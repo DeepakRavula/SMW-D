@@ -132,7 +132,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
                 ->all();
             if (!empty($teacherRooms)) {
                 return $this->addError($attribute, 'Classroom already chosen');
-            }
+            } 
         }
     }
 

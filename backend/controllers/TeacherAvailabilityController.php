@@ -250,13 +250,21 @@ class TeacherAvailabilityController extends BaseController
         $roomModel->to_time   = $toTime->format('g:i A');
         $post             = Yii::$app->request->post();
         $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
-
         $roomModel->day = $teacherAvailabilityModel->day;
         $data =  $this->renderAjax('/user/teacher/_form-teacher-availability', [
             'model' => $teacherModel,
             'roomModel' => $roomModel,
             'teacherAvailabilityModel' => $teacherAvailabilityModel,
         ]);
+        
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->notCanceled()
+            ->notCompleted()
+            ->privateLessons()
+            ->andWhere(['lesson.classroomId' => $roomModel->classroomId, 'lesson.teacherId' => $teacherAvailabilityModel->teacher->id])
+            ->all();
+           
         if ($roomModel->load($post)) {
             $fromTime         = new \DateTime($roomModel->from_time);
             $toTime           = new \DateTime($roomModel->to_time);
@@ -271,6 +279,9 @@ class TeacherAvailabilityController extends BaseController
                 if (!empty($roomModel->classroomId)) {
                     $roomModel->availabilityId = $teacherAvailabilityModel->id;
                     $roomModel->teacherAvailabilityId = $teacherAvailabilityModel->id;
+                    foreach ($lessons as $lesson) {
+                        $lesson->updateAttributes(['classroomId' =>  $roomModel->classroomId]);
+                    }
                     $roomModel->save();
                 } else {
                     TeacherRoom::deleteAll(['teacherAvailabilityId' => $teacherAvailabilityModel->id]);
