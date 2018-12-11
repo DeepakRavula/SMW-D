@@ -96,6 +96,23 @@ class LessonController extends BaseController
             'dataProvider' => $dataProvider,
         ]);
     }
+    public function actionNewIndex()
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $lessonOwingList = LessonOwing::find()->all();
+        foreach($lessonOwingList as $lessonOwing) {
+            $lessonOwingIds[] = $lessonOwing->lessonId;
+        }
+        $lessons = Lesson::find()
+                ->location($locationId)
+                ->andWhere(['lesson.id' => $lessonOwingIds]); 
+        $dataProvider = new ActiveDataProvider([
+            'query' => $lessons
+        ]);
+        return $this->render('newindex', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 
     /**
      * Displays a single Lesson model.
