@@ -796,7 +796,7 @@ class Invoice extends \yii\db\ActiveRecord
             if($this->balance <= -0.09) {
                 $status = (int) $this->type === self::TYPE_INVOICE ? 'Credit' : 'Paid';
             } else {
-                $status = (int) 'Paid';
+                $status = 'Paid';
             }
 
             break;
