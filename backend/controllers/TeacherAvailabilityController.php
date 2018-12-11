@@ -256,15 +256,7 @@ class TeacherAvailabilityController extends BaseController
             'roomModel' => $roomModel,
             'teacherAvailabilityModel' => $teacherAvailabilityModel,
         ]);
-        
-        $lessons = Lesson::find()
-            ->notDeleted()
-            ->notCanceled()
-            ->notCompleted()
-            ->privateLessons()
-            ->andWhere(['lesson.classroomId' => $roomModel->classroomId, 'lesson.teacherId' => $teacherAvailabilityModel->teacher->id])
-            ->all();
-           
+
         if ($roomModel->load($post)) {
             $fromTime         = new \DateTime($roomModel->from_time);
             $toTime           = new \DateTime($roomModel->to_time);
@@ -277,10 +269,23 @@ class TeacherAvailabilityController extends BaseController
             if ($roomModel->validate()) {
                 $teacherAvailabilityModel->save();
                 if (!empty($roomModel->classroomId)) {
+                    $lessons = Lesson::find()
+                        ->notDeleted()
+                        ->notCanceled()
+                        ->notCompleted()
+                        ->privateLessons()
+                        ->teacherAvailability($teacherAvailabilityModel->from_time, $teacherAvailabilityModel->to_time)
+                        ->teacherAvailabilityDay($teacherAvailabilityModel->day)
+                        ->andWhere(['lesson.teacherId' => $teacherAvailabilityModel->teacher->id])
+                        ->all();
                     $roomModel->availabilityId = $teacherAvailabilityModel->id;
                     $roomModel->teacherAvailabilityId = $teacherAvailabilityModel->id;
                     foreach ($lessons as $lesson) {
-                        $lesson->updateAttributes(['classroomId' =>  $roomModel->classroomId]);
+                        $lesson->setScenario(Lesson::SCENARIO_EDIT_CLASSROOM);
+                        if ($lesson->validate()) {
+                            $lesson->classroomId = $roomModel->classroomId;
+                            $lesson->save();
+                        }
                     }
                     $roomModel->save();
                 } else {
