@@ -7,6 +7,10 @@ use Yii;
 use yii\db\Migration;
 use common\models\User;
 use common\models\Lesson;
+use common\models\LessonOwing;
+use yii\helpers\Console;
+use yii\db\Command;
+use yii\db\Connection;
 
 class LessonController extends Controller
 {
@@ -23,7 +27,7 @@ class LessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'trigger-save' ? ['locationId'] : []
+            $actionID == 'trigger-save' || 'get-owing-lessons' ? ['locationId'] : []
         );
     }
     
@@ -44,6 +48,44 @@ class LessonController extends Controller
         foreach ($lessons as $lesson) {
             $lesson->save();
         }
+        return true;
+    }
+    public function actionGetOwingLessons()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        // $lesson_owing_records = LessonOwing::find()->all();
+        // foreach($lesson_owing_records as $lesson_owing_record){
+        //     $lesson_owing_record->delete();
+        // }
+            
+        $lessonIds = [];
+        $lessons = Lesson::find()
+        ->notDeleted()
+        ->isconfirmed()
+        ->notCanceled()
+        ->regular()
+        ->location($this->locationId)
+        ->activePrivateLessons()
+        ->orderBy(['id' => SORT_ASC])
+        ->all();
+        $count = count($lessons);
+        Console::startProgress(0, $count, 'Updating Lessons with owing Amount...');
+        foreach ($lessons as $lesson) {
+            if ($lesson->enrolment) {
+                $owingAmount = $lesson->getOwingAmount($lesson->enrolment->id);
+                if ($owingAmount != 0 && $owingAmount != $lesson->netPrice) {
+                    $lessonOwing = new LessonOwing();
+                    $lessonOwing->lessonId = $lesson->id;
+                    $lessonOwing->save();
+                } 
+            }
+            Console::output("processing: " . $lesson->id . 'added to lesson owing table', Console::FG_GREEN, Console::BOLD);    
+    }
+    Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+
         return true;
     }
 }
