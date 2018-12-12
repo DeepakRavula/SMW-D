@@ -250,13 +250,13 @@ class TeacherAvailabilityController extends BaseController
         $roomModel->to_time   = $toTime->format('g:i A');
         $post             = Yii::$app->request->post();
         $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
-
         $roomModel->day = $teacherAvailabilityModel->day;
         $data =  $this->renderAjax('/user/teacher/_form-teacher-availability', [
             'model' => $teacherModel,
             'roomModel' => $roomModel,
             'teacherAvailabilityModel' => $teacherAvailabilityModel,
         ]);
+
         if ($roomModel->load($post)) {
             $fromTime         = new \DateTime($roomModel->from_time);
             $toTime           = new \DateTime($roomModel->to_time);
@@ -269,8 +269,24 @@ class TeacherAvailabilityController extends BaseController
             if ($roomModel->validate()) {
                 $teacherAvailabilityModel->save();
                 if (!empty($roomModel->classroomId)) {
+                    $lessons = Lesson::find()
+                        ->notDeleted()
+                        ->notCanceled()
+                        ->notCompleted()
+                        ->privateLessons()
+                        ->teacherAvailability($teacherAvailabilityModel->from_time, $teacherAvailabilityModel->to_time)
+                        ->teacherAvailabilityDay($teacherAvailabilityModel->day)
+                        ->andWhere(['lesson.teacherId' => $teacherAvailabilityModel->teacher->id])
+                        ->all();
                     $roomModel->availabilityId = $teacherAvailabilityModel->id;
                     $roomModel->teacherAvailabilityId = $teacherAvailabilityModel->id;
+                    foreach ($lessons as $lesson) {
+                        $lesson->setScenario(Lesson::SCENARIO_EDIT_CLASSROOM);
+                        if ($lesson->validate()) {
+                            $lesson->classroomId = $roomModel->classroomId;
+                            $lesson->save();
+                        }
+                    }
                     $roomModel->save();
                 } else {
                     TeacherRoom::deleteAll(['teacherAvailabilityId' => $teacherAvailabilityModel->id]);

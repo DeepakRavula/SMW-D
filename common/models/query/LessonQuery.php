@@ -469,4 +469,12 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->scheduledOrRescheduled()
                 ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
     }
+
+    public function teacherAvailability($fromTime, $toTime) {
+        return $this->andWhere(['between', 'TIME(lesson.date)', $fromTime, $toTime]);
+    }
+
+    public function teacherAvailabilityDay($day) {
+        return $this->andWhere(['=', 'WEEKDAY(lesson.date)', $day-1]);
+    }
 }
