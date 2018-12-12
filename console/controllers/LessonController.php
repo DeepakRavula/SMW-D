@@ -75,7 +75,7 @@ class LessonController extends Controller
         foreach ($lessons as $lesson) {
             if ($lesson->enrolment) {
                 $owingAmount = $lesson->getOwingAmount($lesson->enrolment->id);
-                if ($owingAmount != 0 && $owingAmount != $lesson->netPrice) {
+                if (round($owingAmount, 2) >= 0.00 && round($owingAmount, 2) < 0.10)  {
                     $lessonOwing = new LessonOwing();
                     $lessonOwing->lessonId = $lesson->id;
                     $lessonOwing->save();
