@@ -54,11 +54,6 @@ class LessonController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-
-        // $lesson_owing_records = LessonOwing::find()->all();
-        // foreach($lesson_owing_records as $lesson_owing_record){
-        //     $lesson_owing_record->delete();
-        // }
             
         $lessonIds = [];
         $lessons = Lesson::find()
@@ -75,7 +70,7 @@ class LessonController extends Controller
         foreach ($lessons as $lesson) {
             if ($lesson->enrolment) {
                 $owingAmount = $lesson->getOwingAmount($lesson->enrolment->id);
-                if (round($owingAmount, 2) >= 0.00 && round($owingAmount, 2) < 0.10)  {
+                if (round($owingAmount, 2) >= 0.01 && round($owingAmount, 2) < 0.10)  {
                     $lessonOwing = new LessonOwing();
                     $lessonOwing->lessonId = $lesson->id;
                     $lessonOwing->save();
