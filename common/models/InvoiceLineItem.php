@@ -462,8 +462,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function getGrossPrice()
     {
-        return $this->isLessonItem() ? round($this->amount, 4) :
-            round($this->amount * $this->unit, 4);
+        return $this->isGroupLesson() ? round($this->amount, 2) :
+            round($this->amount * $this->unit, 2);
     }
 
     public function getDiscount()
@@ -473,7 +473,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ($this->hasMultiEnrolmentDiscount()) {
             $discount += $lineItemPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
                 $this->multiEnrolmentDiscount->value;
-            $lineItemPrice = $this->grossPrice - $discount;
+            $lineItemPrice = $this->grossPrice - round($discount, 2);
         }
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
@@ -482,7 +482,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $discount += $lineItemPrice < 0 ? - ($this->lineItemDiscount->value) :
                     $this->lineItemDiscount->value;
             }
-            $lineItemPrice = $this->grossPrice - $discount;
+            $lineItemPrice = $this->grossPrice - round($discount, 2);
         }
         if ($this->hasGroupDiscount()) {
             if ((int) $this->groupDiscount->valueType) {
@@ -491,17 +491,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $discount += $lineItemPrice < 0 ? - ($this->groupDiscount->value) :
                     $this->groupDiscount->value;
             }
-            $lineItemPrice = $this->grossPrice - $discount;
+            $lineItemPrice = $this->grossPrice - round($discount, 2);
         }
         if ($this->hasCustomerDiscount()) {
             $discount += ($this->customerDiscount->value / 100) * $lineItemPrice;
-            $lineItemPrice = $this->grossPrice - $discount;
+            $lineItemPrice = $this->grossPrice - round($discount, 2);
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
-            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lineItemPrice;
+            $discount += round(($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lineItemPrice, 2);
         }
         
-        return $discount;
+        return round($discount, 2);
     }
     
     public function getTaxLineItemTotal($date)

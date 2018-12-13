@@ -8,6 +8,7 @@ use yii\db\Migration;
 use common\models\User;
 use common\models\Lesson;
 use common\models\Course;
+use common\models\InvoiceLineItem;
 
 class GroupLessonController extends Controller
 {
@@ -54,9 +55,27 @@ class GroupLessonController extends Controller
                 $lastLessonPrice = $courseRate - (round($courseRate / $count, 2) * ($count - 1));
                 foreach ($lessons as $lesson) {
                     $lesson->updateAttributes(['programRate' => round($courseRate / $count, 2)]);
+                    $lessonId = $lesson->id;
+                    $lessonLineItems = InvoiceLineItem::find()
+                        ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
+                            $query->andWhere(['lessonId' => $lessonId]);
+                        }])
+                        ->all();
+                    foreach ($lessonLineItems as $lessonLineItem) {
+                        $lessonLineItem->updateAttributes(['amount' => round($courseRate / $count, 2)]);
+                    }
                 }
                 $lastLesson = end($lessons);
                 $lastLesson->updateAttributes(['programRate' => round($lastLessonPrice, 2)]);
+                $lessonId = $lastLesson->id;
+                $lessonLineItems = InvoiceLineItem::find()
+                    ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
+                        $query->andWhere(['lessonId' => $lessonId]);
+                    }])
+                    ->all();
+                foreach ($lessonLineItems as $lessonLineItem) {
+                    $lessonLineItem->updateAttributes(['amount' => round($lastLessonPrice, 2)]);
+                }
             }
         }
     }
