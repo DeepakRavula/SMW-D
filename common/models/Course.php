@@ -287,6 +287,15 @@ class Course extends \yii\db\ActiveRecord
                     Lesson::STATUS_UNSCHEDULED]])
             ->orderBy(['lesson.date' => SORT_DESC]);
     }
+
+    public function getLastLessonUnconfirmed()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'id'])
+            ->onCondition(['lesson.isDeleted' => false,
+                'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                    Lesson::STATUS_UNSCHEDULED]])
+            ->orderBy(['lesson.date' => SORT_DESC]);
+    }
     
     public function getExtraLessons()
     {
@@ -318,35 +327,35 @@ class Course extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $this->isDeleted = false;
-        }
-        if (!$insert) {
-            return parent::beforeSave($insert);
-        }
-        if (empty($this->isConfirmed)) {
-            $this->isConfirmed = false;
-        }
-        if (empty($this->locationId)) {
-            $this->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        }
-        if (empty($this->type)) {
-            $this->type = self::TYPE_REGULAR;
-        }
-        if ($this->program->isGroup() && !$this->isExtra()) {
-            $startDate = new \DateTime($this->startDate);
-            $this->startDate = (new \DateTime($this->startDate))->format('Y-m-d H:i:s');
-            $weeks = $this->weeksCount;
-            $endDate = $startDate->add(new \DateInterval('P' . $weeks .'W'));
-            $this->endDate = $endDate->format('Y-m-d H:i:s');
-        } else {
-            $lessonsCount = $this->lessonsCount;
-            if ($this->isExtra()) {
-                $endDate = (new Carbon($this->startDate))->addMonths(23);
-            } else {
-                $endDate = (new Carbon($this->startDate))->add(new \DateInterval('P' . $lessonsCount .'W'));
+            if (empty($this->isConfirmed)) {
+                $this->isConfirmed = false;
             }
-            $startDate = new \DateTime($this->startDate);
-            $this->startDate = $startDate->format('Y-m-d H:i:s');
-            $this->endDate = $endDate->endOfMonth();
+            if (empty($this->locationId)) {
+                $this->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+            }
+            if (empty($this->type)) {
+                $this->type = self::TYPE_REGULAR;
+            }
+            if ($this->program->isGroup() && !$this->isExtra()) {
+                $startDate = new \DateTime($this->startDate);
+                $this->startDate = (new \DateTime($this->startDate))->format('Y-m-d H:i:s');
+                $weeks = $this->weeksCount;
+                $endDate = $startDate->add(new \DateInterval('P' . $weeks .'W'));
+                $this->endDate = $endDate->format('Y-m-d H:i:s');
+            } else {
+                $lessonsCount = $this->lessonsCount;
+                if ($this->isExtra()) {
+                    $endDate = (new Carbon($this->startDate))->addMonths(23);
+                } else {
+                    $endDate = (new Carbon($this->startDate))->add(new \DateInterval('P' . $lessonsCount .'W'));
+                }
+                $startDate = new \DateTime($this->startDate);
+                $this->startDate = $startDate->format('Y-m-d H:i:s');
+                $this->endDate = $endDate->endOfMonth();
+            }
+            if ($this->isExtra()) {
+                $this->lessonsCount = 1;
+            }
         }
         
         return parent::beforeSave($insert);
@@ -355,9 +364,7 @@ class Course extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if (!$insert) {
-            return parent::afterSave($insert, $changedAttributes);
-        } else {
+        if ($insert) {
             $courseProgramRate = new CourseProgramRate();
             $courseProgramRate->courseId = $this->id;
             $courseProgramRate->startDate  = (new Carbon($this->startDate))->format('Y-m-d');
@@ -365,13 +372,13 @@ class Course extends \yii\db\ActiveRecord
             $courseProgramRate->programRate = $this->programRate ? $this->programRate : $this->program->rate;
             $courseProgramRate->applyFullDiscount = false;
             $courseProgramRate->save();
-        }
-        if ($this->program->isGroup() && !$this->isExtra()) {
-            $groupCourse = new CourseGroup();
-            $groupCourse->courseId = $this->id;
-            $groupCourse->weeksCount = $this->weeksCount;
-            $groupCourse->lessonsPerWeekCount = $this->lessonsPerWeekCount;
-            $groupCourse->save();
+            if ($this->program->isGroup() && !$this->isExtra()) {
+                $groupCourse = new CourseGroup();
+                $groupCourse->courseId = $this->id;
+                $groupCourse->weeksCount = $this->weeksCount;
+                $groupCourse->lessonsPerWeekCount = $this->lessonsPerWeekCount;
+                $groupCourse->save();
+            }
         }
         return parent::afterSave($insert, $changedAttributes);
     }

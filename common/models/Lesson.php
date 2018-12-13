@@ -888,9 +888,6 @@ class Lesson extends \yii\db\ActiveRecord
         if (!$this->teacherRate) {
             $this->teacherRate = 0.0;
         }
-        if (!$this->programRate) {
-            $this->programRate = 0.0;
-        }
         return parent::beforeSave($insert);
     }
     
@@ -1395,9 +1392,9 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function getGrossPrice()
     {
-        $grossPrice = $this->isGroup() ? $this->programRate / count($this->course->lessons) : 
+        $grossPrice = $this->isGroup() ? $this->programRate : 
             $this->programRate * $this->unit;
-        return $grossPrice;
+        return round($grossPrice, 2);
     }
 
     public function getDiscount()

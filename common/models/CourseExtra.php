@@ -72,4 +72,13 @@ class CourseExtra extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Lesson::className(), ['courseId' => 'extraCourseId']);
     }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        
+        return parent::beforeSave($insert);
+    }
 }

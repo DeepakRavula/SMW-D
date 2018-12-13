@@ -48,7 +48,8 @@ class CourseSearch extends Course
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Course::find()
-                ->groupProgram($locationId)
+                ->groupProgram()
+                ->location($locationId)
                 ->regular()
                 ->notDeleted()
                 ->confirmed();
