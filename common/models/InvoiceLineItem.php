@@ -462,7 +462,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function getGrossPrice()
     {
-        return $this->isGroupLesson() ? round($this->amount, 4) :
+        return $this->isLessonItem() ? round($this->amount, 4) :
             round($this->amount * $this->unit, 4);
     }
 

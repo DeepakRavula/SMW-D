@@ -108,7 +108,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         if (!$insert) {
             return parent::afterSave($insert, $changedAttributes);
         }
-        if ((int) $this->program->isPrivate() && empty($this->enrolment)) {
+        if ($this->program->isPrivate() && empty($this->enrolment)) {
             $enrolmentModel = new Enrolment();
             $enrolmentModel->courseId = $this->courseId;
             $enrolmentModel->studentId = $this->studentId;
@@ -129,7 +129,8 @@ class CourseSchedule extends \yii\db\ActiveRecord
         return $this;
     }
 
-    public function getTeacher() {
+    public function getTeacher() 
+    {
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 }

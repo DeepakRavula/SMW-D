@@ -80,7 +80,7 @@ trait Invoiceable
         } else {
             $courseCount = $enrolment->courseCount;
         }
-        $lessonAmount = $enrolment->courseProgramRate->programRate / $courseCount;
+        $lessonAmount = $this->programRate;
         $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId,
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
