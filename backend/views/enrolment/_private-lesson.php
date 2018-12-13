@@ -50,7 +50,7 @@ use common\models\UserProfile;
 		'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) use ($model) {
-		    return Yii::$app->formatter->asCurrency($data->getOwingAmount($model->id));
+		    return Yii::$app->formatter->asBalance($data->getOwingAmount($model->id));
 	    },
 	],
     ];
