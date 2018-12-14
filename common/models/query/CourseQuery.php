@@ -42,14 +42,11 @@ class CourseQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 
-    public function groupProgram($locationId)
+    public function groupProgram()
     {
-        $this->joinWith(['program' => function ($query) {
+        return $this->joinWith(['program' => function ($query) {
             $query->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
-        }])
-        ->andWhere(['course.locationId' => $locationId]);
-
-        return $this;
+        }]);
     }
 
     public function program($programId)
@@ -132,7 +129,8 @@ class CourseQuery extends \yii\db\ActiveQuery
             ]);
     }
     
-    public function notDeleted()  {
+    public function notDeleted()  
+    {
         return $this->andwhere(['course.isDeleted' => false]);
     }
 }

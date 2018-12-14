@@ -128,7 +128,7 @@ use yii\bootstrap\ActiveForm;
             'attribute' => 'balance',
             'label' => 'Balance',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->getOwingAmount($data->enrolment->id), 2));
+                return Yii::$app->formatter->asBalance(round($data->getOwingAmount($data->enrolment->id), 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']

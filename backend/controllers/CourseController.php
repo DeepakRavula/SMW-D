@@ -221,6 +221,13 @@ class CourseController extends BaseController
                     if ($flag) {
                         $transaction->commit();
                         $model->createLessons();
+                        $course = Course::findOne($model->id);
+                        $courseRate = $course->courseProgramRate->programRate;
+                        
+                        $lessonsPerWeekCount =  $course->courseGroup->lessonsPerWeekCount;
+                        $count = $course->courseGroup->weeksCount * $lessonsPerWeekCount;
+                        $lastLessonPrice = $courseRate - (round($courseRate / $count, 2) * ($count - 1));
+                        $course->lastLessonUnconfirmed->updateAttributes(['programRate' => $lastLessonPrice]);
                         $model->trigger(Course::EVENT_CREATE);
                         return $this->redirect(['lesson/review', 'LessonReview[courseId]' => $model->id]);
                     }
@@ -356,7 +363,8 @@ class CourseController extends BaseController
         $groupEnrolments = Enrolment::find()
             ->select(['courseId'])
             ->joinWith(['course' => function ($query) use ($locationId) {
-                $query->groupProgram($locationId)
+                $query->groupProgram()
+                        ->location($locationId)
                         ->confirmed()
                         ->notDeleted();
             }])

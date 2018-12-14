@@ -68,7 +68,7 @@ class InvoiceController extends BaseController
                             'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
                             'group-lesson','get-payment-amount', 'void',
                             'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post', 'show-items',
-                            'edit-walkin'
+                            'edit-walkin', 'new-index'
                         ],
                         'roles' => [
                             'manageInvoices', 'managePfi'
@@ -104,6 +104,27 @@ class InvoiceController extends BaseController
 
         return $this->render('index', [
                     'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionNewIndex()
+    {
+       $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+       $invoices = Invoice::find()
+                    ->where(['invoice.location_id' => $locationId])
+                    ->notCanceled()
+                    ->notDeleted()
+                    ->invoice()
+                    ->andWhere(['AND',
+                    ['>', 'invoice.balance', 0.00],
+                    ['<=', 'invoice.balance', 1.00]
+                ]);
+
+    $dataProvider = new ActiveDataProvider([
+        'query' => $invoices,
+    ]);
+
+        return $this->render('newindex', [
                     'dataProvider' => $dataProvider,
         ]);
     }
