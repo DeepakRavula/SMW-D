@@ -870,6 +870,12 @@ class Lesson extends \yii\db\ActiveRecord
             }
             if (empty($this->programRate)) {
                 $rate = $this->courseProgramRate->programRate;
+                if ($this->isGroup()) {
+                    $lessonsPerWeekCount =  $this->course->courseGroup->lessonsPerWeekCount;
+                    $count = $this->course->courseGroup->weeksCount * $lessonsPerWeekCount;
+                    $courseRate = $this->courseProgramRate->programRate;
+                    $rate = round($courseRate / $count, 2);
+                }
                 $this->programRate = $rate;
             }
             if (empty($this->teacherRate)) {
