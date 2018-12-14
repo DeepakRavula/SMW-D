@@ -28,9 +28,20 @@ class m181214_075911_clean_up_Hadi_Dayoub_account extends Migration
         $invoicePaymentIds = [8583,10355];
         $invoicePayments = InvoicePayment::find()
                 ->andWhere(['id' => $invoicePaymentIds])
+                ->notDeleted()
                 ->all();
         foreach ($invoicePayments as $invoicePayment) {
             $invoicePayment->delete();
+        }
+        $payments = Payment::find()
+                ->joinWith(['invoicePayment' => function ($query) use ($invoicePaymentIds) {
+                    $query->andWhere(['id' => $invoicePaymentIds])
+                        ->notDeleted();
+                }])
+                ->notDeleted()
+                ->all();
+        foreach ($payments as $payment) {
+            $payment->delete();
         }
         $lessonIds = [38459, 51484];
         $lessonPayments = LessonPayment::find()
@@ -42,7 +53,8 @@ class m181214_075911_clean_up_Hadi_Dayoub_account extends Migration
         }
         $payments = Payment::find()
                 ->joinWith(['lessonPayment' => function ($query) use ($lessonIds) {
-                    $query->andWhere(['lessonId' => $lessonIds]);
+                    $query->andWhere(['lessonId' => $lessonIds])
+                        ->notDeleted();
                 }])
                 ->notDeleted()
                 ->all();
