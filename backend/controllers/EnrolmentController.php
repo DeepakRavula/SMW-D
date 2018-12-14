@@ -271,7 +271,7 @@ class EnrolmentController extends BaseController
             $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
             return [
                 'status' => true,
-                'url' => Url::to(['/course/view', 'id' => $course->id])
+                'url' => Url::to(['/enrolment/view', 'id' => $enrolmentModel->id])
             ];
         }
     }
