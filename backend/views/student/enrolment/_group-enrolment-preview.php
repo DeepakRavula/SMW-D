@@ -19,7 +19,14 @@ use backend\assets\CustomGridAsset;
 ]); ?>
 
 <?php ActiveForm::end(); ?>
+<style>
+ .kv-page-summary > td {
+    border-top:none;
+    font-weight: bold;
+    text-align: right;
+}
 
+</style>
 <div class="user-create-index"> 
     <?php echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
@@ -50,6 +57,8 @@ use backend\assets\CustomGridAsset;
                 'value' => function ($data) {
                     return Yii::$app->formatter->asCurrency(round($data->grossPrice, 2));
                 },
+                'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
                 'pageSummary' => true,
                 'pageSummaryFunc' =>  function () use ($lessonDataProvider) {
                     $lessons = $lessonDataProvider->query->all();
@@ -65,6 +74,8 @@ use backend\assets\CustomGridAsset;
                 'value' => function ($data) use ($model) {
                     return Yii::$app->formatter->asCurrency(round($data->getGroupDiscount($model), 2));
                 },
+                'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
                 'pageSummary' => true,
                 'pageSummaryFunc' =>  function () use ($lessonDataProvider) {
                     $lessons = $lessonDataProvider->query->all();
@@ -80,12 +91,14 @@ use backend\assets\CustomGridAsset;
                 'value' => function ($data) use ($model) {
                     return Yii::$app->formatter->asCurrency(round($data->getGroupSubTotal($model), 2));
                 },
+                'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
                 'pageSummary' => true,
                 'pageSummaryFunc' =>  function () use ($lessonDataProvider) {
                     $lessons = $lessonDataProvider->query->all();
                     $total = 0.00;
                     foreach ($lessons as $lesson) {
-                        $total+= $lesson->getGroupDiscountgetGroupSubTotal($lesson->enrolment);
+                        $total+= $lesson->getGroupSubTotal($lesson->enrolment);
                     }
                     return Yii::$app->formatter->asCurrency(round($total, 2));
                }
