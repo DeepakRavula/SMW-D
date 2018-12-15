@@ -33,16 +33,6 @@ class m181214_075911_clean_up_Hadi_Dayoub_account extends Migration
         foreach ($invoicePayments as $invoicePayment) {
             $invoicePayment->delete();
         }
-        $payments = Payment::find()
-                ->joinWith(['invoicePayment' => function ($query) use ($invoicePaymentIds) {
-                    $query->andWhere(['id' => $invoicePaymentIds])
-                        ->notDeleted();
-                }])
-                ->notDeleted()
-                ->all();
-        foreach ($payments as $payment) {
-            $payment->delete();
-        }
         $lessonIds = [38459, 51484];
         $lessonPayments = LessonPayment::find()
                 ->andWhere(['lessonId' => $lessonIds])
