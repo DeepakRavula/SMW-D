@@ -385,5 +385,32 @@ $results[] = [
                 'data' => $data,
             ];
         }
-    }    
+    }   
+    
+    public function actionEmailMultiCustomer($id)
+    {
+        $model = Lesson::findOne($id);
+        $students = Student::find()
+            ->notDeleted()
+            ->joinWith('enrolments')
+            ->andWhere(['courseId' => $model->courseId])
+            ->all();
+        $emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
+        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
+        $data = $this->renderAjax('/mail/lesson', [
+            'model' => new EmailForm(),
+            'lessonModel' => $model,
+            'emails' => $emails,
+            'emailTemplate' => $emailTemplate,
+            'subject' => $emailTemplate->subject ?? $model->course->program->name . ' lesson reschedule',
+            'userModel' => !empty($model->enrolment->student->customer) ? $model->enrolment->student->customer : null,
+        ]);
+        $post = Yii::$app->request->post();
+        if (!$post) {
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }
 }
