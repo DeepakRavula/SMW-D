@@ -153,7 +153,8 @@ use yii\bootstrap\ActiveForm;
                     return $form->field($data, 'paymentAmount')->textInput([
                         'value' => round($data->getOwingAmount($data->enrolment->id), 2),
                         'class' => 'form-control text-right payment-amount',
-                        'id' => 'lesson-payment-' . $data->id
+                        'id' => 'lesson-payment-' . $data->id,
+                        'lessonId' => $data->id
                     ])->label(false);
                 },
                 'attribute' => 'new_activity',

@@ -139,73 +139,60 @@ use yii\bootstrap\Html;
     var lockTextBox = false;
     var receivePayment = {
         setAction: function() {
-            var invoiceIds = null;
-            if ($("#invoice-line-item-grid").length > 0) {
-                var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            }
             var prId = '<?= $prId; ?>';
             var userId = $('#customer-payment').val();
-            var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
-            var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
-            var paymentCreditIds = new Array();
-            var invoiceCreditIds = new Array();
+            
             var lessonPayments = new Array();
             var groupLessonPayments = new Array();
             var invoicePayments = new Array();
+
             var paymentCredits = new Array();
             var invoiceCredits = new Array();
+
             var canUsePaymentCredits = 0;
             var canUseInvoiceCredits = 0;
+
             $('.credit-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     var amount = $(this).find('.credit-amount').val();
                     var creditId = $(this).find('.credit-type').attr('creditId');
                     var creditType = $(this).find('.credit-type').text();
                     if (creditType == 'Invoice Credit') {
-                        invoiceCredits.push(amount);
+                        invoiceCredits.push({ invoiceCreditId: creditId, value: amount });
                         canUseInvoiceCredits = 1;
-                        invoiceCreditIds.push(creditId);
                     } 
                     if (creditType == 'Payment Credit') {
-                        paymentCredits.push(amount);
+                        paymentCredits.push({ paymentCreditId: creditId, value: amount });
                         canUsePaymentCredits = 1;
-                        paymentCreditIds.push(creditId);
                     }
                 }
             });
             $('.lesson-line-items').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    lessonPayments.push($(this).find('.payment-amount').val());
+                    var lessonId = $(this).find('.payment-amount').attr('lessonId');
+                    var amount = $(this).find('.payment-amount').val();
+                    lessonPayments.push({ id: lessonId, value: amount });
                 }
             });
             $('.group-lesson-line-items').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    groupLessonPayments.push($(this).find('.payment-amount').val());
+                    var lessonId = $(this).find('.payment-amount').attr('lessonId');
+                    var amount = $(this).find('.payment-amount').val();
+                    groupLessonPayments.push({ id: lessonId, value: amount });
                 }
             });
             $('.invoice-line-items').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    invoicePayments.push($(this).find('.payment-amount').val());
+                    var invoiceId = $(this).find('.payment-amount').attr('invoiceId');
+                    var amount = $(this).find('.payment-amount').val();
+                    invoicePayments.push({ id: lessonId, value: amount });
                 }
             });
-            if ($.isEmptyObject(lessonIds)) {
-                lessonIds = null;
-            }
-            if ($.isEmptyObject(invoiceIds)) {
-                invoiceIds = null;
-            }
-            if ($.isEmptyObject(groupLessonIds)) {
-                groupLessonIds = null;
-            }
-            var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds,
-                'PaymentFormGroupLessonSearch[lessonIds]': groupLessonIds, 'PaymentForm[groupLessonPayments]': groupLessonPayments,
-                'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
-                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[invoiceCreditIds]': invoiceCreditIds,
-                'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments,
-                'PaymentForm[paymentCredits]': paymentCredits, 'PaymentForm[paymentCreditIds]': paymentCreditIds,
-                'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[prId]': prId });
-            var url = '<?= Url::to(['payment/receive']) ?>?' + params;
-            $('#modal-form').attr('action', url);
+            var data = ({ 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments,
+                'PaymentForm[paymentCredits]': paymentCredits, 'PaymentForm[invoiceCredits]': invoiceCredits, 
+                'PaymentForm[prId]': prId 
+            });
+            return data;
         },
         calcAmountNeeded : function() {
             var amountToDistribute = parseFloat('0.0');
@@ -283,16 +270,53 @@ use yii\bootstrap\Html;
         var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
-        $('.modal-save').text('Save');
+        $('#modal-save').text('Save');
         $('.modal-back').text('Create Payment Request');
         $('#modal-back').removeClass('btn-info');
         $('#modal-back').addClass('btn-default');
         $('.modal-back').show();
-        $('.modal-save').show();
+        $('#modal-save').show();
+        $('#modal-save').removeClass('modal-save');
+        $('#modal-save').addClass('recive-payment-modal-save');
         $('.select-on-check-all').prop('checked', true);
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
         receivePayment.setAction();
+    });
+
+    $(document).off('click', '.recive-payment-modal-save').on('click', '.recive-payment-modal-save', function () {
+        $('#modal-spinner').show();
+	    modal.disableButtons();
+        var data = receivePayment.setAction();
+        $.ajax({
+            url: $('#modal-form').attr('action'),
+            type: 'post',
+            dataType: "json",
+            data: data,
+            success: function (response)
+            {
+                $('#modal-spinner').hide();
+                if (response.status)
+                {
+                    $('#modal-spinner').hide();
+                    if (!$.isEmptyObject(response.data)) {
+                        $('#modal-content').html(response.data);
+                        $('.modal-back').show();
+                        $(document).trigger("modal-next", response);
+                    } else if (!$.isEmptyObject(response.dataUrl)) {
+                        modal.renderUrlData(response.dataUrl);
+                    } else {
+                        $(document).trigger("modal-success", response);
+                        $('#popup-modal').modal('hide'); 
+                    }
+                } else {
+                    $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                    $(document).trigger("modal-error", response);
+                }
+                modal.enableButtons();
+            }
+        });
+        return false;
     });
 
     $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {
