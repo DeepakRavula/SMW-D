@@ -157,10 +157,11 @@ class LocationController extends BaseController
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilityModel = LocationAvailability::find()
             ->notDeleted()
-            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
-            ->one();
+            ->andWhere(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
+            ->one(); 
         $availabilityModel->fromTime = $startTime;
         $availabilityModel->toTime = $endTime;
+
         return $availabilityModel->save();
     }
     
@@ -169,7 +170,7 @@ class LocationController extends BaseController
          $location = Location::findOne(['slug' => Yii::$app->location]);
          $availabilityModel = LocationAvailability::find()
             ->notDeleted()
-            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
+            ->andWhere(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
             ->one();
         return $availabilityModel->delete();
     }

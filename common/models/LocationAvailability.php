@@ -103,7 +103,9 @@ class LocationAvailability extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        $this->isDeleted = false;
+        if ($insert) {
+            $this->isDeleted = false;
+        }
         return parent::beforeSave($insert);
     }
 }

@@ -244,7 +244,10 @@ function showCalendars(id,type) {
         eventResize : function (event,type,id) {
          var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
-            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime, type: type });
+            alert(endTime);
+            alert(startTime);
+            var params = $.param({ resourceId: event.resourceId, startTime: moment(event.start).format('YYYY-MM-DD HH:mm:ss'), endTime: moment(event.end).format('YYYY-MM-DD HH:mm:ss'), type: type });
+            alert(params);
             $.ajax({
                 url    : '<?= Url::to(['location/edit-availability']) ?>?' + params,
                 type   : 'POST',
