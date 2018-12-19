@@ -17,15 +17,14 @@ use kartik\switchinput\SwitchInput;
                 'label' => 'Status',
                 'value' => function ($data) {
                     $status = null;
-                    if (!$data->hasLessonPayment()) {
+                    if ($data->isUnpaid()) {
                         $status = 'Owing';
-                    }
-                    if ($data->hasPartialyPaidLesson()) {
+                    } else if ($data->isFullyPaid()) {
+                        $status = 'Paid';
+                    } else {
                         $status = 'Partialy Paid';
                     }
-                    if ($data->isFullyPaid()) {
-                        $status = 'Paid';
-                    } 
+    
                     return $status;
                 }
             ],
