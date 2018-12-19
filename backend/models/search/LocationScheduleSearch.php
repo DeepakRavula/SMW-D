@@ -61,6 +61,7 @@ class LocationScheduleSearch extends Lesson
             ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->isConfirmed()
             ->notDeleted()
+            ->present()
             ->location($locationId)
 	    ->orWhere(['IN', 'lesson.id',$rootLessonIds])
             ->orderBy(['TIME(date)' => SORT_ASC]);
