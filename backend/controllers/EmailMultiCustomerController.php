@@ -18,6 +18,7 @@ use common\models\TestEmail;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
+use common\models\EmailMultiCustomer;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -78,23 +79,17 @@ class EmailMultiCustomerController extends BaseController
     }
   
     
-    public function actionEmailMultiCustomer($id)
+    public function actionEmailMultiCustomer()
     {
-        $model = Lesson::findOne($id);
-        $students = Student::find()
-            ->notDeleted()
-            ->joinWith('enrolments')
-            ->andWhere(['courseId' => $model->courseId])
-            ->all();
-        $emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
-        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
-        $data = $this->renderAjax('/mail/lesson', [
+        $emailMultiCustomerModel = new EmailMultiCustomer();
+        $emailMultiCustomerModel->load(Yii::$app->request->get());
+        $emailMultiCustomerModel->setScenario(EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER);
+        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+        $data = $this->renderAjax('/mail/emailmulticustomer', [
             'model' => new EmailForm(),
-            'lessonModel' => $model,
-            'emails' => $emails,
+            'emails' => !empty($model->user->email) ?$model->user->email : null,
+            'subject' => $emailTemplate->subject ?? 'Message from Arcadia Academy of Music',
             'emailTemplate' => $emailTemplate,
-            'subject' => $emailTemplate->subject ?? $model->course->program->name . ' lesson reschedule',
-            'userModel' => !empty($model->enrolment->student->customer) ? $model->enrolment->student->customer : null,
         ]);
         $post = Yii::$app->request->post();
         if (!$post) {
@@ -103,5 +98,6 @@ class EmailMultiCustomerController extends BaseController
                 'data' => $data,
             ];
         }
+       
     }
 }

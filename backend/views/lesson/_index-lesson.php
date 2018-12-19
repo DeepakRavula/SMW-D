@@ -259,12 +259,14 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 $('#lesson-delete').addClass('multiselect-disable');
                 $('#lesson-duration-edit').addClass('multiselect-disable');
                 $('#lesson-classroom-edit').addClass('multiselect-disable');
+                $('#email-multi-customer').addClass('multiselect-disable');
             } else {
                 $('#substitute-teacher').removeClass('multiselect-disable');
                 $('#lesson-discount').removeClass('multiselect-disable');
                 $('#lesson-delete').removeClass('multiselect-disable');
                 $('#lesson-duration-edit').removeClass('multiselect-disable');
                 $('#lesson-classroom-edit').removeClass('multiselect-disable');
+                $('#email-multi-customer').removeClass('multiselect-disable');
             }
             return false;
         }
@@ -376,6 +378,30 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         var params = $.param({ 'EditClassroom[lessonIds]': lessonIds});
                     $.ajax({
                         url    : '<?= Url::to(['private-lesson/edit-classroom']) ?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {    
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        return false;
+    });
+    $(document).off('click', '#email-multi-customer').on('click', '#email-multi-customer', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'EmailMultiCustomer[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?= Url::to(['email-multi-customer/email-multi-customer']) ?>?' +params,
                         type   : 'post',
                         success: function(response)
                         {    
