@@ -87,10 +87,11 @@ class EmailMultiCustomerController extends BaseController
         $lessons = Lesson::find()->andWhere(['id' => $emailMultiCustomerModel->lessonIds])->all();
         $emails = [];
         foreach($lessons as $lesson) {
+            if($lesson->student->customer->primaryEmail) {
          $emails[] = $lesson->student->customer->primaryEmail->email;
-         
+            }
         }
-        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_MESSAGE]);
         $data = $this->renderAjax('/mail/emailmulticustomer', [
             'model' => new EmailForm(),
             'emails' => !empty($emails) ?$emails : null,
