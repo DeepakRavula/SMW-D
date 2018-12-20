@@ -84,10 +84,16 @@ class EmailMultiCustomerController extends BaseController
         $emailMultiCustomerModel = new EmailMultiCustomer();
         $emailMultiCustomerModel->load(Yii::$app->request->get());
         $emailMultiCustomerModel->setScenario(EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER);
+        $lessons = Lesson::find()->andWhere(['id' => $emailMultiCustomerModel->lessonIds])->all();
+        $emails = [];
+        foreach($lessons as $lesson) {
+         $emails[] = $lesson->student->customer->primaryEmail->email;
+         
+        }
         $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
         $data = $this->renderAjax('/mail/emailmulticustomer', [
             'model' => new EmailForm(),
-            'emails' => !empty($model->user->email) ?$model->user->email : null,
+            'emails' => !empty($emails) ?$emails : null,
             'subject' => $emailTemplate->subject ?? 'Message from Arcadia Academy of Music',
             'emailTemplate' => $emailTemplate,
         ]);
