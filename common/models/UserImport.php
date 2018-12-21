@@ -98,7 +98,7 @@ class UserImport extends Model
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
                 if (!empty($row['Date of Birth'])) {
-                    $birthDate = \DateTime::createFromFormat('d/m/Y', $row['Date of Birth']);
+                    $birthDate = \DateTime::createFromFormat('Y-m-d', $row['Date of Birth']);
                     $student->birth_date = $birthDate->format('M d,Y');
                 }
                 $student->customer_id = $user->id;
@@ -143,7 +143,7 @@ class UserImport extends Model
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
                 if (!empty($row['Date of Birth'])) {
-                    $birthDate = \DateTime::createFromFormat('d/m/Y', $row['Date of Birth']);
+                    $birthDate = \DateTime::createFromFormat('Y-m-d', $row['Date of Birth']);
                     $student->birth_date = $birthDate->format('M d,Y');
                 }
                 $student->customer_id = $user->id;
@@ -286,7 +286,7 @@ class UserImport extends Model
         $studentCsv->homeTel = $row['Home Tel'];
         $studentCsv->otherTel = $row['Other Tel'];
         if (!empty($row['Date of Birth'])) {
-            $birthDate = \DateTime::createFromFormat('d/m/Y', $row['Date of Birth']);
+            $birthDate = \DateTime::createFromFormat('Y-m-d', $row['Date of Birth']);
             $studentCsv->birthDate = $birthDate->format('Y-m-d');
         }
         $studentCsv->billingFirstName = $row['Billing First Name'];
