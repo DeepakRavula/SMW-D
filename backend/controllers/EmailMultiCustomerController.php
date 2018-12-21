@@ -19,6 +19,7 @@ use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
 use common\models\EmailMultiCustomer;
+use common\models\UserEmail;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -84,13 +85,20 @@ class EmailMultiCustomerController extends BaseController
         $emailMultiCustomerModel = new EmailMultiCustomer();
         $emailMultiCustomerModel->load(Yii::$app->request->get());
         $emailMultiCustomerModel->setScenario(EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER);
-        $lessons = Lesson::find()->andWhere(['id' => $emailMultiCustomerModel->lessonIds])->all();
-        $emails = [];
-        foreach($lessons as $lesson) {
-            if($lesson->student->customer->primaryEmail) {
-         $emails[] = $lesson->student->customer->primaryEmail->email;
-            }
-        }
+        $emails = ArrayHelper::map(UserEmail::find()
+                    ->notDeleted()
+                    ->joinWith(['userContact' => function ($query) use($emailMultiCustomerModel) {
+                            $query->joinWith(['user' =>function ($query) use($emailMultiCustomerModel) { 
+                                $query->joinWith(['student' =>function ($query) use($emailMultiCustomerModel) { 
+                                    $query->joinWith(['lesson' =>function ($query) use($emailMultiCustomerModel) { 
+                                        $query->andWhere(['lesson.id' => $emailMultiCustomerModel->lessonIds]);
+                                    }]);
+                                }]);   
+                        }])
+                        ->primary();
+                    }])
+                    ->orderBy('user_email.email')
+                    ->all(), 'email', 'email');       
         $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_MESSAGE]);
         $data = $this->renderAjax('/mail/emailmulticustomer', [
             'model' => new EmailForm(),
