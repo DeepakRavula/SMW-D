@@ -31,7 +31,7 @@ class EmailMultiCustomer extends Model
     public function rules()
     {
         return [
-            [['lessonIds'], 'required'],
+            [['lessonIds'], 'required' , 'on' => self::SCENARIO_SEND_EMAIL_MULTICUSTOMER],
         ];
     }
  

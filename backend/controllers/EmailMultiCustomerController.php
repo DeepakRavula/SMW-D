@@ -83,8 +83,8 @@ class EmailMultiCustomerController extends BaseController
     public function actionEmailMultiCustomer()
     {
         $emailMultiCustomerModel = new EmailMultiCustomer();
-        $emailMultiCustomerModel->load(Yii::$app->request->get());
         $emailMultiCustomerModel->setScenario(EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER);
+        $emailMultiCustomerModel->load(Yii::$app->request->get());
         if($emailMultiCustomerModel->validate()){
         $emails = ArrayHelper::map(UserEmail::find()
                     ->notDeleted()
@@ -118,7 +118,7 @@ class EmailMultiCustomerController extends BaseController
     } else {
         return [
             'status' => false,
-            'error' => $emailMultiCustomerModel->getErrors(),
+            'error' => $emailMultiCustomerModel->getErrors('lessonIds'),
         ];
     }
 }
