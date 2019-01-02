@@ -31,7 +31,7 @@ class EmailMultiCustomer extends Model
     public function rules()
     {
         return [
-            [['lessonIds'], 'safe'],
+            [['lessonIds'], 'safe', 'required'],
         ];
     }
  

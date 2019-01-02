@@ -399,7 +399,8 @@ $this->params['show-all'] = $this->render('_show-all-button', [
     });
     $(document).off('click', '#email-multi-customer').on('click', '#email-multi-customer', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
-        var params = $.param({ 'EmailMultiCustomer[lessonIds]': lessonIds});
+        if (!$.isEmptyObject(lessonIds)) {
+            var params = $.param({ 'EmailMultiCustomer[lessonIds]': lessonIds});
                     $.ajax({
                         url    : '<?= Url::to(['email-multi-customer/email-multi-customer']) ?>?' +params,
                         type   : 'post',
@@ -419,6 +420,9 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                             }
                         }
                     });
+        } else {
+            $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();            
+        }
         return false;
     });
 </script>

@@ -85,7 +85,6 @@ class EmailMultiCustomerController extends BaseController
         $emailMultiCustomerModel = new EmailMultiCustomer();
         $emailMultiCustomerModel->load(Yii::$app->request->get());
         $emailMultiCustomerModel->setScenario(EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER);
-        if($emailMultiCustomerModel->lessonIds) {
         $emails = ArrayHelper::map(UserEmail::find()
                     ->notDeleted()
                     ->joinWith(['userContact' => function ($query) use($emailMultiCustomerModel) {
@@ -114,13 +113,6 @@ class EmailMultiCustomerController extends BaseController
                 'data' => $data,
             ];
         }
-    }
-    else {
-        return [
-            'status' => false,
-            'error' => 'Select Any Lessons',
-        ];
-    }
        
     }
 }
