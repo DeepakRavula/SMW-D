@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -19,6 +20,7 @@ class LocationAvailability extends \yii\db\ActiveRecord
     const DEFAULT_TO_TIME   = '17:00:00';
     const TYPE_OPERATION_TIME =1;
     const TYPE_SCHEDULE_TIME =2;
+    const SCENARIO_ADD_AVAILABILITY = 'scenario-add-availability';
     /**
      * @inheritdoc
      */
@@ -42,7 +44,8 @@ class LocationAvailability extends \yii\db\ActiveRecord
             [['locationId', 'day','type'], 'integer'],
             [['fromTime', 'toTime', 'isDeleted'], 'safe'],
             [['fromTime'], 'validateToTime'] ,
-            [['toTime'], 'validateToTime'] 
+            [['toTime'], 'validateToTime'],
+            [['locationId', 'day','type', 'fromTime', 'toTime',], 'validateLocationAvailability', 'on' => self::SCENARIO_ADD_AVAILABILITY],
             
         ];
     }
@@ -88,6 +91,19 @@ class LocationAvailability extends \yii\db\ActiveRecord
            }
                 
     }
+    public function validateLocationAvailability($attributes)
+    {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
+        $availabilityModel = LocationAvailability::find()
+            ->notDeleted()
+            ->andWhere(['locationId' => $location->id, 'day' => $this->day,'type' => $this->type])
+            ->one();   
+        if (!empty($availabilityModel)) {
+            return $this->addError($attributes, "Availabilty cannot be overlapped.");
+        }
+ 
+                 
+    }
     public static function getWeekdaysList()
     {
         return [
@@ -103,7 +119,9 @@ class LocationAvailability extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        $this->isDeleted = false;
+        if ($insert) {
+            $this->isDeleted = false;
+        }
         return parent::beforeSave($insert);
     }
 }

@@ -192,6 +192,36 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $status;
     }
 
+    public function isUnPaid()
+    {
+        $status = true;
+        $fromDate = new \DateTime($this->startDate);
+        $toDate = new \DateTime($this->endDate);
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->course($this->enrolment->courseId)
+            ->between($fromDate, $toDate)
+            ->all();
+        if (!$lessons) {
+            $status = false;
+        }
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasInvoice()) {
+                if ($lesson->invoice->hasPayments()) {
+                    $status = false;
+                    break;
+                }
+            }
+            if ($lesson->hasPayment()) {
+                $status = false;
+                break;
+            }
+        }
+        return $status;
+    }
+
     public function isFullyPaid()
     {
         $status = true;
@@ -208,11 +238,18 @@ class PaymentCycle extends \yii\db\ActiveRecord
             $status = false;
         }
         foreach ($lessons as $lesson) {
-            if (round($lesson->getOwingAmount($this->enrolment->id), 2) != 0.00) {
-                $status = false;
-                break;
+            if (round($lesson->getOwingAmount($this->enrolment->id), 2) != 0.00 ) {
+                if($lesson->hasInvoice()) {
+                    if(!$lesson->invoice->isPaid()) {
+                        $status = false;
+                        break;
+                    }
+                } else {
+                    $status = false;
+                    break;
+                }
             }
-        } 
+        }
         return $status;
     }
 

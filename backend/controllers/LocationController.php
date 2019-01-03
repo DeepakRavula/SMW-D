@@ -157,33 +157,39 @@ class LocationController extends BaseController
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilityModel = LocationAvailability::find()
             ->notDeleted()
-            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
-            ->one();
+            ->andWhere(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
+            ->one(); 
         $availabilityModel->fromTime = $startTime;
         $availabilityModel->toTime = $endTime;
+
         return $availabilityModel->save();
     }
     
-    public function actionDeleteAvailability($resourceId,$type)
+    public function actionDeleteAvailability($id)
      {
          $location = Location::findOne(['slug' => Yii::$app->location]);
          $availabilityModel = LocationAvailability::find()
             ->notDeleted()
-            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
+            ->andWhere(['id' => $id])
             ->one();
-        return $availabilityModel->delete();
+        if($availabilityModel) {
+            $availabilityModel->delete();
+        }      
+        return true;
     }
 
     public function actionAddAvailability($resourceId,$type,$startTime, $endTime)
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
-        $model = new LocationAvailability();
+        $model = new LocationAvailability(['scenario' => LocationAvailability::SCENARIO_ADD_AVAILABILITY]);
         $model->locationId = $location->id;
         $model->day = $resourceId;
         $model->type = $type;
         $model->fromTime = $startTime;
         $model->toTime = $endTime;
-        return $model->save();
+        return [
+            'status' => $model->save(),
+        ];
     }
     public function actionRenderEvents($type)
     {
@@ -204,6 +210,7 @@ class LocationController extends BaseController
                 'end' => $endTime->format('Y-m-d H:i:s'),
                 'backgroundColor' => '#97ef83',
                 'className' => 'location-availability',
+                'id' => $availability->id,
             ];
         }
         return $events;

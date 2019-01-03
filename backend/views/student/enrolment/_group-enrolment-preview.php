@@ -77,11 +77,11 @@ use backend\assets\CustomGridAsset;
                 'contentOptions' => ['style' => 'text-align:right'],
                 'headerOptions' => ['style' => 'text-align:right'],
                 'pageSummary' => true,
-                'pageSummaryFunc' =>  function () use ($lessonDataProvider) {
+                'pageSummaryFunc' =>  function () use ($lessonDataProvider, $model) {
                     $lessons = $lessonDataProvider->query->all();
                     $total = 0.00;
                     foreach ($lessons as $lesson) {
-                        $total+= $lesson->getGroupDiscount($lesson->enrolment);
+                        $total+= $lesson->getGroupDiscount($model);
                     }
                     return Yii::$app->formatter->asCurrency(round($total, 2));
                }
@@ -94,11 +94,11 @@ use backend\assets\CustomGridAsset;
                 'contentOptions' => ['style' => 'text-align:right'],
                 'headerOptions' => ['style' => 'text-align:right'],
                 'pageSummary' => true,
-                'pageSummaryFunc' =>  function () use ($lessonDataProvider) {
+                'pageSummaryFunc' =>  function () use ($lessonDataProvider, $model) {
                     $lessons = $lessonDataProvider->query->all();
                     $total = 0.00;
                     foreach ($lessons as $lesson) {
-                        $total+= $lesson->getGroupSubTotal($lesson->enrolment);
+                        $total+= $lesson->getGroupSubTotal($model);
                     }
                     return Yii::$app->formatter->asCurrency(round($total, 2));
                }
