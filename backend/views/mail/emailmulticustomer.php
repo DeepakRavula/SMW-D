@@ -2,15 +2,14 @@
 
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
+use common\models\Location;
+$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $content = "";
-    $model->to = $emails;
+    $model->to = $location->email;
     $data = null;
     if (!empty($userModel)) {
-        $data = ArrayHelper::map(UserEmail::find()
-            ->notDeleted()
-            ->joinWith('userContact')
-            ->andWhere(['user_contact.userId' => $userModel->id])
-            ->orderBy('user_email.email')
+        $data = ArrayHelper::map(Location::find()
+            ->andWhere(['id' => $locationId])
             ->all(), 'email', 'email');
     }
 ?>

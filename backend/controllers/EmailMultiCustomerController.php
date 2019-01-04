@@ -60,7 +60,8 @@ class EmailMultiCustomerController extends BaseController
                 ])
                 ->setFrom($location->email)
                 ->setReplyTo($location->email)
-                ->setSubject($model->subject);
+                ->setSubject($model->subject)
+                ->setBcc ( $email );
             Yii::$app->mailer->sendMultiple($content);
             if (!empty($model->invoiceId)) {
                 $invoice = Invoice::findOne(['id' => $model->invoiceId]);
