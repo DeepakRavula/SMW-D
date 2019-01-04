@@ -31,11 +31,11 @@ use dosamigos\ckeditor\CKEditor;
             ?>
         </div>
     </div>
-    <?php if($model->bcc) : ?>
+    <?php if($bccEmails) : ?>
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'bcc')->widget(Select2::classname(), [
-                'data' => $data,
+                'data' => $bccEmails,
                 'pluginOptions' => [
                     'tags' => true,
                     'multiple' => true,
