@@ -216,6 +216,10 @@ class UserImport extends Model
                     $userContact->save();
                     $phone = new UserPhone();
                     $phone->number = $phoneNumber;
+                    if (is_numeric($phoneNumber)) {
+                        $newPhoneNumber = substr_replace($phoneNumber, "(", 0) . substr_replace($phoneNumber, ")", 3) . " " . substr_replace(substr($phoneNumber, 3), "-", 3) . substr($phoneNumber, 6);
+                        $phone->number = $newPhoneNumber;
+                    }
                     $phone->userContactId = $userContact->id;
                     $phone->save();
                 }
@@ -229,6 +233,10 @@ class UserImport extends Model
                     $phone = new UserPhone();
                     $phone->userContactId = $userContact->id;
                     $phone->number = $phoneNumber;
+                    if (is_numeric($phoneNumber)) {
+                        $newPhoneNumber = substr_replace($phoneNumber, "(", 0) . substr_replace($phoneNumber, ")", 3) . " " . substr_replace(substr($phoneNumber, 3), "-", 3) . substr($phoneNumber, 6);
+                        $phone->number = $newPhoneNumber;
+                    }
                     if (!empty($row['Billing Work Tel Ext.'])) {
                         $phone->extension = $row['Billing Work Tel Ext.'];
                     }
@@ -245,6 +253,10 @@ class UserImport extends Model
                     $phone = new UserPhone();
                     $phone->userContactId = $userContact->id;
                     $phone->number = $phoneNumber;
+                    if (is_numeric($phoneNumber)) {
+                        $newPhoneNumber = substr_replace($phoneNumber, "(", 0) . substr_replace($phoneNumber, ")", 3) . " " . substr_replace(substr($phoneNumber, 3), "-", 3) . substr($phoneNumber, 6);
+                        $phone->number = $newPhoneNumber;
+                    }
                     if (!empty($row['Billing Other Tel Ext.'])) {
                         $phone->extension = $row['Billing Other Tel Ext.'];
                     }
