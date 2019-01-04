@@ -79,6 +79,9 @@ class UserImport extends Model
         $successCount = 0;
         $studentCount = 0;
         $customerCount = 0;
+        $transaction = \Yii::$app->db->beginTransaction();
+
+        try {
         foreach ($rows as $i => $row) {
             if (empty($row['Billing Home Tel'])) {
                 continue;
@@ -116,9 +119,7 @@ class UserImport extends Model
                 }
             }
 
-            $transaction = \Yii::$app->db->beginTransaction();
-
-            try {
+         
                 $user = new User();
                 $user->password = Yii::$app->security->generateRandomString(8);
                 $user->status = User::STATUS_ACTIVE;
@@ -250,13 +251,15 @@ class UserImport extends Model
                     $phone->save();
                 }
 
-                $transaction->commit();
+               
                 ++$successCount;
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                $errors[] = 'Error on Line '.($i + 2).': '.$e->getMessage();
-            }
+          
         }
+        $transaction->commit();
+    } catch (\Exception $e) {
+        $transaction->rollBack();
+        $errors[] = 'Error on Line '.($i + 2).': '.$e->getMessage();
+    }
         $response = [
             'successCount' => $successCount,
             'studentCount' => $studentCount,
