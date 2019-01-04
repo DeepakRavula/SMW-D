@@ -75,64 +75,40 @@ class PaymentForm extends Model
 
     public function save()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $customer = User::findOne($this->userId);
-        if ($this->invoiceIds) {
-            $invoices = Invoice::find()
-                ->where(['id' => $this->invoiceIds])
-                ->orderBy(['id' => SORT_ASC])
-                ->all();
-        }
-        if ($this->lessonIds) {
-            $lessons = Lesson::find()
-                ->where(['id' => $this->lessonIds])
-                ->orderBy(['date' => SORT_ASC])
-                ->all();
-        }
-        if ($this->groupLessonIds) {
-            $groupLessons = Lesson::find()
-                ->where(['id' => $this->groupLessonIds])
-                ->orderBy(['id' => SORT_ASC])
-                ->all();
-        }
-        if ($this->paymentCreditIds) {
-            $creditPayments = Payment::find()
-                ->where(['id' => $this->paymentCreditIds])
-                ->orderBy(['id' => SORT_ASC])
-                ->all();
-        }
-        if ($this->invoiceCreditIds) {
-            $creditInvoices = Invoice::find()
-                ->where(['id' => $this->invoiceCreditIds])
-                ->orderBy(['id' => SORT_ASC])
-                ->all();
-        }
         $paymentCredits = $this->paymentCredits;
         $invoiceCredits = $this->invoiceCredits;
         $lessonPayments = $this->lessonPayments;
         $groupLessonPayments = $this->groupLessonPayments;
         $invoicePayments = $this->invoicePayments;
-        if ($this->invoiceCreditIds) {
+        if ($invoiceCredits) {
             if ($this->canUseInvoiceCredits) { 
-                foreach ($creditInvoices as $j => $creditInvoice) {
+                foreach ($invoiceCredits as $invoiceCredit) {
+                    $creditInvoice = Invoice::findOne($invoiceCredit['id']);
+                    $creditInvoiceAmount = $invoiceCredit['value'];
                     if ($creditInvoice->hasCredit()) {
-                        if (round($invoiceCredits[$j], 2) > round(abs($creditInvoice->balance), 2)) {
-                            $invoiceCredits[$j] = round(abs($creditInvoice->balance), 2);
+                        if (round($creditInvoiceAmount, 2) > round(abs($creditInvoice->balance), 2)) {
+                            $creditInvoiceAmount = round(abs($creditInvoice->balance), 2);
                         }
-                        if ($this->invoiceIds) {
-                            foreach ($invoices as $i => $invoice) {
+                        if ($invoicePayments) {
+                            foreach ($invoicePayments as $i => $invoicePayment) {
+                                $invoice = Invoice::findOne($invoicePayment['id']);
+                                $invoicePaymentAmount = $invoicePayment['value'];
                                 if ($invoice->isOwing()) {
-                                    if (round($invoicePayments[$i], 2) > round($invoice->balance, 2)) {
-                                        $invoicePayments[$i] = round($invoice->balance, 2);
+                                    if (round($invoicePaymentAmount, 2) > round($invoice->balance, 2)) {
+                                        $invoicePaymentAmount = round($invoice->balance, 2);
                                     }
-                                    if (round($invoicePayments[$i], 2) > 0.00) {
+                                    if (round($invoicePaymentAmount, 2) > 0.00) {
                                         $paymentModel = new Payment();
-                                        $paymentModel->amount = round($invoicePayments[$i], 2);
-                                        if (round($invoiceCredits[$j], 2) > 0.0) {
-                                            if (round($paymentModel->amount, 2) > round($invoiceCredits[$j], 2)) {
-                                                $paymentModel->amount = round($invoiceCredits[$j], 2);                                
+                                        $paymentModel->amount = round($invoicePaymentAmount, 2);
+                                        if (round($creditInvoiceAmount, 2) > 0.0) {
+                                            if (round($paymentModel->amount, 2) > round($creditInvoiceAmount, 2)) {
+                                                $paymentModel->amount = round($creditInvoiceAmount, 2);                                
                                             }
-                                            $invoicePayments[$i] -= round($paymentModel->amount, 2);
-                                            $invoiceCredits[$j] -= round($paymentModel->amount, 2);
+                                            $invoicePaymentAmount -= round($paymentModel->amount, 2);
+                                            $creditInvoiceAmount -= round($paymentModel->amount, 2);
                                             $invoice->addPayment($creditInvoice, $paymentModel);
                                         } else {
                                             break;
@@ -142,21 +118,23 @@ class PaymentForm extends Model
                                 }
                             }
                         }
-                        if ($this->lessonIds) {
-                            foreach ($lessons as $i => $lesson) {
+                        if ($lessonPayments) {
+                            foreach ($lessonPayments as $lessonPayment) {
+                                $lesson = Lesson::findOne($lessonPayment['id']);
+                                $lessonPaymentAmount = $lessonPayment['value'];
                                 if ($lesson->isOwing($lesson->enrolment->id)) {
-                                    if (round($lessonPayments[$i], 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
-                                        $lessonPayments[$i] = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
+                                    if (round($lessonPaymentAmount, 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
+                                        $lessonPaymentAmount = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
                                     }
-                                    if (round($lessonPayments[$i], 2) > 0.00) {
+                                    if (round($lessonPaymentAmount, 2) > 0.00) {
                                         $paymentModel = new Payment();
-                                        $paymentModel->amount = round($lessonPayments[$i], 2);
-                                        if (round($invoiceCredits[$j], 2) > 0.00) {
-                                            if (round($paymentModel->amount, 2) > round($invoiceCredits[$j], 2)) {
-                                                $paymentModel->amount = round($invoiceCredits[$j], 2);
+                                        $paymentModel->amount = round($lessonPaymentAmount, 2);
+                                        if (round($creditInvoiceAmount, 2) > 0.00) {
+                                            if (round($paymentModel->amount, 2) > round($creditInvoiceAmount, 2)) {
+                                                $paymentModel->amount = round($creditInvoiceAmount, 2);
                                             }
-                                            $lessonPayments[$i] -= round($paymentModel->amount, 2);
-                                            $invoiceCredits[$j] -= round($paymentModel->amount, 2);
+                                            $lessonPaymentAmount -= round($paymentModel->amount, 2);
+                                            $creditInvoiceAmount -= round($paymentModel->amount, 2);
                                             $lesson->addPayment($creditInvoice, $paymentModel);
                                         } else {
                                             break;
@@ -165,28 +143,30 @@ class PaymentForm extends Model
                                 }
                             }
                         }
-                        if ($this->groupLessonIds) {
-                            foreach ($groupLessons as $i => $lesson) {
+                        if ($groupLessonPayments) {
+                            foreach ($groupLessonPayments as $groupLessonPayment) {
                                 $enrolment = Enrolment::find()
                                     ->notDeleted()
                                     ->isConfirmed()
-                                    ->andWhere(['courseId' => $lesson->courseId])
+                                    ->andWhere(['courseId' => $groupLesson->courseId])
                                     ->customer($this->userId)
                                     ->one();
-                                if ($lesson->isOwing($enrolment->id)) {
-                                    if (round($groupLessonPayments[$i], 2) > round($lesson->getOwingAmount($enrolment->id), 2)) {
-                                        $groupLessonPayments[$i] = round($lesson->getOwingAmount($enrolment->id), 2);
+                                $groupLesson = Lesson::findOne($groupLessonPayment['id']);
+                                $groupLessonPaymentAmount = $groupLessonPayment['value'];
+                                if ($groupLesson->isOwing($enrolment->id)) {
+                                    if (round($groupLessonPaymentAmount, 2) > round($groupLesson->getOwingAmount($enrolment->id), 2)) {
+                                        $groupLessonPaymentAmount = round($groupLesson->getOwingAmount($enrolment->id), 2);
                                     }
-                                    if (round($groupLessonPayments[$i], 2) > 0.00) {
+                                    if (round($groupLessonPaymentAmount, 2) > 0.00) {
                                         $paymentModel = new Payment();
-                                        $paymentModel->amount = round($groupLessonPayments[$i], 2);
-                                        if (round($invoiceCredits[$j], 2) > 0.00) {
-                                            if (round($paymentModel->amount, 2) > round($invoiceCredits[$j], 2)) {
-                                                $paymentModel->amount = round($invoiceCredits[$j], 2);                               
+                                        $paymentModel->amount = round($groupLessonPaymentAmount, 2);
+                                        if (round($creditInvoiceAmount, 2) > 0.00) {
+                                            if (round($paymentModel->amount, 2) > round($creditInvoiceAmount, 2)) {
+                                                $paymentModel->amount = round($creditInvoiceAmount, 2);                               
                                             }
-                                            $groupLessonPayments[$i] -=round($paymentModel->amount, 2);
-                                            $invoiceCredits[$j] -= round($paymentModel->amount, 2);
-                                            $lesson->addPayment($creditInvoice, $paymentModel, $enrolment);
+                                            $groupLessonPaymentAmount -=round($paymentModel->amount, 2);
+                                            $creditInvoiceAmount -= round($paymentModel->amount, 2);
+                                            $groupLesson->addPayment($creditInvoice, $paymentModel, $enrolment);
                                         } else {
                                             break;
                                         }
@@ -198,27 +178,31 @@ class PaymentForm extends Model
                 }
             }
         }
-        if ($this->paymentCreditIds) {
+        if ($paymentCredits) {
             if ($this->canUsePaymentCredits) {
-                foreach ($creditPayments as $j => $creditPayment) {
+                foreach ($paymentCredits as $paymentCredit) {
+                    $creditPayment = Payment::findOne($paymentCredit['id']);
+                    $creditPaymentAmount = $paymentCredit['value'];
                     if ($creditPayment->hasCredit()) {
-                        if (round($paymentCredits[$j], 2) > round(abs($creditPayment->creditAmount), 2)) {
-                            $paymentCredits[$j] = round(abs($creditPayment->creditAmount), 2);
+                        if (round($creditPaymentAmount, 2) > round(abs($creditPayment->creditAmount), 2)) {
+                            $creditPaymentAmount = round(abs($creditPayment->creditAmount), 2);
                         }
-                        if ($this->invoiceIds) {
-                            foreach ($invoices as $i => $invoice) {
+                        if ($invoicePayment) {
+                            foreach ($invoicePayments as $invoicePayment) {
+                                $invoice = Invoice::findOne($invoicePayment['id']);
+                                $invoicePaymentAmount = $invoicePayment['value'];
                                 if ($invoice->isOwing()) {
-                                    if (round($invoicePayments[$i], 2) > round($invoice->balance, 2)) {
-                                        $invoicePayments[$i] = round($invoice->balance, 2);
+                                    if (round($invoicePaymentAmount, 2) > round($invoice->balance, 2)) {
+                                        $invoicePaymentAmount = round($invoice->balance, 2);
                                     }
-                                    if (round($paymentCredits[$j], 2) > 0.00) {
-                                        if (round($invoicePayments[$i], 2) > round($paymentCredits[$j], 2)) {
-                                            $amountToPay =round($paymentCredits[$j], 2);                                
+                                    if (round($creditPaymentAmount, 2) > 0.00) {
+                                        if (round($invoicePaymentAmount, 2) > round($creditPaymentAmount, 2)) {
+                                            $amountToPay =round($creditPaymentAmount, 2);                                
                                         } else {
-                                            $amountToPay = round($invoicePayments[$i], 2);
+                                            $amountToPay = round($invoicePaymentAmount, 2);
                                         }
-                                        $invoicePayments[$i] -= round($amountToPay, 2);
-                                        $paymentCredits[$j] -= round($amountToPay, 2);
+                                        $invoicePaymentAmount -= round($amountToPay, 2);
+                                        $creditPaymentAmount -= round($amountToPay, 2);
                                         $invoicePaymentModel = new InvoicePayment();
                                         $invoicePaymentModel->invoice_id = $invoice->id;
                                         $invoicePaymentModel->payment_id = $creditPayment->id;
@@ -233,20 +217,22 @@ class PaymentForm extends Model
                                 $invoice->save();
                             }
                         }
-                        if ($this->lessonIds) {
-                            foreach ($lessons as $i => $lesson) {
+                        if ($lessonPayments) {
+                            foreach ($lessonPayments as $lessonPayment) {
+                                $lesson = Lesson::findOne($lessonPayment['id']);
+                                $lessonPaymentAmount = $lessonPayment['value'];
                                 if ($lesson->isOwing($lesson->enrolment->id)) {
-                                    if (round($lessonPayments[$i], 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
-                                        $lessonPayments[$i] = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
+                                    if (round($lessonPaymentAmount, 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
+                                        $lessonPaymentAmount = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
                                     }
-                                    if (round($paymentCredits[$j], 2) > 0.00) {
-                                        if (round($lessonPayments[$i], 2) > round($paymentCredits[$j], 2)) {
-                                            $amountToPay = round($paymentCredits[$j], 2);
+                                    if (round($creditPaymentAmount, 2) > 0.00) {
+                                        if (round($lessonPaymentAmount, 2) > round($creditPaymentAmount, 2)) {
+                                            $amountToPay = round($creditPaymentAmount, 2);
                                         } else {
-                                            $amountToPay = round($lessonPayments[$i], 2);
+                                            $amountToPay = round($lessonPaymentAmount, 2);
                                         }
-                                        $lessonPayments[$i] -= round($amountToPay, 2);
-                                        $paymentCredits[$j] -= round($amountToPay, 2);
+                                        $lessonPaymentAmount -= round($amountToPay, 2);
+                                        $creditPaymentAmount -= round($amountToPay, 2);
                                         $lessonPaymentModel = new LessonPayment();
                                         $lessonPaymentModel->lessonId = $lesson->id;
                                         $lessonPaymentModel->paymentId = $creditPayment->id;
@@ -260,28 +246,30 @@ class PaymentForm extends Model
                                 }
                             }
                         }
-                        if ($this->groupLessonIds) {
-                            foreach ($groupLessons as $i => $lesson) {
+                        if ($groupLessonPayments) {
+                            foreach ($groupLessonPayments as $groupLessonPayment) {
                                 $enrolment = Enrolment::find()
                                     ->notDeleted()
                                     ->isConfirmed()
                                     ->andWhere(['courseId' => $lesson->courseId])
                                     ->customer($this->userId)
                                     ->one();
-                                if ($lesson->isOwing($enrolment->id)) {
-                                    if (round($groupLessonPayments[$i], 2) > round($lesson->getOwingAmount($enrolment->id), 2)) {
-                                        $groupLessonPayments[$i] = round($lesson->getOwingAmount($enrolment->id), 2);
+                                $groupLesson = Lesson::findOne($groupLessonPayment['id']);
+                                $groupLessonPaymentAmount = $groupLessonPayment['value'];
+                                if ($groupLesson->isOwing($enrolment->id)) {
+                                    if (round($grouplessonPaymentAmount, 2) > round($groupLesson->getOwingAmount($enrolment->id), 2)) {
+                                        $grouplessonPaymentAmount = round($groupLesson->getOwingAmount($enrolment->id), 2);
                                     }
-                                    if (round($paymentCredits[$j], 2) > 0.00) {
-                                        if (round($groupLessonPayments[$i], 2) > round($paymentCredits[$j], 2)) {
-                                            $amountToPay = round($paymentCredits[$j], 2);
+                                    if (round($creditPaymentAmount, 2) > 0.00) {
+                                        if (round($grouplessonPaymentAmount, 2) > round($creditPaymentAmount, 2)) {
+                                            $amountToPay = round($creditPaymentAmount, 2);
                                         } else {
-                                            $amountToPay = round($groupLessonPayments[$i], 2);
+                                            $amountToPay = round($grouplessonPaymentAmount, 2);
                                         }
-                                        $groupLessonPayments[$i] -= round($amountToPay, 2);
-                                        $paymentCredits[$j] -=  round($amountToPay, 2);
+                                        $grouplessonPaymentAmount -= round($amountToPay, 2);
+                                        $creditPaymentAmount -=  round($amountToPay, 2);
                                         $lessonPaymentModel = new LessonPayment();
-                                        $lessonPaymentModel->lessonId = $lesson->id;
+                                        $lessonPaymentModel->lessonId = $groupLesson->id;
                                         $lessonPaymentModel->paymentId = $creditPayment->id;
                                         $lessonPaymentModel->receiptId  = $this->receiptId;
                                         $lessonPaymentModel->enrolmentId = $enrolment->id;
@@ -299,16 +287,18 @@ class PaymentForm extends Model
         }
         
         $amount =  $this->amount;
-        if ($this->invoiceIds) {
-            foreach ($invoices as $i => $invoice) {
+        if ($invoicePayments) {
+            foreach ($invoicePayments as $invoicePayment) {
+                $invoice = Invoice::findOne($invoicePayment['id']);
+                $invoicePaymentAmount = $invoicePayment['value'];
                 if ($invoice->isOwing()) {
-                    if (round($invoicePayments[$i], 2) > round($invoice->balance, 2)) {
-                        $invoicePayments[$i] =  round($invoice->balance, 2);
+                    if (round($invoicePaymentAmount, 2) > round($invoice->balance, 2)) {
+                        $invoicePaymentAmount =  round($invoice->balance, 2);
                     }
-                    if (round($invoicePayments[$i], 2) > 0.00) {
+                    if (round($invoicePaymentAmount, 2) > 0.00) {
                         if (round($amount, 2) > 0.00) {
-                            if (round($amount, 2) > round($invoicePayments[$i], 2)) {
-                                $amountToPay = round($invoicePayments[$i], 2);
+                            if (round($amount, 2) > round($invoicePaymentAmount, 2)) {
+                                $amountToPay = round($invoicePaymentAmount, 2);
                             } else {
                                 $amountToPay = round($amount, 2);
                             }
@@ -328,22 +318,24 @@ class PaymentForm extends Model
                 }
             }
         }
-        if ($this->lessonIds) {
-            foreach ($lessons as $i => $lesson) {
+        if ($lessonPayments) {
+            foreach ($lessonPayments as $lessonPayment) {
+                $lesson = Lesson::findOne($lessonPayment['id']);
+                $lessonPaymentAmount = $lessonPayment['value'];
                 if ($lesson->isOwing($lesson->enrolment->id)) {
-                    if ( round($lessonPayments[$i], 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
-                        $lessonPayments[$i] = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
+                    if ( round($lessonPaymentAmount, 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
+                        $lessonPaymentAmount = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
                     }
-                    if ( round($lessonPayments[$i], 2) > 0.00) {
+                    if ( round($lessonPaymentAmount, 2) > 0.00) {
                         if ( round($amount, 2) > 0.00) {
                             $lessonPayment = new LessonPayment();
                             $lessonPayment->lessonId    = $lesson->id;
                             $lessonPayment->paymentId   = $this->paymentId;
-                            $lessonPayment->amount      = $lessonPayments[$i];
+                            $lessonPayment->amount      = $lessonPaymentAmount;
                             $lessonPayment->enrolmentId = $lesson->enrolment->id;
                             $lessonPayment->receiptId  = $this->receiptId;
                             $lessonPayment->save();
-                            $amount -= round($lessonPayments[$i], 2);
+                            $amount -= round($lessonPaymentAmount, 2);
                         } else {
                             break;
                         }
@@ -351,28 +343,30 @@ class PaymentForm extends Model
                 }
             }
         }
-        if ($this->groupLessonIds) {
-            foreach ($groupLessons as $i => $lesson) {
+        if ($groupLessonPayments) {
+            foreach ($groupLessonPayments as $groupLessonPayment) {
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['courseId' => $lesson->courseId])
                     ->customer($this->userId)
                     ->one();
-                if ($lesson->isOwing($enrolment->id)) {
-                    if ( round($groupLessonPayments[$i], 2) > round($lesson->getOwingAmount($enrolment->id), 2)) {
-                        $groupLessonPayments[$i] = round($lesson->getOwingAmount($enrolment->id), 2);
+                $groupLesson = Lesson::findOne($groupLessonPayment['id']);
+                $groupLessonPaymentAmount = $groupLessonPayment['value'];
+                if ($groupLesson->isOwing($enrolment->id)) {
+                    if ( round($grouplessonPaymentAmount, 2) > round($groupLesson->getOwingAmount($enrolment->id), 2)) {
+                        $grouplessonPaymentAmount = round($groupLesson->getOwingAmount($enrolment->id), 2);
                     }
-                    if ( round($groupLessonPayments[$i], 2) > 0.00) {
+                    if ( round($grouplessonPaymentAmount, 2) > 0.00) {
                         if ( round($amount, 2) > 0.00) {
                             $lessonPayment = new LessonPayment();
-                            $lessonPayment->lessonId    = $lesson->id;
+                            $lessonPayment->lessonId    = $groupLesson->id;
                             $lessonPayment->paymentId   = $this->paymentId;
                             $lessonPayment->receiptId  = $this->receiptId;
-                            $lessonPayment->amount      = round($groupLessonPayments[$i], 2);
+                            $lessonPayment->amount      = round($grouplessonPaymentAmount, 2);
                             $lessonPayment->enrolmentId = $enrolment->id;
                             $lessonPayment->save();
-                            $amount -= round($groupLessonPayments[$i], 2);
+                            $amount -= round($grouplessonPaymentAmount, 2);
                         } else {
                             break;
                         }

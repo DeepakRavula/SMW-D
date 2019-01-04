@@ -541,9 +541,6 @@ class PaymentController extends BaseController
         $currentDate = new \DateTime();
         $payment->date = $currentDate->format('M d, Y');
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $receiptLessonIds = [];
-        $receiptInvoiceIds = [];
-        $receiptPaymentIds = [];
         if (!$request->post()) {
             $groupLessonSearchModel->fromDate = $currentDate->format('M 1, Y');
             $groupLessonSearchModel->toDate = $currentDate->format('M t, Y'); 
@@ -589,7 +586,7 @@ class PaymentController extends BaseController
             'pagination' => false 
         ]);
         $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
-        if ($request->post()) {print_r(Yii::$app->request->post());die;
+        if ($request->post()) {
             $model->load($request->post());
             $payment->load($request->post());
             $payment->amount = $model->amount;
@@ -598,12 +595,12 @@ class PaymentController extends BaseController
             if (round($payment->amount, 2) > 0.00) {
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $payment->on(Payment::EVENT_AFTER_INSERT, [new PaymentLog(), 'create'], ['loggedUser' => $loggedUser]);
-                $payment->save();
+                if (!$payment->save()) {
+                    print_r($payment->getErrors());die;
+                }
             }
             
             $model->paymentId = $payment->id;
-            $model->lessonIds = $searchModel->lessonIds;
-            $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
 
             $paymentsLineItemsDataProvider = $this->getUsedCredit($model->paymentCreditIds, $model->paymentCredits, $model->invoiceCreditIds, $model->invoiceCredits, $model->paymentId, $model->amount);

@@ -185,7 +185,7 @@ use yii\bootstrap\Html;
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     var invoiceId = $(this).find('.payment-amount').attr('invoiceId');
                     var amount = $(this).find('.payment-amount').val();
-                    invoicePayments.push({ id: lessonId, value: amount });
+                    invoicePayments.push({ id: invoiceId, value: amount });
                 }
             });
             var data = ({ 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[groupLessonPayments]': groupLessonPayments, 
