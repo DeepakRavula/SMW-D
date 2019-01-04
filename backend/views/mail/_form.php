@@ -31,7 +31,7 @@ use dosamigos\ckeditor\CKEditor;
             ?>
         </div>
     </div>
-    <?php if($bccEmails) : ?>
+    <?php if(!empty($bccEmails)) : ?>
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'bcc')->widget(Select2::classname(), [
