@@ -5,7 +5,7 @@ use common\models\UserEmail;
 use common\models\Location;
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $content = "";
-    $model->to = $location->email;
+    //$model->to = $location->email;
     $data = null;
     if (!empty($userModel)) {
         $data = ArrayHelper::map(Location::find()

@@ -31,6 +31,20 @@ use dosamigos\ckeditor\CKEditor;
             ?>
         </div>
     </div>
+    <?php if($model->bcc) : ?>
+    <div class="row">
+        <div class="col-lg-12">
+            <?= $form->field($model, 'bcc')->widget(Select2::classname(), [
+                'data' => $data,
+                'pluginOptions' => [
+                    'tags' => true,
+                    'multiple' => true,
+                ],
+            ]);
+            ?>
+        </div>
+    </div>
+            <?php endif;?>
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'subject')->textInput(['value' => $subject]) ?>
