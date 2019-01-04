@@ -188,9 +188,9 @@ use yii\bootstrap\Html;
                     invoicePayments.push({ id: lessonId, value: amount });
                 }
             });
-            var data = ({ 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments,
-                'PaymentForm[paymentCredits]': paymentCredits, 'PaymentForm[invoiceCredits]': invoiceCredits, 
-                'PaymentForm[prId]': prId 
+            var data = ({ 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[groupLessonPayments]': groupLessonPayments, 
+                'PaymentForm[invoicePayments]': invoicePayments, 'PaymentForm[paymentCredits]': paymentCredits, 
+                'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[prId]': prId 
             });
             return data;
         },

@@ -530,7 +530,7 @@ class PaymentController extends BaseController
     }
 
     public function actionReceive()
-    {print_r(Yii::$app->request->post());die;
+    {
         $request = Yii::$app->request;
         $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
         $groupLessonSearchModel->showCheckBox = true;
@@ -589,7 +589,7 @@ class PaymentController extends BaseController
             'pagination' => false 
         ]);
         $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
-        if ($request->post()) {
+        if ($request->post()) {print_r(Yii::$app->request->post());die;
             $model->load($request->post());
             $payment->load($request->post());
             $payment->amount = $model->amount;
