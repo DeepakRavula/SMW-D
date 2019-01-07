@@ -158,11 +158,11 @@ use yii\bootstrap\Html;
                     var creditId = $(this).find('.credit-type').attr('creditId');
                     var creditType = $(this).find('.credit-type').text();
                     if (creditType == 'Invoice Credit') {
-                        invoiceCredits.push({ invoiceCreditId: creditId, value: amount });
+                        invoiceCredits.push({ id: creditId, value: amount });
                         canUseInvoiceCredits = 1;
                     } 
                     if (creditType == 'Payment Credit') {
-                        paymentCredits.push({ paymentCreditId: creditId, value: amount });
+                        paymentCredits.push({ id: creditId, value: amount });
                         canUsePaymentCredits = 1;
                     }
                 }
@@ -188,10 +188,13 @@ use yii\bootstrap\Html;
                     invoicePayments.push({ id: invoiceId, value: amount });
                 }
             });
-            var data = ({ 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[groupLessonPayments]': groupLessonPayments, 
+            var data = $.param({ 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[groupLessonPayments]': groupLessonPayments, 
                 'PaymentForm[invoicePayments]': invoicePayments, 'PaymentForm[paymentCredits]': paymentCredits, 
-                'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[prId]': prId 
+                'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
+                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[userId]' : userId, 'PaymentForm[prId]': prId
             });
+            var url = '<?= Url::to(['payment/receive']) ?>?' + $('#modal-form').serialize();
+            $('#modal-form').attr('action', url);
             return data;
         },
         calcAmountNeeded : function() {

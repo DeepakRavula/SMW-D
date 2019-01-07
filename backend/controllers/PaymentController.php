@@ -30,6 +30,7 @@ use common\models\ProformaInvoice;
 use yii\helpers\Url;
 use common\models\User;
 use common\models\log\PaymentLog;
+use yii\helpers\ArrayHelper;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -160,25 +161,6 @@ class PaymentController extends BaseController
                 'status' => true,
                 'data' => $data
             ];
-        }
-    }
-
-    /**
-     * Creates a new Payments model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Payment(['scenario' => Payment::SCENARIO_CREATE]);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
         }
     }
 
@@ -345,81 +327,6 @@ class PaymentController extends BaseController
         ]);
     }
 
-    public function actionInvoicePayment($id)
-    {
-        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_CREATE]);
-        $db = \Yii::$app->db;
-        $transaction = $db->beginTransaction();
-        $request = Yii::$app->request;
-        if ($paymentModel->load($request->post())) {
-            $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
-            $paymentModel->invoiceId = $id;
-            if ($paymentModel->save()) {
-                $transaction->commit();
-                return [
-                    'status' => true,
-                    'canAlert' => $paymentModel->invoice->isPaid() && $paymentModel->invoice->isProformaInvoice()
-                ];
-            } else {
-                $transaction->rollBack();
-                $errors = ActiveForm::validate($paymentModel);
-                return [
-                    'status' => false,
-                    'errors' => $errors,
-                ];
-            }
-        }
-    }
-
-    public function actionValidateApplyCredit()
-    {
-        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
-        $request = Yii::$app->request;
-        $paymentModel->load($request->post());
-        return ActiveForm::validate($paymentModel);
-    }
-
-    public function actionCreditPayment($id)
-    {
-        $model = Invoice::findOne(['id' => $id]);
-        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
-        $paymentModel->invoiceId = $model->id;
-        $request = Yii::$app->request;
-        if ($request->post()) {
-            if ($paymentModel->load($request->post()) && $paymentModel->validate()) {
-                $invoiceModel = Invoice::findOne(['id' => $paymentModel->sourceId]);
-                $model->addPayment($invoiceModel, $paymentModel);
-                $invoiceModel->save();
-                $response = [
-                    'status' => true,
-                    'message' => 'Payment succesfully applied!'
-                ];
-            } else {
-                $response = [
-                    'status' => false,
-                    'errors' => ActiveForm::validate($paymentModel),
-                    'message' => 'No credits available!',
-                ];
-            }
-        } else {
-             
-            $creditDataProvider = $this->getAvailableCredit($model);
-            $data = $this->renderAjax('/invoice/payment/payment-method/_apply-credit', [
-                'invoice' => $model,
-                'paymentModel' => $paymentModel,
-                'creditDataProvider' => $creditDataProvider
-            ]);
-            $response = [
-                'status' => true,
-                'hasCredit' => $creditDataProvider->totalCount > 0,
-                'data' => $data,
-                'message' => $creditDataProvider->totalCount == 0 ? "No credits Available!" : "",
-            ];
-           
-        }
-        return $response;
-    }
-
     public function getCustomerCreditInvoices($customerId)
     {
         return Invoice::find()
@@ -469,32 +376,32 @@ class PaymentController extends BaseController
         return $creditDataProvider;
     }
 
-    public function getUsedCredit($paymentCreditIds, $paymentCredits, $invoiceCreditIds, $invoiceCredits, $paymentId, $amount)
+    public function getUsedCredit($paymentCredits, $invoiceCredits, $paymentId, $amount)
     { 
         $results = [];
-        if (!empty($paymentCreditIds)) {                
-            foreach ($paymentCreditIds as $key =>  $paymentCreditId) {
-                $paymentCredit = Payment::findOne(['id' => $paymentCreditId]);
+        if (!empty($paymentCredits)) {                
+            foreach ($paymentCredits as $paymentCredit) {
+                $creditPayment = Payment::findOne(['id' => $paymentCredit['id']]);
                 $results[] = [
-                    'id' => $paymentCredit->id,
+                    'id' => $creditPayment->id,
                     'type' => 'Payment Credit',
-                    'reference' => $paymentCredit->reference,
-                    'amount' => round($paymentCredit->amount, 2),
-                    'method' => $paymentCredit->paymentMethod->name,
-                    'amountUsed' => round($paymentCredits[$key], 2),
+                    'reference' => $creditPayment->reference,
+                    'amount' => round($creditPayment->amount, 2),
+                    'method' => $creditPayment->paymentMethod->name,
+                    'amountUsed' => round($paymentCredit['value'], 2),
                 ];
             }  
         }
-        if  (!empty($invoiceCreditIds)) {  
-            foreach ($invoiceCreditIds as $key =>  $invoiceCreditId) {
-                $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
+        if  (!empty($invoiceCredits)) { 
+            foreach ($invoiceCredits as $invoiceCredit) {
+                $creditInvoice = Invoice::findOne(['id' => $invoiceCredit['id']]);
                 $results[] = [
-                    'id' => $invoiceCredit->id,
+                    'id' => $creditInvoice->id,
                     'type' => 'Invoice Credit',
-                    'reference' => $invoiceCredit->getInvoiceNumber(),
+                    'reference' => $creditInvoice->getInvoiceNumber(),
                     'amount' => '',
                     'method' => '',
-                    'amountUsed' => round($invoiceCredits[$key], 2),
+                    'amountUsed' => round($invoiceCredit['value'], 2),
                 ];
             }
         } 
@@ -527,6 +434,57 @@ class PaymentController extends BaseController
             ->customer($customerId)
             ->orderBy(['payment.id' => SORT_ASC])
             ->all();
+    }
+
+    public function getInvoicesPaid($invoicePayments)
+    {
+        $dataProvider = null;
+        if ($invoicePayments) {
+            $invoiceIds = ArrayHelper::getColumn($invoicePayments, 'id');
+            $invoices = Invoice::find()
+                ->andWhere(['id' => $invoiceIds])
+                ->orderBy(['id' => SORT_ASC]);
+
+            $dataProvider = new ActiveDataProvider([
+                'query' => $invoices,
+                'pagination' => false 
+            ]);
+        }
+        return $dataProvider;
+    }
+
+    public function getGroupLessonsPaid($groupLessonPayments)
+    {
+        $dataProvider = null;
+        if ($groupLessonPayments) {
+            $lessonIds = ArrayHelper::getColumn($groupLessonPayments, 'id');
+            $lessons = Lesson::find()
+                ->andWhere(['id' => $lessonIds])
+                ->orderBy(['lesson.id' => SORT_ASC]);
+
+            $dataProvider = new ActiveDataProvider([
+                'query' => $lessons,
+                'pagination' => false 
+            ]);
+        }
+        return $dataProvider;
+    }
+
+    public function getLessonsPaid($lessonPayments)
+    {
+        $dataProvider = null;
+        if ($lessonPayments) {
+            $lessonIds = ArrayHelper::getColumn($lessonPayments, 'id');
+            $lessons = Lesson::find()
+                ->andWhere(['id' => $lessonIds])
+                ->orderBy(['lesson.id' => SORT_ASC]);
+
+            $dataProvider = new ActiveDataProvider([
+                'query' => $lessons,
+                'pagination' => false 
+            ]);
+        }
+        return $dataProvider;
     }
 
     public function actionReceive()
@@ -588,6 +546,7 @@ class PaymentController extends BaseController
         $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
         if ($request->post()) {
             $model->load($request->post());
+            $payment->load(Yii::$app->request->get());
             $payment->load($request->post());
             $payment->amount = $model->amount;
             $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
@@ -595,15 +554,15 @@ class PaymentController extends BaseController
             if (round($payment->amount, 2) > 0.00) {
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $payment->on(Payment::EVENT_AFTER_INSERT, [new PaymentLog(), 'create'], ['loggedUser' => $loggedUser]);
-                if (!$payment->save()) {
-                    print_r($payment->getErrors());die;
-                }
+                $payment->save();
             }
             
             $model->paymentId = $payment->id;
             $model->save();
-
-            $paymentsLineItemsDataProvider = $this->getUsedCredit($model->paymentCreditIds, $model->paymentCredits, $model->invoiceCreditIds, $model->invoiceCredits, $model->paymentId, $model->amount);
+            $paymentsLineItemsDataProvider = $this->getUsedCredit($model->paymentCredits, $model->invoiceCredits, $model->paymentId, $model->amount);
+            $invoiceLineItemsDataProvider = $this->getInvoicesPaid($model->invoicePayments);
+            $lessonLineItemsDataProvider = $this->getLessonsPaid($model->lessonPayments);
+            $groupLessonLineItemsDataProvider = $this->getGroupLessonsPaid($model->groupLessonPayments);
             $printData = $this->renderAjax('/receive-payment/print/_form', [
                 'model' => $model,
                 'paymentModel' => $payment,

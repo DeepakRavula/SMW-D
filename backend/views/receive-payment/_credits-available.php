@@ -66,7 +66,8 @@ use yii\bootstrap\ActiveForm;
             return $form->field($fieldModel, 'paymentAmount')->textInput([
                 'value' => round($model['amount'], 2),
                 'class' => 'form-control text-right credit-amount',
-                'id' => 'credit-payment-' . $model['id']
+                'id' => 'credit-payment-' . $model['id'],
+                'creditId' => $model['id']
             ])->label(false);
         },
         'format' => 'raw'

@@ -88,7 +88,8 @@ if ($searchModel->showCheckBox && !$isCreatePfi) {
             return $form->field($data, 'paymentAmount')->textInput([
                 'value' => round($data->balance, 2), 
                 'class' => 'form-control text-right payment-amount',
-                'id' => 'invoice-payment-' . $data->id
+                'id' => 'invoice-payment-' . $data->id,
+                'invoiceId' => $data->id
             ])->label(false);
         },
         'attribute' => 'new_activity',

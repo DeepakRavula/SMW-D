@@ -11,8 +11,8 @@ use yii\bootstrap\Html;
         
     ]); ?>
 
-<?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
-<?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
+<?php $lessonCount = !empty($lessonLineItemsDataProvider) ? $lessonLineItemsDataProvider->getCount() : 0; ?>
+<?php $invoiceCount = !empty($invoiceLineItemsDataProvider) ? $invoiceLineItemsDataProvider->getCount() : 0; ?>
 <?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>
 <?php if ($lessonCount <= 0 && $invoiceCount <= 0 && $groupLessonsCount <= 0) : ?>
 <div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
