@@ -327,7 +327,10 @@ class Student extends \yii\db\ActiveRecord
 
     public function hasEnrolment() 
     {
-        return !empty($this->oneEnrolment);
+        $enrolment = Enrolment::find()
+                ->andWhere(['studentId' => $this->id])
+                ->one();
+        return $enrolment;
     }
 
     public function hasLesson() 
