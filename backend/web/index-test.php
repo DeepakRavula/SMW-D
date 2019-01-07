@@ -1,9 +1,9 @@
 <?php
 
 // NOTE: Make sure this file is not accessible when deployed to production
-// if (!in_array(@$_SERVER['REMOTE_ADDR'], ['*'])) {
-//     die('You are not allowed to access this file.');
-// }
+if (!in_array(@$_SERVER['REMOTE_ADDR'], ['*'])) {
+    die('You are not allowed to access this file.');
+}
 
 // Bootstraping tests environment
 require __DIR__.'/../../tests/bootstrap.php';

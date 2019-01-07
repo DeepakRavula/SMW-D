@@ -64,7 +64,7 @@ class LoginForm extends Model
                     $this->addError('username', Yii::t('backend', 'You are not allowed to login.'));
                 }
             } else {
-                $this->addError('username', Yii::t('backend', 'Incorrect username or password.'));
+                $this->addError('username', Yii::t('backend', 'You are not allowed to login.'));
             }
         }
     }

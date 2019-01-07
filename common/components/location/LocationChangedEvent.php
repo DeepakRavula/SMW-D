@@ -29,7 +29,7 @@ class LocationChangedEvent extends Event
         if (Yii::$app->user->id && Yii::$app->request->pathInfo !== 'location-view') {
             $userLogged = User::findOne(Yii::$app->user->id);
             if ($userLogged->isAdmin()) {
-                return Yii::$app->getResponse()->redirect('/index');
+                return Yii::$app->getResponse()->redirect('/admin/dashboard/index');
             }
         }
         return true;
