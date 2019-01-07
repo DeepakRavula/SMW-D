@@ -12,17 +12,9 @@ use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 ?>
 
-<div class="row m-t-25">
-    <div class="col-md-6">
-    </div>    
-    <?php
-     $locationModel = Location::findOne(['slug' => \Yii::$app->location]);
-   echo $this->render('/print/_receipt-header', [
-       'userModel'=>$customer,
-       'locationModel'=>$locationModel,
-]);
-   ?>
-</div>
+<h4>Thank you for your payment!</h4>
+
+<h4>This is to acknowledge the receipt of payment from {customer's name} on {date} in the amount of {total} via {method}. We have distributed it to the items below.</h4>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
 <?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>
