@@ -4,6 +4,7 @@ namespace backend\models;
 
 use yii\base\Model;
 use Yii;
+use common\models\EmailMultiCustomer;
 
 /**
  * Create user form.
@@ -24,7 +25,8 @@ class EmailForm extends Model
     public function rules()
     {
         return [
-            [['to', 'subject', 'content'], 'required'],
+            [['subject', 'content'], 'required'],
+            [['to'], 'required', 'except' => EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER],
             [['invoiceId', 'paymentRequestId','bcc'], 'safe']
         ];
     }
