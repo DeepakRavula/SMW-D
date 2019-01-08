@@ -32,7 +32,6 @@ class PaymentForm extends Model
     const SCENARIO_STUDENT = 'enrolment-student';
     const SCENARIO_DATE_DETAILED = 'enrolment-start-date';
 
-    public $invoiceIds;
     public $date;
     public $prId;
     public $payment_method_id;
@@ -40,10 +39,6 @@ class PaymentForm extends Model
     public $amountNeeded;
     public $lessonId;
     public $userId;
-    public $lessonIds;
-    public $groupLessonIds;
-    public $invoiceCreditIds;
-    public $paymentCreditIds;
     public $invoicePayments;
     public $lessonPayments;
     public $groupLessonPayments;
@@ -65,10 +60,9 @@ class PaymentForm extends Model
         return [
             ['amount', 'validateAmount'],
             ['amount', 'match', 'pattern' => '^[0-9]\d*(\.\d+)?$^'],
-            [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
-                'lessonIds', 'canUsePaymentCredits', 'invoiceCreditIds', 'amount', 'userId',
-                'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
-                'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds', 'prId',
+            [['date', 'amountNeeded', 'canUseInvoiceCredits', 'selectedCreditValue', 'canUsePaymentCredits', 
+                'invoiceCreditIds', 'amount', 'userId', 'amountToDistribute', 'invoicePayments', 'lessonPayments', 
+                'paymentId', 'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds', 'prId',
                 'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id', 'notes'], 'safe']
         ];
     }

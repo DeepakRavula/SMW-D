@@ -284,7 +284,6 @@ use yii\bootstrap\Html;
         $('.select-on-check-all').prop('checked', true);
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
-        receivePayment.setAction();
     });
 
     $(document).off('click', '.recive-payment-modal-save').on('click', '.recive-payment-modal-save', function () {
@@ -324,7 +323,6 @@ use yii\bootstrap\Html;
 
     $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.calcAmountNeeded();
-        receivePayment.setAction();
         return false;
     });
 
@@ -353,7 +351,6 @@ use yii\bootstrap\Html;
         }
         
         receivePayment.calcAmountNeeded();
-        receivePayment.setAction();
         return false;
     });
 
@@ -361,7 +358,6 @@ use yii\bootstrap\Html;
         lockTextBox = true;
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
-        receivePayment.setAction();
         return false;
     });
 
@@ -375,14 +371,12 @@ use yii\bootstrap\Html;
         $.pjax.reload({url: url, container: "#credit-lineitem-listing", replace: false, async: false, timeout: 6000});
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
-        receivePayment.setAction();
         $('#modal-spinner').hide();
         return false;
     });
 
     $(document).off('pjax:success', '#lesson-line-item-listing, #group-lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing, #group-lesson-line-item-listing', function () {
         receivePayment.calcAmountNeeded();
-        receivePayment.setAction();
         return false;
     });
 
