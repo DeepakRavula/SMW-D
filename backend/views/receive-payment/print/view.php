@@ -16,8 +16,8 @@ use insolita\wgadminlte\LteConst;
 <h4>Thank you for your payment!</h4>
 </div>
 <div>
-<h4>This is to acknowledge the receipt of payment from {<?= $customer->userProfile->firstname . $customer->userProfile->lastname; ?>} on <?= (new \DateTime($model->date))->format('M, d Y'); ?> 
-in the amount of <?= $model->amount; ?> via <?= $model->payment_method_id ?>. We have distributed it to the items below.</h4></div>
+<h4>This is to acknowledge the receipt of payment from <?= $customer->userProfile->firstname .' '.$customer->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($payment->date); ?> 
+in the amount of <?= $model->amount; ?> via <?= $payment->paymentMethod->name; ?>. We have distributed it to the items below.</h4></div>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
 <?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>

@@ -628,6 +628,7 @@ $results[] = [
         'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
         'searchModel'                  =>  $searchModel,
         'customer'                     =>   $customer,
+        'payment'                      => $paymentNew,
     ]);
     }	
 }	

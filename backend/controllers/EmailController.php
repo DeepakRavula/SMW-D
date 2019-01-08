@@ -327,6 +327,8 @@ $results[] = [
         'emailTemplate'                =>   $emailTemplate,
         'emails' => !empty($customer->email) ?$customer->email : null,
         'subject' => $emailTemplate->subject ?? 'Receipt from Arcadia Academy of Music',
+        'payment'                      => $paymentNew,
+        'paymentFormModel'             => $model,
     ]);
     
     $post = Yii::$app->request->post();
