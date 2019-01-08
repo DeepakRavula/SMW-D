@@ -11,6 +11,9 @@ use common\models\Enrolment;
 use common\models\User;
 use common\models\LessonPayment;
 use common\models\InvoicePayment;
+use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
+use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class for table "course".
@@ -65,6 +68,33 @@ class PaymentForm extends Model
                 'paymentId', 'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds', 'prId',
                 'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id', 'notes'], 'safe']
         ];
+    }
+
+    public function getLessonIds()
+    {
+        $lessonIds = null;
+        if ($this->lessonPayments) {
+            $lessonIds = ArrayHelper::getColumn($this->lessonPayments, 'id');
+        }
+        return $lessonIds;
+    }
+
+    public function getInvoiceIds()
+    {
+        $invoiceIds = null;
+        if ($this->invoicePayments) {
+            $invoiceIds = ArrayHelper::getColumn($this->invoicePayments, 'id');
+        }
+        return $invoiceIds;
+    }
+
+    public function getGroupLessonIds()
+    {
+        $lessonIds = null;
+        if ($this->groupLessonPayments) {
+            $lessonIds = ArrayHelper::getColumn($this->groupLessonPayments, 'id');
+        }
+        return $lessonIds;
     }
 
     public function save()
@@ -393,5 +423,113 @@ class PaymentForm extends Model
         } else {
             $this->addError($attributes, "Amount must be number");
         }
+    }
+
+    public function getUsedCredit()
+    {
+        $paymentCredits = $this->paymentCredits;
+        $invoiceCredits = $this->invoiceCredits;
+        $paymentId = $this->paymentId;
+        $amount = $this->amount;
+        $results = [];
+        if (!empty($paymentCredits)) {                
+            foreach ($paymentCredits as $paymentCredit) {
+                $creditPayment = Payment::findOne(['id' => $paymentCredit['id']]);
+                $results[] = [
+                    'id' => $creditPayment->id,
+                    'type' => 'Payment Credit',
+                    'reference' => $creditPayment->reference,
+                    'amount' => round($creditPayment->amount, 2),
+                    'method' => $creditPayment->paymentMethod->name,
+                    'amountUsed' => round($paymentCredit['value'], 2),
+                ];
+            }  
+        }
+        if  (!empty($invoiceCredits)) { 
+            foreach ($invoiceCredits as $invoiceCredit) {
+                $creditInvoice = Invoice::findOne(['id' => $invoiceCredit['id']]);
+                $results[] = [
+                    'id' => $creditInvoice->id,
+                    'type' => 'Invoice Credit',
+                    'reference' => $creditInvoice->getInvoiceNumber(),
+                    'amount' => '',
+                    'method' => '',
+                    'amountUsed' => round($invoiceCredit['value'], 2),
+                ];
+            }
+        } 
+        $paymentNew = Payment::findOne(['id' => $paymentId]);
+        if (!empty($paymentNew)) {
+            $results[] = [
+                'id' => $paymentId,
+                'type' => 'Payment',
+                'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
+                'amount' => $paymentNew->amount,
+                'method' => $paymentNew->paymentMethod->name,
+                'amountUsed' => $amount,
+            ]; 
+        }
+        $paymentsLineItemsDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
+            ],
+            'pagination' => false
+        ]);
+        return $paymentsLineItemsDataProvider;
+    }
+
+    public function getInvoicesPaid()
+    {
+        $invoicePayments = $this->invoicePayments;
+        $dataProvider = null;
+        if ($invoicePayments) {
+            $invoiceIds = ArrayHelper::getColumn($invoicePayments, 'id');
+            $invoices = Invoice::find()
+                ->andWhere(['id' => $invoiceIds])
+                ->orderBy(['id' => SORT_ASC]);
+
+            $dataProvider = new ActiveDataProvider([
+                'query' => $invoices,
+                'pagination' => false 
+            ]);
+        }
+        return $dataProvider;
+    }
+
+    public function getGroupLessonsPaid()
+    {
+        $groupLessonPayments = $this->groupLessonPayments;
+        $dataProvider = null;
+        if ($groupLessonPayments) {
+            $lessonIds = ArrayHelper::getColumn($groupLessonPayments, 'id');
+            $lessons = Lesson::find()
+                ->andWhere(['id' => $lessonIds])
+                ->orderBy(['lesson.id' => SORT_ASC]);
+
+            $dataProvider = new ActiveDataProvider([
+                'query' => $lessons,
+                'pagination' => false 
+            ]);
+        }
+        return $dataProvider;
+    }
+
+    public function getLessonsPaid()
+    {
+        $lessonPayments = $this->lessonPayments;
+        $dataProvider = null;
+        if ($lessonPayments) {
+            $lessonIds = ArrayHelper::getColumn($lessonPayments, 'id');
+            $lessons = Lesson::find()
+                ->andWhere(['id' => $lessonIds])
+                ->orderBy(['lesson.id' => SORT_ASC]);
+
+            $dataProvider = new ActiveDataProvider([
+                'query' => $lessons,
+                'pagination' => false 
+            ]);
+        }
+        return $dataProvider;
     }
 }

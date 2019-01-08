@@ -542,130 +542,81 @@ class PrintController extends BaseController
             'invoiceDataProvider' => $invoiceDataProvider,
         ]);
     }
+
     public function actionReceipt()
     {
         $model  = new PaymentForm();
         $request = Yii::$app->request;
         if ($model->load($request->get())) {
-            //print_r($model);die('coming');
-        
-        $customer =  User::findOne(['id' => $model->userId]);
-        $searchModel  =  new ProformaInvoiceSearch();
-        $searchModel->showCheckBox = false;
-        $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $model->lessonIds]);
-        $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $model->invoiceIds]);
-        $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $model->groupLessonIds]);
-        $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
-        'query' => $paymentLessonLineItems,
-        'pagination' => false,
-    ]);
-        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $paymentInvoiceLineItems,
-            'pagination' => false,
-        ]);
-        $groupLessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $paymentGroupLessonLineItems,
-            'pagination' => false,
-        ]);
-        
-        $results = [];
-      if(!empty($model->paymentCreditIds))  {    
-          $paymentCreditIds = $model->paymentCreditIds; 
-          $paymentCredits   = $model->paymentCredits;          
-      foreach($paymentCreditIds as $key =>  $paymentCreditId) {
-          $paymentCredit = Payment::findOne(['id' => $paymentCreditId]);
-          $results[] = [
-            'id' => $paymentCredit->id,
-            'type' => 'Payment Credit',
-            'reference' => $paymentCredit->reference,
-            'amount' => $paymentCredit->amount,
-            'amountUsed' => $model->paymentCredits[$key],
-            'method' => $paymentCredit->paymentMethod->name,
-        ];
-      }  
-    }
-      if(!empty($model->invoiceCreditIds)) {  
-        $invoiceCreditIds = $model->invoiceCreditIds; 
-        $invoiceCredits   = $model->invoiceCredits;  
-      foreach($invoiceCreditIds as $key =>  $invoiceCreditId) {
-        $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
-        $results[] = [
-            'id' => $invoiceCredit->id,
-            'type' => 'Invoice Credit',
-            'reference' => $invoiceCredit->getInvoiceNumber(),
-            'amount' => '',
-            'amountUsed' => $model->invoiceCredits[$key],
-            'method' => '',
-      ];
-    }
-    
-} 
-$paymentNew = Payment::findOne(['id' => $model->paymentId]);
-if (!empty($paymentNew)) {
-$results[] = [
-    'id' => $paymentNew->id,
-    'type' => 'Payment',
-    'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
-    'amount' => $paymentNew->amount,
-    'amountUsed' => $model->amount,
-    'method'     => $paymentNew->paymentMethod->name,
-]; 
-}
-     $paymentsLineItemsDataProvider = new ArrayDataProvider([
-        'allModels' => $results,
-        'sort' => [
-            'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed', 'method']
-        ]
-     ]);
+            $customer =  User::findOne(['id' => $model->userId]);
+            $searchModel  =  new ProformaInvoiceSearch();
+            $searchModel->showCheckBox = false;
+            $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $model->lessonIds]);
+            $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $model->invoiceIds]);
+            $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $model->groupLessonIds]);
+            $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentLessonLineItems,
+                'pagination' => false,
+            ]);
+            $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentInvoiceLineItems,
+                'pagination' => false,
+            ]);
+            $groupLessonLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentGroupLessonLineItems,
+                'pagination' => false,
+            ]);
+            
+            $paymentsLineItemsDataProvider = $model->getUsedCredit();
 
-    $this->layout = '/print';
+            $this->layout = '/print';
 
-    return $this->render('/receive-payment/print/view', [
-        'model'                        => !empty($model) ? $model : new Payment(),
-        'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
-        'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
-        'groupLessonLineItemsDataProvider' =>  $groupLessonLineItemsDataProvider,
-        'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
-        'searchModel'                  =>  $searchModel,
-        'customer'                     =>   $customer,
-    ]);
+            return $this->render('/receive-payment/print/view', [
+                'model'                        => !empty($model) ? $model : new Payment(),
+                'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
+                'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
+                'groupLessonLineItemsDataProvider' =>  $groupLessonLineItemsDataProvider,
+                'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
+                'searchModel'                  =>  $searchModel,
+                'customer'                     =>   $customer,
+            ]);
+        }	
     }	
-}	
 
-public function actionSalesAndPayment()
-{
-    $searchModel = new ReportSearch();
-    $currentDate = new \DateTime();
-    $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
-    $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
-    $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;     
-    $request = Yii::$app->request;
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-    if ($searchModel->load($request->get())) {
-        $reportRequest = $request->get('ReportSearch');
-        $searchModel->dateRange = $reportRequest['dateRange']; 
-    }
-    $salesQuery = InvoiceLineItem::find()
-        ->notDeleted()
-        ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
-        $query->notDeleted()
-            ->notCanceled()
-            ->notReturned()
-            ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
-            ->location($locationId)
-            ->between((new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d'))
-            ->orderBy([
-                    'DATE(invoice.date)' => SORT_ASC,
-                ]);
-        }])
-        ->joinWith(['itemCategory' => function ($query) {
-            $query->groupBy('item_category.id');
-        }]);
-       
+    public function actionSalesAndPayment()
+    {
+        $searchModel = new ReportSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;     
+        $request = Yii::$app->request;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        if ($searchModel->load($request->get())) {
+            $reportRequest = $request->get('ReportSearch');
+            $searchModel->dateRange = $reportRequest['dateRange']; 
+        }
+        $salesQuery = InvoiceLineItem::find()
+            ->notDeleted()
+            ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
+            $query->notDeleted()
+                ->notCanceled()
+                ->notReturned()
+                ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
+                ->location($locationId)
+                ->between((new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d'))
+                ->orderBy([
+                        'DATE(invoice.date)' => SORT_ASC,
+                    ]);
+            }])
+            ->joinWith(['itemCategory' => function ($query) {
+                $query->groupBy('item_category.id');
+            }]);
+        
 
-    $salesDataProvider = new ActiveDataProvider([
-        'query' => $salesQuery,
-    ]);   
+        $salesDataProvider = new ActiveDataProvider([
+            'query' => $salesQuery,
+        ]);   
         $paymentsQuery = Payment::find()
             ->exceptAutoPayments()
             ->exceptGiftCard()
@@ -674,17 +625,15 @@ public function actionSalesAndPayment()
             ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
                 (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->groupBy('payment.payment_method_id');    
-    $paymentsDataProvider = new ActiveDataProvider([
-        'query' => $paymentsQuery,
-    ]);       
-    
-    $this->layout = '/print';
-            return $this->render('/report/sales-and-payment/_print',
-                    [
-                    'searchModel' => $searchModel,
-                    'salesDataProvider' => $salesDataProvider,
-                    'paymentsDataProvider' => $paymentsDataProvider,
-            ]
-            );
-        }
+        $paymentsDataProvider = new ActiveDataProvider([
+            'query' => $paymentsQuery,
+        ]);       
+        
+        $this->layout = '/print';
+        return $this->render('/report/sales-and-payment/_print', [
+            'searchModel' => $searchModel,
+            'salesDataProvider' => $salesDataProvider,
+            'paymentsDataProvider' => $paymentsDataProvider,
+        ]);
+    }
 }

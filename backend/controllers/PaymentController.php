@@ -375,56 +375,6 @@ class PaymentController extends BaseController
         ]);
         return $creditDataProvider;
     }
-
-    public function getUsedCredit($paymentCredits, $invoiceCredits, $paymentId, $amount)
-    { 
-        $results = [];
-        if (!empty($paymentCredits)) {                
-            foreach ($paymentCredits as $paymentCredit) {
-                $creditPayment = Payment::findOne(['id' => $paymentCredit['id']]);
-                $results[] = [
-                    'id' => $creditPayment->id,
-                    'type' => 'Payment Credit',
-                    'reference' => $creditPayment->reference,
-                    'amount' => round($creditPayment->amount, 2),
-                    'method' => $creditPayment->paymentMethod->name,
-                    'amountUsed' => round($paymentCredit['value'], 2),
-                ];
-            }  
-        }
-        if  (!empty($invoiceCredits)) { 
-            foreach ($invoiceCredits as $invoiceCredit) {
-                $creditInvoice = Invoice::findOne(['id' => $invoiceCredit['id']]);
-                $results[] = [
-                    'id' => $creditInvoice->id,
-                    'type' => 'Invoice Credit',
-                    'reference' => $creditInvoice->getInvoiceNumber(),
-                    'amount' => '',
-                    'method' => '',
-                    'amountUsed' => round($invoiceCredit['value'], 2),
-                ];
-            }
-        } 
-        $paymentNew = Payment::findOne(['id' => $paymentId]);
-        if (!empty($paymentNew)) {
-            $results[] = [
-                'id' => $paymentId,
-                'type' => 'Payment',
-                'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
-                'amount' => $paymentNew->amount,
-                'method' => $paymentNew->paymentMethod->name,
-                'amountUsed' => $amount,
-            ]; 
-        }
-        $paymentsLineItemsDataProvider = new ArrayDataProvider([
-            'allModels' => $results,
-            'sort' => [
-                'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
-            ],
-            'pagination' => false
-        ]);
-        return $paymentsLineItemsDataProvider;
-    }
     
     public function getCustomerPayments($customerId)
     {
@@ -434,57 +384,6 @@ class PaymentController extends BaseController
             ->customer($customerId)
             ->orderBy(['payment.id' => SORT_ASC])
             ->all();
-    }
-
-    public function getInvoicesPaid($invoicePayments)
-    {
-        $dataProvider = null;
-        if ($invoicePayments) {
-            $invoiceIds = ArrayHelper::getColumn($invoicePayments, 'id');
-            $invoices = Invoice::find()
-                ->andWhere(['id' => $invoiceIds])
-                ->orderBy(['id' => SORT_ASC]);
-
-            $dataProvider = new ActiveDataProvider([
-                'query' => $invoices,
-                'pagination' => false 
-            ]);
-        }
-        return $dataProvider;
-    }
-
-    public function getGroupLessonsPaid($groupLessonPayments)
-    {
-        $dataProvider = null;
-        if ($groupLessonPayments) {
-            $lessonIds = ArrayHelper::getColumn($groupLessonPayments, 'id');
-            $lessons = Lesson::find()
-                ->andWhere(['id' => $lessonIds])
-                ->orderBy(['lesson.id' => SORT_ASC]);
-
-            $dataProvider = new ActiveDataProvider([
-                'query' => $lessons,
-                'pagination' => false 
-            ]);
-        }
-        return $dataProvider;
-    }
-
-    public function getLessonsPaid($lessonPayments)
-    {
-        $dataProvider = null;
-        if ($lessonPayments) {
-            $lessonIds = ArrayHelper::getColumn($lessonPayments, 'id');
-            $lessons = Lesson::find()
-                ->andWhere(['id' => $lessonIds])
-                ->orderBy(['lesson.id' => SORT_ASC]);
-
-            $dataProvider = new ActiveDataProvider([
-                'query' => $lessons,
-                'pagination' => false 
-            ]);
-        }
-        return $dataProvider;
     }
 
     public function actionReceive()
@@ -525,19 +424,14 @@ class PaymentController extends BaseController
             'pagination' => false
         ]);
         $invoicesQuery = Invoice::find();
-        if (isset($model->invoiceIds)) {
-            $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
-        } else {
-            if (!$searchModel->userId) {
-                $searchModel->userId = null;
-            }
-            $invoicesQuery->notDeleted()
-                ->invoice()
-                ->customer($searchModel->userId)
-                ->unpaid()
-                ->andWhere(['>','invoice.balance' , 0.09]);
-
+        if (!$searchModel->userId) {
+            $searchModel->userId = null;
         }
+        $invoicesQuery->notDeleted()
+            ->invoice()
+            ->customer($searchModel->userId)
+            ->unpaid()
+            ->andWhere(['>','invoice.balance' , 0.09]);
         $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoicesQuery,
@@ -559,10 +453,10 @@ class PaymentController extends BaseController
             
             $model->paymentId = $payment->id;
             $model->save();
-            $paymentsLineItemsDataProvider = $this->getUsedCredit($model->paymentCredits, $model->invoiceCredits, $model->paymentId, $model->amount);
-            $invoiceLineItemsDataProvider = $this->getInvoicesPaid($model->invoicePayments);
-            $lessonLineItemsDataProvider = $this->getLessonsPaid($model->lessonPayments);
-            $groupLessonLineItemsDataProvider = $this->getGroupLessonsPaid($model->groupLessonPayments);
+            $paymentsLineItemsDataProvider = $model->getUsedCredit();
+            $invoiceLineItemsDataProvider = $model->getInvoicesPaid();
+            $lessonLineItemsDataProvider = $model->getLessonsPaid();
+            $groupLessonLineItemsDataProvider = $model->getGroupLessonsPaid();
             $printData = $this->renderAjax('/receive-payment/print/_form', [
                 'model' => $model,
                 'paymentModel' => $payment,
@@ -570,8 +464,7 @@ class PaymentController extends BaseController
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
                 'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
-                'searchModel' => $searchModel,
-                'groupLessonSearchModel' => $groupLessonSearchModel,
+                'searchModel' => $searchModel
             ]);
             $url = null;
             if ($model->prId) {
