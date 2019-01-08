@@ -27,7 +27,8 @@ class EmailForm extends Model
         return [
             [['subject', 'content'], 'required'],
             [['to'], 'required', 'except' => EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER],
-            [['invoiceId', 'paymentRequestId','bcc'], 'safe']
+            [['invoiceId', 'paymentRequestId','bcc'], 'safe'],
+            [['bcc'], 'required', 'on' => EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER],
         ];
     }
 

@@ -22,7 +22,7 @@ use dosamigos\ckeditor\CKEditor;
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'to')->widget(Select2::classname(), [
-                'data' => $data,
+                'data' => !empty($data) ? $data :null,
                 'pluginOptions' => [
                     'tags' => true,
                     'multiple' => true,
@@ -31,7 +31,7 @@ use dosamigos\ckeditor\CKEditor;
             ?>
         </div>
     </div>
-    <?php if(!empty($bccEmails)) : ?>
+  
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'bcc')->widget(Select2::classname(), [
@@ -44,7 +44,7 @@ use dosamigos\ckeditor\CKEditor;
             ?>
         </div>
     </div>
-            <?php endif;?>
+
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'subject')->textInput(['value' => $subject]) ?>
