@@ -46,11 +46,13 @@ Modal::begin([
         restoreButtonSettings: function() {
             $('.modal-delete').hide();
             $('.modal-button').hide();
-            $('.modal-save').text('Save');
+            $('#modal-save').text('Save');
+            $('#modal-save').removeClass();
+            $('#modal-save').addClass('btn btn-info modal-save');
             $('.modal-save-all').hide();
             $('.modal-back').hide();
             $('.modal-mail').hide();
-            $('.modal-save').attr('message', null);
+            $('#modal-save').attr('message', null);
             $('#modal-popup-warning-notification').fadeOut();
         },
         renderUrlData: function(url) {

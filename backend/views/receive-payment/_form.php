@@ -193,7 +193,7 @@ use yii\bootstrap\Html;
                 'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
                 'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[userId]' : userId, 'PaymentForm[prId]': prId
             });
-            var url = '<?= Url::to(['payment/receive']) ?>?' + $('#modal-form').serialize();
+            var url = '<?= Url::to(["payment/receive"]) ?>?' + $('#modal-form').serialize();
             $('#modal-form').attr('action', url);
             return data;
         },
@@ -300,10 +300,10 @@ use yii\bootstrap\Html;
                 $('#modal-spinner').hide();
                 if (response.status)
                 {
+                    modal.restoreButtonSettings();
                     $('#modal-spinner').hide();
                     if (!$.isEmptyObject(response.data)) {
                         $('#modal-content').html(response.data);
-                        $('.modal-back').show();
                         $(document).trigger("modal-next", response);
                     } else if (!$.isEmptyObject(response.dataUrl)) {
                         modal.renderUrlData(response.dataUrl);
