@@ -10,12 +10,11 @@ use common\models\User;
 use yii\widgets\Pjax;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-// $this->title = 'Payments';
-// $this->params['action-button'] = $this->render('_action-button');
 ?>
 
 <?php
@@ -72,17 +71,6 @@ $columns = [
     ],
 ];
 ?>
-
-<?php $boxTools = $this->render('_payment-buttons');	?>
-<?php LteBox::begin([
-        'type' => LteConst::TYPE_DEFAULT,
-        'title' => 'Payments',
-		'withBorder' => true,
-		'boxTools' => $boxTools,
-    ])
-    ?>
-<div class="clearfix"></div>
-<div>
 <?php Pjax::begin(['id' => 'customer-payment-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
     <?= KartikGridView::widget([
 		'dataProvider' => $paymentDataProvider,
@@ -92,42 +80,3 @@ $columns = [
 		'columns' => $columns,
 	]); ?>
 <?php Pjax::end(); ?>
-</div>
-<div class="more-payment pull-right" id = "admin-login" style = "display:none">
-    <a class = "show-more" href = "">Show More</a>
-</div>
-<?php LteBox::end() ?>
-
-<script>
-	$(document).ready(function() {
-	 var payment_count = '<?= $count; ?>' ;
-		if (payment_count > 10) {
-			$(".more-payment").show();
-			var dateRange = "";
-			var customer = '<?= $userModel->userProfile->firstname; ?>' ;
-			var params = $.param({ 'PaymentSearch[customer]': customer, 'PaymentSearch[dateRange]': dateRange });
-			var url = '<?= Url::to(['payment/index']); ?>?' + params;
-			$('.show-more').attr("href", url);
-		}
-	}); 
-
-	$(document).on('click', '#customer-payment-listing  tbody > tr', function () {
-        var paymentId = $(this).data('key');
-		alert(paymentId);
-		var params = $.param({'paymentId': paymentId });
-        var customUrl = '<?= Url::to(['payment/customer-payment-view']); ?>?' +params;
-        $.ajax({
-            url: customUrl,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                if (response.status) {
-                    $('#modal-content').html(response.data);
-					$('#popup-modal').modal('show');
-                }
-            }
-        });
-        return false;
-    });
-</script>

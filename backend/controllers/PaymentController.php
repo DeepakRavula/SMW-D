@@ -50,7 +50,7 @@ class PaymentController extends BaseController
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
                     'validate-apply-credit', 'validate-receive', 'update-payment', 'view',
-                    'validate-update'
+                    'validate-update', 'customer-payment-view'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -65,7 +65,7 @@ class PaymentController extends BaseController
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
                             'invoice-payment', 'credit-payment', 'validate-apply-credit',
-                            'validate-receive', 'update-payment', 'validate-update'
+                            'validate-receive', 'update-payment', 'validate-update', 'customer-payment-view'
                         ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
@@ -670,70 +670,23 @@ class PaymentController extends BaseController
         return ActiveForm::validate($model);
     }
 
-    public function actionCustomerPaymentView()
+    public function actionCustomerPaymentView($paymentId)
     {
-        if (Yii::$app->request->get('PaymentEditForm')) {
-            $request = Yii::$app->request->get('PaymentEditForm');
-            if (!empty($request['paymentId'])) {
-                $paymentId = $request['paymentId'];
-            }
-            if (!empty($request['invoicePaymentId'])) {
-                $invoicePaymentId = $request['invoicePaymentId'];
-                $invoicePayment = InvoicePayment::findOne($invoicePaymentId);
-                $paymentId = $invoicePayment->payment_id;
-            }
-            if (!empty($request['lessonPaymentId'])) {
-                $lessonPaymentId = $request['lessonPaymentId'];
-                $lessonPayment = LessonPayment::findOne($lessonPaymentId);
-                $paymentId = $lessonPayment->paymentId;
-            }
-        }
         $model = $this->findModel($paymentId);
-        $lessonPayment = Lesson::find()
-            ->privateLessons()
-            ->notDeleted()
-		    ->joinWith(['lessonPayments' => function ($query) use ($paymentId) {
-                $query->andWhere(['paymentId' => $paymentId]);
-            }]);
-	    $lessonDataProvider = new ActiveDataProvider([
-            'query' => $lessonPayment,
-            'pagination' => false
+        $payment = Payment::find()
+                ->andWhere(['id' => $paymentId])
+                ->notDeleted();
+        $paymentDataProvider = new ActiveDataProvider([
+            'query' => $payment,
         ]);
-
-        $groupLessonPayment = Lesson::find()
-            ->groupLessons()
-            ->notDeleted()
-		    ->joinWith(['lessonPayments' => function ($query) use ($paymentId) {
-                $query->andWhere(['paymentId' => $paymentId]);
-            }]);
-	    $groupLessonDataProvider = new ActiveDataProvider([
-            'query' => $groupLessonPayment,
-            'pagination' => false
+        $data = $this->renderAjax('/user/customer/_payment-form', [
+            'model' => $model,
+            'paymentDataProvider' => $paymentDataProvider,
         ]);
-	    
-        $invoicePayment = Invoice::find()
-            ->notDeleted()
-            ->joinWith(['invoicePayments' => function ($query) use ($paymentId) {
-                $query->andWhere(['payment_id' => $paymentId]);
-            }]);
-	    
-	    $invoiceDataProvider = new ActiveDataProvider([
-            'query' => $invoicePayment,
-            'pagination' => false
-        ]);
-        if (!Yii::$app->request->isPost) {
-            $data = $this->renderAjax('view', [
-                'model' => $model,
-                'canEdit' => false,
-                'lessonDataProvider' => $lessonDataProvider,
-                'groupLessonDataProvider' => $groupLessonDataProvider,
-                'invoiceDataProvider' => $invoiceDataProvider
-            ]);
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        }
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 
 }
