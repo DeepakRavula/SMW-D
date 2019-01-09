@@ -344,4 +344,12 @@ class Student extends \yii\db\ActiveRecord
                     ->all();
         return !empty($lessonSplits);
     }
+
+    public function hasEnrolmentHistory() 
+    {
+        $enrolment = Enrolment::find()
+                ->andWhere(['studentId' => $this->id])
+                ->one();
+        return !empty($enrolment) ? true : false;
+    }
 }

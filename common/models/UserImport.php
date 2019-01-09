@@ -79,6 +79,9 @@ class UserImport extends Model
         $successCount = 0;
         $studentCount = 0;
         $customerCount = 0;
+        $transaction = \Yii::$app->db->beginTransaction();
+
+        try {
         foreach ($rows as $i => $row) {
             if (empty($row['Billing Home Tel'])) {
                 continue;
@@ -98,7 +101,7 @@ class UserImport extends Model
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
                 if (!empty($row['Date of Birth'])) {
-                    $birthDate = \DateTime::createFromFormat('Y-m-d', $row['Date of Birth']);
+                    $birthDate = \DateTime::createFromFormat('m/d/Y', $row['Date of Birth']);
                     $student->birth_date = $birthDate->format('M d,Y');
                 }
                 $student->customer_id = $user->id;
@@ -116,9 +119,7 @@ class UserImport extends Model
                 }
             }
 
-            $transaction = \Yii::$app->db->beginTransaction();
-
-            try {
+         
                 $user = new User();
                 $user->password = Yii::$app->security->generateRandomString(8);
                 $user->status = User::STATUS_ACTIVE;
@@ -143,7 +144,7 @@ class UserImport extends Model
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
                 if (!empty($row['Date of Birth'])) {
-                    $birthDate = \DateTime::createFromFormat('Y-m-d', $row['Date of Birth']);
+                    $birthDate = \DateTime::createFromFormat('m/d/Y', $row['Date of Birth']);
                     $student->birth_date = $birthDate->format('M d,Y');
                 }
                 $student->customer_id = $user->id;
@@ -250,13 +251,16 @@ class UserImport extends Model
                     $phone->save();
                 }
 
-                $transaction->commit();
+               
                 ++$successCount;
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                $errors[] = 'Error on Line '.($i + 2).': '.$e->getMessage();
+          
             }
-        }
+        $transaction->commit();
+    } catch (\Exception $e) {
+        $transaction->rollBack();
+        $errors[] = 'Error on Line '.($i + 2).': '.$e->getMessage();
+    }
+
         $response = [
             'successCount' => $successCount,
             'studentCount' => $studentCount,
@@ -286,7 +290,7 @@ class UserImport extends Model
         $studentCsv->homeTel = $row['Home Tel'];
         $studentCsv->otherTel = $row['Other Tel'];
         if (!empty($row['Date of Birth'])) {
-            $birthDate = \DateTime::createFromFormat('Y-m-d', $row['Date of Birth']);
+            $birthDate = \DateTime::createFromFormat('m/d/Y', $row['Date of Birth']);
             $studentCsv->birthDate = $birthDate->format('Y-m-d');
         }
         $studentCsv->billingFirstName = $row['Billing First Name'];
