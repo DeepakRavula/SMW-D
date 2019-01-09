@@ -11,7 +11,7 @@ $location = Location::findOne(['slug' => \Yii::$app->location]);
     $bccEmails = $emails;
 ?>
 
-<?= $this->render('/mail/_form', [
+<?= $this->render('/mail/_form-multi-customer', [
     'content' => $content,
     'model' => $model,
     'data' => $data,
