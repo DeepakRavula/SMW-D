@@ -57,7 +57,7 @@ class EmailController extends BaseController
         ];
     }
     public function actionSend()
-    {
+    { 
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $location = Location::findOne(['id' => $locationId]);
         $model = new EmailForm();
@@ -68,7 +68,8 @@ class EmailController extends BaseController
                 ])
                 ->setFrom($location->email)
                 ->setReplyTo($location->email)
-                ->setSubject($model->subject);
+                ->setSubject($model->subject)
+                ->setBcc($model->bcc);
             Yii::$app->mailer->sendMultiple($content);
             if (!empty($model->invoiceId)) {
                 $invoice = Invoice::findOne(['id' => $model->invoiceId]);
