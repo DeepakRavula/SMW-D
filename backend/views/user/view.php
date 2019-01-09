@@ -109,6 +109,7 @@ $this->params['action-button'] = $this->render('_action-button', [
             'userModel' => $model,
         ]);
         ?>
+        
     <?php endif;?>
         
     </div> 
@@ -125,6 +126,12 @@ $this->params['action-button'] = $this->render('_action-button', [
         ?>
         <?= $this->render('_address', [
             'model' => $model,
+        ]);
+        ?>
+        <?= $this->render('customer/_payment', [
+            'paymentDataProvider' => $paymentDataProvider,
+            'count' => $paymentCount,
+            'userModel' => $model,
         ]);
         ?>
     </div> 

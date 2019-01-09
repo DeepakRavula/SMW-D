@@ -669,4 +669,71 @@ class PaymentController extends BaseController
         }
         return ActiveForm::validate($model);
     }
+
+    public function actionCustomerPaymentView()
+    {
+        if (Yii::$app->request->get('PaymentEditForm')) {
+            $request = Yii::$app->request->get('PaymentEditForm');
+            if (!empty($request['paymentId'])) {
+                $paymentId = $request['paymentId'];
+            }
+            if (!empty($request['invoicePaymentId'])) {
+                $invoicePaymentId = $request['invoicePaymentId'];
+                $invoicePayment = InvoicePayment::findOne($invoicePaymentId);
+                $paymentId = $invoicePayment->payment_id;
+            }
+            if (!empty($request['lessonPaymentId'])) {
+                $lessonPaymentId = $request['lessonPaymentId'];
+                $lessonPayment = LessonPayment::findOne($lessonPaymentId);
+                $paymentId = $lessonPayment->paymentId;
+            }
+        }
+        $model = $this->findModel($paymentId);
+        $lessonPayment = Lesson::find()
+            ->privateLessons()
+            ->notDeleted()
+		    ->joinWith(['lessonPayments' => function ($query) use ($paymentId) {
+                $query->andWhere(['paymentId' => $paymentId]);
+            }]);
+	    $lessonDataProvider = new ActiveDataProvider([
+            'query' => $lessonPayment,
+            'pagination' => false
+        ]);
+
+        $groupLessonPayment = Lesson::find()
+            ->groupLessons()
+            ->notDeleted()
+		    ->joinWith(['lessonPayments' => function ($query) use ($paymentId) {
+                $query->andWhere(['paymentId' => $paymentId]);
+            }]);
+	    $groupLessonDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonPayment,
+            'pagination' => false
+        ]);
+	    
+        $invoicePayment = Invoice::find()
+            ->notDeleted()
+            ->joinWith(['invoicePayments' => function ($query) use ($paymentId) {
+                $query->andWhere(['payment_id' => $paymentId]);
+            }]);
+	    
+	    $invoiceDataProvider = new ActiveDataProvider([
+            'query' => $invoicePayment,
+            'pagination' => false
+        ]);
+        if (!Yii::$app->request->isPost) {
+            $data = $this->renderAjax('view', [
+                'model' => $model,
+                'canEdit' => false,
+                'lessonDataProvider' => $lessonDataProvider,
+                'groupLessonDataProvider' => $groupLessonDataProvider,
+                'invoiceDataProvider' => $invoiceDataProvider
+            ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+    }
+
 }

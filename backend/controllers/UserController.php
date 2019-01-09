@@ -293,7 +293,8 @@ class UserController extends BaseController
     {
         return new ActiveDataProvider([
             'query' => Payment::find()
-                ->andWhere(['user_id' => $id]),
+                ->andWhere(['user_id' => $id])
+                ->notDeleted(),
         ]);
     }
 
@@ -533,7 +534,8 @@ class UserController extends BaseController
             'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
             'unavailability' => $this->getUnavailabilityDataProvider($id),
             'logDataProvider' => $this->getLogDataProvider($id),
-	        'invoiceCount' => $this->getInvoiceCount($model, $locationId),
+            'invoiceCount' => $this->getInvoiceCount($model, $locationId),
+            'paymentCount' => $this->getPaymentCount($id),
         ]);
     }
 
@@ -711,5 +713,14 @@ class UserController extends BaseController
             ];
         }
         return $response;
+    }
+    
+    protected function getPaymentCount($id) 
+    {
+	    $paymentCount = Payment::find()
+                ->andWhere(['user_id' => $id])
+                ->notDeleted()
+		        ->count();
+	    return $paymentCount;
     }
 }
