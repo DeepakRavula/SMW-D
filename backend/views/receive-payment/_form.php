@@ -188,13 +188,19 @@ use yii\bootstrap\Html;
                     invoicePayments.push({ id: invoiceId, value: amount });
                 }
             });
-            var data = $.param({ 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[groupLessonPayments]': groupLessonPayments, 
+            var formData = $('#modal-form').serializeArray();
+            var paymentDataObject = { 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[groupLessonPayments]': groupLessonPayments, 
                 'PaymentForm[invoicePayments]': invoicePayments, 'PaymentForm[paymentCredits]': paymentCredits, 
                 'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
                 'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[userId]' : userId, 'PaymentForm[prId]': prId
+            };
+            var formDataObj = {};
+            var allData = $.each(formData, function( index, value ) {
+                var key = value.name;
+                formDataObj[key] = value.value;
             });
-            var url = '<?= Url::to(["payment/receive"]) ?>?' + $('#modal-form').serialize();
-            $('#modal-form').attr('action', url);
+            var paymentDataObject = $.extend({}, formDataObj, paymentDataObject);
+            var data = $.param(paymentDataObject);
             return data;
         },
         calcAmountNeeded : function() {
@@ -290,8 +296,9 @@ use yii\bootstrap\Html;
         $('#modal-spinner').show();
 	    modal.disableButtons();
         var data = receivePayment.setAction();
+        var url = '<?= Url::to(["payment/receive"]) ?>';
         $.ajax({
-            url: $('#modal-form').attr('action'),
+            url: url,
             type: 'post',
             dataType: "json",
             data: data,
