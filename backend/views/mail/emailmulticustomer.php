@@ -2,23 +2,20 @@
 
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
+use common\models\Location;
+$location = Location::findOne(['slug' => \Yii::$app->location]);
     $content = "";
-    $model->to = $emails;
-    $data = null;
-    if (!empty($userModel)) {
-        $data = ArrayHelper::map(UserEmail::find()
-            ->notDeleted()
-            ->joinWith('userContact')
-            ->andWhere(['user_contact.userId' => $userModel->id])
-            ->orderBy('user_email.email')
-            ->all(), 'email', 'email');
-    }
+    $model->to = "";
+    $model->bcc = $emails;
+    $data = "";
+    $bccEmails = $emails;
 ?>
 
-<?= $this->render('/mail/_form', [
+<?= $this->render('/mail/_form-multi-customer', [
     'content' => $content,
     'model' => $model,
     'data' => $data,
+    'bccEmails' => $bccEmails,
     'subject' => $subject,
     'emailTemplate' => $emailTemplate
 ]);

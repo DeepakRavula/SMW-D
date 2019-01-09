@@ -19,10 +19,11 @@ use dosamigos\ckeditor\CKEditor;
     <?php if (!empty($invoiceId)) : ?>
     <?= $form->field($model, 'invoiceId')->hiddenInput(['value' => $invoiceId])->label(false) ?>
     <?php endif; ?>
+ 
     <div class="row">
         <div class="col-lg-12">
-            <?= $form->field($model, 'to')->widget(Select2::classname(), [
-                'data' => !empty($data) ? $data :null,
+            <?= $form->field($model, 'bcc')->widget(Select2::classname(), [
+                'data' => !empty($bccEmails) ? $bccEmails :null,
                 'pluginOptions' => [
                     'tags' => true,
                     'multiple' => true,
@@ -31,7 +32,7 @@ use dosamigos\ckeditor\CKEditor;
             ?>
         </div>
     </div>
-  
+
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'subject')->textInput(['value' => $subject]) ?>
