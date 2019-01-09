@@ -60,7 +60,8 @@ class EmailMultiCustomerController extends BaseController
                 ])
                 ->setFrom($location->email)
                 ->setReplyTo($location->email)
-                ->setSubject($model->subject);
+                ->setSubject($model->subject)
+                ->setBcc ($bccEmails);
             Yii::$app->mailer->sendMultiple($content);
             if (!empty($model->invoiceId)) {
                 $invoice = Invoice::findOne(['id' => $model->invoiceId]);
@@ -101,8 +102,10 @@ class EmailMultiCustomerController extends BaseController
                     ->orderBy('user_email.email')
                     ->all(), 'email', 'email');       
         $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_MESSAGE]);
+        $model = new EmailForm();
+        $model->setScenario(EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER);            
         $data = $this->renderAjax('/mail/emailmulticustomer', [
-            'model' => new EmailForm(),
+            'model' => $model, 
             'emails' => !empty($emails) ?$emails : null,
             'subject' => $emailTemplate->subject ?? 'Message from Arcadia Academy of Music',
             'emailTemplate' => $emailTemplate,
