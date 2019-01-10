@@ -59,6 +59,8 @@ use yii\bootstrap\Html;
         </div>
     </div>
 
+    <?= $form->field($model, 'amountToDistribute')->hiddenInput()->label(false); ?>
+
     <?php $lessonCount = $lessonDataProvider->getCount(); ?>
     <?php if ($lessonCount > 0) : ?>
         <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
@@ -103,7 +105,6 @@ use yii\bootstrap\Html;
         </div>
     </div>
 
-    <?= $form->field($model, 'amountToDistribute')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 
 </div>
@@ -131,11 +132,17 @@ var updatePayment = {
                 var amount = $(this).find('.payment-amount').val();
                 invoicePayments.push({ id: invoiceId, value: $.isEmptyObject(amount) ? 0.0 : amount });
             });
-            var data = $.param({ 'PaymentEditForm[lessonPayments]': lessonPayments, 'PaymentEditForm[groupLessonPayments]': groupLessonPayments, 
+            var formData = $('#modal-form').serializeArray();
+            var paymentDataObject = { 'PaymentEditForm[lessonPayments]': lessonPayments, 'PaymentEditForm[groupLessonPayments]': groupLessonPayments, 
                 'PaymentEditForm[invoicePayments]': invoicePayments
+            };
+            var formDataObj = {};
+            var allData = $.each(formData, function( index, value ) {
+                var key = value.name;
+                formDataObj[key] = value.value;
             });
-            var url = '<?= Url::to(["payment/update", "id" => $paymentModel->id]) ?>&' + $('#modal-form').serialize();
-            $('#modal-form').attr('action', url);
+            var paymentDataObject = $.extend({}, formDataObj, paymentDataObject);
+            var data = $.param(paymentDataObject);
             return data;
         },
         calcAmountNeeded : function() {
@@ -202,6 +209,7 @@ var updatePayment = {
     $(document).off('click', '.payment-edit-save').on('click', '.payment-edit-save', function () {
         $('#modal-spinner').show();
 	    modal.disableButtons();
+        updatePayment.calcAmountNeeded();
         var data = updatePayment.setAction();
         $.ajax({
             url: $('#modal-form').attr('action'),

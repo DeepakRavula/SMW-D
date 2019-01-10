@@ -130,10 +130,6 @@ class LessonPayment extends \yii\db\ActiveRecord
         if (round($this->amount, 2) == 0.00) {
             $this->isDeleted = true;
         }
-        
-        if (($this->lesson->getCreditAppliedAmount($this->enrolmentId) - $this->lesson->netPrice) > -0.09) {
-            $this->amount = $this->lesson->netPrice;
-        }
         return parent::beforeSave($insert);
     }
 

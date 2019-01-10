@@ -185,8 +185,7 @@ class PaymentController extends BaseController
             ->notDeleted()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id]);
-            }])
-            ->orderBy(['lesson.id' => SORT_ASC]);
+            }]);
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => $lessonPayment,
             'pagination' => false
@@ -197,8 +196,7 @@ class PaymentController extends BaseController
             ->notDeleted()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id]);
-            }])
-            ->orderBy(['lesson.id' => SORT_ASC]);
+            }]);
 	    $groupLessonDataProvider = new ActiveDataProvider([
             'query' => $groupLessonPayment,
             'pagination' => false
@@ -208,8 +206,7 @@ class PaymentController extends BaseController
             ->notDeleted()
             ->joinWith(['invoicePayments' => function ($query) use ($id) {
                 $query->andWhere(['payment_id' => $id]);
-            }])
-            ->orderBy(['invoice.id' => SORT_ASC]);
+            }]);
 	    
 	    $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoicePayment,
