@@ -339,7 +339,7 @@ class StudentController extends BaseController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if (!$model->hasEnrolmentHistory() && !$model->hasLesson()) {
+        if (!$model->hasEnrolment() && !$model->hasLesson()) {
             $model->delete();
             $message = null;
             $response = [
