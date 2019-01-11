@@ -4,6 +4,15 @@ use yii\helpers\Url;
 use yii\bootstrap\Html;
 
 ?>
+
+<div>
+    <h4>Thank you for your payment!</h4>
+</div>
+<div>
+    <h4>This is to acknowledge the receipt of payment from <?= $paymentModel->userProfile->firstname .' '.$paymentModel->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($paymentModel->date); ?> 
+in the amount of <?= $model->amount; ?> via <?= $paymentModel->paymentMethod->name; ?>. We have distributed it to the items below.</h4>
+</div>
+
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
         'action' => Url::to(['email/receipt',  'PaymentForm[userId]' => $model->userId, 

@@ -22,7 +22,7 @@ use kartik\select2\Select2;
                 $url = Url::to(['item/create']);
             }
         $form = ActiveForm::begin([
-        'id' => 'update-item-form',
+        'id' => 'modal-form',
         'action' => $url,
     ]); ?>
 <div class="row">
@@ -66,27 +66,70 @@ use kartik\select2\Select2;
         <?php echo $form->field($model, 'status')->dropDownList(Item::itemStatuses()) ?>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="pull-right">
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default item-cancel']);?>
-        <?php echo Html::submitButton('Save', ['class' => 'btn btn-info']) ?>
-        </div> 
-        <div class="pull-left">
- <?php if (!$model->isNewRecord) {
-            echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'id' => 'item-delete-button',
-                        'class' => 'btn btn-danger',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to delete this item?',
-                            'method' => 'post',
-                        ]
-                ]);
-        }
-        ?>
-    </div>
-    </div>
-</div>
     <?php ActiveForm::end(); ?>
 
 </div>
+<script>
+    $(document).ready(function() {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Item</h4>');
+        $('.modal-cancel').show();
+         $('.modal-save').hide();
+        $('.modal-save-all').addClass('item-create');
+        $('.modal-save-all').show();
+        $('.modal-save-all').text('save');
+        $('#modal-back').hide();
+        $('#popup-modal .modal-dialog').css({'width': '600px'});
+        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+    });
+    $(document).off('click', '.item-create').on('click', '.item-create', function () {
+        var royaltyFreeisChecked = $('#item-royaltyfree').is(':checked');
+        if(royaltyFreeisChecked) {
+        bootbox.confirm({
+            message: "Are you sure you want to save this item as royalty free?",
+                callback: function(result){
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url: $('#modal-form').attr('action'),
+                            type: 'post',
+                            dataType: "json",
+                            data: $('#modal-form').serialize(),
+                            success: function (response)
+                            {
+                                if (response.status) {
+                                    $.pjax.reload({container: '#item-listing', timeout: 6000});
+                                    $('#popup-modal').modal('hide');
+                                } else {
+                                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                       });
+                       return false;
+                    } else {
+                        $('.bootbox').modal('hide');
+                        return false;
+                    }
+                }
+        });
+        }
+        else {
+            $.ajax({
+                            url: $('#modal-form').attr('action'),
+                            type: 'post',
+                            dataType: "json",
+                            data: $('#modal-form').serialize(),
+                            success: function (response)
+                            {
+                                if (response.status) {
+                                    $.pjax.reload({container: '#item-listing', timeout: 6000});
+                                    $('#popup-modal').modal('hide');
+                                } else {
+                                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                       });
+
+        }
+        return false;
+    });
+</script>

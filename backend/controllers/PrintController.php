@@ -557,7 +557,6 @@ class PrintController extends BaseController
             $groupLessonLineItemsDataProvider = $model->getGroupLessonsPaid();
 
             $this->layout = '/print';
-
             return $this->render('/receive-payment/print/view', [
                 'model'                        => !empty($model) ? $model : new Payment(),
                 'lessonLineItemsDataProvider' =>  $lessonLineItemsDataProvider,
@@ -567,7 +566,7 @@ class PrintController extends BaseController
                 'searchModel'                  =>  $searchModel,
                 'customer'                     =>   $customer,
             ]);
-        }	
+        }
     }	
 
     public function actionSalesAndPayment()

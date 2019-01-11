@@ -48,38 +48,7 @@ class EmailMultiCustomerController extends BaseController
             ], 
         ];
     }
-    public function actionSend()
-    {
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $location = Location::findOne(['id' => $locationId]);
-        $model = new EmailForm();
-        if ($model->load(Yii::$app->request->post())) {
-            $content = [];
-                $content[] = Yii::$app->mailer->compose('content', [
-                    'content' => $model->content,
-                ])
-                ->setFrom($location->email)
-                ->setReplyTo($location->email)
-                ->setSubject($model->subject)
-                ->setBcc ($bccEmails);
-            Yii::$app->mailer->sendMultiple($content);
-            if (!empty($model->invoiceId)) {
-                $invoice = Invoice::findOne(['id' => $model->invoiceId]);
-                $invoice->isSent = true;
-                $invoice->save();
-            }
-            if (!empty($model->paymentRequestId)) {
-                $proformaInvoice = ProformaInvoice::findOne(['id' => $model->paymentRequestId]);
-                $proformaInvoice->isMailSent = true;
-                $proformaInvoice->save();
-            }
-            return [
-                'status' => true,
-                'message' => 'Mail has been sent successfully',
-            ];
-        }
-    }
-  
+   
     
     public function actionEmailMultiCustomer()
     {

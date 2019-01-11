@@ -220,6 +220,8 @@ class User extends ActiveRecord implements IdentityInterface
         } else if ($this->isCustomer()) {
             if (!empty($this->student)) {
                 $this->addError($attribute, 'Unable to delete. There are student(s) associated with this ' . $role);
+            } else if ($this->payments) {
+                $this->addError($attribute, 'Unable to delete. There are payments associated with this ' . $role);
             }
         } else if ($this->isTeacher()) {
             if (!empty($this->qualifications) && !empty($this->courses)) {
