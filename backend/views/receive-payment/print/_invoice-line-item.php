@@ -18,36 +18,35 @@ use yii\bootstrap\Html;
         'headerOptions' => ['class' => 'text-left'],
         'contentOptions' => ['class' => 'text-left'],
         'label' => 'Date',
-        'value' => function ($data) {
-            return  !empty($data->date) ? Yii::$app->formatter->asDate($data->date): null;
-        }
+        'value' => 'date'
     ]);
 
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left','style' => $contentWidth],
         'contentOptions' => ['class' => 'text-left','style' => $contentWidth],
         'label' => 'Number',
-        'value' => function ($data) {
-            return $data->invoiceNumber;
-        }
+        'value' => 'number'
     ]);
 
     array_push($columns, [
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right'],
         'label' => 'Amount',
-        'value' => function ($data) {
-            return !empty($data->total) ? Yii::$app->formatter->asCurrency(round($data->total, 2)) : null;
-        }
+        'value' => 'amount'
+    ]);
+
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Payment',
+        'value' => 'payment'
     ]);
 
     array_push($columns, [
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right invoice-value'],
         'label' => 'Balance',
-        'value' => function ($data) {
-            return !empty($data->balance) ?(round($data->balance, 2) > 0.00 && round($data->balance, 2) <= 0.09) || (round($data->balance, 2) < 0.00 && round($data->balance, 2) >= -0.09)  ? Yii::$app->formatter->asCurrency(round('0.00', 2)): Yii::$app->formatter->asCurrency(round($data->balance, 2)) : null;
-        }
+        'value' => 'balance'
     ]);
 ?>
 
