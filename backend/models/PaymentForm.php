@@ -487,54 +487,94 @@ class PaymentForm extends Model
     public function getInvoicesPaid()
     {
         $invoicePayments = $this->invoicePayments;
-        $dataProvider = null;
+        $results = [];
         if ($invoicePayments) {
-            $invoiceIds = ArrayHelper::getColumn($invoicePayments, 'id');
-            $invoices = Invoice::find()
-                ->andWhere(['id' => $invoiceIds])
-                ->orderBy(['id' => SORT_ASC]);
-
-            $dataProvider = new ActiveDataProvider([
-                'query' => $invoices,
-                'pagination' => false 
-            ]);
+            foreach ($invoicePayments as $invoicePayment) {
+                $invoice = Invoice::findOne($invoicePayment['id']);
+                $results[] = [
+                    'date' => Yii::$app->formatter->asDate($invoice->date),
+                    'number' => $invoice->invoiceNumber,
+                    'amount' => Yii::$app->formatter->asCurrency(round($invoice->total, 2)),
+                    'balance' => (round($invoice->balance, 2) > 0.00 && round($invoice->balance, 2) <= 0.09) || 
+                        (round($invoice->balance, 2) < 0.00 && round($invoice->balance, 2) >= -0.09)  ? 
+                        Yii::$app->formatter->asCurrency(round('0.00', 2)) : Yii::$app->formatter->asCurrency(round($invoice->balance, 2))
+                ]; 
+            }
         }
-        return $dataProvider;
+        $invoiceLineItemsDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['date', 'number', 'amount', 'balance']
+            ],
+            'pagination' => false
+        ]);
+        return $invoiceLineItemsDataProvider;
     }
 
     public function getGroupLessonsPaid()
     {
         $groupLessonPayments = $this->groupLessonPayments;
-        $dataProvider = null;
+        $results = [];
         if ($groupLessonPayments) {
-            $lessonIds = ArrayHelper::getColumn($groupLessonPayments, 'id');
-            $lessons = Lesson::find()
-                ->andWhere(['id' => $lessonIds])
-                ->orderBy(['lesson.id' => SORT_ASC]);
-
-            $dataProvider = new ActiveDataProvider([
-                'query' => $lessons,
-                'pagination' => false 
-            ]);
+            foreach ($groupLessonPayments as $groupLessonPayment) {
+                $lesson = Lesson::findOne($groupLessonPayment['id']);
+                $date = Yii::$app->formatter->asDate($lesson->date);
+                $lessonTime = (new \DateTime($lesson->date))->format('H:i:s');
+                $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $lesson->courseId])
+                        ->customer($this->userId)
+                        ->one();
+                $results[] = [
+                    'date' => $date.' @ '.Yii::$app->formatter->asTime($lessonTime),
+                    'student' => $enrolment->student->fullName,
+                    'program' => $lesson->course->program->name,
+                    'teacher' => $lesson->teacher->publicIdentity,
+                    'amount' => Yii::$app->formatter->asCurrency(round($lesson->getGroupNetPrice($enrolment), 2)),
+                    'payment' => $groupLessonPayment['value'],
+                    'balance' => Yii::$app->formatter->asCurrency(round($lesson->getOwingAmount($enrolment->id), 2))
+                ]; 
+            }
         }
-        return $dataProvider;
+        $groupLessonLineItemsDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['date', 'student', 'program', 'teacher', 'amount', 'payment', 'balance']
+            ],
+            'pagination' => false
+        ]);
+        return $groupLessonLineItemsDataProvider;
     }
 
     public function getLessonsPaid()
     {
         $lessonPayments = $this->lessonPayments;
-        $dataProvider = null;
+        $results = [];
         if ($lessonPayments) {
-            $lessonIds = ArrayHelper::getColumn($lessonPayments, 'id');
-            $lessons = Lesson::find()
-                ->andWhere(['id' => $lessonIds])
-                ->orderBy(['lesson.id' => SORT_ASC]);
-
-            $dataProvider = new ActiveDataProvider([
-                'query' => $lessons,
-                'pagination' => false 
-            ]);
+            foreach ($lessonPayments as $lessonPayment) {
+                $lesson = Lesson::findOne($lessonPayment['id']);
+                $date = Yii::$app->formatter->asDate($lesson->date);
+                $lessonTime = (new \DateTime($lesson->date))->format('H:i:s');
+                $enrolment = $lesson->enrolment;
+                $results[] = [
+                    'date' => $date.' @ '.Yii::$app->formatter->asTime($lessonTime),
+                    'student' => $enrolment->student->fullName,
+                    'program' => $lesson->course->program->name,
+                    'teacher' => $lesson->teacher->publicIdentity,
+                    'amount' => Yii::$app->formatter->asCurrency(round($lesson->getNetPrice($enrolment), 2)),
+                    'payment' => $lessonPayment['value'],
+                    'balance' => Yii::$app->formatter->asCurrency(round($lesson->getOwingAmount($enrolment->id), 2))
+                ]; 
+            }
         }
-        return $dataProvider;
+        $lessonLineItemsDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['date', 'student', 'program', 'teacher', 'amount', 'payment', 'balance']
+            ],
+            'pagination' => false
+        ]);
+        return $lessonLineItemsDataProvider;
     }
 }
