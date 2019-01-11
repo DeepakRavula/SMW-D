@@ -178,16 +178,16 @@ var updatePayment = {
                 if (parseFloat(payment) > parseFloat(balance)) {
                     $('.field-'+id).addClass('has-error');
                     $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Can't over pay!</div>");
-                    $('.modal-save').attr('disabled', true);
+                    $('.payment-edit-save').attr('disabled', true);
                 } else {
-                    $('.modal-save').attr('disabled', false);
+                    $('.payment-edit-save').attr('disabled', false);
                     $('.field-'+id).removeClass('has-error');
                     $('.field-'+id).find('.help-block').html("");
                 }
             } else {
                 $('.field-'+id).addClass('has-error');
                 $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Amount must be a number!</div>");
-                $('.modal-save').attr('disabled', true);
+                $('.payment-edit-save').attr('disabled', true);
             }
         }
         
