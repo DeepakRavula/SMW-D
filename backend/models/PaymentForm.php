@@ -130,8 +130,8 @@ class PaymentForm extends Model
                                                 $paymentModel->amount = round($creditInvoiceAmount, 2);                                
                                             }
                                             $invoicePayments[$i]['value'] -= round($paymentModel->amount, 2);
-                                            $creditInvoiceAmount = $invoicePayments[$i]['value'];
                                             $invoiceCredits[$j]['value'] -= round($paymentModel->amount, 2);
+                                            $creditInvoiceAmount = $invoiceCredits[$j]['value'];
                                             $invoice->addPayment($creditInvoice, $paymentModel);
                                         } else {
                                             break;
@@ -157,8 +157,8 @@ class PaymentForm extends Model
                                                 $paymentModel->amount = round($creditInvoiceAmount, 2);
                                             }
                                             $lessonPayments[$i]['value'] -= round($paymentModel->amount, 2);
-                                            $creditInvoiceAmount = $lessonPayments[$i]['value'];
                                             $invoiceCredits[$j]['value'] -= round($paymentModel->amount, 2);
+                                            $creditInvoiceAmount = $invoiceCredits[$j]['value'];
                                             $lesson->addPayment($creditInvoice, $paymentModel);
                                         } else {
                                             break;
@@ -189,8 +189,8 @@ class PaymentForm extends Model
                                                 $paymentModel->amount = round($creditInvoiceAmount, 2);                               
                                             }
                                             $groupLessonPayments[$i]['value'] -=round($paymentModel->amount, 2);
-                                            $creditInvoiceAmount = $groupLessonPayments[$i]['value'];
                                             $invoiceCredits[$j]['value'] -= round($paymentModel->amount, 2);
+                                            $creditInvoiceAmount = $invoiceCredits[$j]['value'];
                                             $groupLesson->addPayment($creditInvoice, $paymentModel, $enrolment);
                                         } else {
                                             break;
@@ -227,8 +227,8 @@ class PaymentForm extends Model
                                             $amountToPay = round($invoicePaymentAmount, 2);
                                         }
                                         $invoicePayments[$i]['value'] -= round($amountToPay, 2);
-                                        $creditPaymentAmount = $invoicePayments[$i]['value'];
                                         $paymentCredits[$j]['value'] -= round($amountToPay, 2);
+                                        $creditPaymentAmount = $paymentCredits[$j]['value'];
                                         $invoicePaymentModel = new InvoicePayment();
                                         $invoicePaymentModel->invoice_id = $invoice->id;
                                         $invoicePaymentModel->payment_id = $creditPayment->id;
@@ -257,8 +257,9 @@ class PaymentForm extends Model
                                             $amountToPay = round($lessonPaymentAmount, 2);
                                         }
                                         $lessonPayments[$i]['value'] -= round($amountToPay, 2);
-                                        $creditPaymentAmount = $lessonPayments[$i]['value'];
+                                        
                                         $paymentCredits[$j]['value'] -= round($amountToPay, 2);
+                                        $creditPaymentAmount = $paymentCredits[$j]['value'];
                                         $lessonPaymentModel = new LessonPayment();
                                         $lessonPaymentModel->lessonId = $lesson->id;
                                         $lessonPaymentModel->paymentId = $creditPayment->id;
@@ -293,8 +294,9 @@ class PaymentForm extends Model
                                             $amountToPay = round($groupLessonPaymentAmount, 2);
                                         }
                                         $groupLessonPayments[$i]['value'] -= round($amountToPay, 2);
-                                        $creditPaymentAmount = $groupLessonPayments[$i]['value'];
+                                        
                                         $paymentCredits[$j]['value'] -=  round($amountToPay, 2);
+                                        $creditPaymentAmount = $paymentCredits[$j]['value'];
                                         $lessonPaymentModel = new LessonPayment();
                                         $lessonPaymentModel->lessonId = $groupLesson->id;
                                         $lessonPaymentModel->paymentId = $creditPayment->id;
