@@ -551,30 +551,17 @@ class PrintController extends BaseController
             $customer =  User::findOne(['id' => $model->userId]);
             $searchModel  =  new ProformaInvoiceSearch();
             $searchModel->showCheckBox = false;
-            $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $model->lessonIds]);
-            $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $model->invoiceIds]);
-            $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $model->groupLessonIds]);
-            $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
-                'query' => $paymentLessonLineItems,
-                'pagination' => false,
-            ]);
-            $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
-                'query' => $paymentInvoiceLineItems,
-                'pagination' => false,
-            ]);
-            $groupLessonLineItemsDataProvider = new ActiveDataProvider([
-                'query' => $paymentGroupLessonLineItems,
-                'pagination' => false,
-            ]);
-            
             $paymentsLineItemsDataProvider = $model->getUsedCredit();
+            $invoiceLineItemsDataProvider = $model->getInvoicesPaid();
+            $lessonLineItemsDataProvider = $model->getLessonsPaid();
+            $groupLessonLineItemsDataProvider = $model->getGroupLessonsPaid();
 
             $this->layout = '/print';
 
             return $this->render('/receive-payment/print/view', [
                 'model'                        => !empty($model) ? $model : new Payment(),
-                'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
-                'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
+                'lessonLineItemsDataProvider' =>  $lessonLineItemsDataProvider,
+                'invoiceLineItemsDataProvider' =>  $invoiceLineItemsDataProvider,
                 'groupLessonLineItemsDataProvider' =>  $groupLessonLineItemsDataProvider,
                 'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
                 'searchModel'                  =>  $searchModel,
