@@ -170,7 +170,7 @@ use yii\bootstrap\ActiveForm;
     $pjaxId = 'lesson-line-item-listing-pr';
 } ?>
 
-<?php Pjax::begin(['enablePushState' => false, 'id' => $pjaxId, 'timeout' => 6000,]); ?>
+<?php Pjax::begin(['enablePushState' => false, 'id' => $pjaxId, 'timeout' => 12000,]); ?>
 <?php if ($searchModel->showCheckBox) : ?>
     <?= GridView::widget([
         'options' => ['id' => $gridId],
