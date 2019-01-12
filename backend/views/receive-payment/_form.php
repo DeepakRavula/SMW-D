@@ -319,7 +319,9 @@ use yii\bootstrap\Html;
                         $('#popup-modal').modal('hide'); 
                     }
                 } else {
+                    alert('sss');
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                    $('.recive-payment-modal-save').attr('disabled', true);
                     $(document).trigger("modal-error", response);
                 }
                 modal.enableButtons();

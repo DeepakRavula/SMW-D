@@ -439,6 +439,7 @@ class PaymentController extends BaseController
             $model->load($request->post());
             $payment->load(Yii::$app->request->get());
             $payment->load($request->post());
+            if ($model->validate()) {
             $payment->amount = $model->amount;
             $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
             $payment->notes = $model->notes;
@@ -475,6 +476,13 @@ class PaymentController extends BaseController
                 'data' => $printData,
                 'url' => $url,
             ];
+        } else {
+            $response = [
+                'status' => false,
+                'errors' => ActiveForm::validate($model),
+            ]; 
+        }
+
         } else {
             $data = $this->renderAjax('/receive-payment/_form', [
                 'model' => $model,
