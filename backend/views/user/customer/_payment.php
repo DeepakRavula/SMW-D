@@ -103,9 +103,8 @@ $columns = [
 	 var payment_count = '<?= $count; ?>' ;
 		if (payment_count > 10) {
 			$(".more-payment").show();
-			var dateRange = "";
 			var customer = '<?= $userModel->userProfile->firstname; ?>' ;
-			var params = $.param({ 'PaymentSearch[customer]': customer, 'PaymentSearch[dateRange]': dateRange });
+			var params = $.param({ 'PaymentSearch[customer]': customer, 'PaymentSearch[isDate]': false });
 			var url = '<?= Url::to(['payment/index']); ?>?' + params;
 			$('.show-more').attr("href", url);
 		}

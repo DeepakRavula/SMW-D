@@ -20,6 +20,7 @@ class PaymentSearch extends Payment
     public $startDate;
     public $endDate;
     public $dateRange;
+    public $isDate;
     /**
      * {@inheritdoc}
      */
@@ -27,7 +28,7 @@ class PaymentSearch extends Payment
     {
         return [
             [['startDate', 'endDate', 'customer', 'dateRange', 'amount', 'user_id', 
-                'paymentMethod', 'number'], 'safe'],
+                'paymentMethod', 'number', 'isDate'], 'safe'],
         ];
     }
 
@@ -47,9 +48,11 @@ class PaymentSearch extends Payment
      */
     public function search($params)
     {
-        $this->startDate = (new \DateTime())->format('M d, Y');
-        $this->endDate = (new \DateTime())->format('M d, Y');
-        $this->dateRange = $this->startDate.' - '.$this->endDate;
+        if ($this->isDate) {
+            $this->startDate = (new \DateTime())->format('M d, Y');
+            $this->endDate = (new \DateTime())->format('M d, Y');
+            $this->dateRange = $this->startDate.' - '.$this->endDate;
+        }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Payment::find()
             ->location($locationId)
