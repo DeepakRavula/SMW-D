@@ -35,7 +35,6 @@ use yii\bootstrap\Html;
         ]);
 
         array_push($columns, [
-            'attribute' => 'teacher',
             'headerOptions' => ['class' => 'text-left'],
             'label' => 'Teacher',
             'value' => 'teacher'
@@ -56,7 +55,7 @@ use yii\bootstrap\Html;
         ]);
 
         array_push($columns, [
-            'attribute' => 'balance',
+            'value' => 'balance',
             'label' => 'Balance',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']

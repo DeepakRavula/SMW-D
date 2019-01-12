@@ -555,7 +555,8 @@ class PrintController extends BaseController
             $invoiceLineItemsDataProvider = $model->getInvoicesPaid();
             $lessonLineItemsDataProvider = $model->getLessonsPaid();
             $groupLessonLineItemsDataProvider = $model->getGroupLessonsPaid();
-
+            $paymentNew = Payment::findOne(['id' => $model->paymentId]);
+            
             $this->layout = '/print';
             return $this->render('/receive-payment/print/view', [
                 'model'                        => !empty($model) ? $model : new Payment(),
@@ -565,6 +566,7 @@ class PrintController extends BaseController
                 'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
                 'searchModel'                  =>  $searchModel,
                 'customer'                     =>   $customer,
+                'payment'                      => $paymentNew,
             ]);
         }
     }	
