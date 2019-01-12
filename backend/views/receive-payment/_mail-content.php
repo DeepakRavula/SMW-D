@@ -11,7 +11,7 @@ use yii\bootstrap\Html;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 ?>
-
+<?php if($payment): ?>
 <div>
     <h4>Thank you for your payment!</h4>
 </div>
@@ -20,7 +20,7 @@ use insolita\wgadminlte\LteConst;
     in the amount of <?= $model->amount; ?> via <?= $payment->paymentMethod->name; ?>. We have distributed it to the items below.
     </h4>
 </div>
-
+<?php endif; ?>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
 <?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>
