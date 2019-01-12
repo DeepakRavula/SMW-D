@@ -14,6 +14,8 @@ use common\models\UserEmail;
         'emailTemplate' => $emailTemplate,
         'searchModel' => $searchModel,
         'customer' => $customer,
+        'payment' => $payment,
+        'model' => $paymentFormModel,
     ]);
     $model->to = $emails;
     $data = null;
