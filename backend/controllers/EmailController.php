@@ -259,6 +259,8 @@ class EmailController extends BaseController
             $lessonLineItemsDataProvider = $model->getLessonsPaid();
             $groupLessonLineItemsDataProvider = $model->getGroupLessonsPaid();
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_RECEIPT]);
+            $paymentNew = Payment::findOne(['id' => $model->paymentId]);
+
             $data = $this->renderAjax('/mail/receipt', [
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -270,6 +272,8 @@ class EmailController extends BaseController
                 'emailTemplate' => $emailTemplate,
                 'emails' => !empty($customer->email) ? $customer->email : null,
                 'subject' => $emailTemplate->subject ?? 'Receipt from Arcadia Academy of Music',
+                'payment' => $paymentNew,
+                'paymentFormModel' => $model,
             ]);
             return [
                 'status' => true,
