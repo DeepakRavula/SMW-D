@@ -264,4 +264,10 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return $this->hasMany(ProformaLineItem::className(), ['proformaInvoiceId' => 'id'])
             ->onCondition(['proforma_line_item.isDeleted' => false]);
     }
+
+    public function getReminderNotes() 
+    {
+		$reminderNote =  ReminderNote::find()->one();
+		return $reminderNote->notes; 
+    }
 }

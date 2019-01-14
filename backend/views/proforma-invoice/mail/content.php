@@ -58,3 +58,4 @@
 <br>
 <?= $emailTemplate->footer ?? 'Thank you 
 Arcadia Academy of Music Team.'; ?>
+<div><?= $model->reminderNotes; ?></div>
