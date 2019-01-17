@@ -8,7 +8,6 @@ use common\models\Invoice;
 use common\models\User;
 use common\models\Lesson;
 use common\models\Location;
-use common\models\InvoiceLineItem;
 
 class InvoiceController extends Controller
 {
