@@ -129,7 +129,7 @@ $this->params['action-button'] = $this->render('_action-button', [
         ]);
         ?>
         <?= $this->render('customer/_payment', [
-            'paymentDataProvider' => $paymentDataProvider,
+            'paymentsDataProvider' => $paymentsDataProvider,
             'count' => $paymentCount,
             'userModel' => $model,
         ]);

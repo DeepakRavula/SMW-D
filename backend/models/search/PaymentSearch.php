@@ -20,7 +20,7 @@ class PaymentSearch extends Payment
     public $startDate;
     public $endDate;
     public $dateRange;
-    public $isDate;
+    public $isShowMore;
     /**
      * {@inheritdoc}
      */
@@ -28,7 +28,7 @@ class PaymentSearch extends Payment
     {
         return [
             [['startDate', 'endDate', 'customer', 'dateRange', 'amount', 'user_id', 
-                'paymentMethod', 'number', 'isDate'], 'safe'],
+                'paymentMethod', 'number', 'isShowMore'], 'safe'],
         ];
     }
 
@@ -48,11 +48,9 @@ class PaymentSearch extends Payment
      */
     public function search($params)
     {
-        if ($this->isDate) {
-            $this->startDate = (new \DateTime())->format('M d, Y');
-            $this->endDate = (new \DateTime())->format('M d, Y');
-            $this->dateRange = $this->startDate.' - '.$this->endDate;
-        }
+        $this->startDate = (new \DateTime())->format('M d, Y');
+        $this->endDate = (new \DateTime())->format('M d, Y');
+        $this->dateRange = $this->startDate.' - '.$this->endDate;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Payment::find()
             ->location($locationId)
@@ -98,6 +96,9 @@ class PaymentSearch extends Payment
         if ($this->number) {
             $query->andFilterWhere(['payment.id' => $this->number]);
         } 
+        if ($this->isShowMore) {
+            $this->dateRange = "";
+        }
         if ($this->dateRange) {
             list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
             $query->andWhere(['between', 'DATE(payment.date)',

@@ -85,7 +85,7 @@ $columns = [
 <div>
 <?php Pjax::begin(['id' => 'customer-payment-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
     <?= KartikGridView::widget([
-		'dataProvider' => $paymentDataProvider,
+		'dataProvider' => $paymentsDataProvider,
 		'options' => ['class' => ''],
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
@@ -104,7 +104,7 @@ $columns = [
 		if (payment_count > 10) {
 			$(".more-payment").show();
 			var customer = '<?= $userModel->userProfile->firstname; ?>' ;
-			var params = $.param({ 'PaymentSearch[customer]': customer, 'PaymentSearch[isDate]': false });
+			var params = $.param({ 'PaymentSearch[customer]': customer, 'PaymentSearch[isShowMore]': true });
 			var url = '<?= Url::to(['payment/index']); ?>?' + params;
 			$('.show-more').attr("href", url);
 		}

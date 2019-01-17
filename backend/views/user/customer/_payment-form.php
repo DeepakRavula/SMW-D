@@ -71,7 +71,7 @@ $columns = [
     ],
 ];
 ?>
-<?php Pjax::begin(['id' => 'customer-payment-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
+<?php Pjax::begin(['id' => 'customer-payment', 'timeout' => 6000, 'enablePushState' => false]); ?>
     <?= KartikGridView::widget([
 		'dataProvider' => $paymentDataProvider,
 		'options' => ['class' => ''],
@@ -79,4 +79,11 @@ $columns = [
 		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
 		'columns' => $columns,
 	]); ?>
-<?php Pjax::end(); ?>
+<?php Pjax::end(); ?> 
+
+<script>
+	 $(document).ready(function() {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Payment</h4>');
+		
+    });
+</script>
