@@ -13,10 +13,10 @@ use insolita\wgadminlte\LteConst;
 ?>
 <?php if($payment): ?>
 <div>
-<h4>Thank you for your payment!</h4>
+<h4 class = "payment-receipt">Thank you for your payment!</h4>
 </div>
 <div>
-<h4>This is to acknowledge the receipt of payment from <?= $customer->userProfile->firstname .' '.$customer->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($payment->date); ?> 
+<h4 class = "payment-receipt">This is to acknowledge the receipt of payment from <?= $customer->userProfile->firstname .' '.$customer->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($payment->date); ?> 
 in the amount of <?= $model->amount; ?> via <?= $payment->paymentMethod->name; ?>. We have distributed it to the items below.</h4></div>
 <?php endif; ?>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
