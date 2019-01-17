@@ -84,6 +84,7 @@ $columns = [
 <script>
 	 $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Payment</h4>');
-		
+		$('.modal-save').hide();
+		$('.modal-cancel').hide();
     });
 </script>

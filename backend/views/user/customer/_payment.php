@@ -11,11 +11,6 @@ use yii\widgets\Pjax;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 
-/* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
-
-// $this->title = 'Payments';
-// $this->params['action-button'] = $this->render('_action-button');
 ?>
 
 <?php
@@ -112,7 +107,6 @@ $columns = [
 
 	$(document).on('click', '#customer-payment-listing  tbody > tr', function () {
         var paymentId = $(this).data('key');
-		alert(paymentId);
 		var params = $.param({'paymentId': paymentId });
         var customUrl = '<?= Url::to(['payment/customer-payment-view']); ?>?' +params;
         $.ajax({
