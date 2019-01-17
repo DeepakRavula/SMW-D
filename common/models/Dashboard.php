@@ -56,9 +56,8 @@ class Dashboard extends \yii\db\ActiveRecord
         foreach ($datePeriod as $dates) {
             $fromDate = $dates->format('Y-m-d');
             $toDate = $dates->format('Y-m-t');
-            $revenue = 0.00;
             $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-            $invoiceLineItems =  InvoiceLineItem::find()
+            $revenue =  InvoiceLineItem::find()
                         ->notDeleted()
                         ->joinWith(['invoice' => function ($query) use ($locationId) {
                             $query->notDeleted()
@@ -68,10 +67,8 @@ class Dashboard extends \yii\db\ActiveRecord
                                 ->location($locationId);
                         }])
                         ->andWhere(['between', 'DATE(invoice.date)', $fromDate, $toDate])
-                        ->all();
-            foreach ($invoiceLineItems as $invoiceLineItem) {
-                $revenue+= $invoiceLineItem->netPrice;
-            }            
+                        ->sum('invoice_line_item.priceAfterDiscounts');
+                      
 
             $monthlyRevenue = !empty($revenue) ? (int) $revenue : 0;
             array_push($monthlyIncome, $monthlyRevenue);

@@ -8,6 +8,7 @@ use common\models\Invoice;
 use common\models\User;
 use common\models\Lesson;
 use common\models\Location;
+use common\models\InvoiceLineItem;
 
 class InvoiceController extends Controller
 {
@@ -24,7 +25,7 @@ class InvoiceController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'trigger-save' ? ['locationId'] : []
+            $actionID == 'trigger-save' || 'set-net-price' ? ['locationId'] : []
         );
     }
 
