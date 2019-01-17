@@ -25,7 +25,7 @@ class InvoiceController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'trigger-save' || 'set-net-price' ? ['locationId'] : []
+            $actionID == 'trigger-save' ? ['locationId'] : []
         );
     }
 
