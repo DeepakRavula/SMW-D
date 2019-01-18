@@ -355,6 +355,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $taxStatus = TaxStatus::findOne(['name' => $this->tax_status]);
             $this->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
             $this->tax_rate = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
+            $this->netTotal = $this->netPrice;
         }
         return parent::beforeSave($insert);
     }
