@@ -161,9 +161,7 @@ class LessonPayment extends \yii\db\ActiveRecord
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
         }
-        foreach ($this->lesson->paymentRequests as $paymentRequest) {
-            $paymentRequest->save();
-        }
+        
         return parent::afterSave($insert, $changedAttributes);
     }
 
