@@ -13,9 +13,9 @@ use yii\widgets\Pjax;
     <div class="dropdown">
         <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li><a id="receive-payment" href="#">Receive Payment</a></li>
             <li><a id="lesson-mail-button" href="#">Mail</a></li>
             <?php if ($model->isPrivate()) : ?>
+                <li><a id="receive-payment" href="#">Receive Payment</a></li>
                 <?php if ($model->canExplode()) : ?>
                     <li><a id="split-lesson" href="#">Explode</a></li>
                 <?php endif; ?>
