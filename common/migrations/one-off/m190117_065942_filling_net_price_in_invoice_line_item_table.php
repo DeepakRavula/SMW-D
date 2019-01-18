@@ -27,7 +27,7 @@ class m190117_065942_filling_net_price_in_invoice_line_item_table extends Migrat
        $lineItems = InvoiceLineItem::find()
                         ->all();
         foreach ($lineItems as $lineItem) {
-            $lineItem->updateAttributes(['priceAfterDiscounts' => $lineItem->netPrice]);
+            $lineItem->updateAttributes(['netTotal' => $lineItem->netPrice]);
         }
 
     }

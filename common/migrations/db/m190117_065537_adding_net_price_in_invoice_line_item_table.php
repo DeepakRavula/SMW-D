@@ -12,7 +12,7 @@ class m190117_065537_adding_net_price_in_invoice_line_item_table extends Migrati
      */
     public function safeUp()
     {
-        $this->addColumn('invoice_line_item', 'priceAfterDiscounts', $this->decimal(10, 4)->notNull()->defaultValue(0.00));
+        $this->addColumn('invoice_line_item', 'netTotal', $this->decimal(10, 4)->notNull()->defaultValue(0.00));
     }
 
     /**

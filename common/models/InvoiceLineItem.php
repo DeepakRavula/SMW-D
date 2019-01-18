@@ -94,7 +94,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             },
             ],
             ['amount', 'default', 'value' => 0.0000],
-            [['priceAfterDiscount'], 'number'],
+            [['netTotal'], 'number'],
             [['royaltyFree', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 
                 'tax_rate', 'userName', 'cost', 'code', 'rate', 'isDeleted', 'lessonCanBeUnscheduled'], 'safe'],
         ];
@@ -344,7 +344,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $this->tax_rate    = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
             $this->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
             $this->tax_status  = $taxStatus->name;
-            $this->priceAfterDiscounts = $this->netPrice;
+            $this->netTotal = $this->netPrice;
             if (!isset($this->royaltyFree)) {
                 $this->royaltyFree = $this->item->royaltyFree;
             }
