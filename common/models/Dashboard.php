@@ -67,7 +67,7 @@ class Dashboard extends \yii\db\ActiveRecord
                                 ->location($locationId);
                         }])
                         ->andWhere(['between', 'DATE(invoice.date)', $fromDate, $toDate])
-                        ->sum('invoice_line_item.priceAfterDiscounts');
+                        ->sum('invoice_line_item.netTotal');
                       
 
             $monthlyRevenue = !empty($revenue) ? (int) $revenue : 0;
