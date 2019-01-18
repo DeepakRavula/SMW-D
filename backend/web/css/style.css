@@ -556,4 +556,7 @@ dl {
     margin-left:35px;
     margin-right:35px;
 }
-     
+.payment-receipt{
+	font-weight: normal;
+	font-size: 14px;
+}

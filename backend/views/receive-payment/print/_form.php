@@ -6,10 +6,10 @@ use yii\bootstrap\Html;
 ?>
 
 <div>
-    <h4>Thank you for your payment!</h4>
+    <h4 class = "payment-receipt">Thank you for your payment!</h4>
 </div>
 <div>
-    <h4>This is to acknowledge the receipt of payment from <?= $paymentModel->userProfile->firstname .' '.$paymentModel->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($paymentModel->date); ?> 
+    <h4 class = "payment-receipt">This is to acknowledge the receipt of payment from <?= $paymentModel->userProfile->firstname .' '.$paymentModel->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($paymentModel->date); ?> 
 in the amount of <?= $model->amount; ?> via <?= $paymentModel->paymentMethod->name; ?>. We have distributed it to the items below.</h4>
 </div>
 
