@@ -14,6 +14,7 @@ use common\models\InvoicePayment;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\data\ActiveDataProvider;
+use common\models\ProformaInvoice;
 
 /**
  * This is the model class for table "course".
@@ -402,6 +403,21 @@ class PaymentForm extends Model
                     }
                 }
             }
+        }
+
+        $lessonIds = $this->getLessonIds();
+        $paymentRequests = ProformaInvoice::find()
+            ->notDeleted()
+            ->andWhere(['proforma_invoice.userId' => $this->userId])
+            ->joinWith(['proformaLineItems' => function ($query) use ($lessonIds) {
+                $query->joinWith(['lessonLineItem' => function ($query) use ($lessonIds) {
+                    $query->andWhere(['proforma_item_lesson.lessonId' => $lessonIds]);
+                }]);
+            }])
+            ->groupBy('proforma_invoice.id')
+            ->all();
+        foreach ($paymentRequests as $paymentRequest) {
+            $paymentRequest->save();
         }
         return true;
     }
