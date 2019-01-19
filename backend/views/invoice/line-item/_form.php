@@ -65,3 +65,67 @@ use yii\helpers\Url;
     </dl>
     <?php ActiveForm::end(); ?>
 </div>
+<script>
+ $(document).ready(function() {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Line Item</h4>');
+        $('.modal-cancel').show();
+        $('.modal-save').hide();
+        $('.modal-save-all').addClass('edit-line-item-save');
+        $('.modal-save-all').show();
+        $('.modal-save-all').text('save');
+        $('#modal-back').hide();
+        $('#popup-modal .modal-dialog').css({'width': '600px'});
+        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+    });
+    $(document).off('click', '.edit-line-item-save').on('click', '.edit-line-item-save', function () {
+        var royaltyFreeisChecked = $('#invoicelineitem-royaltyfree').is(':checked');
+        if(royaltyFreeisChecked) {
+        bootbox.confirm({
+            message: "Are you sure you want to save this item as royalty free?",
+                callback: function(result){
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url: $('#modal-form').attr('action'),
+                            type: 'post',
+                            dataType: "json",
+                            data: $('#modal-form').serialize(),
+                            success: function (response)
+                            {
+                                if (response.status) {
+                                    //$.pjax.reload({container: '#item-listing', timeout: 6000});
+                                    $('#popup-modal').modal('hide');
+                                } else {
+                                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                       });
+                       return false;
+                    } else {
+                        $('.bootbox').modal('hide');
+                        return false;
+                    }
+                }
+        });
+        }
+        else {
+            $.ajax({
+                            url: $('#modal-form').attr('action'),
+                            type: 'post',
+                            dataType: "json",
+                            data: $('#modal-form').serialize(),
+                            success: function (response)
+                            {
+                                if (response.status) {
+                                    $.pjax.reload({container: '#item-listing', timeout: 6000});
+                                    $('#popup-modal').modal('hide');
+                                } else {
+                                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                       });
+
+        }
+        return false;
+    });  
+</script>
