@@ -107,8 +107,8 @@ $columns = [
 
 	$(document).on('click', '#customer-payment-listing  tbody > tr', function () {
         var paymentId = $(this).data('key');
-		var params = $.param({'paymentId': paymentId });
-        var customUrl = '<?= Url::to(['payment/customer-payment-view']); ?>?' +params;
+		var params = $.param({'PaymentEditForm[paymentId]': paymentId });
+        var customUrl = '<?= Url::to(['payment/view']); ?>?' +params;
         $.ajax({
             url: customUrl,
             type: 'get',
