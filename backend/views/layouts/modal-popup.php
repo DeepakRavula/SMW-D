@@ -26,7 +26,7 @@ Modal::begin([
 <script>
     var modal = {
         disableButtons: function() {
-            $('.modal-save').attr('disabled', true);
+            $('#modal-save').attr('disabled', true);
             $('.modal-button').attr('disabled', true);
             $('.modal-save-all').attr('disabled', true);
             $('.modal-back').attr('disabled', true);
@@ -35,7 +35,7 @@ Modal::begin([
             $('.modal-mail').attr('disabled', true);
         },
         enableButtons: function() {
-            $('.modal-save').attr('disabled', false);
+            $('#modal-save').attr('disabled', false);
             $('.modal-button').attr('disabled', false);
             $('.modal-delete').attr('disabled', false);
             $('.modal-cancel').attr('disabled', false);
@@ -46,11 +46,13 @@ Modal::begin([
         restoreButtonSettings: function() {
             $('.modal-delete').hide();
             $('.modal-button').hide();
-            $('.modal-save').text('Save');
+            $('#modal-save').text('Save');
+            $('#modal-save').removeClass();
+            $('#modal-save').addClass('btn btn-info modal-save');
             $('.modal-save-all').hide();
             $('.modal-back').hide();
             $('.modal-mail').hide();
-            $('.modal-save').attr('message', null);
+            $('#modal-save').attr('message', null);
             $('#modal-popup-warning-notification').fadeOut();
         },
         renderUrlData: function(url) {

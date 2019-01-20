@@ -55,6 +55,9 @@
         <strong> Notes: </strong><?php echo $model->notes; ?>
 		<?php endif;?>
     </div>
+<div>
+    <?= $model->reminderNotes; ?>
+</div>
 <script>
     $(document).ready(function() {
         window.print();

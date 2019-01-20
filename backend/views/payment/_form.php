@@ -59,6 +59,8 @@ use yii\bootstrap\Html;
         </div>
     </div>
 
+    <?= $form->field($model, 'amountToDistribute')->hiddenInput()->label(false); ?>
+
     <?php $lessonCount = $lessonDataProvider->getCount(); ?>
     <?php if ($lessonCount > 0) : ?>
         <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
@@ -103,7 +105,6 @@ use yii\bootstrap\Html;
         </div>
     </div>
 
-    <?= $form->field($model, 'amountToDistribute')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 
 </div>
@@ -113,33 +114,36 @@ use yii\bootstrap\Html;
 var lockTextBox = false;
 var updatePayment = {
         setAction: function() {
-            var lessonIds = new Array();
-            var groupLessonIds = new Array();
-            var invoiceIds = new Array();
             var lessonPayments = new Array();
             var groupLessonPayments = new Array();
             var invoicePayments = new Array();
             $('.lesson-line-items').each(function() {
-                lessonIds.push($(this).data('key'));
+                var lessonId = $(this).data('key');
                 var amount = $(this).find('.payment-amount').val();
-                lessonPayments.push($.isEmptyObject(amount) ? 0.0 : amount);
+                lessonPayments.push({ id: lessonId, value: $.isEmptyObject(amount) ? 0.0 : amount });
             });
             $('.group-lesson-line-items').each(function() {
-                groupLessonIds.push($(this).data('key'));
+                var groupLessonId = $(this).data('key');
                 var amount = $(this).find('.payment-amount').val();
-                groupLessonPayments.push($.isEmptyObject(amount) ? 0.0 : amount);
+                groupLessonPayments.push({ id: groupLessonId, value: $.isEmptyObject(amount) ? 0.0 : amount });
             });
             $('.invoice-line-items').each(function() {
-                invoiceIds.push($(this).data('key'));
+                var invoiceId = $(this).data('key');
                 var amount = $(this).find('.payment-amount').val();
-                invoicePayments.push($.isEmptyObject(amount) ? 0.0 : amount);
+                invoicePayments.push({ id: invoiceId, value: $.isEmptyObject(amount) ? 0.0 : amount });
             });
-            var params = $.param({ 'PaymentEditForm[lessonIds]': lessonIds, 'PaymentEditForm[groupLessonIds]': groupLessonIds, 
-                'PaymentEditForm[invoiceIds]': invoiceIds, 'PaymentEditForm[lessonPayments]': lessonPayments, 
-                'PaymentEditForm[invoicePayments]': invoicePayments, 'PaymentEditForm[groupLessonPayments]': groupLessonPayments });
-            var url = '<?= Url::to(['payment/update', 'id' => $paymentModel->id]) ?>&' + params;
-            $('#modal-form').attr('action', url);
-            return false;
+            var formData = $('#modal-form').serializeArray();
+            var paymentDataObject = { 'PaymentEditForm[lessonPayments]': lessonPayments, 'PaymentEditForm[groupLessonPayments]': groupLessonPayments, 
+                'PaymentEditForm[invoicePayments]': invoicePayments
+            };
+            var formDataObj = {};
+            var allData = $.each(formData, function( index, value ) {
+                var key = value.name;
+                formDataObj[key] = value.value;
+            });
+            var paymentDataObject = $.extend({}, formDataObj, paymentDataObject);
+            var data = $.param(paymentDataObject);
+            return data;
         },
         calcAmountNeeded : function() {
             var amountReceived = '<?= $model->amount; ?>';
@@ -174,34 +178,68 @@ var updatePayment = {
                 if (parseFloat(payment) > parseFloat(balance)) {
                     $('.field-'+id).addClass('has-error');
                     $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Can't over pay!</div>");
-                    $('.modal-save').attr('disabled', true);
+                    $('.payment-edit-save').attr('disabled', true);
                 } else {
-                    $('.modal-save').attr('disabled', false);
+                    $('.payment-edit-save').attr('disabled', false);
                     $('.field-'+id).removeClass('has-error');
                     $('.field-'+id).find('.help-block').html("");
                 }
             } else {
                 $('.field-'+id).addClass('has-error');
                 $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Amount must be a number!</div>");
-                $('.modal-save').attr('disabled', true);
+                $('.payment-edit-save').attr('disabled', true);
             }
         }
         
         updatePayment.calcAmountNeeded();
-        updatePayment.setAction();
         return false;
     });
 
     $(document).off('change', '#paymenteditform-amount').on('change', '#paymenteditform-amount', function () {
         updatePayment.calcAmountNeeded();
-        updatePayment.setAction();
         return false;
     });
 
     $(document).off('keyup', '#paymenteditform-amount').on('keyup', '#paymenteditform-amount', function () {
         lockTextBox = true;
         updatePayment.calcAmountNeeded();
-        updatePayment.setAction();
+        return false;
+    });
+
+    $(document).off('click', '.payment-edit-save').on('click', '.payment-edit-save', function () {
+        $('#modal-spinner').show();
+	    modal.disableButtons();
+        updatePayment.calcAmountNeeded();
+        var data = updatePayment.setAction();
+        $.ajax({
+            url: $('#modal-form').attr('action'),
+            type: 'post',
+            dataType: "json",
+            data: data,
+            success: function (response)
+            {
+                $('#modal-spinner').hide();
+                if (response.status)
+                {
+                    modal.restoreButtonSettings();
+                    $('#modal-spinner').hide();
+                    if (!$.isEmptyObject(response.data)) {
+                        $('#modal-content').html(response.data);
+                        $('.modal-back').show();
+                        $(document).trigger("modal-next", response);
+                    } else if (!$.isEmptyObject(response.dataUrl)) {
+                        modal.renderUrlData(response.dataUrl);
+                    } else {
+                        $(document).trigger("modal-success", response);
+                        $('#popup-modal').modal('hide'); 
+                    }
+                } else {
+                    $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                    $(document).trigger("modal-error", response);
+                }
+                modal.enableButtons();
+            }
+        });
         return false;
     });
 
@@ -212,10 +250,11 @@ var updatePayment = {
         $('.modal-save-all').hide();
         $('.modal-delete').hide();
         $('.modal-mail').hide();
+        $('#modal-save').removeClass('modal-save');
+        $('#modal-save').addClass('payment-edit-save');
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
 
         updatePayment.calcAmountNeeded();
-        updatePayment.setAction();
     });
 </script>

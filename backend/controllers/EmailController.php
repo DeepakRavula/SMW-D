@@ -57,7 +57,7 @@ class EmailController extends BaseController
         ];
     }
     public function actionSend()
-    {
+    { 
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $location = Location::findOne(['id' => $locationId]);
         $model = new EmailForm();
@@ -68,7 +68,8 @@ class EmailController extends BaseController
                 ])
                 ->setFrom($location->email)
                 ->setReplyTo($location->email)
-                ->setSubject($model->subject);
+                ->setSubject($model->subject)
+                ->setBcc($model->bcc);
             Yii::$app->mailer->sendMultiple($content);
             if (!empty($model->invoiceId)) {
                 $invoice = Invoice::findOne(['id' => $model->invoiceId]);
@@ -247,96 +248,38 @@ class EmailController extends BaseController
     }
     public function actionReceipt()
     {
-        $model  = new PaymentForm();
+        $model = new PaymentForm();
         $request = Yii::$app->request;
         if ($model->load($request->get())) {
-        $customer =  User::findOne(['id' => $model->userId]);
-        $searchModel  =  new ProformaInvoiceSearch();
-        $searchModel->showCheckBox = false;
-        $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $model->lessonIds]);
-        $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $model->invoiceIds]);
-        $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $model->groupLessonIds]);
-        $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
-        'query' => $paymentLessonLineItems,
-        'pagination' => false,
-    ]);
-        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $paymentInvoiceLineItems,
-            'pagination' => false,
-        ]);
-        $groupLessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $paymentGroupLessonLineItems,
-            'pagination' => false,
-        ]);
-        
-        $results = [];
-      if(!empty($model->paymentCreditIds))  {    
-          $paymentCreditIds = $model->paymentCreditIds; 
-          $paymentCredits   = $model->paymentCredits;          
-      foreach($paymentCreditIds as $key =>  $paymentCreditId) {
-          $paymentCredit = Payment::findOne(['id' => $paymentCreditId]);
-          $results[] = [
-            'id' => $paymentCredit->id,
-            'type' => 'Payment Credit',
-            'reference' => $paymentCredit->reference,
-            'amount' => $paymentCredit->amount,
-            'amountUsed' => $model->paymentCredits[$key],
-        ];
-      }  
-    }
-      if(!empty($invoiceCreditIds)) {  
-        $invoiceCreditIds = $model->invoiceCreditIds; 
-        $invoiceCredits   = $model->invoiceCredits;  
-      foreach($invoiceCreditIds as $key =>  $invoiceCreditId) {
-        $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
-        $results[] = [
-            'id' => $invoiceCredit->id,
-            'type' => 'Invoice Credit',
-            'reference' => $invoiceCredit->getInvoiceNumber(),
-            'amount' => abs($invoiceCredit->balance),
-            'amountUsed' => $model->invoiceCredits[$key],
-      ];
-    }
-    
-} 
-$paymentNew = Payment::findOne(['id' => $model->paymentId]);
-if (!empty($paymentNew)) {
-$results[] = [
-    'id' => $paymentNew->id,
-    'type' => 'Payment',
-    'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
-    'amount' => $paymentNew->amount,
-    'amountUsed' => $model->amount,
-]; 
-}
-     $paymentsLineItemsDataProvider = new ArrayDataProvider([
-        'allModels' => $results,
-        'sort' => [
-            'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
-        ]
-     ]);
+            $customer = User::findOne(['id' => $model->userId]);
+            $searchModel = new ProformaInvoiceSearch();
+            $searchModel->showCheckBox = false;
+            $paymentsLineItemsDataProvider = $model->getUsedCredit();
+            $invoiceLineItemsDataProvider = $model->getInvoicesPaid();
+            $lessonLineItemsDataProvider = $model->getLessonsPaid();
+            $groupLessonLineItemsDataProvider = $model->getGroupLessonsPaid();
+            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_RECEIPT]);
+            $paymentNew = Payment::findOne(['id' => $model->paymentId]);
 
-     $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_RECEIPT]);
-     $data  =   $this->renderAjax('/mail/receipt', [
-        'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
-        'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
-        'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
-        'searchModel'                  =>  $searchModel,
-        'customer'                     =>   $customer,
-        'model' => new EmailForm(),
-        'emailTemplate'                =>   $emailTemplate,
-        'emails' => !empty($customer->email) ?$customer->email : null,
-        'subject' => $emailTemplate->subject ?? 'Receipt from Arcadia Academy of Music',
-    ]);
-    
-    $post = Yii::$app->request->post();
-    if (!$post) {
-        return [
-            'status' => true,
-            'data' => $data,
-        ];
-    }
-}
+            $data = $this->renderAjax('/mail/receipt', [
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'paymentsLineItemsDataProvider' => $paymentsLineItemsDataProvider,
+                'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+                'searchModel' => $searchModel,
+                'customer' => $customer,
+                'model' => new EmailForm(),
+                'emailTemplate' => $emailTemplate,
+                'emails' => !empty($customer->email) ? $customer->email : null,
+                'subject' => $emailTemplate->subject ?? 'Receipt from Arcadia Academy of Music',
+                'payment' => $paymentNew,
+                'paymentFormModel' => $model,
+            ]);
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
     }
 
     public function actionPayment($id) 

@@ -95,8 +95,8 @@ $this->params['show-all'] = $this->render('_button', [
                 {
                     if(response.status)
                     {
-                        $('#item-edit-content').html(response.data);
-                        $('#item-edit-modal').modal('show');
+                        $('#popup-modal').modal('show');
+                        $('#modal-content').html(response.data);
                     } else {
                         $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }

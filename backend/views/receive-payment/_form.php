@@ -139,73 +139,69 @@ use yii\bootstrap\Html;
     var lockTextBox = false;
     var receivePayment = {
         setAction: function() {
-            var invoiceIds = null;
-            if ($("#invoice-line-item-grid").length > 0) {
-                var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            }
             var prId = '<?= $prId; ?>';
             var userId = $('#customer-payment').val();
-            var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
-            var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
-            var paymentCreditIds = new Array();
-            var invoiceCreditIds = new Array();
+            
             var lessonPayments = new Array();
             var groupLessonPayments = new Array();
             var invoicePayments = new Array();
+
             var paymentCredits = new Array();
             var invoiceCredits = new Array();
+
             var canUsePaymentCredits = 0;
             var canUseInvoiceCredits = 0;
+
             $('.credit-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     var amount = $(this).find('.credit-amount').val();
                     var creditId = $(this).find('.credit-type').attr('creditId');
                     var creditType = $(this).find('.credit-type').text();
                     if (creditType == 'Invoice Credit') {
-                        invoiceCredits.push(amount);
+                        invoiceCredits.push({ id: creditId, value: amount });
                         canUseInvoiceCredits = 1;
-                        invoiceCreditIds.push(creditId);
                     } 
                     if (creditType == 'Payment Credit') {
-                        paymentCredits.push(amount);
+                        paymentCredits.push({ id: creditId, value: amount });
                         canUsePaymentCredits = 1;
-                        paymentCreditIds.push(creditId);
                     }
                 }
             });
             $('.lesson-line-items').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    lessonPayments.push($(this).find('.payment-amount').val());
+                    var lessonId = $(this).find('.payment-amount').attr('lessonId');
+                    var amount = $(this).find('.payment-amount').val();
+                    lessonPayments.push({ id: lessonId, value: amount });
                 }
             });
             $('.group-lesson-line-items').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    groupLessonPayments.push($(this).find('.payment-amount').val());
+                    var lessonId = $(this).find('.payment-amount').attr('lessonId');
+                    var amount = $(this).find('.payment-amount').val();
+                    groupLessonPayments.push({ id: lessonId, value: amount });
                 }
             });
             $('.invoice-line-items').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    invoicePayments.push($(this).find('.payment-amount').val());
+                    var invoiceId = $(this).find('.payment-amount').attr('invoiceId');
+                    var amount = $(this).find('.payment-amount').val();
+                    invoicePayments.push({ id: invoiceId, value: amount });
                 }
             });
-            if ($.isEmptyObject(lessonIds)) {
-                lessonIds = null;
-            }
-            if ($.isEmptyObject(invoiceIds)) {
-                invoiceIds = null;
-            }
-            if ($.isEmptyObject(groupLessonIds)) {
-                groupLessonIds = null;
-            }
-            var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds,
-                'PaymentFormGroupLessonSearch[lessonIds]': groupLessonIds, 'PaymentForm[groupLessonPayments]': groupLessonPayments,
-                'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
-                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[invoiceCreditIds]': invoiceCreditIds,
-                'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments,
-                'PaymentForm[paymentCredits]': paymentCredits, 'PaymentForm[paymentCreditIds]': paymentCreditIds,
-                'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[prId]': prId });
-            var url = '<?= Url::to(['payment/receive']) ?>?' + params;
-            $('#modal-form').attr('action', url);
+            var formData = $('#modal-form').serializeArray();
+            var paymentDataObject = { 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[groupLessonPayments]': groupLessonPayments, 
+                'PaymentForm[invoicePayments]': invoicePayments, 'PaymentForm[paymentCredits]': paymentCredits, 
+                'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
+                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[userId]' : userId, 'PaymentForm[prId]': prId
+            };
+            var formDataObj = {};
+            var allData = $.each(formData, function( index, value ) {
+                var key = value.name;
+                formDataObj[key] = value.value;
+            });
+            var paymentDataObject = $.extend({}, formDataObj, paymentDataObject);
+            var data = $.param(paymentDataObject);
+            return data;
         },
         calcAmountNeeded : function() {
             var amountToDistribute = parseFloat('0.0');
@@ -283,21 +279,59 @@ use yii\bootstrap\Html;
         var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
-        $('.modal-save').text('Save');
+        $('#modal-save').text('Save');
+        $('.modal-cancel').text('Close');
         $('.modal-back').text('Create Payment Request');
         $('#modal-back').removeClass('btn-info');
         $('#modal-back').addClass('btn-default');
         $('.modal-back').show();
-        $('.modal-save').show();
+        $('#modal-save').show();
+        $('#modal-save').removeClass('modal-save');
+        $('#modal-save').addClass('recive-payment-modal-save');
         $('.select-on-check-all').prop('checked', true);
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
-        receivePayment.setAction();
+    });
+
+    $(document).off('click', '.recive-payment-modal-save').on('click', '.recive-payment-modal-save', function () {
+        $('#modal-spinner').show();
+	    modal.disableButtons();
+        var data = receivePayment.setAction();
+        var url = '<?= Url::to(["payment/receive"]) ?>';
+        $.ajax({
+            url: url,
+            type: 'post',
+            dataType: "json",
+            data: data,
+            success: function (response)
+            {
+                $('#modal-spinner').hide();
+                if (response.status)
+                {
+                    modal.restoreButtonSettings();
+                    $('#modal-spinner').hide();
+                    if (!$.isEmptyObject(response.data)) {
+                        $('#modal-content').html(response.data);
+                        $(document).trigger("modal-next", response);
+                    } else if (!$.isEmptyObject(response.dataUrl)) {
+                        modal.renderUrlData(response.dataUrl);
+                    } else {
+                        $(document).trigger("modal-success", response);
+                        $('#popup-modal').modal('hide'); 
+                    }
+                } else {
+                    $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                    $('.recive-payment-modal-save').attr('disabled', true);
+                    $(document).trigger("modal-error", response);
+                }
+                modal.enableButtons();
+            }
+        });
+        return false;
     });
 
     $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.calcAmountNeeded();
-        receivePayment.setAction();
         return false;
     });
 
@@ -312,21 +346,20 @@ use yii\bootstrap\Html;
                 if (parseFloat(payment) > parseFloat(balance)) {
                     $('.field-'+id).addClass('has-error');
                     $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Can't over pay!</div>");
-                    $('.modal-save').attr('disabled', true);
+                    $('.recive-payment-modal-save').attr('disabled', true);
                 } else {
-                    $('.modal-save').attr('disabled', false);
+                    $('.recive-payment-modal-save').attr('disabled', false);
                     $('.field-'+id).removeClass('has-error');
                     $('.field-'+id).find('.help-block').html("");
                 }
             } else {
                 $('.field-'+id).addClass('has-error');
                 $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Amount must be a number!</div>");
-                $('.modal-save').attr('disabled', true);
+                $('.recive-payment-modal-save').attr('disabled', true);
             }
         }
         
         receivePayment.calcAmountNeeded();
-        receivePayment.setAction();
         return false;
     });
 
@@ -334,7 +367,6 @@ use yii\bootstrap\Html;
         lockTextBox = true;
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
-        receivePayment.setAction();
         return false;
     });
 
@@ -343,19 +375,22 @@ use yii\bootstrap\Html;
         var userId = $('#customer-payment').val();
         var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormGroupLessonSearch[userId]': userId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
-        $.pjax.reload({url: url, container: "#invoice-line-item-listing", replace: false, async: false, timeout: 6000});
-        $.pjax.reload({url: url, container: "#lesson-line-item-listing", replace: false, async: false, timeout: 6000});
-        $.pjax.reload({url: url, container: "#credit-lineitem-listing", replace: false, async: false, timeout: 6000});
-        receivePayment.calcAmountNeeded();
-        receivePayment.setAvailableCredits();
-        receivePayment.setAction();
-        $('#modal-spinner').hide();
+        $.ajax({
+            url    : url,
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#modal-spinner').hide();
+                }
+            }
+        });
         return false;
     });
 
     $(document).off('pjax:success', '#lesson-line-item-listing, #group-lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing, #group-lesson-line-item-listing', function () {
         receivePayment.calcAmountNeeded();
-        receivePayment.setAction();
         return false;
     });
 

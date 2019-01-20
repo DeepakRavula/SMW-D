@@ -16,77 +16,45 @@ use yii\bootstrap\ActiveForm;
         array_push($columns, [
             'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-            'attribute' => 'dateRange',
-            'label' => 'Date',
-            'value' => function ($data) {
-                $date = Yii::$app->formatter->asDate($data->date);
-                $lessonTime = (new \DateTime($data->date))->format('H:i:s');
-
-                return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
-            }
+            'value' => 'date',
+            'label' => 'Date'
         ]);
 
         array_push($columns, [
             'label' => 'Student',
-            'attribute' => 'student',
-            'value' => function ($data) use($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->userId)
-                    ->one();
-                return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
-            },
+            'value' => 'student'
         ]);
 
         array_push($columns, [
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
-            'attribute' => 'program',
-            'label' => 'Program',
-            'value' => function ($model) {
-                return $model->course->program->name;
-            }
+            'value' => 'program',
+            'label' => 'Program'
         ]);
 
         array_push($columns, [
-            'attribute' => 'teacher',
+            'value' => 'teacher',
             'headerOptions' => ['class' => 'text-left'],
-            'label' => 'Teacher',
-            'value' => function ($data) {
-                return $data->teacher->publicIdentity;
-            }
+            'label' => 'Teacher'
         ]);
 
         array_push($columns, [
             'label' => 'Amount',
-            'attribute' => 'amount',
-            'value' => function ($data) use($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->userId)
-                    ->one();
-                return Yii::$app->formatter->asCurrency(round($data->getGroupNetPrice($enrolment), 2));
-            },
+            'value' => 'amount',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
         ]);
 
         array_push($columns, [
-            'attribute' => 'balance',
+            'label' => 'Payment',
+            'value' => 'payment',
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right']
+        ]);
+
+        array_push($columns, [
+            'value' => 'balance',
             'label' => 'Balance',
-            'value' => function ($data) use($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->userId)
-                    ->one();
-                return Yii::$app->formatter->asCurrency(round($data->getOwingAmount($enrolment->id), 2));
-            },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
         ]);

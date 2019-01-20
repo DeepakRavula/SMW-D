@@ -130,10 +130,6 @@ class LessonPayment extends \yii\db\ActiveRecord
         if (round($this->amount, 2) == 0.00) {
             $this->isDeleted = true;
         }
-        
-        if (($this->lesson->getCreditAppliedAmount($this->enrolmentId) - $this->lesson->netPrice) > -0.09) {
-            $this->amount = $this->lesson->netPrice;
-        }
         return parent::beforeSave($insert);
     }
 
@@ -165,9 +161,7 @@ class LessonPayment extends \yii\db\ActiveRecord
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
         }
-        foreach ($this->lesson->paymentRequests as $paymentRequest) {
-            $paymentRequest->save();
-        }
+        
         return parent::afterSave($insert, $changedAttributes);
     }
 

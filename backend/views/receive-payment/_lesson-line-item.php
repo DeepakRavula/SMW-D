@@ -153,7 +153,8 @@ use yii\bootstrap\ActiveForm;
                     return $form->field($data, 'paymentAmount')->textInput([
                         'value' => round($data->getOwingAmount($data->enrolment->id), 2),
                         'class' => 'form-control text-right payment-amount',
-                        'id' => 'lesson-payment-' . $data->id
+                        'id' => 'lesson-payment-' . $data->id,
+                        'lessonId' => $data->id
                     ])->label(false);
                 },
                 'attribute' => 'new_activity',
@@ -169,7 +170,7 @@ use yii\bootstrap\ActiveForm;
     $pjaxId = 'lesson-line-item-listing-pr';
 } ?>
 
-<?php Pjax::begin(['enablePushState' => false, 'id' => $pjaxId, 'timeout' => 6000,]); ?>
+<?php Pjax::begin(['enablePushState' => false, 'id' => $pjaxId, 'timeout' => 12000,]); ?>
 <?php if ($searchModel->showCheckBox) : ?>
     <?= GridView::widget([
         'options' => ['id' => $gridId],

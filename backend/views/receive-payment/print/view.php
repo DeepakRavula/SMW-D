@@ -11,18 +11,14 @@ use yii\bootstrap\Html;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 ?>
-
-<div class="row m-t-25">
-    <div class="col-md-6">
-    </div>    
-    <?php
-     $locationModel = Location::findOne(['slug' => \Yii::$app->location]);
-   echo $this->render('/print/_receipt-header', [
-       'userModel'=>$customer,
-       'locationModel'=>$locationModel,
-]);
-   ?>
+<?php if($payment): ?>
+<div>
+<h4 class = "payment-receipt">Thank you for your payment!</h4>
 </div>
+<div>
+<h4 class = "payment-receipt">This is to acknowledge the receipt of payment from <?= $customer->userProfile->firstname .' '.$customer->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($payment->date); ?> 
+in the amount of <?= $model->amount; ?> via <?= $payment->paymentMethod->name; ?>. We have distributed it to the items below.</h4></div>
+<?php endif; ?>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
 <?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>

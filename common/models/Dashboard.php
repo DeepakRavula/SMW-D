@@ -57,18 +57,18 @@ class Dashboard extends \yii\db\ActiveRecord
             $fromDate = $dates->format('Y-m-d');
             $toDate = $dates->format('Y-m-t');
             $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-            $revenue = Payment::find()
-                    ->notDeleted()
-                    ->exceptAutoPayments()
-		    ->exceptGiftCard()
-                    ->joinWith(['invoicePayment' => function ($query) use ($locationId) {
-                        $query->joinWith(['invoice' => function ($query) use ($locationId) {
+            $revenue =  InvoiceLineItem::find()
+                        ->notDeleted()
+                        ->joinWith(['invoice' => function ($query) use ($locationId) {
                             $query->notDeleted()
-                                ->andWhere(['invoice.location_id' => $locationId]);
-                        }]);
-                    }])
-                    ->andWhere(['between', 'payment.date', $fromDate, $toDate])
-                    ->sum('payment.amount');
+                                ->notCanceled()
+                                ->notReturned()
+                                ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
+                                ->location($locationId);
+                        }])
+                        ->andWhere(['between', 'DATE(invoice.date)', $fromDate, $toDate])
+                        ->sum('invoice_line_item.netTotal');
+                      
 
             $monthlyRevenue = !empty($revenue) ? (int) $revenue : 0;
             array_push($monthlyIncome, $monthlyRevenue);

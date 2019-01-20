@@ -1522,18 +1522,21 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaymentRequest()
     {
         return $this->hasOne(ProformaInvoice::className(), ['id' => 'proformaInvoiceId'])
+            ->onCondition(['proforma_invoice.isDeleted' => false])    
             ->via('paymentRequestLineItems');
     }
 
     public function getPaymentRequests()
     {
         return $this->hasMany(ProformaInvoice::className(), ['id' => 'proformaInvoiceId'])
+            ->onCondition(['proforma_invoice.isDeleted' => false])    
             ->via('paymentRequestLineItems');
     }
 
     public function getPaymentRequestLineItems()
     {
         return $this->hasMany(ProformaLineItem::className(), ['id' => 'proformaLineItemId'])
+            ->onCondition(['proforma_line_item.isDeleted' => false])    
             ->via('paymentRequestLessonItems');
     }
 

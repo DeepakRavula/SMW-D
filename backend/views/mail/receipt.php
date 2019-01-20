@@ -3,13 +3,19 @@
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
 
+?>
+
+<?php 
     $content = $this->renderAjax('/receive-payment/_mail-content', [
-    'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-    'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
-    'emailTemplate' => $emailTemplate,
-    'searchModel' => $searchModel,
-    'customer' => $customer,
+        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
+        'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+        'emailTemplate' => $emailTemplate,
+        'searchModel' => $searchModel,
+        'customer' => $customer,
+        'payment' => $payment,
+        'model' => $paymentFormModel,
     ]);
     $model->to = $emails;
     $data = null;
@@ -29,4 +35,4 @@ use common\models\UserEmail;
     'data' => $data,
     'subject' => $subject,
     'emailTemplate' => $emailTemplate
-]);
+]); ?>
