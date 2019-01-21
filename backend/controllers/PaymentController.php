@@ -51,7 +51,7 @@ class PaymentController extends BaseController
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
                     'validate-apply-credit', 'validate-receive', 'update-payment', 'view',
-                    'validate-update',
+                    'validate-update'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -66,7 +66,7 @@ class PaymentController extends BaseController
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
                             'invoice-payment', 'credit-payment', 'validate-apply-credit',
-                            'validate-receive', 'update-payment', 'validate-update',
+                            'validate-receive', 'update-payment', 'validate-update'
                         ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
