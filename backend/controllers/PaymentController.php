@@ -51,7 +51,7 @@ class PaymentController extends BaseController
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
                     'validate-apply-credit', 'validate-receive', 'update-payment', 'view',
-                    'validate-update', 'customer-payment-view'
+                    'validate-update',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -66,7 +66,7 @@ class PaymentController extends BaseController
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
                             'invoice-payment', 'credit-payment', 'validate-apply-credit',
-                            'validate-receive', 'update-payment', 'validate-update', 'customer-payment-view'
+                            'validate-receive', 'update-payment', 'validate-update',
                         ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
@@ -523,24 +523,4 @@ class PaymentController extends BaseController
         }
         return ActiveForm::validate($model);
     }
-
-    public function actionCustomerPaymentView($paymentId)
-    {
-        $model = $this->findModel($paymentId);
-        $payment = Payment::find()
-                ->andWhere(['id' => $paymentId])
-                ->notDeleted();
-        $paymentDataProvider = new ActiveDataProvider([
-            'query' => $payment,
-        ]);
-        $data = $this->renderAjax('/user/customer/_payment-form', [
-            'model' => $model,
-            'paymentDataProvider' => $paymentDataProvider,
-        ]);
-        return [
-            'status' => true,
-            'data' => $data
-        ];
-    }
-
 }
