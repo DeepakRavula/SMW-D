@@ -124,7 +124,7 @@ echo Menu::widget([
         [
             'label' => Yii::t('backend', 'Payments'),
             'icon' => '<i class="fa  fa-dollar"></i>',
-            'url' => ['/payment/index'],
+            'url' => ['/payment/index', 'PaymentSearch[isDefault]' => true],
             'visible' => Yii::$app->user->can('manageInvoices'),
             'active' => (Yii::$app->controller->id === 'payment') ? true : false,
         ],
