@@ -60,7 +60,6 @@ LteBox::begin([
 	],
     ];
     ?>
-    <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-schedule-history-index', 'timeout' => 6000,]); ?>
 	<?php echo GridView::widget([
 	    'dataProvider' => $scheduleHistoryDataProvider,
@@ -74,6 +73,5 @@ LteBox::begin([
 	
 	?>
 	<?php yii\widgets\Pjax::end(); ?>
-    </div>
 </div>
 <?php LteBox::end()?>
