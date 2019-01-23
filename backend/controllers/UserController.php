@@ -722,6 +722,7 @@ class UserController extends BaseController
             'query' => Payment::find()
                 ->andWhere(['user_id' => $id])
                 ->notDeleted()
+                ->exceptAutoPayments()
                 ->limit(10),
             'pagination' => false,
             'sort' => ['defaultOrder' => ['date' => SORT_DESC]],
@@ -733,6 +734,7 @@ class UserController extends BaseController
 	    $paymentCount = Payment::find()
                 ->andWhere(['user_id' => $id])
                 ->notDeleted()
+                ->exceptAutoPayments()
 		        ->count();
 	    return $paymentCount;
     }

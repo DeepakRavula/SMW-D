@@ -1,8 +1,6 @@
 <?php
 
 use yii\helpers\Url;
-use common\components\gridView\KartikGridView;
-use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
 use common\models\Location;
 use common\models\Payment;
@@ -10,6 +8,7 @@ use common\models\User;
 use yii\widgets\Pjax;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\grid\GridView;
 
 ?>
 
@@ -17,10 +16,9 @@ use insolita\wgadminlte\LteConst;
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $columns = [
 	[
-		'attribute' => 'number',
-		'label' => 'Number',
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+		'label' => 'ID',
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
 		'value' => function ($data) {
 			return $data->getPaymentNumber();
 		},
@@ -28,7 +26,7 @@ $columns = [
     [
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
 		'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-		'attribute' => 'dateRange',
+		'label' => 'Date',
 		'value' => function ($data) {
 			if (!empty($data->date)) {
 				$lessonDate = Yii::$app->formatter->asDate($data->date);
@@ -40,24 +38,21 @@ $columns = [
     [
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
 		'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
-		'label' => 'Payment Method',
-		'attribute' => 'paymentMethod',
+		'label' => 'Method',
 		'value' => function ($data) {
 			return $data->paymentMethod->name;
 		},
 	],
 	[
 		'label' => 'Notes',
-		'attribute' => 'notes',
 		'value' => function ($data) {
 			return $data->notes;
 		},
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
     ],
     [
 		'label' => 'Amount',
-		'attribute' => 'amount',
 		'value' => function ($data) {
 			$amount = round($data->amount, 2);
 			return Yii::$app->formatter->asCurrency($amount);
@@ -79,11 +74,13 @@ $columns = [
 <div class="clearfix"></div>
 <div>
 <?php Pjax::begin(['id' => 'customer-payment-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
-    <?= KartikGridView::widget([
+    <?= GridView::widget([
 		'dataProvider' => $paymentsDataProvider,
-		'options' => ['class' => ''],
+		'options' => ['class' => 'col-md-12'],
+		'summary' => false,
+    	'emptyText' => false,
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
+		'tableOptions' => ['class' => 'table table-bordered table table-condensed', 'id' => 'payment'],
 		'columns' => $columns,
 	]); ?>
 <?php Pjax::end(); ?>
