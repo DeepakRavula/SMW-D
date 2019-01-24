@@ -260,6 +260,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 $('#lesson-duration-edit').addClass('multiselect-disable');
                 $('#lesson-classroom-edit').addClass('multiselect-disable');
                 $('#email-multi-customer').addClass('multiselect-disable');
+                $('#lesson-unschedule').addClass('multiselect-disable');
             } else {
                 $('#substitute-teacher').removeClass('multiselect-disable');
                 $('#lesson-discount').removeClass('multiselect-disable');
@@ -267,6 +268,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 $('#lesson-duration-edit').removeClass('multiselect-disable');
                 $('#lesson-classroom-edit').removeClass('multiselect-disable');
                 $('#email-multi-customer').removeClass('multiselect-disable');
+                $('#lesson-unschedule').removeClass('multiselect-disable');
             }
             return false;
         }
@@ -397,6 +399,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                     });
         return false;
     });
+
     $(document).off('click', '#email-multi-customer').on('click', '#email-multi-customer', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if (!$.isEmptyObject(lessonIds)) {
@@ -423,6 +426,31 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         } else {
             $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();            
         }
+        return false;
+    });
+    
+    $(document).off('click', '#lesson-unschedule').on('click', '#lesson-unschedule', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'PrivateLesson[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?= Url::to(['private-lesson/unschedule']) ?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {    
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
         return false;
     });
 </script>

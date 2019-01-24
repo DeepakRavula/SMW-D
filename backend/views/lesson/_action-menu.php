@@ -8,6 +8,7 @@
             <li><a class="multiselect-disable" id="lesson-delete" href="#">Delete</a></li>
             <li><a class="multiselect-disable" id="lesson-classroom-edit" href="#">Edit Classroom</a></li>
             <li><a class="multiselect-disable" id="email-multi-customer" href="#">Email Selected</a></li>
+            <li><a class="multiselect-disable" id="lesson-unschedule" href="#">Unschedule</a></li>
         </ul>
     </div>
 </div>
