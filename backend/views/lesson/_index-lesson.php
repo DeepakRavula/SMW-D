@@ -437,9 +437,9 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                         type   : 'post',
                         success: function(response)
                         {    
-                            if (response.status) {
-                                    $('#modal-content').html(response.data);
-                                    $('#popup-modal').modal('show');
+                            if (response.status) {  
+                                var url = "<?= Url::to(['lesson/index']); ?>";
+                                $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 6000});
                                 }
                             else {
                                 if (response.message) {

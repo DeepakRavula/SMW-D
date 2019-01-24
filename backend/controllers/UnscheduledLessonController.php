@@ -13,6 +13,7 @@ use yii\filters\VerbFilter;
 use backend\models\search\UnscheduledLessonSearch;
 use yii\web\Response;
 use common\models\UnscheduleLesson;
+use common\models\Lesson;
 
 /**
  * LogController implements the CRUD actions for SystemLog model.
@@ -83,5 +84,14 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
 
         return $response;
  
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = Lesson::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }

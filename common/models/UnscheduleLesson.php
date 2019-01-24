@@ -32,7 +32,6 @@ class UnscheduleLesson extends Model
     public function rules()
     {
         return [
-            [['lessonIds'], 'safe'],
             [['lessonIds'], 'validateOnInvoiced', 'on' => [self::SCENARIO_BULK_UNSCHEDULE]],
         ];
     }
