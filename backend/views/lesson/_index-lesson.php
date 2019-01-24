@@ -431,9 +431,9 @@ $this->params['show-all'] = $this->render('_show-all-button', [
     
     $(document).off('click', '#lesson-unschedule').on('click', '#lesson-unschedule', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
-        var params = $.param({ 'PrivateLesson[lessonIds]': lessonIds});
+            var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds});
                     $.ajax({
-                        url    : '<?= Url::to(['private-lesson/unschedule']) ?>?' +params,
+                        url    : '<?= Url::to(['unscheduled-lesson/bulk-unschedule']) ?>?' +params,
                         type   : 'post',
                         success: function(response)
                         {    
