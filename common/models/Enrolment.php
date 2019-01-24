@@ -914,6 +914,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $createdLessons = Lesson::find()->andWhere(['courseId' => $this->course->id])->between($start,$end)->all();
         foreach($createdLessons as $createdLesson) {
             $createdLesson->setDiscount();
+            $createdLesson->makeAsRoot();
         }
         $this->resetPaymentCycle();
         return true;
