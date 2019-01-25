@@ -15,7 +15,7 @@ use common\models\log\LogHistory;
 $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->identity->id]);
 $fromDate = (new \DateTime())->format('M d, Y');
 $toDate = (new \DateTime())->format('M d, Y');
-$dateRange = $fromDate.' - '.$toDate;
+$dateRange = $fromDate . ' - ' . $toDate;
 echo Menu::widget([
     'options' => ['class' => 'sidebar-menu'],
     'linkTemplate' => '<a href="{url}">{icon}<span>{label}</span>{right-icon}{badge}</a>',

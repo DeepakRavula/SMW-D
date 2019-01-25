@@ -82,11 +82,6 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-        if (!$this->isSeeMore && !$this->dateRange) {
-            $this->fromDate = (new \DateTime())->format('M d, Y');
-            $this->toDate = (new \DateTime())->format('M d, Y');
-            $this->dateRange = $this->fromDate.' - '.$this->toDate;
-        }
         if (!$this->showAll) {
             $query->notCompleted();
         }
