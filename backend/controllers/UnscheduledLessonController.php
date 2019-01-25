@@ -78,7 +78,7 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
             } else {
                 $response = [
                     'status' => false,
-                    'errors' => $unscheduleLessonModel->getErrors('lessonIds'),
+                    'error' => $unscheduleLessonModel->getErrors('lessonIds'),
                 ];
             }
 
