@@ -38,7 +38,7 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['bulk-unschedule'
+                        'actions' => ['bulk-unschedule','index'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
