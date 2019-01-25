@@ -89,14 +89,8 @@ class LessonController extends BaseController
     {
         $searchModel = new LessonSearch();
         $request = Yii::$app->request;
-        $lessonRequest = $request->get('LessonSearch');
-        if (!empty($lessonRequest['isSeeMore'])) {
-            $searchModel->isSeeMore = $lessonRequest['isSeeMore'];
-        }
         $dataProvider = $searchModel->search($request->queryParams);
-        if (!empty($lessonRequest['dateRange'])) {
-            $searchModel->dateRange = $lessonRequest['dateRange'];
-        }
+        $dataProvider->pagination->pagesize = 200;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
