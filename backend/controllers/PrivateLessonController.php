@@ -35,7 +35,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom',
+                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -49,7 +49,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                            'apply-discount', 'edit-duration', 'edit-classroom',
+                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -405,4 +405,5 @@ class PrivateLessonController extends BaseController
         }
         return $response;
     }
+
 }

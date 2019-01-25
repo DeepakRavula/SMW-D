@@ -1,194 +1,194 @@
 <?php
 
-use yii\helpers\Url;
-use common\models\Lesson;
 use backend\models\search\LessonSearch;
-use yii\widgets\Pjax;
-use kartik\daterange\DateRangePicker;
-use yii\bootstrap\Modal;
 use common\components\gridView\KartikGridView;
-use yii\helpers\ArrayHelper;
+use common\models\Lesson;
 use common\models\Program;
-use common\models\Location;
 use common\models\Student;
-use common\models\UserProfile;
+use kartik\daterange\DateRangePicker;
 use kartik\grid\GridView;
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Private Lessons';
 $this->params['action-button'] = $this->render('_action-menu', [
-    'searchModel' => $searchModel
+    'searchModel' => $searchModel,
 ]);
 $this->params['show-all'] = $this->render('_show-all-button', [
-    'searchModel' => $searchModel
+    'searchModel' => $searchModel,
 ]);
 ?>
-
+<div id="loader" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
 <div class="grid-row-open p-10">
-    <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
+    <?php Pjax::begin(['id' => 'lesson-index', 'timeout' => 25000]);?>
     <?php $columns = [
-            [
-                'class' => '\kartik\grid\CheckboxColumn',
-                'mergeHeader' => false
-            ],
-            [
-                'label' => 'Student',
-                'attribute' => 'student',
-                'value' => function ($data) {
-                    return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
-                },
-            ],
-            [
-                'label' => 'Program',
-                'attribute' => 'program',
-                'value' => function ($data) {
-                    return !empty($data->course->program->name) ? $data->course->program->name : null;
-                },
-            ],
-            [
-                'label' => 'Teacher',
-		        'attribute' => 'teacher',
-                'value' => function ($data) {
-                    return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
-                },
-            ],
-            [
-                'label' => 'Date',
-                'attribute' => 'dateRange',
-                'filter' => '<div class="input-group drp-container">'. DateRangePicker::widget([
-                    'model' => $searchModel,
-                    'convertFormat' => true,
-                    'initRangeExpr' => true,
-                    'attribute' => 'dateRange',
-                    'options' => [
-                        'class' => 'form-control',
-                        'readOnly' => true
-                    ],
-                    'pluginOptions' => [
-                        'autoApply' => true,
-                        'ranges' => [
-                            Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
-                            Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
-                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
-                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
-                        ],
-                        'locale' => [
-                            'format' => 'M d, Y',
-                        ],
-                        'opens' => 'left'
-                    ]
-                ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
-                'value' => function ($data) {
-                    $date = Yii::$app->formatter->asDate($data->date);
-                    $lessonTime = (new \DateTime($data->date))->format('H:i:s');
-
-                    return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
-                }
-            ],
-	        [
-                'label' => 'Duration',
-                'attribute' => 'duration',
-                'value' => function ($data) {
-                    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
-                    return $lessonDuration;
-                }
-            ]
-        ];       
-        if ($searchModel->showAll) { 
-            array_push($columns, [
-                'label' => 'Status',
-                'attribute' => 'lessonStatus',
-                'filter' => LessonSearch::lessonStatuses(),
-                'filterWidgetOptions'=>[
-                    'options' => [
-                        'id' => 'lesson-index-status',
-                    ],
-                ],
-                'value' => function ($data) {
-                    $status = null;
-                    if (!empty($data->status)) {
-                        return $data->getStatus();
-                    }
-                    return $status;
-                },
-            ]);
-        }
-        array_push($columns, 
-            [
-                'label' => 'Price',
-                'attribute' => 'price',
-                'contentOptions' => ['class' => 'text-right'],
-                'headerOptions' => ['class' => 'text-right'],
-                'value' => function ($data) {
-                    return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
-                }
-            ],
-            [
-                'label' => 'Owing',
-                'attribute' => 'owing',
-                'contentOptions' => function ($data) {
-                    $highLightClass = 'text-right';
-                    if ($data->hasInvoice()) {
-                        if ($data->invoice->isOwing()) {
-                            $highLightClass .= ' danger';
-                        }
-                    } else if ($data->isOwing($data->enrolment->id)) {
-                        $highLightClass .= ' danger';
-                    }
-                    return ['class' => $highLightClass];
-                },
-                'headerOptions' => ['class' => 'text-right'],
-                'value' => function ($data) {
-                    if ($data->hasInvoice()) {
-                        $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
-                    } else {
-                        $owingAmount = $data->getOwingAmount($data->enrolment->id) > 0.09 ? $data->getOwingAmount($data->enrolment->id) : 0.00;
-                    }
-                    return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
-                },
-            ]
-        );
-
-        if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
-            array_shift($columns);
-        }
-     ?>   
-    <div class="box">
-    <?= KartikGridView::widget([
-        'dataProvider' => $dataProvider,
-        'options' => ['id' => 'lesson-index-1'],
-        'filterModel' => $searchModel,
-        'summary' => "Showing {begin} - {end} of {totalCount} items",
-        'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['lesson/view', 'id' => $model->id]);
-
-            return ['data-url' => $url];
+    [
+        'class' => '\kartik\grid\CheckboxColumn',
+        'mergeHeader' => false,
+    ],
+    [
+        'label' => 'Student',
+        'attribute' => 'student',
+        'value' => function ($data) {
+            return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
         },
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'columns' => $columns,
-        'toolbar' =>  [
-            '{export}',
-        ],
-        'export' => [
-            'fontAwesome' => true,
-        ],  
-        'panel' => [
-                'type' => GridView::TYPE_DEFAULT
+    ],
+    [
+        'label' => 'Program',
+        'attribute' => 'program',
+        'value' => function ($data) {
+            return !empty($data->course->program->name) ? $data->course->program->name : null;
+        },
+    ],
+    [
+        'label' => 'Teacher',
+        'attribute' => 'teacher',
+        'value' => function ($data) {
+            return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+        },
+    ],
+    [
+        'label' => 'Date',
+        'attribute' => 'dateRange',
+        'filter' => '<div class="input-group drp-container">' . DateRangePicker::widget([
+            'model' => $searchModel,
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'attribute' => 'dateRange',
+            'options' => [
+                'class' => 'form-control',
+                'readOnly' => true,
             ],
-    ]); ?>
+            'pluginOptions' => [
+                'autoApply' => true,
+                'ranges' => [
+                    Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                    Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                    Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                    Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                ],
+                'locale' => [
+                    'format' => 'M d, Y',
+                ],
+                'opens' => 'left',
+            ],
+        ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
+        'value' => function ($data) {
+            $date = Yii::$app->formatter->asDate($data->date);
+            $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+
+            return !empty($date) ? $date . ' @ ' . Yii::$app->formatter->asTime($lessonTime) : null;
+        },
+    ],
+    [
+        'label' => 'Duration',
+        'attribute' => 'duration',
+        'value' => function ($data) {
+            $lessonDuration = (new \DateTime($data->duration))->format('H:i');
+            return $lessonDuration;
+        },
+    ],
+];
+if ($searchModel->showAll) {
+    array_push($columns, [
+        'label' => 'Status',
+        'attribute' => 'lessonStatus',
+        'filter' => LessonSearch::lessonStatuses(),
+        'filterWidgetOptions' => [
+            'options' => [
+                'id' => 'lesson-index-status',
+            ],
+        ],
+        'value' => function ($data) {
+            $status = null;
+            if (!empty($data->status)) {
+                return $data->getStatus();
+            }
+            return $status;
+        },
+    ]);
+}
+array_push($columns,
+    [
+        'label' => 'Price',
+        'attribute' => 'price',
+        'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right'],
+        'value' => function ($data) {
+            return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
+        },
+    ],
+    [
+        'label' => 'Owing',
+        'attribute' => 'owing',
+        'contentOptions' => function ($data) {
+            $highLightClass = 'text-right';
+            if ($data->hasInvoice()) {
+                if ($data->invoice->isOwing()) {
+                    $highLightClass .= ' danger';
+                }
+            } else if ($data->isOwing($data->enrolment->id)) {
+                $highLightClass .= ' danger';
+            }
+            return ['class' => $highLightClass];
+        },
+        'headerOptions' => ['class' => 'text-right'],
+        'value' => function ($data) {
+            if ($data->hasInvoice()) {
+                $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
+            } else {
+                $owingAmount = $data->getOwingAmount($data->enrolment->id) > 0.09 ? $data->getOwingAmount($data->enrolment->id) : 0.00;
+            }
+            return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
+        },
+    ]
+);
+
+if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
+    array_shift($columns);
+}
+?>
+    <div class="box">
+    <?=KartikGridView::widget([
+    'dataProvider' => $dataProvider,
+    'options' => ['id' => 'lesson-index-1'],
+    'filterModel' => $searchModel,
+    'summary' => "Showing {begin} - {end} of {totalCount} items",
+    'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
+    'rowOptions' => function ($model, $key, $index, $grid) {
+        $url = Url::to(['lesson/view', 'id' => $model->id]);
+
+        return ['data-url' => $url];
+    },
+    'tableOptions' => ['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'columns' => $columns,
+    'toolbar' => [
+        '{export}',
+    ],
+    'export' => [
+        'fontAwesome' => true,
+    ],
+    'panel' => [
+        'type' => GridView::TYPE_DEFAULT,
+    ],
+]);?>
 	</div>
-	<?php Pjax::end(); ?>
+	<?php Pjax::end();?>
 
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Substitute Teacher</h4>',
-    'id'=>'teacher-substitute-modal',
+    'id' => 'teacher-substitute-modal',
 ]);?>
 <div id="teacher-substitute-content"></div>
-<?php Modal::end(); ?>
+<?php Modal::end();?>
 </div>
 
 <script>
@@ -203,7 +203,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         } else {
             var params = $.param({ ids: lessonIds });
             $.ajax({
-                url    : '<?= Url::to(['teacher-substitute/index']) ?>?' +params,
+                url    : '<?=Url::to(['teacher-substitute/index'])?>?' +params,
                 type   : 'get',
                 success: function(response)
                 {
@@ -227,7 +227,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         } else {
             var params = $.param({ 'LessonDiscount[ids]': lessonIds });
             $.ajax({
-                url    : '<?= Url::to(['private-lesson/apply-discount']) ?>?' +params,
+                url    : '<?=Url::to(['private-lesson/apply-discount'])?>?' +params,
                 type   : 'get',
                 success: function(response)
                 {
@@ -260,6 +260,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 $('#lesson-duration-edit').addClass('multiselect-disable');
                 $('#lesson-classroom-edit').addClass('multiselect-disable');
                 $('#email-multi-customer').addClass('multiselect-disable');
+                $('#lesson-unschedule').addClass('multiselect-disable');
             } else {
                 $('#substitute-teacher').removeClass('multiselect-disable');
                 $('#lesson-discount').removeClass('multiselect-disable');
@@ -267,6 +268,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 $('#lesson-duration-edit').removeClass('multiselect-disable');
                 $('#lesson-classroom-edit').removeClass('multiselect-disable');
                 $('#email-multi-customer').removeClass('multiselect-disable');
+                $('#lesson-unschedule').removeClass('multiselect-disable');
             }
             return false;
         }
@@ -278,13 +280,13 @@ $this->params['show-all'] = $this->render('_show-all-button', [
             $('#index-error-notification').html("Choose any lessons to delete").fadeIn().delay(5000).fadeOut();
         } else {
             var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
-            bootbox.confirm({ 
-                message: "Are you sure you want to delete this lesson?", 
+            bootbox.confirm({
+                message: "Are you sure you want to delete this lesson?",
                 callback: function(result) {
                     if(result) {
                         $('.bootbox').modal('hide');
                         $.ajax({
-                            url    : '<?= Url::to(['private-lesson/delete']) ?>?' +params,
+                            url    : '<?=Url::to(['private-lesson/delete'])?>?' +params,
                             type   : 'post',
                             success: function(response)
                             {
@@ -302,7 +304,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                         });
                     }
                 }
-            });	
+            });
         }
         return false;
     });
@@ -313,10 +315,10 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         } else {
             var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
                         $.ajax({
-                            url    : '<?= Url::to(['private-lesson/edit-duration']) ?>?' +params,
+                            url    : '<?=Url::to(['private-lesson/edit-duration'])?>?' +params,
                             type   : 'post',
                             success: function(response)
-                            {    
+                            {
                                 if (response.status) {
                                         $('#modal-content').html(response.data);
                                         $('#popup-modal').modal('show');
@@ -329,7 +331,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                                 }
                             }
                         });
-                   
+
         }
         return false;
     });
@@ -361,10 +363,10 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         var program = $("input[name*='LessonSearch[program]").val();
         var teacher = $("input[name*='LessonSearch[teacher]").val();
         var dateRange = $("input[name*='LessonSearch[dateRange]").val();
-        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
-        var url = "<?= Url::to(['lesson/index']); ?>?"+params;
+        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
+        var url = "<?=Url::to(['lesson/index']);?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
-    });  
+    });
 
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
         var dateRange = $("#lessonsearch-daterange").val();
@@ -377,10 +379,10 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         var params = $.param({ 'EditClassroom[lessonIds]': lessonIds});
                     $.ajax({
-                        url    : '<?= Url::to(['private-lesson/edit-classroom']) ?>?' +params,
+                        url    : '<?=Url::to(['private-lesson/edit-classroom'])?>?' +params,
                         type   : 'post',
                         success: function(response)
-                        {    
+                        {
                             if (response.status) {
                                     $('#modal-content').html(response.data);
                                     $('#popup-modal').modal('show');
@@ -397,15 +399,16 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                     });
         return false;
     });
-    $(document).off('click', '#email-multi-customer').on('click', '#email-multi-customer', function(){
+
+   $(document).off('click', '#email-multi-customer').on('click', '#email-multi-customer', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if (!$.isEmptyObject(lessonIds)) {
             var params = $.param({ 'EmailMultiCustomer[lessonIds]': lessonIds});
                     $.ajax({
-                        url    : '<?= Url::to(['email-multi-customer/email-multi-customer']) ?>?' +params,
+                        url    : '<?=Url::to(['email-multi-customer/email-multi-customer'])?>?' +params,
                         type   : 'post',
                         success: function(response)
-                        {    
+                        {
                             if (response.status) {
                                     $('#modal-content').html(response.data);
                                     $('#popup-modal').modal('show');
@@ -421,7 +424,46 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                         }
                     });
         } else {
-            $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();            
+            $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();
+        }
+        return false;
+    });
+
+    $(document).off('click', '#lesson-unschedule').on('click', '#lesson-unschedule', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if (!$.isEmptyObject(lessonIds)) {
+            $('#menu-shown').hide();
+               bootbox.confirm({
+                message: "Are you sure you want to unschedule?",
+                callback: function(result) {
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $('#loader').show();
+                        var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['unscheduled-lesson/bulk-unschedule'])?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                $.pjax.reload({container: "#lesson-index", replace: false, timeout: 25000});
+                                $('#loader').hide();
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        }
+                }
+               });
+        } else {
+            $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();
         }
         return false;
     });

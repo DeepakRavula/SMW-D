@@ -377,7 +377,7 @@ echo Tabs::widget([
         return false;
     });
 
-    $(document).on('click', '#lesson-unschedule', function () {
+$(document).on('click', '#lesson-unschedule', function () {
         $('#loader').show();
         $.ajax({
             url: '<?=Url::to(['lesson/unschedule', 'id' => $model->id]);?>',
