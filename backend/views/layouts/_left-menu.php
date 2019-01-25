@@ -13,6 +13,9 @@ use common\models\log\LogHistory;
 ?>
 <?php
 $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->identity->id]);
+$fromDate = (new \DateTime())->format('M d, Y');
+$toDate = (new \DateTime())->format('M d, Y');
+$dateRange = $fromDate.' - '.$toDate;
 echo Menu::widget([
     'options' => ['class' => 'sidebar-menu'],
     'linkTemplate' => '<a href="{url}">{icon}<span>{label}</span>{right-icon}{badge}</a>',
@@ -63,7 +66,7 @@ echo Menu::widget([
         ],
         [
             'label' => Yii::t('backend', 'Private Lessons'),
-            'url' => ['/lesson/index'],
+            'url' => ['/lesson/index', 'LessonSearch[dateRange]' => $dateRange],
             'icon' => '<i class="fa fa-music"></i>',
             'visible' => Yii::$app->user->can('managePrivateLessons'),
             'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
