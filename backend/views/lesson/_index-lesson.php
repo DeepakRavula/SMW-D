@@ -25,9 +25,12 @@ $this->params['show-all'] = $this->render('_show-all-button', [
     'searchModel' => $searchModel
 ]);
 ?>
-
+<div id="loader" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
 <div class="grid-row-open p-10">
-    <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
+    <?php Pjax::begin(['id' => 'lesson-index','timeout' => 25000,]); ?>
     <?php $columns = [
             [
                 'class' => '\kartik\grid\CheckboxColumn',
@@ -403,6 +406,11 @@ $this->params['show-all'] = $this->render('_show-all-button', [
     $(document).off('click', '#email-multi-customer').on('click', '#email-multi-customer', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if (!$.isEmptyObject(lessonIds)) {
+               bootbox.confirm({ 
+                message: "Are you sure you want to delete this lesson?", 
+                callback: function(result) {
+                    if(result) {
+                        $('.bootbox').modal('hide');
             var params = $.param({ 'EmailMultiCustomer[lessonIds]': lessonIds});
                     $.ajax({
                         url    : '<?= Url::to(['email-multi-customer/email-multi-customer']) ?>?' +params,
@@ -423,7 +431,10 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                             }
                         }
                     });
-        } else {
+        } 
+        } 
+        }); 
+        }else {
             $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();            
         }
         return false;
@@ -431,15 +442,23 @@ $this->params['show-all'] = $this->render('_show-all-button', [
     
     $(document).off('click', '#lesson-unschedule').on('click', '#lesson-unschedule', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
-            var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds});
+        if (!$.isEmptyObject(lessonIds)) {
+            $('#menu-shown').hide();
+               bootbox.confirm({ 
+                message: "Are you sure you want to unschedule?", 
+                callback: function(result) {
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $('#loader').show();
+                        var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds});
                     $.ajax({
                         url    : '<?= Url::to(['unscheduled-lesson/bulk-unschedule']) ?>?' +params,
                         type   : 'post',
                         success: function(response)
                         {    
                             if (response.status) {  
-                                var url = "<?= Url::to(['lesson/index']); ?>";
-                                $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 6000});
+                                $.pjax.reload({container: "#lesson-index", replace: false, timeout: 25000});
+                                $('#loader').hide();
                                 }
                             else {
                                 if (response.message) {
@@ -451,6 +470,12 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                             }
                         }
                     });
+        }
+                }
+               });
+        } else {
+            $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();   
+        }
         return false;
     });
 </script>
