@@ -452,9 +452,11 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                             else {
                                 if (response.message) {
                                     $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                    $('#loader').hide();
                                 }
                                 if (response.error) {
                                     $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                    $('#loader').hide();
                                 }
                             }
                         }
