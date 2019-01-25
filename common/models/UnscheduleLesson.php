@@ -37,7 +37,7 @@ class UnscheduleLesson extends Model
     }
     public function validateOnInvoiced($attribute)
     {
-       foreach($this->lessonIds as $lessonId) {
+       foreach ($this->lessonIds as $lessonId) {
           $lesson = Lesson::findOne($lessonId);
           if ($lesson->hasInvoice()) {
             $this->addError($attribute, "One of the selected lessons is invoiced. Invoiced lessons can't be edited.");
