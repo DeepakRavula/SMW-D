@@ -377,10 +377,10 @@ echo Tabs::widget([
         return false;
     });
 
-    $(document).on('click', '#lesson-unschedule', function () {
+$(document).on('click', '#lesson-unschedule', function () {
         $('#loader').show();
         $.ajax({
-            url: '<?=Url::to(['unscheduled-lesson/bulk-unschedule', 'id' => $model->id]);?>',
+            url: '<?=Url::to(['lesson/unschedule', 'id' => $model->id]);?>',
             type: 'post',
             dataType: "json",
             data: $(this).serialize(),
