@@ -911,9 +911,10 @@ class Enrolment extends \yii\db\ActiveRecord
         $end = new \DateTime($this->course->endDate);
         $period = new \DatePeriod($start, $interval, $end);
         $this->generateLessons($period, true);
-        $createdLessons = Lesson::find()->andWhere(['courseId' => $this->course->id])->between($start,$end)->all();
-        foreach($createdLessons as $createdLesson) {
-            $createdLesson->setDiscount();
+        $extendedLessons = Lesson::find()->andWhere(['courseId' => $this->course->id])->between($start, $end)->all();
+        foreach($extendedLessons as $extendedLesson) {
+            $extendedLesson->setDiscount();
+            $extendedLesson->makeAsRoot();
         }
         $this->resetPaymentCycle();
         return true;
