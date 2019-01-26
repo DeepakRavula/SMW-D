@@ -28,11 +28,13 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
         $count = count($lessons);
         Console::startProgress(0, $count, 'Deleting Lessons...');
         foreach ($lessons as $lesson) {
-
+            print_r("\n\n");
+            Console::output("processing: " . $lesson->id . 'processing', Console::FG_GREEN, Console::BOLD);
             if ($lesson->leafs) {
                 $childLessons = $lesson->leafs;
                 if($childLessons) {
                 foreach ($childLessons as $childLesson) {
+                    Console::output("processing: " . $childLesson->id . 'children of '. $lesson->id, Console::FG_GREEN, Console::BOLD);
                     $this->execute("DELETE FROM bulk_reschedule_lesson where lessonId =" .$childLesson->id);
                     $this->execute("DELETE FROM invoice_item_lesson where lessonId =" . $childLesson->id);
                     $this->execute("DELETE FROM lesson_split_usage where lessonId =" . $childLesson->id);
@@ -43,7 +45,10 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
                 }
             }
             }
-                if ($lesson->hasRootLesson()) {
+        }
+        $lessons = Lesson::find()->andWhere(['>', 'id', 207450])->andWhere(['courseId' => 687])->all();
+        foreach ($lessons as $lesson) {       
+        if ($lesson->hasRootLesson()) {
                     $immediateRootLesson = $lesson->parent()->one();
                     if ($immediateRootLesson->status === Lesson::STATUS_CANCELED) {
                         $immediateRootLesson->status = Lesson::STATUS_SCHEDULED;
@@ -82,7 +87,7 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
                     $this->execute("DELETE FROM lesson where lesson.id = " . $lesson->id);
 
                 }
-                Console::output("processing: " . $lesson->id . 'processing', Console::FG_GREEN, Console::BOLD);
+              
         }
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
