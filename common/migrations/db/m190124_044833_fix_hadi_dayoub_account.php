@@ -4,6 +4,7 @@ use common\models\Lesson;
 use common\models\Payment;
 use common\models\User;
 use yii\db\Migration;
+use yii\helpers\Console;
 
 /**
  * Class m190124_044833_fix_hadi_dayoub_account
@@ -24,9 +25,24 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
     public function safeUp()
     {
         $lessons = Lesson::find()->andWhere(['>', 'id', 207450])->andWhere(['courseId' => 687])->all();
+        $count = count($lessons);
+        Console::startProgress(0, $count, 'Deleting Lessons...');
         foreach ($lessons as $lesson) {
-            if (!$lesson->leafs) {
 
+            if ($lesson->leafs) {
+                $childLessons = $lesson->leafs;
+                if($childLessons) {
+                foreach ($childLessons as $childLesson) {
+                    $this->execute("DELETE FROM bulk_reschedule_lesson where lessonId =" . $childLesson->id);
+                    $this->execute("DELETE FROM invoice_item_lesson where lessonId =" .  $childLesson->id);
+                    $this->execute("DELETE FROM lesson_split_usage where lessonId =" .  $childLesson->id);
+                    $this->execute("DELETE FROM  private_lesson where lessonId =" .  $childLesson->id);
+                    $this->execute("DELETE FROM lesson_hierarchy where lesson_hierarchy.lessonId = " . $lesson->id . " AND lesson_hierarchy.childLessonId =" . $childLesson->id);
+                    $this->execute("DELETE FROM lesson_hierarchy where lesson_hierarchy.lessonId = " . $childLesson->id . " AND lesson_hierarchy.childLessonId =" . $childLesson->id);
+                    $this->execute("DELETE FROM lesson where lesson.id = " .  $childLesson->id);
+                }
+            }
+            }
                 if ($lesson->hasRootLesson()) {
                     $immediateRootLesson = $lesson->parent()->one();
                     if ($immediateRootLesson->status === Lesson::STATUS_CANCELED) {
@@ -60,27 +76,16 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
                     $this->execute("DELETE FROM bulk_reschedule_lesson where lessonId =" . $lesson->id);
                     $this->execute("DELETE FROM invoice_item_lesson where lessonId =" . $lesson->id);
                     $this->execute("DELETE FROM lesson_split_usage where lessonId =" . $lesson->id);
-                    $this->execute("DELETE FROM  private_lesson where lessonId =" . $lesson->id);
+                    $this->execute("DELETE FROM private_lesson where lessonId =" . $lesson->id);
                     $this->execute("DELETE FROM lesson where lesson.id = " . $lesson->id);
                     $this->execute("DELETE FROM lesson_hierarchy where lesson_hierarchy.lessonId = " . $immediateRootLesson->id . " AND lesson_hierarchy.childLessonId =" . $lesson->id);
                     $this->execute("DELETE FROM lesson_hierarchy where lesson_hierarchy.lessonId = " . $lesson->id . " AND lesson_hierarchy.childLessonId =" . $lesson->id);
 
                 }
-            }
-            else {
-                $childLessons = $lesson->leafs->all();
-                foreach ($childLessons as $childLesson) {
-                    $this->execute("DELETE FROM bulk_reschedule_lesson where lessonId =" . $childLesson->id);
-                    $this->execute("DELETE FROM invoice_item_lesson where lessonId =" .  $childLesson->id);
-                    $this->execute("DELETE FROM lesson_split_usage where lessonId =" .  $childLesson->id);
-                    $this->execute("DELETE FROM  private_lesson where lessonId =" .  $childLesson->id);
-                    $this->execute("DELETE FROM lesson_hierarchy where lesson_hierarchy.lessonId = " . $lesson->id . " AND lesson_hierarchy.childLessonId =" . $childLesson->id);
-                    $this->execute("DELETE FROM lesson_hierarchy where lesson_hierarchy.lessonId = " . $childLesson->id . " AND lesson_hierarchy.childLessonId =" . $childLesson->id);
-                    $this->execute("DELETE FROM lesson where lesson.id = " .  $childLesson->id);
-                }
-            }
+                Console::output("processing: " . $lesson->id . 'processing', Console::FG_GREEN, Console::BOLD);
         }
-
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
 
     /**
