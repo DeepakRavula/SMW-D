@@ -1326,11 +1326,6 @@ class Lesson extends \yii\db\ActiveRecord
 	    return $status; 
     }
 
-    public function getImmediateRootLesson()
-    {
-        return self::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_DESC])->one();
-    }
-
     public function getLineItemDiscountValue()
     {
         return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value . ' %' : '$ ' . $this->lineItemDiscount->value;
