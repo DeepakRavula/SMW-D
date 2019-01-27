@@ -26,9 +26,9 @@ class m190127_143425_add_lesson_in_lesson_hierarchy extends Migration
             $privateLesson = new PrivateLesson();
             $privateLesson->lessonId = $lesson->id;
             if ($lesson->id == 199429) {
-                $privateLesson->expiryDate = '2018-06-7 10:00:00';
+                $privateLesson->expiryDate = '2019-06-7 10:00:00';
             } else {
-                $privateLesson->expiryDate = '2018-06-14 10:00:00';
+                $privateLesson->expiryDate = '2019-06-14 10:00:00';
             }
             $privateLesson->save();
         }
