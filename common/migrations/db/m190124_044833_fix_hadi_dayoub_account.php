@@ -61,9 +61,9 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
                             $lastChildLessonChildPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['isDeleted' => false]);
                             $lastChildLessonChildPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['reference' => $immediateRootLesson->lessonNumber]);
                         }
-                        if ($lastChildLessonChildPayment->payment->debitUsage) {
-                            $lastChildLessonChildPayment->payment->debitUsage->creditUsagePayment->updateAttributes(['isDeleted' => false]);
-                        }
+                        // if ($lastChildLessonChildPayment->payment->debitUsage) {
+                        //     $lastChildLessonChildPayment->payment->debitUsage->creditUsagePayment->updateAttributes(['isDeleted' => false]);
+                        // }
                     }
                 }
                 if ($lastChildLessonChild->invoice) {
