@@ -195,7 +195,7 @@ $childLessons = Lesson::find()->andWhere(['id' => $childLessonIds])->all();
             }
           
     }
-    $lessons = Lesson::find()->andWhere(['>', 'id', 207450])->andWhere(['courseId' => 687])->all();
+    $lessons = Lesson::find()->andWhere(['>', 'id', 207449])->andWhere(['courseId' => 687])->all();
         $count = count($lessons);
         Console::startProgress(0, $count, 'Deleting Lessons...');       
         foreach ($lessons as $lesson) {       
