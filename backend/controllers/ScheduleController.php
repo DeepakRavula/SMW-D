@@ -23,6 +23,8 @@ use common\models\User;
 use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
 use backend\models\search\ScheduleSearch;
+use common\models\LessonPayment;
+use common\models\Payment;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -71,16 +73,6 @@ class ScheduleController extends BaseController
     public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $lessons = Lesson::find()->andWhere(['=', 'id', 207458])->andWhere(['courseId' => 687])->all();
-        foreach ($lessons as $lesson) {       
-        if ($lesson->hasPayment()) {
-         $lessonPayments = $lesson->allLessonPayments;
-         foreach($lessonPayments as $lessonPayment) {
-             print_r("\n".$lessonPayment->id);
-         }
-        }
-    }
-        die('comming');
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();

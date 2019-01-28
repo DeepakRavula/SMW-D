@@ -5,6 +5,8 @@ use common\models\Payment;
 use common\models\User;
 use yii\db\Migration;
 use yii\helpers\Console;
+use common\models\LessonPayment;
+use common\models\InvoicePayment;
 
 /**
  * Class m190124_044833_fix_hadi_dayoub_account
@@ -24,6 +26,24 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
 
     public function safeUp()
     {
+        $deletedLessons = Lesson::find()->andWhere(['>','id' , '207450'])->andWhere(['courseId' => 687])->andWhere(['isDeleted' => true])->all();
+         print_r(count($deletedLessons));
+        foreach ($deletedLessons as $deletedLesson) {
+            $deletedLesson->updateAttributes(['isDeleted' => false]);
+            $deletedLessonPayments =  LessonPayment::find()->andWhere(['lessonId' => $deletedLesson->id])->andWhere(['isDeleted' => true])->all();
+            foreach ($deletedLessonPayments as $deletedLessonPayment) {
+                $deletedLessonPayment->updateAttributes(['isDeleted' => false]);
+                $deletedLesson->payment->updateAttributes(['isDeleted' => false]);
+                $deletedLessonPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['isDeleted' => false]);
+                if ($deletedLessonPayment->payment->isCreditApplied()) {
+                    $debitUsageInvoicePayments = InvoicePayment::find()->andWhere(['payment_id' => $deletedLessonPayment->payment->creditUsage->debitUsagePayment->id])->andWhere(['isDeleted' => true])->all();
+                   foreach ($debitUsageInvoicePayments as $debitUsageInvoicePayment) {
+                       $debitUsageInvoicePayment->updateAttributes(['isDeleted' => false]);
+                   }
+                }
+            }
+        }
+
         $lastChildLessonChildId = [211510];
         $lastChildLessonChilds = Lesson::find()->andWhere(['id' => $lastChildLessonChildId])->all();
         foreach ( $lastChildLessonChilds as  $lastChildLessonChild){
@@ -77,7 +97,7 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
         
         
         $lastChildLessonIds = [211247,219442];
-        $childLessonIds = [207452,207450];
+        $childLessonIds = [207452];
         $lastChildLessons = Lesson::find()->andWhere(['id' => $lastChildLessonIds])->all();
         foreach ($lastChildLessons as $lastChildLesson){
             if ($lastChildLesson->rootLesson) {
@@ -231,6 +251,7 @@ $childLessons = Lesson::find()->andWhere(['id' => $childLessonIds])->all();
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
 
+        
     }
 
     /**
