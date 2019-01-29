@@ -29,8 +29,10 @@ use kartik\select2\Select2;
 		<?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
 		 <?php
         $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
+        $customerFullName = $model->isNewRecord ? $customer->userProfile->fullName : null;
     ?>
 		<?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
+        <?php echo $form->field($model, 'customer_id')->textInput(['maxlength' => true, 'value' => $customerFullName, 'readonly'=> true]) ?>
 		<?php echo $form->field($model, 'birth_date')->widget(DatePicker::className(), [
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
