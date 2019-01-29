@@ -94,6 +94,7 @@ use yii\helpers\Url;
                             {
                                 if (response.status) {
                                     $.pjax.reload({container: '#invoice-view-lineitem-listing', timeout: 6000, async:false});
+                                    $.pjax.reload({container: '#invoice-header-summary', timeout: 6000, async:false});
                                     $.pjax.reload({container: '#invoice-bottom-summary', timeout: 6000, async:false});
                                     $('#popup-modal').modal('hide');
                                 } else {
@@ -119,6 +120,7 @@ use yii\helpers\Url;
                             {
                                 if (response.status) {
                                     $.pjax.reload({container: '#invoice-view-lineitem-listing', timeout: 6000, async:false});
+                                    $.pjax.reload({container: '#invoice-header-summary', timeout: 6000, async:false});
                                     $.pjax.reload({container: '#invoice-bottom-summary', timeout: 6000, async:false});
                                     $('#popup-modal').modal('hide');
                                 } else {
