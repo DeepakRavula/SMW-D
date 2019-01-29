@@ -26,8 +26,7 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
 
     public function safeUp()
     {
-        $deletedLessons = Lesson::find()->andWhere(['>','id' , '207450'])->andWhere(['courseId' => 687])->andWhere(['isDeleted' => true])->all();
-         print_r(count($deletedLessons));
+             $deletedLessons = Lesson::find()->andWhere(['>','id' , '207450'])->andWhere(['courseId' => 687])->andWhere(['isDeleted' => true])->all();
         foreach ($deletedLessons as $deletedLesson) {
             $deletedLesson->updateAttributes(['isDeleted' => false]);
             $deletedLessonPayments =  LessonPayment::find()->andWhere(['lessonId' => $deletedLesson->id])->andWhere(['isDeleted' => true])->all();
@@ -43,6 +42,7 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
                 }
             }
         }
+   
 
         $lastChildLessonChildId = [211510];
         $lastChildLessonChilds = Lesson::find()->andWhere(['id' => $lastChildLessonChildId])->all();
@@ -56,29 +56,32 @@ class m190124_044833_fix_hadi_dayoub_account extends Migration
                     $lastChildLessonChildPayments = $lastChildLessonChild->allLessonPayments;
                     foreach ($lastChildLessonChildPayments as $lastChildLessonChildPayment) {
                         $lastChildLessonChildPayment->updateAttributes(['lessonId' => $immediateRootLesson->id]);
-                        $lastChildLessonChildPayment->updateAttributes(['isDeleted' => false]);
+                       $lastChildLessonChildPayment->updateAttributes(['isDeleted' => false]);
                         if ($lastChildLessonChildPayment->payment->creditUsage) {
                             $lastChildLessonChildPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['isDeleted' => false]);
                             $lastChildLessonChildPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['reference' => $immediateRootLesson->lessonNumber]);
                         }
-                        // if ($lastChildLessonChildPayment->payment->debitUsage) {
-                        //     $lastChildLessonChildPayment->payment->debitUsage->creditUsagePayment->updateAttributes(['isDeleted' => false]);
-                        // }
+                        if ($lastChildLessonChildPayment->payment->debitUsage) {
+                            $lastChildLessonChildPayment->payment->debitUsage->creditUsagePayment->updateAttributes(['isDeleted' => false]);
+                        }
                     }
+
                 }
+       
                 if ($lastChildLessonChild->invoice) {
+                   
                     $this->execute("DELETE  iv, ip, ili, iil, iipcl, iie, n3, pfpf, t2, ilid, ir FROM invoice iv
-        LEFT JOIN note n3 ON n3.`instanceId`= iv.`id` AND n3.`instanceType` = 4
-        LEFT JOIN proforma_payment_frequency pfpf ON pfpf.`invoiceId`= iv.`id`
-        LEFT JOIN invoice_line_item ili ON ili.`invoice_id`= iv.`id`
-        LEFT JOIN invoice_item_lesson iil ON iil.`invoiceLineItemId`= ili.`id`
-        LEFT JOIN invoice_item_enrolment iie ON iie.`invoiceLineItemId`= ili.`id`
-        LEFT JOIN invoice_item_payment_cycle_lesson iipcl ON iipcl.`invoiceLineItemId`= ili.`id`
-        LEFT JOIN invoice_line_item_discount ilid ON ilid.`invoiceLineItemId`= ili.`id`
-        LEFT JOIN invoice_payment ip ON ip.`invoice_id`= iv.`id`
-        LEFT JOIN invoice_reverse ir ON ir.`invoiceId`= iv.`id`
-        LEFT JOIN transaction t2 ON t2.`id`= iv.`transactionId`
-        where iv.id =" .$lastChildLessonChild->invoice->id);
+                    LEFT JOIN note n3 ON n3.`instanceId`= iv.`id` AND n3.`instanceType` = 4
+                    LEFT JOIN proforma_payment_frequency pfpf ON pfpf.`invoiceId`= iv.`id`
+                    LEFT JOIN invoice_line_item ili ON ili.`invoice_id`= iv.`id`
+                    LEFT JOIN invoice_item_lesson iil ON iil.`invoiceLineItemId`= ili.`id`
+                    LEFT JOIN invoice_item_enrolment iie ON iie.`invoiceLineItemId`= ili.`id`
+                    LEFT JOIN invoice_item_payment_cycle_lesson iipcl ON iipcl.`invoiceLineItemId`= ili.`id`
+                    LEFT JOIN invoice_line_item_discount ilid ON ilid.`invoiceLineItemId`= ili.`id`
+                    LEFT JOIN invoice_payment ip ON ip.`invoice_id`= iv.`id`
+                    LEFT JOIN invoice_reverse ir ON ir.`invoiceId`= iv.`id`
+                    LEFT JOIN transaction t2 ON t2.`id`= iv.`transactionId`
+                    where iv.id =" .$lastChildLessonChild->invoice->id);
                 }
 
                 $this->execute("DELETE FROM bulk_reschedule_lesson where lessonId =" .$lastChildLessonChild->id);
@@ -248,6 +251,8 @@ $childLessons = Lesson::find()->andWhere(['id' => $childLessonIds])->all();
                 }
               
         }
+        $lessonPayment = LessonPayment::findOne(43343);
+        $lessonPayment->updateAttributes(['isDeleted' => 1]);
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
 
