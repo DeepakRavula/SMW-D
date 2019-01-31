@@ -185,11 +185,11 @@ use kartik\switchinput\SwitchInput;
         $('#modal-back').hide();
         $('#popup-modal .modal-dialog').css({'width': '600px'});
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-        enrolment.fetchProgram();
+        enrolment.fetchRateCalculation();
     });
 
     var enrolment = {
-        fetchProgram: function() {
+        fetchRateCalculation: function() {
             var duration = $('#enrolmentform-duration').val();
             var programId = $('#enrolmentform-programid').val();
             var paymentFrequencyDiscount = $('#enrolmentform-pfdiscount').val();
@@ -212,7 +212,7 @@ use kartik\switchinput\SwitchInput;
                 rate: options.programRate, customerDiscount : options.customerDiscount,lessonsCount : options.lessonsCount
             });
             $.ajax({
-                url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
+                url: '<?= Url::to(['student/fetch-rate-calculation']); ?>?' + params,
                 type: 'get',
                 dataType: "json",
                 success: function (response)
@@ -238,7 +238,7 @@ use kartik\switchinput\SwitchInput;
                 success: function (response)
                 {
                     $('#enrolmentform-programrate').val(response.rate).trigger('change'); 
-                    enrolment.fetchProgram(); 
+                    enrolment.fetchRateCalculation(); 
                 }
             });
     });
@@ -252,6 +252,6 @@ use kartik\switchinput\SwitchInput;
                 return false;
             }
         }
-        enrolment.fetchProgram();
+        enrolment.fetchRateCalculation();
     });
 </script>
