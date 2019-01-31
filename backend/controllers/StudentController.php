@@ -46,7 +46,7 @@ class StudentController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'create', 'update', 'delete', 'merge', 'fetch-program-rate', 'validate'
+                    'create', 'update', 'delete', 'merge', 'fetch-program-rate', 'validate', 'fetch-rate'
                 ],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
@@ -58,7 +58,7 @@ class StudentController extends BaseController
                     [
                         'allow' => true,
                         'actions' => ['index', 'create', 'update', 'delete', 'merge', 'fetch-program-rate',
-                            'create-enrolment', 'validate', 'print', 'view'],
+                            'create-enrolment', 'validate', 'print', 'view', 'fetch-rate'],
                         'roles' => ['manageStudents'],
                     ],
                 ],
@@ -259,6 +259,13 @@ class StudentController extends BaseController
                 'rate' => $rate
             ];
         }
+    }
+
+    public function actionFetchRate($id) {
+        $program     = Program::findOne(['id' => $id]);
+        return [
+            'rate' => $program->rate
+        ];
     }
 
     public function actionMerge($id)

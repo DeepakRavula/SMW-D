@@ -228,10 +228,23 @@ use kartik\switchinput\SwitchInput;
     $('#enrolmentform-programrate').on('focusin', function(){
         $(this).data('val', $(this).val());
     });
+    $(document).off('change', '#enrolmentform-programid').on('change', '#enrolmentform-programid', function(){
+        var programId = $('#enrolmentform-programid').val();
+        var params = $.param({ id: programId });
+        $.ajax({
+                url: '<?= Url::to(['student/fetch-rate']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    $('#enrolmentform-programrate').val(response.rate).trigger('change'); 
+                    enrolment.fetchProgram(); 
+                }
+            });
+    });
 
-    $(document).off('change', '#enrolmentform-programid, #enrolmentform-duration, #enrolmentform-programrate, \n\
-        #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount').on('change', '#enrolmentform-programid, \n\
-        #enrolmentform-duration, #enrolmentform-programrate, #enrolmentform-pfdiscount, \n\
+    $(document).off('change', '#enrolmentform-duration, #enrolmentform-programrate, \n\
+        #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount').on('change', '#enrolmentform-duration, #enrolmentform-programrate, #enrolmentform-pfdiscount, \n\
         #enrolmentform-enrolmentdiscount', function(){
         if ($(this).attr('id') == 'enrolmentform-programrate') {
             $(this).data('val', $(this).val());
