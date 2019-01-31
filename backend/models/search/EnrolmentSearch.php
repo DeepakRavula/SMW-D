@@ -114,8 +114,8 @@ class EnrolmentSearch extends Enrolment
             'program' => SORT_ASC
         ];
         $query->andFilterWhere(['like', 'p.name', $this->program]);
-        $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)],['like', 'student.last_name', trim($this->student)]]);
-        $query->andFilterWhere(['or', ['like', 'up.firstname', $this->teacher], ['like', 'up.lastname', $this->teacher]]);
+        $query->andFilterWhere(['like', "CONCAT(student.first_name, ' ', student.last_name)", $this->student]);
+        $query->andFilterWhere(['like', "CONCAT(up.firstname, ' ', up.lastname)", $this->teacher]);
         if ($this->startdate) {
             list($this->startBeginDate, $this->startEndDate) = explode(' - ', $this->startdate);
             $query->andWhere(['between', 'DATE(course.startDate)',

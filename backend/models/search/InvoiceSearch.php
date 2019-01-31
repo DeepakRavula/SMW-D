@@ -135,7 +135,7 @@ class InvoiceSearch extends Invoice
         }
            $query->andFilterWhere(['like', 'user_phone.number', trim($this->phone)]);
         if ($this->customer) {
-            $query->andFilterWhere(['or', ['like', 'user_profile.firstname', trim($this->customer)], ['like', 'user_profile.lastname', trim($this->customer)]]);
+            $query->andFilterWhere(['like', "CONCAT(user_profile.firstname, ' ', user_profile.lastname)", $this->customer]);
         } elseif ($this->customerId) {
             $query->andFilterWhere(['user.id' => $this->customerId ]); 
         }

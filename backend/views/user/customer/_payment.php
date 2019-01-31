@@ -15,14 +15,6 @@ use yii\grid\GridView;
 <?php
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $columns = [
-	[
-		'label' => 'ID',
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
-		'value' => function ($data) {
-			return $data->getPaymentNumber();
-		},
-	],
     [
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
 		'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
@@ -35,21 +27,13 @@ $columns = [
 			return null;
 		},
     ],
-    [
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
-		'label' => 'Method',
-		'value' => function ($data) {
-			return $data->paymentMethod->name;
-		},
-	],
 	[
 		'label' => 'Notes',
 		'value' => function ($data) {
 			return $data->notes;
 		},
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:70%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:70%'],
     ],
     [
 		'label' => 'Amount',
@@ -95,7 +79,7 @@ $columns = [
 	 var payment_count = '<?= $count; ?>' ;
 		if (payment_count > 10) {
 			$(".more-payment").show();
-			var customer = '<?= $userModel->userProfile->firstname; ?>' ;
+			var customer = '<?= $userModel->userProfile->fullName; ?>' ;
 			var params = $.param({ 'PaymentSearch[customer]': customer, 'PaymentSearch[isDefault]': 0 });
 			var url = '<?= Url::to(['payment/index']); ?>?' + params;
 			$('.show-more').attr("href", url);
