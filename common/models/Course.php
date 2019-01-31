@@ -412,9 +412,7 @@ class Course extends \yii\db\ActiveRecord
                 $nextWeekScheduledDate->setTime($hour, $minute, $second);
                 $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
             }
-            if (!$isUnscheduled) {
-                $lesson->save();
-            }
+                 $lesson->save();
             $startDate->modify('next ' . $day);
         }
         return $lesson->date;
