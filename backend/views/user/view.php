@@ -128,12 +128,14 @@ $this->params['action-button'] = $this->render('_action-button', [
             'model' => $model,
         ]);
         ?>
+        <?php if ($searchModel->role_name == 'customer'):?>
         <?= $this->render('customer/_payment', [
             'paymentsDataProvider' => $paymentsDataProvider,
             'count' => $paymentCount,
             'userModel' => $model,
         ]);
         ?>
+        <?php endif;?>
     </div> 
 </div>
     <div class="nav-tabs-custom">
