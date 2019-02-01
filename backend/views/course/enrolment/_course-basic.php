@@ -185,11 +185,11 @@ use kartik\switchinput\SwitchInput;
         $('#modal-back').hide();
         $('#popup-modal .modal-dialog').css({'width': '600px'});
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-        enrolment.fetchProgram();
+        enrolment.fetchRateCalculation();
     });
 
     var enrolment = {
-        fetchProgram: function() {
+        fetchRateCalculation: function() {
             var duration = $('#enrolmentform-duration').val();
             var programId = $('#enrolmentform-programid').val();
             var paymentFrequencyDiscount = $('#enrolmentform-pfdiscount').val();
@@ -212,7 +212,7 @@ use kartik\switchinput\SwitchInput;
                 rate: options.programRate, customerDiscount : options.customerDiscount,lessonsCount : options.lessonsCount
             });
             $.ajax({
-                url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
+                url: '<?= Url::to(['student/fetch-rate-calculation']); ?>?' + params,
                 type: 'get',
                 dataType: "json",
                 success: function (response)
@@ -228,10 +228,23 @@ use kartik\switchinput\SwitchInput;
     $('#enrolmentform-programrate').on('focusin', function(){
         $(this).data('val', $(this).val());
     });
+    $(document).off('change', '#enrolmentform-programid').on('change', '#enrolmentform-programid', function(){
+        var programId = $('#enrolmentform-programid').val();
+        var params = $.param({ id: programId });
+        $.ajax({
+                url: '<?= Url::to(['student/fetch-rate']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    $('#enrolmentform-programrate').val(response.rate).trigger('change'); 
+                    enrolment.fetchRateCalculation(); 
+                }
+            });
+    });
 
-    $(document).off('change', '#enrolmentform-programid, #enrolmentform-duration, #enrolmentform-programrate, \n\
-        #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount').on('change', '#enrolmentform-programid, \n\
-        #enrolmentform-duration, #enrolmentform-programrate, #enrolmentform-pfdiscount, \n\
+    $(document).off('change', '#enrolmentform-duration, #enrolmentform-programrate, \n\
+        #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount').on('change', '#enrolmentform-duration, #enrolmentform-programrate, #enrolmentform-pfdiscount, \n\
         #enrolmentform-enrolmentdiscount', function(){
         if ($(this).attr('id') == 'enrolmentform-programrate') {
             $(this).data('val', $(this).val());
@@ -239,6 +252,6 @@ use kartik\switchinput\SwitchInput;
                 return false;
             }
         }
-        enrolment.fetchProgram();
+        enrolment.fetchRateCalculation();
     });
 </script>

@@ -46,7 +46,7 @@ class StudentController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'create', 'update', 'delete', 'merge', 'fetch-program-rate', 'validate'
+                    'create', 'update', 'delete', 'merge', 'fetch-rate-calculation', 'validate', 'fetch-rate'
                 ],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
@@ -57,8 +57,8 @@ class StudentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'update', 'delete', 'merge', 'fetch-program-rate',
-                            'create-enrolment', 'validate', 'print', 'view'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'merge', 'fetch-rate-calculation',
+                            'create-enrolment', 'validate', 'print', 'view', 'fetch-rate'],
                         'roles' => ['manageStudents'],
                     ],
                 ],
@@ -221,7 +221,7 @@ class StudentController extends BaseController
         return $model;
     }
 
-    public function actionFetchProgramRate($duration, $id = null, $paymentFrequencyDiscount = null, $multiEnrolmentDiscount = null, $rate = null, $customerDiscount = null)
+    public function actionFetchRateCalculation($duration, $id = null, $paymentFrequencyDiscount = null, $multiEnrolmentDiscount = null, $rate = null, $customerDiscount = null)
     {
         if ($id) {
             $program     = Program::findOne(['id' => $id]);
@@ -259,6 +259,13 @@ class StudentController extends BaseController
                 'rate' => $rate
             ];
         }
+    }
+
+    public function actionFetchRate($id) {
+        $program     = Program::findOne(['id' => $id]);
+        return [
+            'rate' => $program->rate
+        ];
     }
 
     public function actionMerge($id)
