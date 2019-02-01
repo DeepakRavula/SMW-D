@@ -15,10 +15,8 @@ class m190129_160255_fix_lesson_hierarchy_issue extends Migration
     public function safeUp()
     {
         $lessonIds = LessonHierarchy::find()->select('lessonId');
-        $privateLessonIds = PrivateLesson::find()->select('lessonId');
         $lessons = Lesson::find()
                 ->andWhere(['NOT IN', 'lesson.id', $lessonIds])
-                ->andWhere(['NOT IN', 'lesson.id', $privateLessonIds])
                 ->scheduled()
                 ->notDeleted()
                 ->isConfirmed()
