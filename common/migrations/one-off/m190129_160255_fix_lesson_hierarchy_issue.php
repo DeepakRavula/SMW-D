@@ -19,15 +19,14 @@ class m190129_160255_fix_lesson_hierarchy_issue extends Migration
         $lessons = Lesson::find()
                 ->andWhere(['NOT IN', 'lesson.id', $lessonIds])
                 ->andWhere(['NOT IN', 'lesson.id', $privateLessonIds])
-                //->scheduled()
+                ->scheduled()
                 ->notDeleted()
                 ->isConfirmed()
-                ->location([14, 15, 16, 4, 9, 17, 18, 19, 20, 21])
+                ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21])
                 ->all();
-                foreach ($lessons as $lesson) {
-                    $lesson->makeAsRoot();
-                    // print_r('id=>'.  $lesson->id."\n");
-                } 
+        foreach ($lessons as $lesson) {
+            $lesson->makeAsRoot();
+        } 
     }
 
     /**
