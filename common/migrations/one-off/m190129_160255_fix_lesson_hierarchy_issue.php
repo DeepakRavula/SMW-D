@@ -17,7 +17,7 @@ class m190129_160255_fix_lesson_hierarchy_issue extends Migration
         $lessonIds = LessonHierarchy::find()->select('lessonId');
         $scheduledLessons = Lesson::find()
                 ->andWhere(['NOT IN', 'lesson.id', $lessonIds])
-                ->scheduled()
+                ->statusScheduled()
                 ->notDeleted()
                 ->isConfirmed()
                 ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21])
@@ -34,17 +34,7 @@ class m190129_160255_fix_lesson_hierarchy_issue extends Migration
                 ->all();
         foreach ($unScheduledLessons as $unScheduledLesson) {
             $unScheduledLesson->makeAsRoot();
-        } 
-        $scheduledCompletedLessons = Lesson::find()
-                ->andWhere(['NOT IN', 'lesson.id', $lessonIds])
-                ->andWhere(['lesson.status' => 2])
-                ->notDeleted()
-                ->isConfirmed()
-                ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21])
-                ->all();
-        foreach ($scheduledCompletedLessons as $scheduledCompletedLesson) {
-            $scheduledCompletedLesson->makeAsRoot();
-        } 
+        }
     }
 
     /**
