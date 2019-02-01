@@ -22,6 +22,13 @@ class m190129_160255_fix_lesson_hierarchy_issue extends Migration
                 ->isConfirmed()
                 ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21])
                 ->all();
+        $lessons = Lesson::find()
+                ->andWhere(['NOT IN', 'lesson.id', $lessonIds])
+                ->unScheduled()
+                ->notDeleted()
+                ->isConfirmed()
+                ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21])
+                ->all();
         foreach ($lessons as $lesson) {
             $lesson->makeAsRoot();
         } 
