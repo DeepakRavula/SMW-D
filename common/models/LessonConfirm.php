@@ -53,7 +53,7 @@ class LessonConfirm extends Model
             ->andWhere(['courseId' => $courseModel->id])
             ->notDeleted()
             ->isConfirmed()
-            ->statusScheduled()
+            ->statusScheduledOrUnscheduled()
             ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
