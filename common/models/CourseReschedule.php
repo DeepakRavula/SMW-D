@@ -95,7 +95,7 @@ class CourseReschedule extends Model
             ->andWhere(['courseId' => $this->courseId])
             ->regular()
             ->notDeleted()
-            ->statusScheduledOrUnscheduled()
+            ->statusScheduledOrUnscheduledOrRescheduled()
             ->isConfirmed()
             ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime($this->dateToChangeSchedule))->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])

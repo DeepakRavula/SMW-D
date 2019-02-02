@@ -440,6 +440,11 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]]);
     }
+
+    public function statusScheduledOrUnscheduledOrRescheduled()
+    {
+        return $this->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED, Lesson::STATUS_RESCHEDULED]]);
+    }
     
     public function date($date)
     {
