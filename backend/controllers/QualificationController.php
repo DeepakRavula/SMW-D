@@ -12,6 +12,7 @@ use yii\filters\ContentNegotiator;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use common\models\Lesson;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -133,9 +134,20 @@ class QualificationController extends BaseController
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
+        $lessons  = Lesson::find()
+                ->notDeleted()
+                ->scheduledOrRescheduled()
+                ->andWhere(['lesson.teacherId' => $model->teacher_id])
+                ->joinWith(['program' => function($query) use ($model){
+                    $query->andWhere(['program.id' => $model->program_id]);
+                }])
+                ->all();
         $post = Yii::$app->request->post();
         if ($post) {
             if ($model->load($post) && $model->save()) {
+                foreach ($lessons as $lesson) {
+                    $lesson->updateAttributes(['teacherRate' => $model->rate]);
+                }
                 $response = [
                     'status' => true,
                 ];
