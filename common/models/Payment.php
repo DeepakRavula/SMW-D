@@ -75,7 +75,6 @@ class Payment extends ActiveRecord
             [['amount'], 'required'],
             [['amount'], 'number'],
             [['paymentAmount'], 'number'],
-            ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
                 'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId', 'createdByUserId', 
                 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
