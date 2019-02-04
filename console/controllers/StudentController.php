@@ -9,12 +9,20 @@ use common\models\Student;
 
 class StudentController extends Controller
 {
+    public $locationId;
     public function init() 
     {
         parent::init();
 		$user = User::findByRole(User::ROLE_BOT);
 		$botUser = end($user);
         Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+    }
+
+    public function options($actionID)
+    {
+        return array_merge(parent::options($actionID),
+            $actionID == 'set-status' ? ['locationId'] : []
+        );
     }
 
     public function actionSetStatusActive()
@@ -47,6 +55,7 @@ class StudentController extends Controller
         ini_set('memory_limit', '-1');
         $activeStudents = Student::find()
             ->notDeleted()
+            ->location($this->locationId)
             ->active();
         $inactiveStudents = Student::find()
             ->notDeleted()
@@ -58,6 +67,7 @@ class StudentController extends Controller
         }
         $activeStudents = Student::find()
             ->notDeleted()
+            ->location($this->locationId)
             ->active()
             ->all();
         foreach ($activeStudents as $student) {
