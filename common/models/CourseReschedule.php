@@ -102,8 +102,10 @@ class CourseReschedule extends Model
             ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime($this->dateToChangeSchedule))->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
+        $currentDate = new \DateTime();
+        $current_date = $currentDate->format('Y-m-d H:i:s');
         foreach ($rescheduledLessons as $rescheduledLesson) {
-            if (!($rescheduledLesson->parent()->one()->isHoliday())) {
+            if ($rescheduledLesson->parent()->one()->date < $current_date) {
                 $lessonIds[] = $rescheduledLesson->id;
             }
         }

@@ -59,8 +59,10 @@ class LessonConfirm extends Model
             ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
+        $currentDate = new \DateTime();
+        $current_date = $currentDate->format('Y-m-d H:i:s');
         foreach ($oldRescheduledLessons as $oldRescheduledLesson) {
-            if (!($oldRescheduledLesson->parent()->one()->isHoliday())) {
+            if ($oldRescheduledLesson->parent()->one()->date < $current_date) {
                 $lessonIds[] = $oldRescheduledLesson->id;
             }
         }
