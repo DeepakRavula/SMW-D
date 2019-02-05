@@ -6,6 +6,8 @@ use Yii;
 use yii\console\Controller;
 use common\models\User;
 use common\models\Student;
+use common\models\Location;
+use yii\helpers\Console;
 
 class StudentController extends Controller
 {
@@ -16,13 +18,6 @@ class StudentController extends Controller
 		$user = User::findByRole(User::ROLE_BOT);
 		$botUser = end($user);
         Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
-    }
-
-    public function options($actionID)
-    {
-        return array_merge(parent::options($actionID),
-            $actionID == 'set-status' ? ['locationId'] : []
-        );
     }
 
     public function actionSetStatusActive()
@@ -53,12 +48,17 @@ class StudentController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $activeStudents = Student::find()
+        $cronEnabledLocations = Location::find()->cronEnabledLocations()->all();
+        $count = count($cronEnabledLocations);
+        Console::startProgress(0, $count, 'Processing Location.....');
+        foreach ($cronEnabledLocations as $cronEnabledLocation) {
+            $activeStudents = Student::find()
             ->notDeleted()
-            ->location($this->locationId)
+            ->location($cronEnabledLocation->id)
             ->active();
         $inactiveStudents = Student::find()
             ->notDeleted()
+            ->location($cronEnabledLocation->id)
             ->leftJoin(['active_students' => $activeStudents], 'student.id = active_students.id')
             ->andWhere(['active_students.id' => null])
             ->all();
@@ -67,11 +67,16 @@ class StudentController extends Controller
         }
         $activeStudents = Student::find()
             ->notDeleted()
-            ->location($this->locationId)
+            ->location($cronEnabledLocation->id)
             ->active()
             ->all();
         foreach ($activeStudents as $student) {
             $student->updateAttributes(['status' => Student::STATUS_ACTIVE]);
         }
+        Console::output("processing: " . $cronEnabledLocation->name . 'processing', Console::FG_GREEN, Console::BOLD);
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+
     }
 }

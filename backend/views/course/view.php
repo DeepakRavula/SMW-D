@@ -36,7 +36,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 			<dt>Teacher</dt>
 			<dd><?= $model->teacher->publicIdentity; ?></dd>
 			<dt>Rate</dt>
-			<dd><?= Yii::$app->formatter->asCurrency($model->program->rate); ?></dd>
+			<dd><?= Yii::$app->formatter->asCurrency($model->courseProgramRate->programRate); ?></dd>
 		</dl>
 		<?php LteBox::end() ?>
 		</div>
