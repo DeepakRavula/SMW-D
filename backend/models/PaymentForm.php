@@ -428,16 +428,10 @@ class PaymentForm extends Model
     public function addNegativePayment()
     {
         $invoiceCredits = $this->invoiceCredits;
-        if ($invoiceCredits) {
-            if ($this->canUseInvoiceCredits) {
                 $amount = abs($this->amount);
                 foreach ($invoiceCredits as $j => $invoiceCredit) {
                     $creditInvoice = Invoice::findOne($invoiceCredit['id']);
                     $creditInvoiceAmount = $invoiceCredit['value'];
-                  
-                    if($creditInvoiceAmount > $creditInvoice->balance){
-                     $creditInvoiceAmount = abs($creditInvoice->balance);   
-                    }
                     if($amount < $creditInvoiceAmount) {
                         $creditInvoiceAmount = $amount;
                     }
@@ -453,8 +447,6 @@ class PaymentForm extends Model
                             }       
                                     $creditInvoice->save();
                                 }
-                            }
-                        }
                     }
 
     public function getCustomerCreditInvoices($customerId)
