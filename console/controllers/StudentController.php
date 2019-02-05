@@ -18,13 +18,6 @@ class StudentController extends Controller
         Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
     }
 
-    public function options($actionID)
-    {
-        return array_merge(parent::options($actionID),
-            $actionID == 'set-status' ? ['locationId'] : []
-        );
-    }
-
     public function actionSetStatusActive()
     {
         set_time_limit(0);
@@ -55,7 +48,6 @@ class StudentController extends Controller
         ini_set('memory_limit', '-1');
         $activeStudents = Student::find()
             ->notDeleted()
-            ->location($this->locationId)
             ->active();
         $inactiveStudents = Student::find()
             ->notDeleted()
@@ -67,7 +59,6 @@ class StudentController extends Controller
         }
         $activeStudents = Student::find()
             ->notDeleted()
-            ->location($this->locationId)
             ->active()
             ->all();
         foreach ($activeStudents as $student) {
