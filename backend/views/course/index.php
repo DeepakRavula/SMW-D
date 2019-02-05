@@ -53,7 +53,7 @@ $this->params['show-all'] = $this->render('_button', [
                 'label' => 'Rate',
                 'format' => 'currency',
                 'value' => function ($data) {
-                    return !empty($data->courseProgramRate) ? $data->courseProgramRate : null;
+                    return !empty($data->courseProgramRate->programRate) ? $data->courseProgramRate->programRate : null;
                 },
             ],
             [
