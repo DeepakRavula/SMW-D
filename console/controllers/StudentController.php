@@ -6,6 +6,8 @@ use Yii;
 use yii\console\Controller;
 use common\models\User;
 use common\models\Student;
+use common\models\Location;
+use yii\helpers\Console;
 
 class StudentController extends Controller
 {
@@ -52,11 +54,11 @@ class StudentController extends Controller
         foreach ($cronEnabledLocations as $cronEnabledLocation) {
             $activeStudents = Student::find()
             ->notDeleted()
-            ->location($cronEnabledLocation->locationId)
+            ->location($cronEnabledLocation->id)
             ->active();
         $inactiveStudents = Student::find()
             ->notDeleted()
-            ->location($cronEnabledLocation)
+            ->location($cronEnabledLocation->id)
             ->leftJoin(['active_students' => $activeStudents], 'student.id = active_students.id')
             ->andWhere(['active_students.id' => null])
             ->all();
@@ -65,7 +67,7 @@ class StudentController extends Controller
         }
         $activeStudents = Student::find()
             ->notDeleted()
-            ->location($cronEnabledLocation)
+            ->location($cronEnabledLocation->id)
             ->active()
             ->all();
         foreach ($activeStudents as $student) {
