@@ -145,10 +145,8 @@ class ScheduleController extends FrontendBaseController
         if ($role->name === User::ROLE_TEACHER) {
             $query->andWhere(['lesson.teacherId' => $userId]);
         }
-        if ($role->name === User::ROLE_CUSTOMER) {
-            $query->present();
-        }
-        $query->scheduledOrRescheduled()  
+        $query->scheduledOrRescheduled()
+            ->present()
             ->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
             ->notDeleted();
         $lessons = $query->all();
