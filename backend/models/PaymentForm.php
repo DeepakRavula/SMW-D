@@ -452,6 +452,7 @@ class PaymentForm extends Model
                 }
             }
         }
+        return true;
     }
 
     public function getCustomerCreditInvoices($customerId)
