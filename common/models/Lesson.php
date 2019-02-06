@@ -716,6 +716,8 @@ class Lesson extends \yii\db\ActiveRecord
             $class = null;
         } elseif (!$this->isExtra () && $this->isEnrolmentFirstlesson()) {
             $class = 'first-lesson';
+        } elseif (!$this->isPresent) {
+            $class = 'absent-lesson';
         } elseif ($this->isPrivate()) {
             $class = 'private-lesson';
         } elseif ($this->isGroup()) {

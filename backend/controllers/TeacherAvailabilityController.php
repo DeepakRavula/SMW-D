@@ -376,7 +376,6 @@ class TeacherAvailabilityController extends BaseController
                 }])
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
-                ->present()
                 ->notDeleted()
                 ->between($fromDate, $toDate)
                 ->andWhere(['lesson.teacherId' => $teacherId]);
