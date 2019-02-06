@@ -65,3 +65,36 @@ $form = ActiveForm::begin([
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Qualification</h4>');
+        $('#popup-modal .modal-dialog').css({'width': '400px'});
+        $('.modal-save').addClass('edit-qualification-save');
+    });
+    $(document).off('click', '.edit-qualification-save').on('click', '.edit-qualification-save', function () {
+        bootbox.confirm({
+            message: "This program rate affected all future lessons",
+                callback: function(result){
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url: $('#modal-form').attr('action'),
+                            type: 'post',
+                            dataType: "json",
+                            data: $('#modal-form').serialize(),
+                            success: function (response)
+                            {
+                                if (response.status) {
+                                    $('#popup-modal').modal('hide');
+                                }
+                            }
+                       });
+                    } else {
+                        $('.bootbox').modal('hide');
+                        return false;
+                    }
+                }
+        });
+    });
+</script>
