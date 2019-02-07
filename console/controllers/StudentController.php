@@ -91,7 +91,7 @@ class StudentController extends Controller
         foreach ($cronNotEnabledLocations as $cronNotEnabledLocation) {
             $activeStudents = Student::find()
             ->notDeleted()
-            ->location($cronEnabledLocation->id)
+            ->location($cronNotEnabledLocation->id)
             ->active();
         $inactiveStudents = Student::find()
             ->notDeleted()
