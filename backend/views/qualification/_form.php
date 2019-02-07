@@ -65,3 +65,44 @@ $form = ActiveForm::begin([
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Qualification</h4>');
+        $('#popup-modal .modal-dialog').css({'width': '400px'});
+        var newRecord = <?= $model->isNewRecord | 0; ?>;
+        if (!newRecord) {
+            $('.modal-save').hide();
+            $('.modal-save-all').addClass('edit-qualification-save');
+            $('.modal-save-all').show();
+            $('.modal-save-all').text('save');
+        }
+    });
+    
+    $(document).off('click', '.edit-qualification-save').on('click', '.edit-qualification-save', function () {
+        bootbox.confirm({
+            message: "Modifying teacher's rate would affect all the future lesson teacher's cost. Do you want to continue?",
+                callback: function(result){
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url: $('#modal-form').attr('action'),
+                            type: 'post',
+                            dataType: "json",
+                            data: $('#modal-form').serialize(),
+                            success: function (response)
+                            {
+                                if (response.status) {
+                                    $('#popup-modal').modal('hide');
+                                    $.pjax.reload({container: '#qualification-grid', timeout: 6000, async:false});
+                                }
+                            }
+                       });
+                    } else {
+                        $('.bootbox').modal('hide');
+                        return false;
+                    }
+                }
+        });
+    });
+</script>
