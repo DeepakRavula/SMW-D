@@ -44,7 +44,7 @@ class StudentController extends Controller
         }
     }
 
-    public function actionSetStatus()
+    public function actionSetStatusProduction()
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
@@ -52,13 +52,39 @@ class StudentController extends Controller
         $count = count($cronEnabledLocations);
         Console::startProgress(0, $count, 'Processing Location.....');
         foreach ($cronEnabledLocations as $cronEnabledLocation) {
-            $activeStudents = Student::find()
+            $this->setStatus($cronEnabledLocation->id);
+            Console::output("processing: " . $cronEnabledLocation->name . 'processing', Console::FG_GREEN, Console::BOLD);
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+
+    }
+
+    
+    public function actionSetStatusNonProduction()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $cronNotEnabledLocations = Location::find()->cronNotEnabledLocations()->all();
+        $count = count($cronNotEnabledLocations);
+        Console::startProgress(0, $count, 'Processing Location.....');
+        foreach ($cronNotEnabledLocations as $cronNotEnabledLocation) {
+            $this->setStatus($cronNotEnabledLocation->id);
+        Console::output("processing: " . $cronNotEnabledLocation->name . 'processing', Console::FG_GREEN, Console::BOLD);
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+
+    }
+
+    public function setStatus($locationId) {
+        $activeStudents = Student::find()
             ->notDeleted()
-            ->location($cronEnabledLocation->id)
+            ->location($locationId)
             ->active();
         $inactiveStudents = Student::find()
             ->notDeleted()
-            ->location($cronEnabledLocation->id)
+            ->location($locationId)
             ->leftJoin(['active_students' => $activeStudents], 'student.id = active_students.id')
             ->andWhere(['active_students.id' => null])
             ->all();
@@ -67,16 +93,11 @@ class StudentController extends Controller
         }
         $activeStudents = Student::find()
             ->notDeleted()
-            ->location($cronEnabledLocation->id)
+            ->location($locationId)
             ->active()
             ->all();
         foreach ($activeStudents as $student) {
             $student->updateAttributes(['status' => Student::STATUS_ACTIVE]);
         }
-        Console::output("processing: " . $cronEnabledLocation->name . 'processing', Console::FG_GREEN, Console::BOLD);
-        }
-        Console::endProgress(true);
-        Console::output("done.", Console::FG_GREEN, Console::BOLD);
-
     }
 }
