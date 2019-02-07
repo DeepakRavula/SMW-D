@@ -14,6 +14,7 @@ use kartik\date\DatePickerAsset;
 use kartik\time\TimePickerAsset;
 use kartik\select2\Select2Asset;
 use common\models\CustomerReferralSource;
+use insolita\wgadminlte\LteInfoBox;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
@@ -49,6 +50,41 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <br>
 <?php yii\widgets\Pjax::begin(['id' => 'customer-view']) ?>
+<div class="row">
+    <div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_RED,
+                      'bgColor'=>'',
+                      'number'=>100500,
+                      'text'=>'OWING',
+                      'icon'=>'fa fa-exclamation-triangle',
+                      'progressNumber'=>66,
+                      'description'=>'Something about this'
+                  ])?>
+</div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_AQUA,
+                      'bgColor'=>'',
+                      'number'=>100500,
+                      'text'=>'CREDITS',
+                      'icon'=>'fa fa-check',
+                      'progressNumber'=>66,
+                      'description'=>'Something about this'
+                  ])?>
+</div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_GREEN,
+                      'bgColor'=>'',
+                      'number'=>100500,
+                      'text'=>'LAST PAYMENT',
+                      'icon'=>'fa fa-credit-card',
+                      'progressNumber'=>66,
+                      'description'=>'Something about this'
+                  ])?>
+</div>
+</div>
 <div class="row">
     <div class="col-md-6">  
         <?php
