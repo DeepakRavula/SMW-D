@@ -78,6 +78,7 @@ $form = ActiveForm::begin([
             $('.modal-save-all').text('save');
         }
     });
+    
     $(document).off('click', '.edit-qualification-save').on('click', '.edit-qualification-save', function () {
         bootbox.confirm({
             message: "Modifying teacher's rate would affect all the future lesson teacher's cost. Do you want to continue?",
