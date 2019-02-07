@@ -134,17 +134,18 @@ class QualificationController extends BaseController
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        $lessons  = Lesson::find()
-                ->notDeleted()
-                ->scheduledOrRescheduled()
-                ->andWhere(['lesson.teacherId' => $model->teacher_id])
-                ->joinWith(['program' => function($query) use ($model){
-                    $query->andWhere(['program.id' => $model->program_id]);
-                }])
-                ->all();
         $post = Yii::$app->request->post();
         if ($post) {
             if ($model->load($post) && $model->save()) {
+                $lessons  = Lesson::find()
+                    ->notDeleted()
+                    ->scheduledOrRescheduled()
+                    ->isConfirmed()
+                    ->andWhere(['lesson.teacherId' => $model->teacher_id])
+                    ->joinWith(['program' => function($query) use ($model){
+                        $query->andWhere(['program.id' => $model->program_id]);
+                    }])
+                    ->all();
                 foreach ($lessons as $lesson) {
                     $lesson->updateAttributes(['teacherRate' => $model->rate]);
                 }
