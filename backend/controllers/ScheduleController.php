@@ -128,6 +128,7 @@ class ScheduleController extends BaseController
             ->location($locationId)
             ->scheduledOrRescheduled()
             ->isConfirmed()
+            ->present()
             ->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
             ->notDeleted();
         if (!empty($teacherId)) {
