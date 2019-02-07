@@ -287,6 +287,8 @@ class ScheduleController extends FrontendBaseController
                     $class = 'absent-lesson';
                 } elseif ($lesson->isEnrolmentFirstlesson()) {
                     $class = 'first-lesson';
+                } elseif ($lesson->isPrivate()) {
+                    $class = 'private-lesson';
                 } elseif ($lesson->getRootLesson()) {
                     $rootLesson = $lesson->getRootLesson();
                     if ($rootLesson->id !== $lesson->id) {
