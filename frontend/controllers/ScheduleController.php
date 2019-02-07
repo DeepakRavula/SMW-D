@@ -146,7 +146,7 @@ class ScheduleController extends FrontendBaseController
             $query->andWhere(['lesson.teacherId' => $userId]);
         }
         $query->scheduledOrRescheduled()
-             ->present()  
+            ->present()
             ->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
             ->notDeleted();
         $lessons = $query->all();
@@ -281,6 +281,8 @@ class ScheduleController extends FrontendBaseController
                 if (!empty($lesson->colorCode)) {
                     $class = null;
                     $backgroundColor = $lesson->colorCode;
+                } elseif (!$lesson->isPresent) {
+                    $class = 'absent-lesson';
                 } elseif ($lesson->isEnrolmentFirstlesson()) {
                     $class = 'first-lesson';
                 } elseif ($lesson->getRootLesson()) {
