@@ -84,6 +84,17 @@ $this->params['action-button'] = $this->render('_action-button', [
                       'description'=>'Something about this'
                   ])?>
 </div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_ORANGE,
+                      'bgColor'=>'',
+                      'number'=>$prePaidLessonsCount,
+                      'text'=>'PRE-PAID LESSONS',
+                      'icon'=>'fa fa-credit-card',
+                      'progressNumber'=>66,
+                      'description'=>'Something about this'
+                  ])?>
+</div>
 </div>
 <div class="row">
     <div class="col-md-6">  

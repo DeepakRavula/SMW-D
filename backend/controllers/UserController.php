@@ -537,6 +537,7 @@ class UserController extends BaseController
             'invoiceCount' => $this->getInvoiceCount($model, $locationId),
             'paymentsDataProvider' => $this->getPaymentsDataProvider($id),
             'paymentCount' => $this->getPaymentCount($id),
+            'prePaidLessonsCount' => $this->getPrePaidLessons($id),
         ]);
     }
 
@@ -727,7 +728,7 @@ class UserController extends BaseController
             'pagination' => false,
             'sort' => ['defaultOrder' => ['date' => SORT_DESC]],
         ]);
-    }
+    } 
 
     protected function getPaymentCount($id) 
     {
@@ -737,5 +738,26 @@ class UserController extends BaseController
                 ->exceptAutoPayments()
 		        ->count();
 	    return $paymentCount;
+    }
+
+    public function getPrePaidLessons($id) 
+    {
+        $lessons = Lesson::find()
+                ->customer($id)
+                ->notDeleted()
+                ->scheduledOrRescheduled()
+                ->unscheduled()
+                ->notCanceled()
+                ->isConfirmed()
+                ->notCompleted()
+                ->all();
+        $count = 0;
+        foreach ($lessons as $lesson) {
+            if (round($lesson->getOwingAmount($this->enrolment->id), 2) != 0.00 ) {
+                $count = count($lesson) + $count;
+                print_r($count);die('bfhfhfhf');
+            }
+        }
+        return $count;
     }
 }
