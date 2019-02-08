@@ -35,6 +35,7 @@ class PaymentForm extends Model
     const SCENARIO_CUSTOMER = 'enrollment-customer';
     const SCENARIO_STUDENT = 'enrolment-student';
     const SCENARIO_DATE_DETAILED = 'enrolment-start-date';
+    const SCENARIO_NEGATIVE_PAYMENT = 'add-negative-payment';
 
     public $date;
     public $prId;
@@ -67,8 +68,28 @@ class PaymentForm extends Model
             [['date', 'amountNeeded', 'canUseInvoiceCredits', 'selectedCreditValue', 'canUsePaymentCredits',
                 'invoiceCreditIds', 'amount', 'userId', 'amountToDistribute', 'invoicePayments', 'lessonPayments',
                 'paymentId', 'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds', 'prId',
-                'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id', 'notes'], 'safe'],
+                'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id', 'notes'], 'safe',  'on' => self::SCENARIO_DEFAULT],
+            [['selectedCreditValue', 'amount', 'invoicePayments', 'lessonPayments', 'lessonIds', 'invoiceIds',
+            'paymentCredits', 'invoiceCredits', 'groupLessonIds', 'groupLessonPayments'], 'validateNegativePayment',  'on' => self::SCENARIO_NEGATIVE_PAYMENT],    
         ];
+    }
+
+    public function validateNegativePayment($attributes)
+    {   
+        $lessonIds = $this->getLessonIds();
+        $invoiceIds = $this->getInvoiceIds();
+        $groupLessonIds = $this->getGroupLessonIds();
+
+        if ((float) $this->amount <= (float) 0 ) {
+            
+        if ($this->paymentCredits || $this->lessonPayments || $this->groupLessonPayments || $lessonIds || $invoiceIds || $groupLessonIds) {
+            $this->addError($attributes, "Negative Payment can be applied to only invoice credits.");
+        }
+    }
+
+        if ((float) $this->amount <= (float) 0 && !$this->invoiceCredits) {
+            $this->addError($attributes, "Select Any Invoice credits to apply negative payment");
+        }
     }
 
     public function getLessonIds()
@@ -107,6 +128,7 @@ class PaymentForm extends Model
         $groupLessonPayments = $this->groupLessonPayments;
         $invoicePayments = $this->invoicePayments;
         if ($this->amount < 0.00) {
+            $this->setScenario(self::SCENARIO_NEGATIVE_PAYMENT);
             $this->addNegativePayment();
         } else {
             if ($invoiceCredits) {

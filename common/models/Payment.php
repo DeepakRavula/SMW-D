@@ -12,6 +12,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
+use backend\models\PaymentForm;
 
 /**
  * This is the model class for table "payments".
@@ -48,6 +49,7 @@ class Payment extends ActiveRecord
     const SCENARIO_CREDIT_USED_EDIT = 'credit-used-edit';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
     const SCENARIO_LESSON_CREDIT = 'lesson-credit';
+    const SCENARIO_NEGATIVE_PAYMENT = 'negative_payment';
 
     const CONSOLE_USER_ID  = 727;
     
@@ -72,6 +74,7 @@ class Payment extends ActiveRecord
             [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
+            [['amount'], 'validateOnNegativePayment', 'on' => self::SCENARIO_NEGATIVE_PAYMENT],
             [['amount'], 'required'],
             [['amount'], 'number'],
             [['paymentAmount'], 'number'],
@@ -80,6 +83,7 @@ class Payment extends ActiveRecord
                 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
+            ['amount', 'validateNonZero',  'on' => [self::SCENARIO_DEFAULT]],    
         ];
     }
 
@@ -87,6 +91,13 @@ class Payment extends ActiveRecord
     {
         if ((float) $this->amount === (float) 0) {
             $this->addError($attributes, "Amount can't be 0");
+        }
+    }
+
+    public function validateOnNegativePayment($attributes)
+    {
+        if ((float) $this->amount < (float) 0) {
+            $this->addError($attributes, "Amount can't be Negative");
         }
     }
 

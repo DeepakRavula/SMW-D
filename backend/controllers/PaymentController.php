@@ -439,6 +439,9 @@ class PaymentController extends BaseController
             $model->load($request->post());
             $payment->load(Yii::$app->request->get());
             $payment->load($request->post());
+            if ($model->amount <= 0.00) {
+                $model->setScenario(PaymentForm::SCENARIO_NEGATIVE_PAYMENT);
+            }
             if ($model->validate()) {
             $payment->amount = $model->amount;
             $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
