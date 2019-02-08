@@ -427,8 +427,6 @@ $this->params['action-button'] = $this->render('_action-button', [
                             $('.modal-delete').show();
                             $(".modal-delete").attr("action", url);
                         }
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Qualification</h4>');
-                        $('#popup-modal .modal-dialog').css({'width': '400px'});
                     }
                 }
             });

@@ -90,13 +90,31 @@ class CourseReschedule extends Model
             'courseId' => $this->courseId,
             'isConfirmed' => false,
         ]);
+        $lessonIds = [];
         $rescheduleStartDate = (new \DateTime($this->rescheduleBeginDate))->modify('-1 day');
+        $rescheduledLessons = Lesson::find()
+            ->andWhere(['courseId' => $this->courseId])
+            ->regular()
+            ->notDeleted()
+            ->rescheduled()
+            ->notCanceled()
+            ->isConfirmed()
+            ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime($this->dateToChangeSchedule))->format('Y-m-d')])
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->all();
+        $dateToChangeSchedule = (new \DateTime($this->dateToChangeSchedule))->format('Y-m-d H:i:s');
+        foreach ($rescheduledLessons as $rescheduledLesson) {
+            if ($rescheduledLesson->getOriginalDate() < $dateToChangeSchedule) {
+                $lessonIds[] = $rescheduledLesson->id;
+            }
+        }
         $lessons = Lesson::find()
             ->andWhere(['courseId' => $this->courseId])
             ->regular()
             ->notDeleted()
-            ->statusScheduledOrUnscheduled()
+            ->notCanceled()
             ->isConfirmed()
+            ->andWhere(['NOT', ['lesson.id' => $lessonIds]])
             ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime($this->dateToChangeSchedule))->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();

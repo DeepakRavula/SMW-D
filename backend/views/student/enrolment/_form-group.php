@@ -72,7 +72,7 @@ use yii\helpers\Url;
                 'attribute' => 'rate',
                 'label' => 'Rate',
                 'value' => function ($data) {
-                    return !empty($data->program->rate) ? $data->program->rate : null;
+                    return !empty($data->courseProgramRate->programRate) ? $data->courseProgramRate->programRate : null;
                 },
             ],
             [

@@ -49,11 +49,28 @@ class LessonConfirm extends Model
         $oneLesson = end($lessons);
         $startDate = new \DateTime($this->rescheduleBeginDate);
         $endDate = new \DateTime($this->rescheduleEndDate);
+        $lessonIds = [];
+        $oldRescheduledLessons = Lesson::find()
+            ->andWhere(['courseId' => $courseModel->id])
+            ->notDeleted()
+            ->isConfirmed() 
+            ->rescheduled()
+            ->notCanceled()
+            ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->all();
+        $dateToChangeSchedule = $startDate->format('Y-m-d H:i:s');
+        foreach ($oldRescheduledLessons as $oldRescheduledLesson) {
+            if ($oldRescheduledLesson->getOriginalDate() < $dateToChangeSchedule ) {
+                $lessonIds[] = $oldRescheduledLesson->id;
+            }
+        }
         $oldLessons = Lesson::find()
             ->andWhere(['courseId' => $courseModel->id])
             ->notDeleted()
-            ->isConfirmed()
-            ->statusScheduledOrUnscheduled()
+            ->isConfirmed() 
+            ->notCanceled()
+            ->andWhere(['NOT', ['lesson.id' => $lessonIds]])
             ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
