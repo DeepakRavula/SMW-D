@@ -1,6 +1,8 @@
 <?php
 
 use yii\db\Migration;
+use common\models\User;
+use common\models\Location;
 
 /**
  * Class m190208_071615_add_reports_to_privilege
@@ -13,8 +15,6 @@ class m190208_071615_add_reports_to_privilege extends Migration
     public function safeUp()
     {
         $auth = Yii::$app->authManager;
-        $admin = $auth->getRole(User::ROLE_ADMINISTRATOR);
-        $owner = $auth->getRole(User::ROLE_OWNER);
         $permissions = [
             [
                 'permission' => 'manageReports',
@@ -23,10 +23,6 @@ class m190208_071615_add_reports_to_privilege extends Migration
             [
                 'permission' => 'manageBirthdays',
                 'description' => 'Manage birthdays'
-            ],
-            [
-                'permission' => 'manageItemCategory',
-                'description' => 'Manage item category'
             ],
             [
                 'permission' => 'manageItemCategoryReport',
@@ -41,10 +37,6 @@ class m190208_071615_add_reports_to_privilege extends Migration
                 'description' => 'Manage items by customer report'
             ],
             [
-                'permission' => 'manageReports',
-                'description' => 'Manage reports'
-            ],
-            [
                 'permission' => 'manageRoyalty',
                 'description' => 'Manage reports'
             ],
@@ -54,33 +46,15 @@ class m190208_071615_add_reports_to_privilege extends Migration
             ],
             [
                 'permission' => 'manageTaxCollected',
-                'description' => 'Manage Royalty free item report'
-            ],
-            [
-                'permission' => 'manageTaxCollected',
-                'description' => 'Manage Royalty free item report'
+                'description' => 'Manage tax collected report'
             ],
         ];
-        $locations = Location::find()->all();
         foreach ($permissions as $permission) {
             $loginToBackend = $auth->getPermission($permission['permission']);
-            if (!$loginToBackend) {
-                $loginToBackend = $auth->createPermission($permission['permission']);
-                $loginToBackend->description = $permission['description'];
-                $loginToBackend->isLocationSpecific = true;
-                $auth->add($loginToBackend);
-            }
-            foreach ($locations as $location) {
-                $locationId = $location->id;
-                $adminItem = $auth->getChildrenWithLocation(User::ROLE_ADMINISTRATOR, $locationId);
-                $ownerItem = $auth->getChildrenWithLocation(User::ROLE_OWNER, $locationId);
-                if (empty($adminItem[$permission['permission']])) {
-                    $auth->addChildWithLocation($admin, $loginToBackend, $locationId);
-                }
-                if (empty($ownerItem[$permission['permission']])) {
-                    $auth->addChildWithLocation($owner, $loginToBackend, $locationId);
-                }
-            }
+            $loginToBackend->isLocationSpecific = true;
+            // $this->update('rbac_auth_item', [
+            //     'isLocationSpecific' => true,
+            // ]);
         }
     }
 
