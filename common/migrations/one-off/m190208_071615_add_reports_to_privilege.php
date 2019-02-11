@@ -49,13 +49,14 @@ class m190208_071615_add_reports_to_privilege extends Migration
                 'description' => 'Manage tax collected report'
             ],
         ];
+        $locations = Location::find()->all();
         foreach ($permissions as $permission) {
             $loginToBackend = $auth->getPermission($permission['permission']);
-            $loginToBackend->isLocationSpecific = true;
-            // $this->update('rbac_auth_item', [
-            //     'isLocationSpecific' => true,
-            // ]);
+            if ($loginToBackend) {
+                $this->execute("UPDATE rbac_auth_item set isLocationSpecific = true where type = 2 and description = '" .$permission['description']."'");
+            }
         }
+
     }
 
     /**
