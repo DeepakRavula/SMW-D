@@ -419,10 +419,12 @@ class TeacherAvailabilityController extends BaseController
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
             }
             $class = $lesson->class;
+            $bgColor = $lesson->getColorCode();
             $events[] = [
                 'start' => $lesson->date,
                 'end' => $toTime->format('Y-m-d H:i:s'),
                 'className' => $class,
+                'backgroundColor' => $bgColor,
                 'title' => $title,
             ];
         }
