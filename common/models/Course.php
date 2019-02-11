@@ -227,7 +227,7 @@ class Course extends \yii\db\ActiveRecord
     public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id'])
-            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
+            ->onCondition(['enrolment.isDeleted' => false]);
     }
     
     public function getRegularCourse()
@@ -620,5 +620,11 @@ class Course extends \yii\db\ActiveRecord
         if ($endDate < $startDate) {
             $this->addError($attribute, "Enrolment end date must be greater than or equal to start date");
         }
+    }
+
+    public function getConfirmedEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'id'])
+            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
     }
 }

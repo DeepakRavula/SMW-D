@@ -638,7 +638,7 @@ class CourseController extends BaseController
                 ->andWhere(['courseId' => $model->id])
                 ->notDeleted()
                 ->all();
-        if (!$model->enrolment && $model->program->isGroup()) {
+        if (!$model->confirmedEnrolment && $model->program->isGroup()) {
             if ($extraCourses) {
                 foreach ($extraCourses as $extraCourse) {
                     $extraCourse->lesson->delete();
