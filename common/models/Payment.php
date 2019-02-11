@@ -12,6 +12,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
+use backend\models\PaymentForm;
 
 /**
  * This is the model class for table "payments".
@@ -75,22 +76,14 @@ class Payment extends ActiveRecord
             [['amount'], 'required'],
             [['amount'], 'number'],
             [['paymentAmount'], 'number'],
-            ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
                 'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId', 'createdByUserId', 
                 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
-                self::SCENARIO_CREDIT_USED_EDIT]],
+                self::SCENARIO_CREDIT_USED_EDIT]],   
         ];
     }
-
-    public function validateNonZero($attributes)
-    {
-        if ((float) $this->amount === (float) 0) {
-            $this->addError($attributes, "Amount can't be 0");
-        }
-    }
-
+   
     public function validateOnDelete($attributes)
     {
         if ($this->hasInvoicePayments()) {

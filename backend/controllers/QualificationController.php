@@ -141,6 +141,9 @@ class QualificationController extends BaseController
                     ->notDeleted()
                     ->scheduledOrRescheduled()
                     ->isConfirmed()
+                    ->notCompleted()
+                    ->unscheduled()
+                    ->notCanceled()
                     ->andWhere(['lesson.teacherId' => $model->teacher_id])
                     ->joinWith(['program' => function($query) use ($model){
                         $query->andWhere(['program.id' => $model->program_id]);
