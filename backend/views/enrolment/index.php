@@ -68,6 +68,9 @@ $this->params['show-all'] = $this->render('_button', [
             'id' => 'enrolment-startdate-search',
             'convertFormat' => true,
             'initRangeExpr' => true,
+            'options' => [
+                'readOnly' => true,
+            ],
             'pluginOptions' => [
                 'autoApply' => true,
                 'allowClear' => true,
@@ -100,6 +103,9 @@ $this->params['show-all'] = $this->render('_button', [
             'id' => 'enrolment-enddate-search',
             'convertFormat' => true,
             'initRangeExpr' => true,
+            'options' => [
+                'readOnly' => true,
+            ],
             'pluginOptions' => [
                 'autoApply' => true,
                 'allowClear' => true,
