@@ -46,6 +46,9 @@ $columns              = [
             'id' => 'timeline-daterange-search',
             'convertFormat' => true,
             'initRangeExpr' => true,
+            'options' => [
+				'readOnly' => true,
+			],
             'pluginOptions' => [
                 'autoApply' => true,
                 'allowClear' => true,
