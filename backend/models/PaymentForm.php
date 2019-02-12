@@ -473,6 +473,33 @@ class PaymentForm extends Model
                     $creditInvoice->save();
                 }
             }
+        } 
+        $paymentCredits = $this->paymentCredits;
+        if ($paymentCredits) {
+            if ($this->canUsePaymentCredits) { 
+                $amount = abs($this->amount);
+                foreach ($paymentCredits as $j => $paymentCredit) {
+                    $creditPaymentAmount = $paymentCredit['value'];
+                    if ($amount < $creditPaymentAmount) {
+                        $creditPaymentAmount = $amount;
+                    }
+                  
+                    $creditInvoice = new Invoice();
+                    $creditInvoice->userId = $this->userId;
+                    $creditInvoice->save();
+                    if ($creditInvoice->hasCredit()) {
+                        $invoicePaymentModel = new InvoicePayment();
+                        $invoicePaymentModel->amount = -round($creditInvoiceAmount, 2);
+                        $invoicePaymentModel->invoice_id = $creditInvoice->id;
+                        $invoicePaymentModel->payment_id = $this->paymentId;
+                        $invoicePaymentModel->save();
+                        $amount -= $creditInvoiceAmount;
+                    } else {
+                        break;
+                    }
+                    $creditInvoice->save();
+                }
+            }
         }
         return true;
     }
