@@ -43,12 +43,12 @@ class ReportController extends BaseController
 					[
                         'allow' => true,
                         'actions' => ['payment'],
-                        'roles' => ['managePayments'],
+                        'roles' => ['managePaymentsReport'],
                     ],
                     [
                         'allow' => true,
                         'actions' => ['sales-and-payment'],
-                        'roles' => ['managePayments'],
+                        'roles' => ['manageSalesAndPayment'],
                     ],
 					[
                         'allow' => true,

@@ -149,7 +149,7 @@ echo Menu::widget([
                     'label' => Yii::t('backend', 'Payments'),
                     'icon' => '<i class="fa fa-dollar"></i>',
                     'url' => ['/report/payment'],
-					'visible' => Yii::$app->user->can('managePayments'),
+					'visible' => Yii::$app->user->can('managePaymentsReport'),
                     'active' => (Yii::$app->controller->action->id === 'payment') ? true : false,
                 ],
                     [
@@ -205,7 +205,7 @@ echo Menu::widget([
                     'label' => Yii::t('backend', 'Sales & Payments Report'),
                     'icon' => '<i class="fa fa-dollar"></i>',
                     'url' => ['/report/sales-and-payment'],
-					'visible' => Yii::$app->user->can('manageItemCategoryReport'),
+					'visible' => Yii::$app->user->can('manageSalesAndPayment'),
                     'active' => (Yii::$app->controller->action->id === 'sales-and-payment') ? true : false,
                 ],
                     [
