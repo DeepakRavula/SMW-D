@@ -125,9 +125,6 @@ class InvoiceSearch extends Invoice
 		}]);
 		$query->joinWith(['userContacts' => function ($query){
 				$query->joinWith(['phone']);
-            }]);
-            $query->joinWith(['student' => function ($query) use($locationId) {
-               $query->location($locationId);
             }]);   
         }]);
         if ($this->number) {
@@ -140,6 +137,9 @@ class InvoiceSearch extends Invoice
             $query->andFilterWhere(['user.id' => $this->customerId ]); 
         }
         if ($this->student) {
+            $query->joinWith(['student' => function ($query) use($locationId) {
+                $query->location($locationId);
+             }]);
 		    $query->andFilterWhere(['like', 'student.first_name', $this->student])
                   ->orFilterWhere(['like', 'student.last_name', $this->student]);
         }

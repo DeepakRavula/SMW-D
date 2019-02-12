@@ -38,7 +38,11 @@ class m190208_071615_add_reports_to_privilege extends Migration
             ],
             [
                 'permission' => 'manageRoyalty',
-                'description' => 'Manage reports'
+                'description' => 'Manage royalty report'
+            ],
+            [
+                'permission' => 'manageDiscountReport',
+                'description' => 'Manage discount report'
             ],
             [
                 'permission' => 'manageRoyaltyFreeItems',
