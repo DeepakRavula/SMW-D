@@ -56,6 +56,7 @@ class LessonConfirm extends Model
             ->isConfirmed() 
             ->rescheduled()
             ->notCanceled()
+            ->unInvoiced()
             ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
@@ -70,6 +71,7 @@ class LessonConfirm extends Model
             ->notDeleted()
             ->isConfirmed() 
             ->notCanceled()
+            ->unInvoiced()
             ->andWhere(['NOT', ['lesson.id' => $lessonIds]])
             ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])

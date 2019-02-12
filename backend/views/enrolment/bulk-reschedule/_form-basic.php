@@ -43,4 +43,12 @@ use yii\helpers\Url;
         $('.modal-save').text('Preview lessons');
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
     });
+    $(document).off('change', '#coursereschedule-datetochangeschedule').on('change', '#coursereschedule-datetochangeschedule', function() {
+        var changeDate = $('#coursereschedule-datetochangeschedule').val();
+        var changeDate =  moment(changeDate).format('YYYY-MM-DD');
+        var currentDate = moment().format('YYYY-MM-DD');
+        if (changeDate < currentDate) {
+            bootbox.alert("Warning: You've chosen a date in the past. Are you sure you want to continue? (Note: Invoiced lessons will not be affected.)");
+        }
+    });
 </script>
