@@ -43,6 +43,7 @@ use yii\helpers\Url;
         $('.modal-save').text('Preview lessons');
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
     });
+    
     $(document).off('change', '#coursereschedule-datetochangeschedule').on('change', '#coursereschedule-datetochangeschedule', function() {
         var changeDate = $('#coursereschedule-datetochangeschedule').val();
         var changeDate =  moment(changeDate).format('YYYY-MM-DD');
