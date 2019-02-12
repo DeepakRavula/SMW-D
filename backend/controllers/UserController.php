@@ -760,4 +760,22 @@ class UserController extends BaseController
         }
         return $count;
     }
+
+    protected function getInvoiceOwing($model, $locationId)
+    {
+        $invoices = Invoice::find()
+                ->andWhere([
+                    'invoice.user_id' => $model->id,
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                    'invoice.location_id' => $locationId,
+                ])
+                ->notDeleted();
+        $invoiceCount = 0;
+        foreach ($invoices as $invoice) {
+            if ($invoice->isOwing()) {
+                $invoiceCount = $invoiceCount + $invoice->balance;
+            }
+        }
+        return $invoiceCount;
+    }
 }
