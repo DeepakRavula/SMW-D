@@ -44,6 +44,9 @@ $this->params['show-all'] = $this->render('_button', [
                     'initRangeExpr' => true,
                     'attribute' => 'dateRange',
                     'convertFormat' => true,
+                    'options' => [
+                        'readOnly' => true,
+                    ],
                     'pluginOptions'=>[
                         'autoApply' => true,
                         'ranges' => [
