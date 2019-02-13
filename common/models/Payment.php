@@ -86,11 +86,19 @@ class Payment extends ActiveRecord
    
     public function validateOnDelete($attributes)
     {
+        if ($this->isNegativePayment()) {
+            $this->addError($attributes, "Negative Payments Cannot be deleted");
+        }
         if ($this->hasInvoicePayments()) {
             foreach ($this->invoicePayments as $invoicePayment) {
                 if (!$invoicePayment->invoice->isInvoice()) {
                     $this->addError($attributes, "Used PFI's payments can't be deleted!");
                     break;
+                }
+                else {
+                    if($invoicePayment->invoice->isPaymentCreditInvoice()) {
+                        $this->addError($attributes, "Refunded payments cannot be deleted! ");
+                    }
                 }
             }
         }
@@ -121,6 +129,9 @@ class Payment extends ActiveRecord
 
     public function validateOnEdit($attributes)
     {
+        if ($this->isNegativePayment()) {
+            $this->addError($attributes, "Negative Payments Cannot be Edited");
+        }
         if ($this->isAutoPayments()) {
             $this->addError($attributes, "System generated payments can't be deleted!");
         }
@@ -128,6 +139,10 @@ class Payment extends ActiveRecord
             foreach ($this->invoicePayments as $invoicePayment) {
                 if (!$invoicePayment->invoice->isInvoice()) {
                     $this->addError($attributes, "Used PFI's payments can't be modified!");
+                } else {
+                    if($invoicePayment->invoice->isPaymentCreditInvoice()) {
+                        $this->addError($attributes, "Refunded payments cannot be edited! ");
+                    }
                 }
             }
         }
@@ -407,6 +422,11 @@ class Payment extends ActiveRecord
     public function isAutoPayments()
     {
         return $this->isCreditApplied() || $this->isCreditUsed() || $this->isAccountEntry();
+    }
+
+    public function isNegativePayment()
+    {
+        return !$this->isCreditUsed() && $this->amount < 0.01;
     }
 
     public function afterSoftDelete()
