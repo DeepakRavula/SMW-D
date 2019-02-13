@@ -426,7 +426,7 @@ class Payment extends ActiveRecord
 
     public function isNegativePayment()
     {
-        return !$this->isCreditUsed() && $this->amount < 0.01;
+        return !$this->isCreditUsed() && $this->amount < 0.00;
     }
 
     public function afterSoftDelete()
