@@ -538,6 +538,8 @@ class UserController extends BaseController
             'paymentsDataProvider' => $this->getPaymentsDataProvider($id),
             'paymentCount' => $this->getPaymentCount($id),
             'prePaidLessonsCount' => $this->getPrePaidLessons($id),
+            'invoicesBalance' => $this->getInvoiceOwing($model, $locationId),
+            'lastPayment' => $this->getLastPayment($id),
         ]);
     }
 
@@ -745,20 +747,18 @@ class UserController extends BaseController
         $lessons = Lesson::find()
                 ->customer($id)
                 ->notDeleted()
-                ->scheduledOrRescheduled()
-                ->unscheduled()
+                ->scheduledOrRescheduledOrUnscheduled()
                 ->notCanceled()
                 ->isConfirmed()
                 ->notCompleted()
                 ->all();
-        $count = 0;
+        $prePaidLessonsCount = 0;
         foreach ($lessons as $lesson) {
-            if (round($lesson->getOwingAmount($this->enrolment->id), 2) != 0.00 ) {
-                $count = count($lesson) + $count;
-                print_r($count);die('bfhfhfhf');
+            if (round($lesson->getOwingAmount($lesson->enrolment->id), 2) == 0.00 ) {
+                $prePaidLessonsCount  = count($lesson) + $prePaidLessonsCount ;
             }
         }
-        return $count;
+        return $prePaidLessonsCount;
     }
 
     protected function getInvoiceOwing($model, $locationId)
@@ -769,13 +769,27 @@ class UserController extends BaseController
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
-                ->notDeleted();
+                ->notDeleted()
+                ->all();
         $invoiceCount = 0;
         foreach ($invoices as $invoice) {
             if ($invoice->isOwing()) {
                 $invoiceCount = $invoiceCount + $invoice->balance;
+            } else {
+                return $invoiceCount;
             }
         }
         return $invoiceCount;
+    }
+
+    protected function getLastPayment($id)
+    {
+        $lastPayment = Payment::find()
+            ->andWhere(['user_id' => $id])
+            ->notDeleted()
+            ->exceptAutoPayments()
+            ->orderBy(['payment.date' => SORT_DESC])
+            ->one();
+        return $lastPayment;
     }
 }

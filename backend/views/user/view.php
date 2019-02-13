@@ -55,11 +55,10 @@ $this->params['action-button'] = $this->render('_action-button', [
 <?= LteInfoBox::widget([
                       'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_RED,
                       'bgColor'=>'',
-                      'number'=>$invoicesCount ,
+                      'number'=>$invoicesBalance,
                       'text'=>'OWING',
                       'icon'=>'fa fa-exclamation-triangle',
                       'progressNumber'=>66,
-                      'description'=>'Something about this'
                   ])?>
 </div>
 <div class="col-md-3">  
@@ -70,18 +69,17 @@ $this->params['action-button'] = $this->render('_action-button', [
                       'text'=>'CREDITS',
                       'icon'=>'fa fa-check',
                       'progressNumber'=>66,
-                      'description'=>'Something about this'
                   ])?>
 </div>
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_GREEN,
                       'bgColor'=>'',
-                      'number'=>100500,
+                      'number'=>$lastPayment->amount,
                       'text'=>'LAST PAYMENT',
                       'icon'=>'fa fa-credit-card',
                       'progressNumber'=>66,
-                      'description'=>'Something about this'
+                      'description'=> (new \DateTime($lastPayment->date))->format('M d, Y'),
                   ])?>
 </div>
 <div class="col-md-3">  
@@ -92,7 +90,6 @@ $this->params['action-button'] = $this->render('_action-button', [
                       'text'=>'PRE-PAID LESSONS',
                       'icon'=>'fa fa-credit-card',
                       'progressNumber'=>66,
-                      'description'=>'Something about this'
                   ])?>
 </div>
 </div>
