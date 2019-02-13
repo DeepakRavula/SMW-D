@@ -792,4 +792,41 @@ class UserController extends BaseController
             ->one();
         return $lastPayment;
     }
+
+    public function getCredits($id) 
+    {
+        $invoiceCredits = Invoice::find()
+            ->notDeleted()
+            ->invoiceCredit($id)
+            ->all();
+        $paymentCredits = Payment::find()
+            ->notDeleted()
+            ->exceptAutoPayments()
+            ->customer($id)
+            ->orderBy(['payment.id' => SORT_ASC])
+            ->all();
+            if ($invoiceCredits) {
+                foreach ($invoiceCredits as $invoiceCredit) {
+                    $results[] = [
+                        'id' => $invoiceCredit->id,
+                        'type' => 'Invoice Credit',
+                        'reference' => $invoiceCredit->getInvoiceNumber(),
+                        'amount' => round(abs($invoiceCredit->balance), 2)
+                    ];
+                }
+            }
+    
+            if ($paymentCredits) {
+                foreach ($paymentCredits as $paymentCredit) {
+                    if ($paymentCredit->hasCredit()) {
+                        $results[] = [
+                            'id' => $paymentCredit->id,
+                            'type' => 'Payment Credit',
+                            'reference' => $paymentCredit->reference,
+                            'amount' => round($paymentCredit->creditAmount, 2)
+                        ];
+                    }
+            }
+        }
+    }
 }
