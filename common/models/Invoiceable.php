@@ -32,16 +32,6 @@ trait Invoiceable
         return $invoiceLineItem;
     }
 
-    public function addPaymentCreditLineItem($invoice)
-    {
-        $invoiceLineItem             = new InvoiceLineItem();
-        $invoiceLineItem->invoice_id = $invoice->id;
-        $item = Item::findOne(['code' => Item::PAYMENT]);
-        $invoiceLineItem->item_id    = $item->id;
-
-        return $invoiceLineItem;
-    }
-
     public function addPrivateLessonLineItem($invoice)
     {
         $invoiceLineItem = $this->addLessonLineItem($invoice);
