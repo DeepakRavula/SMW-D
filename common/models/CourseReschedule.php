@@ -112,7 +112,7 @@ class CourseReschedule extends Model
             ->andWhere(['courseId' => $this->courseId])
             ->regular()
             ->notDeleted()
-            ->notCanceled()
+            ->notCanceled() 
             ->isConfirmed()
             ->andWhere(['NOT', ['lesson.id' => $lessonIds]])
             ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime($this->dateToChangeSchedule))->format('Y-m-d')])
