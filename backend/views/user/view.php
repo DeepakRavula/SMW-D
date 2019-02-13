@@ -65,7 +65,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <?= LteInfoBox::widget([
                       'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_AQUA,
                       'bgColor'=>'',
-                      'number'=>100500,
+                      'number'=> $credits,
                       'text'=>'CREDITS',
                       'icon'=>'fa fa-check',
                       'progressNumber'=>66,
@@ -75,11 +75,11 @@ $this->params['action-button'] = $this->render('_action-button', [
 <?= LteInfoBox::widget([
                       'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_GREEN,
                       'bgColor'=>'',
-                      //'number'=>$lastPayment->amount,
+                      'number'=> ($lastPayment) ? $lastPayment->amount : null,
                       'text'=>'LAST PAYMENT',
                       'icon'=>'fa fa-credit-card',
                       'progressNumber'=>66,
-                     // 'description'=> (new \DateTime($lastPayment->date))->format('M d, Y'),
+                      'description'=> ($lastPayment) ? (new \DateTime($lastPayment->date))->format('M d, Y') : null,
                   ])?>
 </div>
 <div class="col-md-3">  

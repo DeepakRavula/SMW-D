@@ -540,6 +540,7 @@ class UserController extends BaseController
             'prePaidLessonsCount' => $this->getPrePaidLessons($id),
             'invoicesBalance' => $this->getInvoiceOwing($model, $locationId),
             'lastPayment' => $this->getLastPayment($id),
+            'credits' => $this->getCredits($id),
         ]);
     }
 
@@ -805,28 +806,25 @@ class UserController extends BaseController
             ->customer($id)
             ->orderBy(['payment.id' => SORT_ASC])
             ->all();
+            $invoice_credits = 0;
             if ($invoiceCredits) {
                 foreach ($invoiceCredits as $invoiceCredit) {
-                    $results[] = [
-                        'id' => $invoiceCredit->id,
-                        'type' => 'Invoice Credit',
-                        'reference' => $invoiceCredit->getInvoiceNumber(),
-                        'amount' => round(abs($invoiceCredit->balance), 2)
-                    ];
+                        $invoice_credits =  round(abs($invoiceCredit->balance), 2);
                 }
+                return $invoice_credits;
             }
-    
+            $payment_credits = 0;
             if ($paymentCredits) {
                 foreach ($paymentCredits as $paymentCredit) {
                     if ($paymentCredit->hasCredit()) {
-                        $results[] = [
-                            'id' => $paymentCredit->id,
-                            'type' => 'Payment Credit',
-                            'reference' => $paymentCredit->reference,
-                            'amount' => round($paymentCredit->creditAmount, 2)
-                        ];
+                        $payment_credits = round($paymentCredit->creditAmount, 2);
+                        return $payment_credits;
                     }
+                }
             }
-        }
+            print_r($payment_credits);
+            print_r($invoice_credits);die('dbdbdb');
+        $credits = $invoice_credits + $payment_credits;
+        return $credits;
     }
 }
