@@ -96,7 +96,7 @@ class Payment extends ActiveRecord
                     break;
                 }
                 else {
-                    if($invoicePayment->invoice->isPaymentCreditInvoice()) {
+                    if ($invoicePayment->invoice->isPaymentCreditInvoice()) {
                         $this->addError($attributes, "Refunded payments cannot be deleted! ");
                     }
                 }
@@ -140,7 +140,7 @@ class Payment extends ActiveRecord
                 if (!$invoicePayment->invoice->isInvoice()) {
                     $this->addError($attributes, "Used PFI's payments can't be modified!");
                 } else {
-                    if($invoicePayment->invoice->isPaymentCreditInvoice()) {
+                    if ($invoicePayment->invoice->isPaymentCreditInvoice()) {
                         $this->addError($attributes, "Refunded payments cannot be edited! ");
                     }
                 }
