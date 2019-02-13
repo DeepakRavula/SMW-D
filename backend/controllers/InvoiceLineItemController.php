@@ -85,7 +85,7 @@ class InvoiceLineItemController extends BaseController
         if ($lineItem->isLessonItem() && $lineItem->invoice->isInvoice()) {
             $confirmationMessage = 'Deleting line item will unschedule the lesson. Would you like to proceed?';
         }
-        if (!$lineItem->invoice->isPosted) {
+        if (!$lineItem->invoice->isPosted && !$lineItem->invoice->isPaymentCreditInvoice()) {
             if ($lineItem->invoice->isReversedInvoice()) {
                 $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
             }
@@ -121,7 +121,7 @@ class InvoiceLineItemController extends BaseController
         } else {
             $response = [
                 'status' => false,
-                'message' => 'Item cannot be updated if invoice posted!',
+                'message' => 'Item cannot be updated! ',
             ];
         }
         return $response;
