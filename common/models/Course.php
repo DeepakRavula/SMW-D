@@ -396,6 +396,10 @@ class Course extends \yii\db\ActiveRecord
             if ($lesson->isUnscheduled()) {
                 $isUnscheduled = true;
             }
+            $isInvoiced = false;
+            if ($lesson->hasInvoice()) {
+                $isInvoiced = true;
+            }
             $lesson->id = null;
             $lesson->isNewRecord = true;
             $lesson->teacherId = $teacherId;
@@ -412,7 +416,9 @@ class Course extends \yii\db\ActiveRecord
                 $nextWeekScheduledDate->setTime($hour, $minute, $second);
                 $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
             }
-                 $lesson->save();
+            if (!$isInvoiced) {
+                $lesson->save();
+            }
             $startDate->modify('next ' . $day);
         }
         return $lesson->date;

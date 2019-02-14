@@ -137,9 +137,11 @@ class InvoiceSearch extends Invoice
             $query->andFilterWhere(['user.id' => $this->customerId ]); 
         }
         if ($this->student) {
-            $query->joinWith(['student' => function ($query) use($locationId) {
-                $query->location($locationId);
-             }]);
+            $query->joinWith(['user' => function ($query) use($locationId) {
+                $query->joinWith(['student' => function ($query) use($locationId) {
+                    $query->location($locationId);
+                }]);
+            }]);
 		    $query->andFilterWhere(['like', 'student.first_name', $this->student])
                   ->orFilterWhere(['like', 'student.last_name', $this->student]);
         }
