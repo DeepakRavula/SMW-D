@@ -140,8 +140,8 @@ class QualificationController extends BaseController
                 $lessons  = Lesson::find()
                     ->notDeleted()
                     ->isConfirmed()
-                    ->notCompleted()
                     ->notCanceled()
+                    ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
                     ->andWhere(['lesson.teacherId' => $model->teacher_id])
                     ->joinWith(['program' => function($query) use ($model){
                         $query->andWhere(['program.id' => $model->program_id]);
