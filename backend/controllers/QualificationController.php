@@ -139,10 +139,8 @@ class QualificationController extends BaseController
             if ($model->load($post) && $model->save()) {
                 $lessons  = Lesson::find()
                     ->notDeleted()
-                    ->scheduledOrRescheduled()
                     ->isConfirmed()
                     ->notCompleted()
-                    ->unscheduled()
                     ->notCanceled()
                     ->andWhere(['lesson.teacherId' => $model->teacher_id])
                     ->joinWith(['program' => function($query) use ($model){
