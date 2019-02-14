@@ -19,6 +19,7 @@ class ItemType extends \yii\db\ActiveRecord
     const TYPE_LESSON_SPLIT = 7;
     const TYPE_SPLIT_LESSON_CREDIT_APPLIED = 8;
     const TYPE_EXTRA_LESSON = 9;
+    CONST TYPE_PAYMENT_CREDIT = 10;
 
     /**
      * {@inheritdoc}
@@ -81,6 +82,9 @@ class ItemType extends \yii\db\ActiveRecord
             break;
             case self::TYPE_EXTRA_LESSON:
                 $code = 'EXTRA LESSON';
+            break;
+            case self::TYPE_PAYMENT_CREDIT:
+                $code = 'PAYMENT CREDIT';
             break;
         }
 

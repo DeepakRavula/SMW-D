@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="receive-payments" href='#' data-url='<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->user_id]); ?>'>Receive Payment</a></li>
             <?php if ($model->isInvoice()) : ?>
-                <?php if (!$model->isVoid) : ?>
+                <?php if (!$model->isVoid && !$model->isPaymentCreditInvoice()) : ?>
                     <li><a id="void" href="#">Void</a></li>
                 <?php else : ?>
                     <li><a class="multiselect-disable" href="#">Void</a></li>

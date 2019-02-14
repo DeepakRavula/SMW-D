@@ -4,7 +4,7 @@ use yii\helpers\Url;
 use common\models\User;
 
 ?>
-<?php if (!$model->isOpeningBalance()) : ?>
+<?php if (!$model->isOpeningBalance() && !$model->isPaymentCreditInvoice()) : ?>
 <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
 <ul class="dropdown-menu dropdown-menu-right">
 	<?php if (empty($model->user) || $model->user->isLocationWalkin()) : ?>
