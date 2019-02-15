@@ -53,7 +53,7 @@ class ExtraLesson extends Lesson
     
     public function addGroup()
     {
-        $enrolments = Enrolment::findAll(['courseId' => $this->courseId]);
+        $enrolments = Enrolment::findAll(['courseId' => $this->courseId, 'isDeleted' => false, 'isConfirmed' => true]); 
         $regularCourse = Course::findOne($this->courseId);
         $course = $this->createCourse();
         $regularCourse->extendTo($course);
