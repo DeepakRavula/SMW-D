@@ -374,6 +374,16 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->type === (int) Invoice::TYPE_INVOICE;
     }
 
+    public function isPaymentCreditInvoice()
+    {
+        if (!$this->lineItem) {
+            $status = false;
+        } else {
+            $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_PAYMENT_CREDIT;
+        }
+        return $status;
+    }
+
     public function isProFormaInvoice()
     {
         return (int) $this->type === (int) Invoice::TYPE_PRO_FORMA_INVOICE;
@@ -898,7 +908,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canRevert()
     {
-        return $this->lineItem && !$this->isReversedInvoice() && !$this->isInvoiceReversed() && !$this->isOpeningBalance();
+        return $this->lineItem && !$this->isReversedInvoice() && !$this->isInvoiceReversed() && !$this->isOpeningBalance() && !$this->isPaymentCreditInvoice();
     }
 
     public function getReminderNotes() 
@@ -1023,7 +1033,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function void($canbeUnscheduled)
     {
-        if (!$this->isVoid) {
+        if (!$this->isVoid && !$this->isPaymentCreditInvoice()) {
             foreach ($this->lineItems as $lineItem) {
                 $lineItem->lessonCanBeUnscheduled = $canbeUnscheduled;
                 $lineItem->delete();
@@ -1037,7 +1047,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $status = false;
         if ($this->lineItem) {
-            $status = !$this->lineItem->isSpecialLineItems() && !$this->lineItem->isLessonItem();
+            $status = !$this->lineItem->isSpecialLineItems() && !$this->lineItem->isLessonItem() && !$this->isPaymentCreditInvoice();
         }
         return $status;
     }

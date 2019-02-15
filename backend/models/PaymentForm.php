@@ -4,7 +4,9 @@ namespace backend\models;
 
 use common\models\Enrolment;
 use common\models\Invoice;
+use common\models\InvoiceLineItem;
 use common\models\InvoicePayment;
+use common\models\Item;
 use common\models\Lesson;
 use common\models\LessonPayment;
 use common\models\Payment;
@@ -15,6 +17,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
+use common\models\ItemType;
 
 /**
  * This is the model class for table "course".
@@ -68,24 +71,24 @@ class PaymentForm extends Model
             [['date', 'amountNeeded', 'canUseInvoiceCredits', 'selectedCreditValue', 'canUsePaymentCredits',
                 'invoiceCreditIds', 'amount', 'userId', 'amountToDistribute', 'invoicePayments', 'lessonPayments',
                 'paymentId', 'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds', 'prId',
-                'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id', 'notes'], 'safe',  'on' => self::SCENARIO_DEFAULT],
+                'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id', 'notes'], 'safe', 'on' => self::SCENARIO_DEFAULT],
             [['selectedCreditValue', 'amount', 'invoicePayments', 'lessonPayments', 'lessonIds', 'invoiceIds',
-            'paymentCredits', 'invoiceCredits', 'groupLessonIds', 'groupLessonPayments'], 'validateNegativePayment',  'on' => self::SCENARIO_NEGATIVE_PAYMENT],    
+                'paymentCredits', 'invoiceCredits', 'groupLessonIds', 'groupLessonPayments'], 'validateNegativePayment', 'on' => self::SCENARIO_NEGATIVE_PAYMENT],
         ];
     }
 
     public function validateNegativePayment($attributes)
-    {   
+    {
         $lessonIds = $this->getLessonIds();
         $invoiceIds = $this->getInvoiceIds();
         $groupLessonIds = $this->getGroupLessonIds();
 
-        if ((float) $this->amount <= (float) 0 ) {
-            
-        if ($this->paymentCredits || $this->lessonPayments || $this->groupLessonPayments || $lessonIds || $invoiceIds || $groupLessonIds) {
-            $this->addError($attributes, "Negative Payment can be applied to only invoice credits.");
+        if ((float) $this->amount <= (float) 0) {
+
+            if ($this->paymentCredits || $this->lessonPayments || $this->groupLessonPayments || $lessonIds || $invoiceIds || $groupLessonIds) {
+                $this->addError($attributes, "Negative Payment can be applied to only invoice credits.");
+            }
         }
-    }
 
         if ((float) $this->amount <= (float) 0 && !$this->invoiceCredits) {
             $this->addError($attributes, "Select Any Invoice credits to apply negative payment");
@@ -450,6 +453,7 @@ class PaymentForm extends Model
 
     public function addNegativePayment()
     {
+        $customer = User::findOne($this->userId);
         $invoiceCredits = $this->invoiceCredits;
         if ($invoiceCredits) {
             if ($this->canUseInvoiceCredits) {
@@ -470,6 +474,42 @@ class PaymentForm extends Model
                     } else {
                         break;
                     }
+                    $creditInvoice->save();
+                }
+            }
+        }
+        $paymentCredits = $this->paymentCredits;
+        if ($paymentCredits) {
+            if ($this->canUsePaymentCredits) {
+                $creditInvoice = new Invoice();
+                $creditInvoice->user_id = $customer->id;
+                $creditInvoice->location_id = $customer->userLocation->location->id;
+                $creditInvoice->type = Invoice::TYPE_INVOICE;
+                $creditInvoice->save();
+                $invoiceLineItem = new InvoiceLineItem();
+                $invoiceLineItem->invoice_id = $creditInvoice->id;
+                $item = Item::findOne(['code' => Item::PAYMENT_CREDIT]);
+                $invoiceLineItem->description = $item->description;
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CREDIT;
+                $invoiceLineItem->item_id = $item->id;
+                $invoiceLineItem->save();
+                $amount = abs($this->amount);
+                foreach ($paymentCredits as $j => $paymentCredit) {
+                    $creditPaymentAmount = $paymentCredit['value'];
+                    if ($amount < $creditPaymentAmount) {
+                        $creditPaymentAmount = $amount;
+                    }
+                    $invoicePaymentModel = new InvoicePayment();
+                    $invoicePaymentModel->amount = $paymentCredit['value'];
+                    $invoicePaymentModel->invoice_id = $creditInvoice->id;
+                    $invoicePaymentModel->payment_id = $paymentCredit['id'];
+                    $invoicePaymentModel->save();
+                    $invoicePaymentModel = new InvoicePayment();
+                    $invoicePaymentModel->amount = -$paymentCredit['value'];
+                    $invoicePaymentModel->invoice_id = $creditInvoice->id;
+                    $invoicePaymentModel->payment_id = $this->paymentId;
+                    $invoicePaymentModel->save();
+                    $amount -= $creditPaymentAmount;
                     $creditInvoice->save();
                 }
             }
