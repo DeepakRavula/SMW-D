@@ -776,8 +776,6 @@ class UserController extends BaseController
         foreach ($invoices as $invoice) {
             if ($invoice->isOwing()) {
                 $invoiceCount = $invoiceCount + $invoice->balance;
-            } else {
-                return $invoiceCount;
             }
         }
         return $invoiceCount;
@@ -799,31 +797,27 @@ class UserController extends BaseController
         $invoiceCredits = Invoice::find()
             ->notDeleted()
             ->invoiceCredit($id)
-            ->all();
+            ->all(); 
         $paymentCredits = Payment::find()
             ->notDeleted()
             ->exceptAutoPayments()
             ->customer($id)
             ->orderBy(['payment.id' => SORT_ASC])
             ->all();
-            $invoice_credits = 0;
-            if ($invoiceCredits) {
-                foreach ($invoiceCredits as $invoiceCredit) {
-                        $invoice_credits =  round(abs($invoiceCredit->balance), 2);
-                }
-                return $invoice_credits;
+        $invoice_credits = 0;
+        if ($invoiceCredits) {
+            foreach ($invoiceCredits as $invoiceCredit) {
+                    $invoice_credits =  round(abs($invoiceCredit->balance), 2);
             }
-            $payment_credits = 0;
-            if ($paymentCredits) {
-                foreach ($paymentCredits as $paymentCredit) {
-                    if ($paymentCredit->hasCredit()) {
-                        $payment_credits = round($paymentCredit->creditAmount, 2);
-                        return $payment_credits;
-                    }
+        }
+        $payment_credits = 0;
+        if ($paymentCredits) {
+            foreach ($paymentCredits as $paymentCredit) {
+                if ($paymentCredit->hasCredit()) {
+                    $payment_credits = round($paymentCredit->creditAmount, 2);
                 }
             }
-            print_r($payment_credits);
-            print_r($invoice_credits);die('dbdbdb');
+        }
         $credits = $invoice_credits + $payment_credits;
         return $credits;
     }
