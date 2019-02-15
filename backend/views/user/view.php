@@ -52,6 +52,11 @@ $this->params['action-button'] = $this->render('_action-button', [
 <br>
 <?php yii\widgets\Pjax::begin(['id' => 'customer-view']) ?>
 <?php if ($searchModel->role_name == 'customer'):?>
+<style>
+.info-box-top-20 {
+    margin-top : -20px;
+}
+</style>
 <div class="row">
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
@@ -78,7 +83,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                       'description'=> ($lastPayment) ? (new \DateTime($lastPayment->date))->format('M d, Y') : null,
                   ])?>
 </div>
-<div class="col-md-3">  
+<div class="col-md-3 info-box-top-20">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_ORANGE,
                       'number'=>$fullyPrePaidLessonsCount,
