@@ -30,6 +30,11 @@ use yii\widgets\Pjax;
                 <dt>Profit </dt>
                 <dd><?= Yii::$app->formatter->asCurrency(round($lessonProfit, 2)); ?></dd>
                 <?php endif;?>
+                <?php if ($model->isGroup()): ?>
+                <dt>Cost Per Student</dt>
+                <?php $number_of_students = $model->netCost / count($model->enrolments); ?>
+                <dd><?= Yii::$app->formatter->asCurrency(round($number_of_students, 2)); ?></dd>
+                <?php endif;?>
                 </dl>
             </div>
             <!-- /.box-body -->
