@@ -51,6 +51,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <br>
 <?php yii\widgets\Pjax::begin(['id' => 'customer-view']) ?>
+<?php if ($searchModel->role_name == 'customer'):?>
 <div class="row">
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
@@ -86,6 +87,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                   ])?>
 </div>
 </div>
+<?php endif;?>
 <div class="row">
     <div class="col-md-6">  
         <?php
