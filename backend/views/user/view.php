@@ -55,7 +55,7 @@ $this->params['action-button'] = $this->render('_action-button', [
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_RED,
-                      'number'=>$owingInvoiceCount,
+                      'number'=>$invoiceOwingAmountTotal,
                       'text'=>'OWING',
                       'icon'=>'fa fa-exclamation-triangle',
                   ])?>
@@ -80,7 +80,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_ORANGE,
-                      'number'=>$prePaidLessonsCount,
+                      'number'=>$fullyPrePaidLessonsCount,
                       'text'=>'PRE-PAID LESSONS',
                       'icon'=>'fa fa-credit-card',
                   ])?>

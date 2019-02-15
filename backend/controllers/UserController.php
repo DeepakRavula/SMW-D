@@ -537,8 +537,8 @@ class UserController extends BaseController
             'invoiceCount' => $this->getInvoiceCount($model, $locationId),
             'paymentsDataProvider' => $this->getPaymentsDataProvider($id),
             'paymentCount' => $this->getPaymentCount($id),
-            'prePaidLessonsCount' => $this->getPrePaidLessonsCount($id),
-            'owingInvoiceCount' => $this->getOwingInvoiceCount($model),
+            'fullyPrePaidLessonsCount' => $this->getFullyPrePaidLessonsCount($id),
+            'invoiceOwingAmountTotal' => $this->getInvoiceOwingAmountTotal($id),
             'lastPayment' => $this->getLastPayment($id),
             'credits' => $this->getTotalCredits($id),
         ]);
@@ -743,7 +743,7 @@ class UserController extends BaseController
 	    return $paymentCount;
     }
 
-    public function getPrePaidLessonsCount($id) 
+    public function getFullyPrePaidLessonsCount($id) 
     {
         $lessons = Lesson::find()
                 ->customer($id)
@@ -752,20 +752,20 @@ class UserController extends BaseController
                 ->isConfirmed()
                 ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
                 ->all();
-        $prePaidLessonsCount = 0;
+        $fullyPrePaidLessonsCount = 0;
         foreach ($lessons as $lesson) {
             if (round($lesson->getOwingAmount($lesson->enrolment->id), 2) == 0.00 ) {
-                $prePaidLessonsCount  = count($lesson) + $prePaidLessonsCount ;
+                $fullyPrePaidLessonsCount++ ;
             }
         }
-        return $prePaidLessonsCount;
+        return $fullyPrePaidLessonsCount;
     }
 
-    protected function getOwingInvoiceCount($model)
+    protected function getInvoiceOwingAmountTotal($id)
     {
         $invoices = Invoice::find()
                 ->andWhere([
-                    'invoice.user_id' => $model->id,
+                    'invoice.user_id' => $id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
                 ])
                 ->notDeleted()
@@ -773,7 +773,7 @@ class UserController extends BaseController
         $invoiceCount = 0;
         foreach ($invoices as $invoice) {
             if ($invoice->isOwing()) {
-                $invoiceCount = $invoiceCount + $invoice->balance;
+                $invoiceCount += $invoice->balance;
             }
         }
         return $invoiceCount;
@@ -805,14 +805,14 @@ class UserController extends BaseController
         $invoice_credits = 0;
         if ($invoiceCredits) {
             foreach ($invoiceCredits as $invoiceCredit) {
-                    $invoice_credits = round(abs($invoiceCredit->balance), 2);
+                    $invoice_credits += round(abs($invoiceCredit->balance), 2);
             }
         }
         $payment_credits = 0;
         if ($paymentCredits) {
             foreach ($paymentCredits as $paymentCredit) {
                 if ($paymentCredit->hasCredit()) {
-                    $payment_credits = round($paymentCredit->creditAmount, 2);
+                    $payment_credits += round($paymentCredit->creditAmount, 2);
                 }
             }
         }
