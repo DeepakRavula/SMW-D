@@ -77,7 +77,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_GREEN,
-                      'number'=> ($lastPayment) ? $lastPayment->amount : null,
+                      'number'=> ($lastPayment) ? round($lastPayment->amount, 2) : null,
                       'text'=>'LAST PAYMENT',
                       'icon'=>'fa fa-credit-card',
                       'description'=> ($lastPayment) ? (new \DateTime($lastPayment->date))->format('M d, Y') : null,
@@ -88,7 +88,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                       'bgIconColor'=> LteConst::COLOR_ORANGE,
                       'number'=>$fullyPrePaidLessonsCount,
                       'text'=>'PRE-PAID LESSONS',
-                      'icon'=>'fa fa-credit-card',
+                      'icon'=>'fa fa-music',
                   ])?>
 </div>
 </div>
