@@ -15,6 +15,7 @@ use kartik\time\TimePickerAsset;
 use kartik\select2\Select2Asset;
 use common\models\CustomerReferralSource;
 use insolita\wgadminlte\LteInfoBox;
+use insolita\wgadminlte\LteConst;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
@@ -53,43 +54,35 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div class="row">
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
-                      'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_RED,
-                      'bgColor'=>'',
-                      'number'=>$invoicesBalance,
+                      'bgIconColor'=> LteConst::COLOR_RED,
+                      'number'=>$owingInvoiceCount,
                       'text'=>'OWING',
                       'icon'=>'fa fa-exclamation-triangle',
-                      'progressNumber'=>66,
                   ])?>
 </div>
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
-                      'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_AQUA,
-                      'bgColor'=>'',
+                      'bgIconColor'=> LteConst::COLOR_AQUA,
                       'number'=> $credits,
                       'text'=>'CREDITS',
                       'icon'=>'fa fa-check',
-                      'progressNumber'=>66,
                   ])?>
 </div>
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
-                      'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_GREEN,
-                      'bgColor'=>'',
+                      'bgIconColor'=> LteConst::COLOR_GREEN,
                       'number'=> ($lastPayment) ? $lastPayment->amount : null,
                       'text'=>'LAST PAYMENT',
                       'icon'=>'fa fa-credit-card',
-                      'progressNumber'=>66,
                       'description'=> ($lastPayment) ? (new \DateTime($lastPayment->date))->format('M d, Y') : null,
                   ])?>
 </div>
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
-                      'bgIconColor'=>\insolita\wgadminlte\LteConst::COLOR_ORANGE,
-                      'bgColor'=>'',
+                      'bgIconColor'=> LteConst::COLOR_ORANGE,
                       'number'=>$prePaidLessonsCount,
                       'text'=>'PRE-PAID LESSONS',
                       'icon'=>'fa fa-credit-card',
-                      'progressNumber'=>66,
                   ])?>
 </div>
 </div>

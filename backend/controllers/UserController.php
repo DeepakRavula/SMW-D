@@ -537,10 +537,10 @@ class UserController extends BaseController
             'invoiceCount' => $this->getInvoiceCount($model, $locationId),
             'paymentsDataProvider' => $this->getPaymentsDataProvider($id),
             'paymentCount' => $this->getPaymentCount($id),
-            'prePaidLessonsCount' => $this->getPrePaidLessons($id),
-            'invoicesBalance' => $this->getInvoiceOwing($model, $locationId),
+            'prePaidLessonsCount' => $this->getPrePaidLessonsCount($id),
+            'owingInvoiceCount' => $this->getOwingInvoiceCount($model),
             'lastPayment' => $this->getLastPayment($id),
-            'credits' => $this->getCredits($id),
+            'credits' => $this->getTotalCredits($id),
         ]);
     }
 
@@ -731,7 +731,7 @@ class UserController extends BaseController
             'pagination' => false,
             'sort' => ['defaultOrder' => ['date' => SORT_DESC]],
         ]);
-    } 
+    }
 
     protected function getPaymentCount($id) 
     {
@@ -743,15 +743,14 @@ class UserController extends BaseController
 	    return $paymentCount;
     }
 
-    public function getPrePaidLessons($id) 
+    public function getPrePaidLessonsCount($id) 
     {
         $lessons = Lesson::find()
                 ->customer($id)
                 ->notDeleted()
-                ->scheduledOrRescheduledOrUnscheduled()
                 ->notCanceled()
                 ->isConfirmed()
-                ->notCompleted()
+                ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
                 ->all();
         $prePaidLessonsCount = 0;
         foreach ($lessons as $lesson) {
@@ -762,13 +761,12 @@ class UserController extends BaseController
         return $prePaidLessonsCount;
     }
 
-    protected function getInvoiceOwing($model, $locationId)
+    protected function getOwingInvoiceCount($model)
     {
         $invoices = Invoice::find()
                 ->andWhere([
                     'invoice.user_id' => $model->id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
-                    'invoice.location_id' => $locationId,
                 ])
                 ->notDeleted()
                 ->all();
@@ -792,7 +790,7 @@ class UserController extends BaseController
         return $lastPayment;
     }
 
-    public function getCredits($id) 
+    public function getTotalCredits($id) 
     {
         $invoiceCredits = Invoice::find()
             ->notDeleted()
@@ -807,7 +805,7 @@ class UserController extends BaseController
         $invoice_credits = 0;
         if ($invoiceCredits) {
             foreach ($invoiceCredits as $invoiceCredit) {
-                    $invoice_credits =  round(abs($invoiceCredit->balance), 2);
+                    $invoice_credits = round(abs($invoiceCredit->balance), 2);
             }
         }
         $payment_credits = 0;
@@ -818,7 +816,7 @@ class UserController extends BaseController
                 }
             }
         }
-        $credits = $invoice_credits + $payment_credits;
-        return $credits;
+        $totalCredits = $invoice_credits + $payment_credits;
+        return $totalCredits;
     }
 }
