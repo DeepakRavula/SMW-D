@@ -32,8 +32,8 @@ use yii\widgets\Pjax;
                 <?php endif;?>
                 <?php if ($model->isGroup()): ?>
                 <dt>Cost Per Student</dt>
-                <?php $number_of_students = $model->netCost / count($model->enrolments); ?>
-                <dd><?= Yii::$app->formatter->asCurrency(round($number_of_students, 2)); ?></dd>
+                <?php ($model->enrolments) ? $number_of_students = $model->netCost / count($model->enrolments) : null; ?>
+                <dd><?= ($model->enrolments) ? Yii::$app->formatter->asCurrency(round($number_of_students, 2)) : null; ?></dd>
                 <?php endif;?>
                 </dl>
             </div>
