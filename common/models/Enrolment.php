@@ -12,6 +12,7 @@ use common\models\discount\LessonDiscount;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\data\ArrayDataProvider;
 use carbon\Carbon;
+use Carbon\Carbon;
 /**
  * This is the model class for table "enrolment".
  *
@@ -799,6 +800,22 @@ class Enrolment extends \yii\db\ActiveRecord
                     $paymentCycle->save();
                 }
             }
+        }
+        return true;
+    }
+
+    public function setDueDate()
+    {
+
+        if ($this->course->isPrivate()) {
+        $lessons = Lesson::find()
+                ->enrolment($this->id)
+                ->all();
+        foreach ($lessons as $lesson) {
+           $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
+           $dueDate = Carbon::parse($firstLessonDate)->format('Y-m-d');
+           $lesson->updateAttributes(['dueDate' => $dueDate]) 
+        }    
         }
         return true;
     }
