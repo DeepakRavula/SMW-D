@@ -23,11 +23,18 @@ use yii\widgets\Pjax;
                 <dd><?= Yii::$app->formatter->asCurrency(round($model->teacherRate, 2)); ?></dd>
                 <dt>Cost </dt>
                 <dd><?= Yii::$app->formatter->asCurrency(round($model->netCost, 2)); ?></dd>
+                <?php if (!$model->isGroup()): ?>
                 <dt>Price </dt>
                 <dd><?= Yii::$app->formatter->asCurrency(round($model->getSubTotal(), 2)); ?></dd>
                 <?php $lessonProfit = $model->getSubTotal() - $model->netCost; ?> 
                 <dt>Profit </dt>
                 <dd><?= Yii::$app->formatter->asCurrency(round($lessonProfit, 2)); ?></dd>
+                <?php endif;?>
+                <?php if ($model->isGroup()): ?>
+                <dt>Cost Per Student</dt>
+                <?php ($model->enrolments) ? $number_of_students = $model->netCost / count($model->enrolments) : null; ?>
+                <dd><?= ($model->enrolments) ? Yii::$app->formatter->asCurrency(round($number_of_students, 2)) : null; ?></dd>
+                <?php endif;?>
                 </dl>
             </div>
             <!-- /.box-body -->
