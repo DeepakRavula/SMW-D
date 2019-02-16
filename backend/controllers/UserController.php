@@ -537,10 +537,6 @@ class UserController extends BaseController
             'invoiceCount' => $this->getInvoiceCount($model, $locationId),
             'paymentsDataProvider' => $this->getPaymentsDataProvider($id),
             'paymentCount' => $this->getPaymentCount($id),
-            'fullyPrePaidLessonsCount' => $this->getFullyPrePaidLessonsCount($id),
-            'invoiceOwingAmountTotal' => $this->getInvoiceOwingAmountTotal($id),
-            'lastPayment' => $this->getLastPayment($id),
-            'credits' => $this->getTotalCredits($id),
         ]);
     }
 
@@ -741,82 +737,5 @@ class UserController extends BaseController
                 ->exceptAutoPayments()
 		        ->count();
 	    return $paymentCount;
-    }
-
-    public function getFullyPrePaidLessonsCount($id) 
-    {
-        $lessons = Lesson::find()
-                ->customer($id)
-                ->notDeleted()
-                ->notCanceled()
-                ->isConfirmed()
-                ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
-                ->all();
-        $fullyPrePaidLessonsCount = 0;
-        foreach ($lessons as $lesson) {
-            if (round($lesson->getOwingAmount($lesson->enrolment->id), 2) == 0.00 ) {
-                $fullyPrePaidLessonsCount++ ;
-            }
-        }
-        return $fullyPrePaidLessonsCount;
-    }
-
-    protected function getInvoiceOwingAmountTotal($id)
-    {
-        $invoices = Invoice::find()
-                ->andWhere([
-                    'invoice.user_id' => $id,
-                    'invoice.type' => Invoice::TYPE_INVOICE,
-                ])
-                ->notDeleted()
-                ->all();
-        $invoiceCount = 0;
-        foreach ($invoices as $invoice) {
-            if ($invoice->isOwing()) {
-                $invoiceCount += $invoice->balance;
-            }
-        }
-        return $invoiceCount;
-    }
-
-    protected function getLastPayment($id)
-    {
-        $lastPayment = Payment::find()
-            ->andWhere(['user_id' => $id])
-            ->notDeleted()
-            ->exceptAutoPayments()
-            ->orderBy(['payment.date' => SORT_DESC])
-            ->one();
-        return $lastPayment;
-    }
-
-    public function getTotalCredits($id) 
-    {
-        $invoiceCredits = Invoice::find()
-            ->notDeleted()
-            ->invoiceCredit($id)
-            ->all(); 
-        $paymentCredits = Payment::find()
-            ->notDeleted()
-            ->exceptAutoPayments()
-            ->customer($id)
-            ->orderBy(['payment.id' => SORT_ASC])
-            ->all();
-        $invoice_credits = 0;
-        if ($invoiceCredits) {
-            foreach ($invoiceCredits as $invoiceCredit) {
-                    $invoice_credits += round(abs($invoiceCredit->balance), 2);
-            }
-        }
-        $payment_credits = 0;
-        if ($paymentCredits) {
-            foreach ($paymentCredits as $paymentCredit) {
-                if ($paymentCredit->hasCredit()) {
-                    $payment_credits += round($paymentCredit->creditAmount, 2);
-                }
-            }
-        }
-        $totalCredits = $invoice_credits + $payment_credits;
-        return $totalCredits;
     }
 }
