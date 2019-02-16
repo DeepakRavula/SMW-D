@@ -51,48 +51,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <br>
 <?php yii\widgets\Pjax::begin(['id' => 'customer-view']) ?>
-<?php if ($searchModel->role_name == 'customer'):?>
-<style>
-.info-box-top-20 {
-    margin-top : -20px;
-}
-</style>
-<div class="row">
-    <div class="col-md-3">  
-<?= LteInfoBox::widget([
-                      'bgIconColor'=> LteConst::COLOR_RED,
-                      'number'=>$invoiceOwingAmountTotal,
-                      'text'=>'OWING',
-                      'icon'=>'fa fa-exclamation-triangle',
-                  ])?>
-</div>
-<div class="col-md-3">  
-<?= LteInfoBox::widget([
-                      'bgIconColor'=> LteConst::COLOR_AQUA,
-                      'number'=> $credits,
-                      'text'=>'CREDITS',
-                      'icon'=>'fa fa-check',
-                  ])?>
-</div>
-<div class="col-md-3">  
-<?= LteInfoBox::widget([
-                      'bgIconColor'=> LteConst::COLOR_GREEN,
-                      'number'=> ($lastPayment) ? round($lastPayment->amount, 2) : null,
-                      'text'=>'LAST PAYMENT',
-                      'icon'=>'fa fa-credit-card',
-                      'description'=> ($lastPayment) ? (new \DateTime($lastPayment->date))->format('M d, Y') : null,
-                  ])?>
-</div>
-<div class="col-md-3 info-box-top-20">  
-<?= LteInfoBox::widget([
-                      'bgIconColor'=> LteConst::COLOR_ORANGE,
-                      'number'=>$fullyPrePaidLessonsCount,
-                      'text'=>'PRE-PAID LESSONS',
-                      'icon'=>'fa fa-music',
-                  ])?>
-</div>
-</div>
-<?php endif;?>
+    
 <div class="row">
     <div class="col-md-6">  
         <?php
