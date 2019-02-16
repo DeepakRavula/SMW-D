@@ -10,6 +10,7 @@ use common\models\Enrolment;
 use common\models\ProformaInvoice;
 use common\models\ProformaLineItem;
 use common\models\Location;
+use yii\helpers\Console;
 
 class PaymentRequestController extends Controller
 {
@@ -53,10 +54,15 @@ class PaymentRequestController extends Controller
             }])
             ->notPaymentPrefered()
             ->all();
+            $count = count($enrolments);
+            Console::startProgress(0, $count, 'Creating Payment Request...');
         foreach ($enrolments as $enrolment) {
+            Console::output("processing:  " . $enrolment->id . '   creating payment request', Console::FG_GREEN, Console::BOLD);    
             $dateRange = $enrolment->getCurrentPaymentCycleDateRange($priorDate);
             $enrolment->createPaymentRequest($dateRange);
         }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
         return true;
     }
 
