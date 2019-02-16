@@ -1304,7 +1304,6 @@ class Lesson extends \yii\db\ActiveRecord
             }
             $privateLessonModel = new PrivateLesson();
             $privateLessonModel->lessonId = $this->id;
-            print_r($this->paymentCycle);die('coming');
             $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
             $privateLessonModel->save();
         }
