@@ -2,6 +2,7 @@
 
 use yii\db\Migration;
 use common\models\Lesson;
+use yii\helpers\Console;
 
 /**
  * Class m190214_062142_add_status_copy
@@ -25,8 +26,10 @@ class m190214_062142_add_status_copy extends Migration
                 $query->andWhere(['NOT', ['lesson_payment.id' => null]]);
             }])
             ->all();
-
+            $count = count($lessons);
+            Console::startProgress(0, $count, 'Rounding lessons to two decimal places...');    
         foreach ($lessons as $lesson) {
+            Console::output("processing: " . $lesson->id . 'rounded to two decimal place', Console::FG_GREEN, Console::BOLD);
             $status = Lesson::STATUS_PAID;
             if ($lesson->hasCredit($lesson->enrolment->id)) {
                 $status = Lesson::STATUS_CREDIT;
@@ -39,6 +42,8 @@ class m190214_062142_add_status_copy extends Migration
                 'total' => $lesson->netPrice
             ]);
         }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
 
     /**
