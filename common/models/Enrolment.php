@@ -768,7 +768,6 @@ class Enrolment extends \yii\db\ActiveRecord
                     $paymentCycle->save();
                 }
             }
-            $this->setDueDate();
         }
     }
 
@@ -800,26 +799,11 @@ class Enrolment extends \yii\db\ActiveRecord
                     $paymentCycle->save();
                 }
             }
-           $this->setDueDate(); 
         }
         return true;
     }
 
-    public function setDueDate()
-    {
 
-        if ($this->course->isPrivate()) {
-        $lessons = Lesson::find()
-                ->enrolment($this->id)
-                ->all();
-        foreach ($lessons as $lesson) {
-           $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
-           $dueDate =  $firstLessonDate->modify('- 15 days')->format('Y-m-d');
-           $lesson->updateAttributes(['dueDate' => $dueDate]);
-        }    
-        }
-        return true;
-    }
 
     public function hasExplodedLesson()
     {

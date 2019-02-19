@@ -1280,6 +1280,8 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return true;
     }
+
+  
     
     public function makeAsChild($lesson)
     {

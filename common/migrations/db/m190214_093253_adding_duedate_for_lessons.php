@@ -4,7 +4,7 @@ use yii\db\Migration;
 use common\models\Location;
 use common\models\Lesson;
 use yii\helpers\Console;
-
+use Carbon\Carbon;
 /**
  * Class m190214_093253_adding_duedate_for_lessons
  */
@@ -15,7 +15,10 @@ class m190214_093253_adding_duedate_for_lessons extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('lesson', 'dueDate', $this->date()->notNull());
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        //$this->addColumn('lesson', 'dueDate', $this->date()->notNull());
         $cronEnabledLocations = Location::find()->cronEnabledLocations()->all();
         $count = count($cronEnabledLocations);
         Console::startProgress(0, $count, 'Processing Location.....');
@@ -34,16 +37,27 @@ class m190214_093253_adding_duedate_for_lessons extends Migration
         $lessons = Lesson::find()
                 ->isConfirmed()
                 ->notDeleted()
+                ->regular()
                 ->location($locationId)
                 ->activePrivateLessons()
-                ->location($locationId)
                 ->notCanceled()
                 ->all();
         foreach ($lessons as $lesson) {
-            $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
-            $dueDate =  $firstLessonDate->modify('- 15 days')->format('Y-m-d');
-            $lesson->updateAttributes(['dueDate' => $dueDate]);
-
+            if (!$lesson->paymentCycle) {
+                if ($lesson->rootLesson) {
+                    if ($lesson->rootLesson->paymentCycle) {
+                    print_r("\n\nLesson :".$lesson->id."\tRootLesson:".$lesson->rootLesson->id."\n");
+                } else {
+                    print_r("\n\nLesson :".$lesson->id."\n");
+                }
+            } else {
+                print_r("\n\n No root Lesson Lesson :".$lesson->id."\n");  
+            }
+            } else {
+            // $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
+            // $dueDate =  Carbon::parse($firstLessonDate)->modify('- 15 days')->format('Y-m-d');
+            // $lesson->updateAttributes(['dueDate' => $dueDate]);
+            }
         }        
 
     }
