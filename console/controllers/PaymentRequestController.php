@@ -36,7 +36,7 @@ class PaymentRequestController extends Controller
         $currentDate = new \DateTime();
         $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
         $locationIds = [];
-        $locations = Location::find()->notDeleted()->cronEnabledLocations()->andWhere(['id' => 15])->all();
+        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
         foreach ($locations as $location) {  
             Console::output("processing:  " . $location->name . '   creating payment request', Console::FG_GREEN, Console::BOLD);         
         $enrolments = Enrolment::find()
