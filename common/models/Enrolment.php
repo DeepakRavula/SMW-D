@@ -814,7 +814,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->all();
         foreach ($lessons as $lesson) {
            $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
-           $dueDate = Carbon::parse($firstLessonDate)->format('Y-m-d');
+           $dueDate =  $firstLessonDate->modify('- 15 days')->format('Y-m-d');
            $lesson->updateAttributes(['dueDate' => $dueDate]);
         }    
         }
