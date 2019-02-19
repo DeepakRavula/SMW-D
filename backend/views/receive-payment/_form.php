@@ -255,13 +255,19 @@ use yii\bootstrap\Html;
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             var amountReceived = $('#paymentform-amount').val();
             if (!lockTextBox) {
-                var amountReceived = amountNeeded - creditAmount < 0 ? '0.00' : (-(creditAmount - amountNeeded)).toFixed(2);
+                var amountReceived = amountNeeded - creditAmount  < 0 ? amountNeeded > 0 ? '0.00' : amountNeeded - creditAmount : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
             var amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute;
             $('.amount-to-credit').text((amountToCredit).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
-            $('.amount-needed-value').text((amountNeeded).toFixed(2));
+            if(amountNeeded > 0) {
+                setAmountNeeded = amountNeeded;
+            }
+            else {
+                setAmountNeeded = amountNeeded - creditAmount;
+            }
+            $('.amount-needed-value').text((setAmountNeeded).toFixed(2));
         },
         setAvailableCredits : function() {
             var creditAmount = parseFloat('0.00');

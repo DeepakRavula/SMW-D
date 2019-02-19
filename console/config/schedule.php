@@ -15,7 +15,7 @@ $schedule->command('student/set-status-non-production')->dailyAt('01:30');
 $schedule->command('customer/set-status')->dailyAt('02:00');
 $schedule->command('invoice/all-expired-lessons')->dailyAt('23:30');
 $schedule->command('payment-request/create')->dailyAt('03:00');
-$schedule->command('payment-preference/create')->dailyAt('05:00');
+$schedule->command('payment-preference/create')->dailyAt('06:00');
 $schedule->command('tools/backup')->dailyAt('23:59');
 
 

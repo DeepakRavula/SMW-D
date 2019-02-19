@@ -14,6 +14,8 @@ use kartik\date\DatePickerAsset;
 use kartik\time\TimePickerAsset;
 use kartik\select2\Select2Asset;
 use common\models\CustomerReferralSource;
+use insolita\wgadminlte\LteInfoBox;
+use insolita\wgadminlte\LteConst;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
@@ -49,6 +51,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <br>
 <?php yii\widgets\Pjax::begin(['id' => 'customer-view']) ?>
+    
 <div class="row">
     <div class="col-md-6">  
         <?php
