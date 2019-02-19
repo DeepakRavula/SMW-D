@@ -13,6 +13,7 @@ class m190219_054556_invoice_tally_status extends Migration
     public function safeUp()
     {
         $table = Yii::$app->db->schema->getTableSchema('invoice');
+        $this->alterColumn('invoice', 'updatedOn', $this->timestamp()->null());
         if (!isset($table->columns['paidStatus'])) {
             $this->addColumn('invoice', 'paidStatus', $this->integer()->notNull()->defaultValue(0));
         }
