@@ -33,17 +33,16 @@ class PaymentRequestController extends Controller
         foreach ($prs as $pr) {
             $pr->updateAttributes(['isDeleted' => true]);
         }
-        $locationIds = [];
-        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
-        foreach ($locations as $location) {
-            $locationIds[] = $location->id;
-        }
         $currentDate = new \DateTime();
         $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
+        $locationIds = [];
+        $locations = Location::find()->notDeleted()->cronEnabledLocations()->andWhere(['id' => 15])->all();
+        foreach ($locations as $location) {  
+            Console::output("processing:  " . $location->name . '   creating payment request', Console::FG_GREEN, Console::BOLD);         
         $enrolments = Enrolment::find()
             ->notDeleted()
             ->isConfirmed()
-            ->location($locationIds)
+            ->location($location->id)
             ->privateProgram()
             ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
             ->isRegular()
@@ -61,10 +60,13 @@ class PaymentRequestController extends Controller
             $dateRange = $enrolment->getCurrentPaymentCycleDateRange($priorDate);
             $enrolment->createPaymentRequest($dateRange);
         }
-        Console::endProgress(true);
-        Console::output("done.", Console::FG_GREEN, Console::BOLD);
-        return true;
     }
+    Console::endProgress(true);
+    Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
+    
+}
+
 
     public function actionSave()
     {

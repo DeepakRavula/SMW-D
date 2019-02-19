@@ -76,6 +76,16 @@ class ScheduleController extends BaseController
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
+        $customers = User::find()
+        ->joinWith(['customerPaymentPreference' => function ($query) {
+            $query ->andWhere(['NOT', ['customer_payment_preference.id' => null]]);
+            
+        }])
+        ->location(16)
+        ->notDeleted()
+        ->active()
+        ->all();
+        print_r(count($customers));die('coming');
         $scheduleVisibilities = LocationAvailability::find()
             ->notDeleted()
             ->location($locationId)
