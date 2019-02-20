@@ -69,6 +69,9 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     'model' => $model,
 ]);?>
         <?php endif;?>
+        <?=$this->render('_total-details', [
+    'model' => $model,
+]);?>
     </div>
 </div>
 

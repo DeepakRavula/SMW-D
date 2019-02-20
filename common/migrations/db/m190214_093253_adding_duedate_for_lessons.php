@@ -5,6 +5,7 @@ use common\models\Location;
 use common\models\Lesson;
 use yii\helpers\Console;
 use Carbon\Carbon;
+use common\models\LessonOwing;
 /**
  * Class m190214_093253_adding_duedate_for_lessons
  */
@@ -44,19 +45,13 @@ class m190214_093253_adding_duedate_for_lessons extends Migration
                 ->all();
         foreach ($lessons as $lesson) {
             if (!$lesson->paymentCycle) {
-                if ($lesson->rootLesson) {
-                    if ($lesson->rootLesson->paymentCycle) {
-                    print_r("\n\nLesson :".$lesson->id."\tRootLesson:".$lesson->rootLesson->id."\n");
-                } else {
-                    print_r("\n\nLesson :".$lesson->id."\n");
-                }
+                $lessonOwing = new LessonOwing();
+                $lessonOwing->lessonId = $lesson->id;
+                $lessonOwing->save();
             } else {
-                print_r("\n\n No root Lesson Lesson :".$lesson->id."\n");  
-            }
-            } else {
-            // $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
-            // $dueDate =  Carbon::parse($firstLessonDate)->modify('- 15 days')->format('Y-m-d');
-            // $lesson->updateAttributes(['dueDate' => $dueDate]);
+                $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
+                $dueDate =  Carbon::parse($firstLessonDate)->modify('- 15 days')->format('Y-m-d');
+                $lesson->updateAttributes(['dueDate' => $dueDate]);
             }
         }        
 
