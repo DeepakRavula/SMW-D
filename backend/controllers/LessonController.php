@@ -54,7 +54,7 @@ class LessonController extends BaseController
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update','unschedule', 'credit-transfer',
-                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict'
+                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict', 'edit-due-date',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -70,7 +70,7 @@ class LessonController extends BaseController
                             'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
 							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm', 'invoice', 'modify-classroom',
-                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index'
+                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index', 'edit-due-date'
                         ],
                         'roles' => ['managePrivateLessons', 
 							'manageGroupLessons'],
@@ -795,6 +795,33 @@ class LessonController extends BaseController
             return [
                 'status' => false,
                 'message' => 'Lesson cannot be unscheduled',
+            ];
+        }
+    }
+
+    public function actionEditDueDate($id)
+    {
+        $request = Yii::$app->request;
+        $model = $this->findModel($id);
+       
+        $data = $this->renderAjax('_edit-due-date', [
+            'model' => $model,
+        ]);
+        if ($request->post()) {
+            if($model->load($request->post()) && $model->save()) {
+                return [
+                    'status' => true
+                ];
+            } else {
+            return [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model),
+                ];
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
             ];
         }
     }
