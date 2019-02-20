@@ -808,7 +808,9 @@ class LessonController extends BaseController
             'model' => $model,
         ]);
         if ($request->post()) {
-            if($model->load($request->post()) && $model->save()) {
+            if($model->load($request->post())) {
+                $model->dueDate = (new \DateTime($model->dueDate))->format('Y-m-d');
+                $model->save();
                 return [
                     'status' => true
                 ];

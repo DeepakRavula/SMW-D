@@ -2,6 +2,7 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use yii\jui\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -15,14 +16,20 @@ use yii\helpers\Url;
     ]); ?>
     <div class="row">
         <div class="col-xs-6 pull-left">
-            <label>Due Date</label>
-        </div>
-        <div class="col-xs-2">
-        </div>
-        <div class="col-xs-4">
-            <?= $form->field($model, 'dueDate')->textInput([
-                'value' => Yii::$app->formatter->asDate($model->dueDate),
-                'class' => 'text-right form-control' ])->label(false); ?>
+        <?= $form->field($model, 'dueDate')->widget(
+                DatePicker::classname(), [
+                    'value'  => Yii::$app->formatter->asDate($model->dueDate),
+                    'dateFormat' => 'php:M d, Y',
+                    'options' => [
+                        'class' => 'form-control'
+                    ],
+                    'clientOptions' => [
+                        'changeMonth' => true,
+                        'yearRange' => '1500:3000',
+                        'changeYear' => true
+                    ]
+                ]);
+            ?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>
