@@ -76,6 +76,7 @@ class ExtraLessonController extends BaseController
             $model->addPrivate(Lesson::STATUS_SCHEDULED);
             if ($model->save()) {
                 $model->makeAsRoot();
+                
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $model->on(
                     Lesson::EVENT_AFTER_INSERT,

@@ -521,6 +521,7 @@ class Course extends \yii\db\ActiveRecord
             'date' => $day->format('Y-m-d H:i:s'),
             'duration' => $this->recentCourseSchedule->duration,
             'isConfirmed' => $isConfirmed,
+            'dueDate' => $day->format('Y-m-d')
         ]);
         $lesson->save();
     }
