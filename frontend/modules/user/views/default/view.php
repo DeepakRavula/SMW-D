@@ -25,6 +25,12 @@ $this->title = $model->publicIdentity;
             'model' => $model,
         ]);
         ?>
+		<?= $this->render('teacher/teacher_invoiced_lessons', [
+			'model' => $model,
+			'searchModel' => $searchModel,
+			'invoicedLessonsDataProvider' => $invoicedLessonsDataProvider,
+        ]);
+        ?>
 	</div> 
 	<div class="col-md-5 user-detail">	
 		<?php
