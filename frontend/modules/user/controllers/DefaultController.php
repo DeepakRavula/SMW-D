@@ -111,7 +111,7 @@ class DefaultController extends Controller
         return $this->render('view', [
             'model' => $model,
             'searchModel' => $invoiceSearchModel,
-            'invoicedLessonsDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
+            'invoicedLessonsDataProvider' => $this->getInvoicedLessonsDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
         ]);
     }
     public function actionEditProfile($id)
@@ -156,10 +156,10 @@ class DefaultController extends Controller
         }
     }
 
-    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate, $summariseReport)
+    protected function getInvoicedLessonsDataProvider($id, $fromDate, $toDate, $summariseReport)
     {
         
-        $timeVoucher = InvoiceLineItem::find()
+        $invoicedLessons = InvoiceLineItem::find()
             ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($fromDate,$toDate) {
                 $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
@@ -171,10 +171,10 @@ class DefaultController extends Controller
             }])
            ->orderBy(['invoice.date' => SORT_ASC]);
         if($summariseReport) { 
-            $timeVoucher->groupBy('invoice.date');
+            $invoicedLessons->groupBy('invoice.date');
         }    
         return new ActiveDataProvider([
-            'query' => $timeVoucher,
+            'query' => $invoicedLessons,
             'pagination' => false,
         ]);
     }
