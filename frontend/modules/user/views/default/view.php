@@ -25,12 +25,6 @@ $this->title = $model->publicIdentity;
             'model' => $model,
         ]);
         ?>
-		<?= $this->render('teacher/teacher_invoiced_lessons', [
-			'model' => $model,
-			'searchModel' => $searchModel,
-			'invoicedLessonsDataProvider' => $invoicedLessonsDataProvider,
-        ]);
-        ?>
 	</div> 
 	<div class="col-md-5 user-detail">	
 		<?php
@@ -44,6 +38,16 @@ $this->title = $model->publicIdentity;
         ]);
         ?>
 	</div> 
+</div>
+<div class="row">
+<div class="col-md-12">	
+<?= $this->render('teacher/_cost-time-voucher-content', [
+			'model' => $model,
+			'searchModel' => $searchModel,
+			'invoicedLessonsDataProvider' => $invoicedLessonsDataProvider,
+        ]);
+    ?>
+</div>
 </div>
 <?php $userForm = new UserForm();
     $userForm->setModel($model);?>

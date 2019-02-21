@@ -19,6 +19,7 @@ use common\models\UserProfile;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use yii\data\ActiveDataProvider;
+use common\models\Invoice;
 
 class DefaultController extends Controller
 {

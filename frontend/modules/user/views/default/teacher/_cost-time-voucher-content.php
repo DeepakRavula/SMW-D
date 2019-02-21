@@ -3,6 +3,9 @@ use kartik\grid\GridView;
 use common\models\InvoiceLineItem;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\widgets\ActiveForm;
+use kartik\daterange\DateRangePicker;
+use yii\helpers\Html;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -109,7 +112,6 @@ td.kv-group-odd {
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
-                'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')
             ],
             [
                 'label' => 'Cost',
@@ -126,14 +128,47 @@ td.kv-group-odd {
                         }
                     return Yii::$app->formatter->asCurrency($costSum);
                 },
-                'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')
             ],
         ];
 ?>
 <?php LteBox::begin([
-        'type' => LteConst::TYPE_DEFAULT,
-    ])
-    ?>
+    'type' => LteConst::TYPE_DEFAULT,
+    'title' => 'Invoiced Lessons',
+    'withBorder' => true,
+]) ?>
+<div class="col-md-12">
+    <?php $form = ActiveForm::begin([
+        'id' => 'time-voucher-search-form',
+    ]); ?>
+    
+    <div class="row">
+        <div class="col-md-3 form-group">
+            <?= DateRangePicker::widget([
+                'model' => $searchModel,
+                'attribute' => 'dateRange',
+                'convertFormat' => true,
+                'initRangeExpr' => true,
+                'pluginOptions' => [
+                    'autoApply' => true,
+                    'ranges' => [
+                        //Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                        Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                        Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                        Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                    ],
+                    'locale' => [
+                        'format' => 'M d,Y',
+                    ],
+                    'opens' => 'right',
+                ],
+            ]); ?>
+        </div>
+        <div class="col-md-1 form-group">
+            <?= Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <?php ActiveForm::end(); ?>
 <?= GridView::widget([
     'dataProvider' => $invoicedLessonsDataProvider,
     'summary' => false,
@@ -152,3 +187,12 @@ td.kv-group-odd {
     'columns' => $columns
 ]); ?>
 <?php LteBox::end() ?>
+
+<script>
+    $(document).on('beforeSubmit', '#time-voucher-search-form', function () {
+        var dateRange = $('#invoicesearch-daterange').val();
+        var params = $.param({ 'InvoiceSearch[dateRange]': dateRange});
+        $.pjax.reload({container: "#time-voucher-grid", replace: false, timeout: 6000, data: $(this).serialize()});
+        return false;
+    });
+</script>
