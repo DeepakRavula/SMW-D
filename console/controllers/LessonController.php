@@ -11,6 +11,7 @@ use common\models\LessonOwing;
 use yii\helpers\Console;
 use yii\db\Command;
 use yii\db\Connection;
+use Carbon\Carbon;
 
 class LessonController extends Controller
 {
@@ -27,7 +28,7 @@ class LessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'trigger-save' || 'get-owing-lessons' ? ['locationId'] : []
+            $actionID == 'trigger-save' || 'get-owing-lessons' || 'set-due-date' ? ['locationId'] : []
         );
     }
     
@@ -79,6 +80,44 @@ class LessonController extends Controller
             Console::output("processing: " . $lesson->id . 'added to lesson owing table', Console::FG_GREEN, Console::BOLD);    
     }
     Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+
+        return true;
+    }
+
+    public function actionSetDueDate()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $totalLessonsCount = 0;
+        $lessonCountAddedToOwingTable = 0;
+        $lessonCountAddedDueDate = 0;
+        $lessons = Lesson::find()
+                ->isConfirmed()
+                ->notDeleted()
+                ->regular()
+                ->location($this->locationId)
+                ->activePrivateLessons()
+                ->notCanceled()
+                ->all();
+        foreach ($lessons as $lesson) {
+            $totalLessonsCount++;
+            if (!$lesson->paymentCycle) {
+                $lessonOwing = new LessonOwing();
+                $lessonOwing->lessonId = $lesson->id;
+                $lessonOwing->save();
+                $lessonCountAddedToOwingTable++;
+                Console::output($lesson->id . 'added to lesson owing table', Console::FG_GREEN, Console::BOLD); 
+            } else {
+                $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
+                $dueDate = Carbon::parse($firstLessonDate)->modify('- 15 days')->format('Y-m-d');
+                $lesson->updateAttributes(['dueDate' => $dueDate]);
+                Console::output("processing: " . $lesson->id . 'added due date', Console::FG_GREEN, Console::BOLD); 
+                $lessonCountAddedDueDate++;
+            }
+        }  
+        print_r("Total Lessons Count".$totalLessonsCount. "Lessons Count Added to Owing Table".$lessonCountAddedToOwingTable."Lessons added due date:". $lessonCountAddedDueDate);
+        Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
 
         return true;
