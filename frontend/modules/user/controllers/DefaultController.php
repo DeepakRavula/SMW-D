@@ -111,7 +111,7 @@ class DefaultController extends Controller
         return $this->render('view', [
             'model' => $model,
             'searchModel' => $invoiceSearchModel,
-            'invoicedLessonsDataProvider' => $this->getInvoicedLessonsDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
+            'invoicedLessonsDataProvider' => $this->getInvoicedLessonsDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate),
         ]);
     }
     public function actionEditProfile($id)
@@ -156,7 +156,7 @@ class DefaultController extends Controller
         }
     }
 
-    protected function getInvoicedLessonsDataProvider($id, $fromDate, $toDate, $summariseReport)
+    protected function getInvoicedLessonsDataProvider($id, $fromDate, $toDate)
     {
         
         $invoicedLessons = InvoiceLineItem::find()
@@ -169,10 +169,7 @@ class DefaultController extends Controller
                 $query->andWhere(['lesson.teacherId' => $id])
                 ->groupBy('lesson.id');
             }])
-           ->orderBy(['invoice.date' => SORT_ASC]);
-        if($summariseReport) { 
-            $invoicedLessons->groupBy('invoice.date');
-        }    
+           ->orderBy(['invoice.date' => SORT_ASC]);    
         return new ActiveDataProvider([
             'query' => $invoicedLessons,
             'pagination' => false,
