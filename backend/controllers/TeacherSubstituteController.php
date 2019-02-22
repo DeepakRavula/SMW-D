@@ -185,6 +185,7 @@ class TeacherSubstituteController extends BaseController
             $lesson->isConfirmed = true;
             $lesson->save();
         }
+        Lesson::triggerPusher();
         if (end($lessons)->isGroup()) {
             $courseModel = end($lessons)->course;
             $response = [
