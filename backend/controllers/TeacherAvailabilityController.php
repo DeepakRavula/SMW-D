@@ -287,6 +287,7 @@ class TeacherAvailabilityController extends BaseController
                             $lesson->save();
                         }
                     }
+                    Lesson::triggerPusher();
                     $roomModel->save();
                 } else {
                     TeacherRoom::deleteAll(['teacherAvailabilityId' => $teacherAvailabilityModel->id]);

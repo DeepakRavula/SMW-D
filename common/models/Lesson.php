@@ -940,19 +940,7 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
                 }
             }
-            $options = [
-                'cluster' => env('PUSHER_CLUSTER'),
-                'encrypted' => true
-            ];
-            $pusher = new \Pusher\Pusher(
-                env('PUSHER_KEY'),
-                env('PUSHER_SECRET'),
-                env('PUSHER_APP_ID'),
-                $options
-            );
-            if (!isset($changedAttributes['isConfirmed']) && $this->isConfirmed) {
-                $pusher->trigger('lesson', 'lesson-edit', '');
-            }
+            
             if ($this->isPrivate()) {
                 $amount = $this->getCreditAppliedAmount($this->enrolment->id);
                 if ($amount > $this->netPrice) {
@@ -972,6 +960,21 @@ class Lesson extends \yii\db\ActiveRecord
         }
         
         return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public static function triggerPusher()
+    {
+        $options = [
+            'cluster' => env('PUSHER_CLUSTER'),
+            'encrypted' => true
+        ];
+        $pusher = new \Pusher\Pusher(
+            env('PUSHER_KEY'),
+            env('PUSHER_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+        return $pusher->trigger('lesson', 'lesson-edit', '');
     }
     
     public function canMerge()
