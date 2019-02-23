@@ -71,6 +71,7 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
                     $model = $this->findModel($lessonId);
                     $model->unschedule();
                 }
+                Lesson::triggerPusher();
                 $response = [
                     'status' => true,
                     'message' => 'Lessons unscheduled successfully',
