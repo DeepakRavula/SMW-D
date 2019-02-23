@@ -192,7 +192,7 @@ td.kv-group-odd {
     $(document).on('beforeSubmit', '#time-voucher-search-form', function () {
         var dateRange = $('#invoicesearch-daterange').val();
         var params = $.param({ 'InvoiceSearch[dateRange]': dateRange});
-        $.pjax.reload({container: "#time-voucher-grid", replace: false, timeout: 6000});
+        $.pjax.reload({container: "#time-voucher-grid", replace: false, timeout: 6000, data: $(this).serialize()});
         return false;
     });
 </script>
