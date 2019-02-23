@@ -27,7 +27,7 @@ class LessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'trigger-save' || 'get-owing-lessons' ? ['locationId'] : []
+            $actionID == 'copy-total-and-status' || 'trigger-save' || 'get-owing-lessons' ? ['locationId'] : []
         );
     }
     
@@ -77,10 +77,46 @@ class LessonController extends Controller
                 } 
             }
             Console::output("processing: " . $lesson->id . 'added to lesson owing table', Console::FG_GREEN, Console::BOLD);    
-    }
-    Console::endProgress(true);
+        }
+        Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
 
+        return true;
+    }
+
+    public function actionCopyTotalAndStatus()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+            
+        Console::startProgress(0, 'Rounding lessons to two decimal places...');    
+        $lessons = Lesson::find()
+            ->isConfirmed()
+            ->location($this->locationId)
+            ->privateLessons()
+            ->notCanceled()
+            ->notDeleted()
+            ->joinWith(['lessonPayment' => function ($query) {
+                $query->andWhere(['NOT', ['lesson_payment.id' => null]]);
+            }])
+            ->all();
+        
+        foreach ($lessons as $lesson) {
+            Console::output("processing: " . $lesson->id . 'rounded to two decimal place', Console::FG_GREEN, Console::BOLD);
+            $status = Lesson::STATUS_PAID;
+            if ($lesson->hasCredit($lesson->enrolment->id)) {
+                $status = Lesson::STATUS_CREDIT;
+            }
+            if ($lesson->isOwing($lesson->enrolment->id)) {
+                $status = Lesson::STATUS_OWING;
+            }
+            $lesson->updateAttributes([
+                'paidStatus' => $status,
+                'total' => $lesson->netPrice
+            ]);
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
         return true;
     }
 }

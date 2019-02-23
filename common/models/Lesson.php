@@ -940,7 +940,6 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
                 }
             }
-            
             if ($this->isPrivate()) {
                 $amount = $this->getCreditAppliedAmount($this->enrolment->id);
                 if ($amount > $this->netPrice) {

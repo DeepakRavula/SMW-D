@@ -24,7 +24,7 @@ class InvoiceController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'trigger-save' ? ['locationId'] : []
+            $actionID == 'copy-total-and-status' || 'trigger-save' ? ['locationId'] : []
         );
     }
 
@@ -100,5 +100,32 @@ class InvoiceController extends Controller
         foreach ($invoices as $invoice) {
             $invoice->save();
         }
+    }
+
+    public function actionCopyTotalStatus()
+    {
+        Console::startProgress(0, 'Rounding invoices to two decimal places...');    
+        $invoices = Invoice::find()
+            ->location($this->locationId)
+            ->notDeleted()
+            ->all();
+
+        foreach ($invoices as $invoice) {
+            Console::output("processing: " . $invoice->id . 'rounded to two decimal place', Console::FG_GREEN, Console::BOLD);
+            $status = Invoice::STATUS_PAID;
+            if ($invoice->hasCredit()) {
+                $status = Invoice::STATUS_CREDIT;
+            }
+            if ($invoice->isOwing()) {
+                $status = Invoice::STATUS_OWING;
+            }
+            $invoice->updateAttributes([
+                'paidStatus' => $status,
+                'totalCopy' => $invoice->subTotal + $invoice->tax
+            ]);
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
     }
 }
