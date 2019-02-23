@@ -8,7 +8,6 @@ use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\UserPhone;
 use common\models\UserAddress;
-use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -40,7 +39,7 @@ $this->title = $model->publicIdentity;
         ?>
 	</div> 
 </div>
-<?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
+<?php if ($model->isTeacher()):?>
 <div class="row">
 <div class="col-md-12">	
 <?= $this->render('teacher/_cost-time-voucher-content', [
