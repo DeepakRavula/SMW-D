@@ -218,6 +218,7 @@ class LessonController extends BaseController
         ]);
         if ($request->post()) {
             if($model->load($request->post()) && $model->save()) {
+                Lesson::triggerPusher();
                 return [
                     'status' => true
                 ];
@@ -289,7 +290,7 @@ class LessonController extends BaseController
                     ];
                 }
             }
-            
+            Lesson::triggerPusher();
         } else {
             $response = [
                 'status' => true,
@@ -361,7 +362,6 @@ class LessonController extends BaseController
             $lesson->status = Lesson::STATUS_UNSCHEDULED;
         }
         if ($lesson->save()) {
-            Lesson::triggerPusher();
             $response = [
                 'status' => true
             ];
@@ -733,6 +733,7 @@ class LessonController extends BaseController
         $model->classroomId = $classroomId;
         if ($model->validate()) {
             $model->save(false);
+            Lesson::triggerPusher();
             $response = [
                 'status' => true,
             ];
@@ -774,6 +775,7 @@ class LessonController extends BaseController
         if ($model->load(Yii::$app->request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $model->save();
+            Lesson::triggerPusher();
             return [
                 'status' => true
             ];
@@ -789,6 +791,7 @@ class LessonController extends BaseController
     {
         $model = $this->findModel($id);
         if ($model->unschedule()) {
+            Lesson::triggerPusher();
             return [
                 'status' => true,
                 'message'=>'Lesson unscheduled successfully',

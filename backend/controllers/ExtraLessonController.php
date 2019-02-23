@@ -83,6 +83,7 @@ class ExtraLessonController extends BaseController
                     ['loggedUser' => $loggedUser]
                 );
                 $model->trigger(Lesson::EVENT_AFTER_INSERT);
+                Lesson::triggerPusher();
                 $response   = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
@@ -146,6 +147,7 @@ class ExtraLessonController extends BaseController
             $model->courseId = $course->id;
             if ($model->save()) {
                 $model->makeAsRoot();
+                Lesson::triggerPusher();
                 $response   = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
