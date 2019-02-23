@@ -8,6 +8,7 @@ use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\UserPhone;
 use common\models\UserAddress;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -39,16 +40,18 @@ $this->title = $model->publicIdentity;
         ?>
 	</div> 
 </div>
+<?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
 <div class="row">
 <div class="col-md-12">	
 <?= $this->render('teacher/_cost-time-voucher-content', [
 			'model' => $model,
-			'searchModel' => $searchModel,
+			'searchModel' => $invoiceSearchModel,
 			'invoicedLessonsDataProvider' => $invoicedLessonsDataProvider,
         ]);
     ?>
 </div>
 </div>
+<?php endif;?>
 <?php $userForm = new UserForm();
     $userForm->setModel($model);?>
 <?php Modal::begin([
