@@ -18,7 +18,7 @@ class m190214_093253_adding_duedate_for_lessons extends Migration
     {
 
         $this->addColumn('lesson', 'dueDate', $this->date()->notNull());
-      }
+    }
 
     /**
      * {@inheritdoc}
