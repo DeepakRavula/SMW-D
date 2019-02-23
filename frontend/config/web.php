@@ -16,6 +16,9 @@ $config = [
                 'v1' => 'frontend\modules\api\v1\Module',
             ],
         ],
+        'gridview' => [
+            'class' => '\kartik\grid\Module', 
+        ],
     ],
     'components' => [
         'session' => [

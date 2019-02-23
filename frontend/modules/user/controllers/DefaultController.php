@@ -16,6 +16,10 @@ use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use yii\base\Model;
 use common\models\UserProfile;
+use common\models\InvoiceLineItem;
+use backend\models\search\InvoiceSearch;
+use yii\data\ActiveDataProvider;
+use common\models\Invoice;
 
 class DefaultController extends Controller
 {
@@ -98,9 +102,16 @@ class DefaultController extends Controller
     {
         $id = Yii::$app->user->id;
         $model = User::findOne(['id' => $id]);
-       
+        $request = Yii::$app->request;
+        $invoiceSearchModel = new InvoiceSearch();
+        $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
+        if ($invoiceSearchModel->load($request->get())) {
+            list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
+        }
         return $this->render('view', [
             'model' => $model,
+            'searchModel' => $invoiceSearchModel,
+            'invoicedLessonsDataProvider' => $this->getInvoicedLessonsDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate),
         ]);
     }
     public function actionEditProfile($id)
@@ -143,5 +154,25 @@ class DefaultController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    protected function getInvoicedLessonsDataProvider($id, $fromDate, $toDate)
+    {
+        
+        $invoicedLessons = InvoiceLineItem::find()
+            ->notDeleted()
+            ->joinWith(['invoice' => function ($query) use ($fromDate,$toDate) {
+                $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+                    ->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));
+            }])
+            ->joinWith(['lesson' => function ($query) use ($id) {
+                $query->andWhere(['lesson.teacherId' => $id])
+                ->groupBy('lesson.id');
+            }])
+           ->orderBy(['invoice.date' => SORT_ASC]);    
+        return new ActiveDataProvider([
+            'query' => $invoicedLessons,
+            'pagination' => false,
+        ]);
     }
 }

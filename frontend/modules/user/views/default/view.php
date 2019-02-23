@@ -39,6 +39,16 @@ $this->title = $model->publicIdentity;
         ?>
 	</div> 
 </div>
+<div class="row">
+<div class="col-md-12">	
+<?= $this->render('teacher/_cost-time-voucher-content', [
+			'model' => $model,
+			'searchModel' => $searchModel,
+			'invoicedLessonsDataProvider' => $invoicedLessonsDataProvider,
+        ]);
+    ?>
+</div>
+</div>
 <?php $userForm = new UserForm();
     $userForm->setModel($model);?>
 <?php Modal::begin([

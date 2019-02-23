@@ -361,6 +361,7 @@ class LessonController extends BaseController
             $lesson->status = Lesson::STATUS_UNSCHEDULED;
         }
         if ($lesson->save()) {
+            Lesson::triggerPusher();
             $response = [
                 'status' => true
             ];
@@ -667,6 +668,7 @@ class LessonController extends BaseController
             $lesson->save();
             $lesson->setDiscount();
         }
+        Lesson::triggerPusher();
         if (!$model->rescheduleBeginDate && !$model->changesFrom && $courseModel->isPrivate()) {
             $model->confirmEnrolment();
         }
