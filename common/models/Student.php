@@ -132,7 +132,8 @@ class Student extends \yii\db\ActiveRecord
 
     public function getCustomerPaymentPreference()
     {
-        return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'customer_id']);
+        return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'customer_id'])
+            ->onCondition(['customer_payment_preference.isDeleted' => false]);
     }
 
     public function getCustomer()

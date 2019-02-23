@@ -278,27 +278,8 @@ class ScheduleController extends FrontendBaseController
                 }
             } else {
                 $title = $lesson->enrolment->student->fullName;
-                $class = 'private-lesson';
-                $backgroundColor = null;
-                if (!empty($lesson->colorCode)) {
-                    $class = null;
-                    $backgroundColor = $lesson->colorCode;
-                } elseif (!$lesson->isPresent) {
-                    $class = 'absent-lesson';
-                } elseif ($lesson->isEnrolmentFirstlesson()) {
-                    $class = 'first-lesson';
-                } elseif ($lesson->isPrivate()) {
-                    $class = 'private-lesson';
-                } elseif ($lesson->getRootLesson()) {
-                    $rootLesson = $lesson->getRootLesson();
-                    if ($rootLesson->id !== $lesson->id) {
-                        $class = 'lesson-rescheduled';
-                    }
-                    if ($rootLesson->teacherId !== $lesson->teacherId) {
-                        $class = 'teacher-substituted';
-                    }
-                }
-
+                $class = $lesson->class;
+                $backgroundColor = $lesson->getColorCode();
                 $description = $this->renderAjax('private-lesson-description', [
                     'title' => $title,
                     'lesson' => $lesson,

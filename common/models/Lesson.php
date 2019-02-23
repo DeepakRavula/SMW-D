@@ -59,6 +59,10 @@ class Lesson extends \yii\db\ActiveRecord
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
 
+    const STATUS_PAID = 1;
+    const STATUS_CREDIT = 2;
+    const STATUS_OWING = 3;
+
     const SCENARIO_REVIEW_TEACHER = 'review-teacher';
     const SCENARIO_CREATE_GROUP = 'group-extra-lesson-create';
     const SCENARIO_SUBSTITUTE_TEACHER = 'substitute-teacher';
@@ -167,7 +171,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax', 'updatedOn', 
-                'createdOn', 'lessonId', 'dueDate'], 'safe'],
+                'createdOn', 'lessonId', 'total', 'paidStatus', 'dueDate'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
