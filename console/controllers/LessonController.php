@@ -108,9 +108,11 @@ class LessonController extends Controller
         foreach ($lessons as $lesson) {
             $totalLessonsCount++;
             if (!$lesson->paymentCycle) {
+                Console::output("Processing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
                 $lessonOwing = new LessonOwing();
                 $lessonOwing->lessonId = $lesson->id;
                 $lessonOwing->save();
+                $lessonCountAddedToOwingTable++;
                 }
             }
         Console::output("Lessons Added to Owing Table " . $lessonCountAddedToOwingTable, Console::FG_GREEN, Console::BOLD);
@@ -153,7 +155,7 @@ class LessonController extends Controller
                         $previousLessonPaymentCycle = PaymentCycleLesson::findOne(['lessonId' => $previousLessonId]);
                         $paymentCycleLesson = new PaymentCycleLesson();
                         $paymentCycleLesson->lessonId = $lesson->id;
-                        $paymentCycleLesson->paymentCycleId = $paymentCycleLesson->paymentCycleId;
+                        $paymentCycleLesson->paymentCycleId =  $previousLessonPaymentCycle->paymentCycleId;
                         $paymentCycleLesson->save();
                         Console::output($lesson->id . 'created new payment cycle' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
                     }  else {

@@ -107,7 +107,8 @@ class LessonController extends BaseController
                 ->location($locationId)
                 ->andWhere(['lesson.id' => $lessonOwingIds]); 
         $dataProvider = new ActiveDataProvider([
-            'query' => $lessons
+            'query' => $lessons,
+            'pagination' => false,
         ]);
         return $this->render('newindex', [
             'dataProvider' => $dataProvider,

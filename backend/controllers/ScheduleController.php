@@ -26,6 +26,7 @@ use backend\models\search\ScheduleSearch;
 use common\models\LessonPayment;
 use common\models\Payment;
 use common\models\PaymentCycle;
+use common\models\PaymentCycleLesson;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -74,24 +75,40 @@ class ScheduleController extends BaseController
     public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $lesson = Lesson::find()->andWhere(['id' => 38441])->one();
-        $lessonDate = Carbon::parse($lesson->date)->format('Y-m-d');
-        print_r("Lesson Date:".$lessonDate);
-        $paymentCycles = PaymentCycle::find()
-            ->Where(['isDeleted' => false])
-            ->andWhere(['enrolmentId' => $lesson->enrolment->id])
-            ->andWhere(['<','payment_cycle.endDate',Carbon::parse($lesson->date)->format('Y-m-d')])
-            ->orderBy(['payment_cycle.endDate' => SORT_ASC])
-            ->one();
-            if (!$paymentCycles) {
-                if($lesson->date > $lesson->course->startDate) {
-                    $startDate = Carbon::parse($lesson->course->startDate)->format('Y-m-d');
+        $lessonIds = [72802,72803,72804];
+        $lessons = Lesson::find()
+        ->isConfirmed()
+        ->notDeleted()
+        ->regular()
+        ->location(15)
+        ->andWhere(['lesson.id' => $lessonIds])
+        ->activePrivateLessons()
+        ->notCanceled()
+        ->all();
+       
+    foreach ($lessons as $lesson) {
+       
+        if (!$lesson->paymentCycle) {
+            if ($lesson->rootLesson) {
+                if ($lesson->isExploded === 1) {
+                    $previousLessonId = $lesson->id - 1;
+                        $previousLessonPaymentCycle = PaymentCycleLesson::findOne(['lessonId' => $previousLessonId]);
+                        if (!$previousLessonPaymentCycle) {
+                            if ($lesson->rootLesson->paymentCycle) {
+                                $paymentCycleId = $lesson->rootLesson->paymentCycle->id;
+                            }
+                        } else {
+                            $paymentCycleId = $previousLessonPaymentCycle->paymentCycleId;
+                        }
+                        $paymentCycleLesson = new PaymentCycleLesson();
+                        $paymentCycleLesson->lessonId = $lesson->id;
+                        $paymentCycleLesson->paymentCycleId = $paymentCycleId;
+                        $paymentCycleLesson->save();
                 }
-            }  else {
-                $startDate = Carbon::parse($paymentCycle->endDate)->modify('+1day')->format('Y-m-d');
-            }   
-            $paymentFrequency = $lesson->enrolment->paymentFrequencyId;
-            print_r($paymentFrequency);            
+            }
+        }
+    }  
+                   
        die('coming');    
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
