@@ -34,6 +34,7 @@ use common\models\LessonReview;
 use yii\helpers\ArrayHelper;
 use common\models\LessonConfirm;
 use common\models\LessonOwing;
+use common\models\UnscheduleLesson;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -790,7 +791,10 @@ class LessonController extends BaseController
     public function actionUnschedule($id)
     {
         $model = $this->findModel($id);
-        if ($model->unschedule()) {
+        $post  = Yii::$app->request->post();
+        $unscheduleLessonModel = new UnscheduleLesson();
+        $unscheduleLessonModel->load($post);
+        if ($model->unschedule($unscheduleLessonModel->reasonToUnschedule)) {
             Lesson::triggerPusher();
             return [
                 'status' => true,

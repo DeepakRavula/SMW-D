@@ -1262,8 +1262,14 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->children()->orderBy(['lesson.id' => SORT_DESC])->one();
     }
 
-    public function unschedule()
+    public function unschedule($reasonToUnschedule)
     {
+        $note = new Note();
+        $note->content = $reasonToUnschedule;
+        $note->instanceId = $this->id;
+        $note->instanceType = Note::INSTANCE_TYPE_LESSON;
+        $note->createdUserId = Yii::$app->user->id;
+        $note->save();
         $this->status = self::STATUS_UNSCHEDULED;
         $this->save();
         return true;

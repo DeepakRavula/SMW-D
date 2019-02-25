@@ -25,6 +25,9 @@ class UnscheduleLesson extends Model
     const SCENARIO_BULK_UNSCHEDULE = 'bulk-unschedule';
 
     public $lessonIds;
+    public $isBulk;
+    public $reasonToUnschedule;
+    public $reason;
     
     /**
      * {@inheritdoc}
@@ -33,6 +36,7 @@ class UnscheduleLesson extends Model
     {
         return [
             [['lessonIds'], 'validateOnInvoiced', 'on' => [self::SCENARIO_BULK_UNSCHEDULE]],
+            [['isBulk', 'reasonToUnschedule', 'reason'], 'safe'],
         ];
     }
     public function validateOnInvoiced($attribute)

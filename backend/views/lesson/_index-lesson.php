@@ -432,35 +432,24 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     $(document).off('click', '#lesson-unschedule').on('click', '#lesson-unschedule', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if (!$.isEmptyObject(lessonIds)) {
+            var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds, 'UnscheduleLesson[isBulk]': true});
             $('#menu-shown').hide();
                bootbox.confirm({
                 message: "Are you sure you want to unschedule?",
                 callback: function(result) {
                     if(result) {
                         $('.bootbox').modal('hide');
-                        $('#loader').show();
-                        var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds});
-                    $.ajax({
-                        url    : '<?=Url::to(['unscheduled-lesson/bulk-unschedule'])?>?' +params,
-                        type   : 'post',
+                        $.ajax({
+                        url    : '<?=Url::to(['unscheduled-lesson/reason-to-unschedule'])?>?' +params,
+                        type   : 'get',
                         success: function(response)
                         {
                             if (response.status) {
-                                $.pjax.reload({container: "#lesson-index", replace: false, timeout: 25000});
-                                $('#loader').hide();
+                                $('#modal-content').html(response.data);
+                                $('#popup-modal').modal('show');
                                 }
-                            else {
-                                if (response.message) {
-                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
-                                    $('#loader').hide();
-                                }
-                                if (response.error) {
-                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
-                                    $('#loader').hide();
-                                }
-                            }
                         }
-                    });
+                    });                  
         }
                 }
                });
