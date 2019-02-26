@@ -13,6 +13,7 @@ class m190226_091018_add_indexing_lesson_discount extends Migration
     public function safeUp()
     {
         $this->createIndex('lessonId', 'lesson_discount', 'lessonId');
+        $this->createIndex('enrolmentId', 'lesson_discount', 'enrolmentId');
     }
 
     /**
