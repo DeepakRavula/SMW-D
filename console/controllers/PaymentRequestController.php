@@ -38,7 +38,7 @@ class PaymentRequestController extends Controller
 
         $currentDate = new \DateTime();
         $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
-        $prs = ProformaInvoice::find()->location($this->locationId)->all();
+        $prs = ProformaInvoice::find()->notDeleted()->location($this->locationId)->all();
         foreach ($prs as $pr) {
             $pr->updateAttributes(['isDeleted' => true]);
         } 
@@ -51,7 +51,7 @@ class PaymentRequestController extends Controller
             ->privateProgram()
             ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
             ->isRegular()
-            ->joinWith(['course' => function ($query) use ($priorDate) {
+            ->joinWith(['course' => function ($query) use ($priorDate) { 
                 $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
                         ->confirmed()
                         ->notDeleted();
