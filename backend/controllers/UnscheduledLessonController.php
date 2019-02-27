@@ -73,7 +73,6 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
             if ($unscheduleLessonModel->load(Yii::$app->request->post()) && $unscheduleLessonModel->validate()) {
                 foreach ($unscheduleLessonModel->lessonIds as $lessonId) {
                     $model = $this->findModel($lessonId);
-                    print_r($unscheduleLessonModel);die('coming');
                     $model->unschedule($note->content);
                 }
                 Lesson::triggerPusher();
