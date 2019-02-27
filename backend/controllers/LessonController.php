@@ -794,7 +794,7 @@ class LessonController extends BaseController
         $post  = Yii::$app->request->post();
         $unscheduleLessonModel = new UnscheduleLesson();
         $unscheduleLessonModel->load($post);
-        if ($model->unschedule($unscheduleLessonModel->reasonToUnschedule)) {
+        if ($model->unschedule($unscheduleLessonModel->reason)) {
             Lesson::triggerPusher();
             return [
                 'status' => true,

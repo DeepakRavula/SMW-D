@@ -376,7 +376,6 @@ echo Tabs::widget([
     });
 
 $(document).on('click', '#lesson-unschedule', function () {
-        //$('#loader').show();
         $.ajax({
             url: '<?=Url::to(['unscheduled-lesson/reason-to-unschedule', 'UnscheduleLesson[lessonIds]' => $model->id,'UnscheduleLesson[isBulk]' => false]);?>',
             type: 'get',
