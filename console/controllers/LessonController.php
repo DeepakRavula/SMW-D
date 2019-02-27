@@ -239,6 +239,8 @@ class LessonController extends Controller
         $totalLessonsCount = 0;
         $lessonCountAddedToOwingTable = 0;
         $lessonCountAddedDueDate = 0;
+        $totalExtraLessonsCount = 0;
+        $totalGroupLessonsCount = 0;
         $lessons = Lesson::find()
             ->isConfirmed()
             ->notDeleted()

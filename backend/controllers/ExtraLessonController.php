@@ -142,6 +142,7 @@ class ExtraLessonController extends BaseController
         ]);
         if ($model->load($request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $model->dueDate = (new \DateTime($model->date))->format('Y-m-d');
             $model->isConfirmed = true;
             $course = $model->addGroup();
             $model->courseId = $course->id;

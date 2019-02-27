@@ -37,6 +37,6 @@ use yii\jui\DatePicker;
 <script>
     $(document).ready(function() {
         $('#popup-modal .modal-dialog').css({'width': '400px'});
-        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Tax</h4>');
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Due Date</h4>');
     });
 </script>
