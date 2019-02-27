@@ -68,12 +68,11 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
             $unscheduleLessonModel = new UnscheduleLesson();
             $unscheduleLessonModel->setScenario(UnscheduleLesson::SCENARIO_BULK_UNSCHEDULE);
             $post  = Yii::$app->request->post();
-
-            $unscheduleLessonModel->lessonIds = $lessonIds;
-            if ($unscheduleLessonModel->load(Yii::$app->request->post()) && $unscheduleLessonModel->validate()) {
+            
+            if ($unscheduleLessonModel->load(Yii::$app->request->get()) && $unscheduleLessonModel->validate()) {
                 foreach ($unscheduleLessonModel->lessonIds as $lessonId) {
                     $model = $this->findModel($lessonId);
-                    $model->unschedule($note->content);
+                    $model->unschedule($unscheduleLessonModel->reason);
                 }
                 Lesson::triggerPusher();
                 $response = [
