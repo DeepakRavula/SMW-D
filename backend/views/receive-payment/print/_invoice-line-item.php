@@ -15,36 +15,36 @@ use yii\bootstrap\Html;
     }
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left'],
+        'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
+        'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
         'label' => 'Date',
         'value' => 'date'
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-left','style' => $contentWidth],
-        'contentOptions' => ['class' => 'text-left','style' => $contentWidth],
+        'headerOptions' => ['class' => 'text-left','style' => $contentWidth, 'style' => 'width:20%'],
+        'contentOptions' => ['class' => 'text-left','style' => $contentWidth, 'style' => 'width:20%'],
         'label' => 'Number',
         'value' => 'number'
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
         'label' => 'Amount',
         'value' => 'amount'
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
         'label' => 'Payment',
         'value' => 'payment'
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right invoice-value'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
+        'contentOptions' => ['class' => 'text-right invoice-value', 'style' => 'width:20%'],
         'label' => 'Balance',
         'value' => 'balance'
     ]);
