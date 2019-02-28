@@ -39,7 +39,7 @@ class LessonPayment extends \yii\db\ActiveRecord
             [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
             [['isDeleted','receiptId', 'date', 'createdByUserId', 
             'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
-            [['amount'], 'validateIsOwing']
+            //[['amount'], 'validateIsOwing']
         ];
     }
 
