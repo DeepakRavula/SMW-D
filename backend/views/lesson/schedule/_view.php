@@ -47,8 +47,11 @@ LteBox::begin([
 <?php if ($model->privateLesson) : ?>
     <dt>Expiry Date</dt>
     <dd><?= Yii::$app->formatter->asDate($model->privateLesson->expiryDate); ?></dd>
-<?php endif; ?>
-
+    <?php endif; ?>  
+<?php if ($model->dueDate) : ?>    
+    <dt>Due on</dt>
+    <dd><?= Yii::$app->formatter->asDate($model->dueDate); ?></dd>
+ <?php endif; ?>
 </dl>
 <?php LteBox::end() ?>
 <?php \yii\widgets\Pjax::end(); ?>

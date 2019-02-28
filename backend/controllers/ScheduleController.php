@@ -25,6 +25,8 @@ use Carbon\CarbonInterval;
 use backend\models\search\ScheduleSearch;
 use common\models\LessonPayment;
 use common\models\Payment;
+use common\models\PaymentCycle;
+use common\models\PaymentCycleLesson;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.

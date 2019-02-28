@@ -36,7 +36,7 @@ class UnscheduleLesson extends Model
     {
         return [
             [['lessonIds'], 'validateOnInvoiced', 'on' => [self::SCENARIO_BULK_UNSCHEDULE]],
-            [['isBulk', 'reasonToUnschedule', 'reason'], 'safe'],
+            [['isBulk', 'reasonToUnschedule', 'reason', 'lessonIds'], 'safe'],
         ];
     }
     public function validateOnInvoiced($attribute)

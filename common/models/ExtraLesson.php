@@ -48,6 +48,7 @@ class ExtraLesson extends Lesson
         $this->type = Lesson::TYPE_EXTRA;
 	    $lessonDate = $this->date;
         $this->date = (new \DateTime($lessonDate))->format('Y-m-d H:i:s');
+        $this->dueDate = (new \DateTime($lessonDate))->format('Y-m-d');
         return $this;
     }
     

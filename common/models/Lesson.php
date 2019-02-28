@@ -171,7 +171,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax', 'updatedOn', 
-                'createdOn', 'lessonId', 'total', 'paidStatus'], 'safe'],
+                'createdOn', 'lessonId', 'total', 'paidStatus', 'dueDate'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
@@ -441,8 +441,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                    ->via('paymentCycleLesson')
-                    ->onCondition(['payment_cycle.isDeleted' => false]);
+                    ->via('paymentCycleLesson');
+                    //->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getLessonPayments()
@@ -1292,6 +1292,8 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return true;
     }
+
+  
     
     public function makeAsChild($lesson)
     {

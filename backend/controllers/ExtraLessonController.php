@@ -76,6 +76,7 @@ class ExtraLessonController extends BaseController
             $model->addPrivate(Lesson::STATUS_SCHEDULED);
             if ($model->save()) {
                 $model->makeAsRoot();
+                
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $model->on(
                     Lesson::EVENT_AFTER_INSERT,
@@ -142,6 +143,7 @@ class ExtraLessonController extends BaseController
         ]);
         if ($model->load($request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $model->dueDate = (new \DateTime($model->date))->format('Y-m-d');
             $model->isConfirmed = true;
             $course = $model->addGroup();
             $model->courseId = $course->id;
