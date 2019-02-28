@@ -38,7 +38,8 @@ class LessonPayment extends \yii\db\ActiveRecord
         return [
             [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
             [['isDeleted','receiptId', 'date', 'createdByUserId', 
-            'updatedByUserId', 'updatedOn', 'createdOn'], 'safe']
+            'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            [['amount'], 'validateIsOwing']
         ];
     }
 
@@ -71,6 +72,13 @@ class LessonPayment extends \yii\db\ActiveRecord
                 ],
             ],
         ];
+    }
+
+    public function validateIsOwing($attributes)
+    {
+        if (!$this->lesson->isOwing($this->lesson->enrolment->id)) {
+            $this->addError($attributes, "Lesson is already Paid");
+        }
     }
 
     /**
