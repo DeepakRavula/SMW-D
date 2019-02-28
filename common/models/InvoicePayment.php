@@ -39,7 +39,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
             [['payment_id', 'invoice_id', 'receiptId'], 'integer'],
             [['isDeleted', 'date', 'createdByUserId', 
             'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
-            [['amount'], 'validateIsOwing'],
+            //[['amount'], 'validateIsOwing'],
         ];
     }
 
