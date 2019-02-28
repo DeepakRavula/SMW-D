@@ -75,41 +75,6 @@ class ScheduleController extends BaseController
     public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $lessonIds = [72802,72803,72804];
-        $lessons = Lesson::find()
-        ->isConfirmed()
-        ->notDeleted()
-        ->regular()
-        ->location(15)
-        ->andWhere(['lesson.id' => $lessonIds])
-        ->activePrivateLessons()
-        ->notCanceled()
-        ->all();
-       
-    foreach ($lessons as $lesson) {
-       
-        if (!$lesson->paymentCycle) {
-            if ($lesson->rootLesson) {
-                if ($lesson->isExploded === 1) {
-                    $previousLessonId = $lesson->id - 1;
-                        $previousLessonPaymentCycle = PaymentCycleLesson::findOne(['lessonId' => $previousLessonId]);
-                        if (!$previousLessonPaymentCycle) {
-                            if ($lesson->rootLesson->paymentCycle) {
-                                $paymentCycleId = $lesson->rootLesson->paymentCycle->id;
-                            }
-                        } else {
-                            $paymentCycleId = $previousLessonPaymentCycle->paymentCycleId;
-                        }
-                        $paymentCycleLesson = new PaymentCycleLesson();
-                        $paymentCycleLesson->lessonId = $lesson->id;
-                        $paymentCycleLesson->paymentCycleId = $paymentCycleId;
-                        $paymentCycleLesson->save();
-                }
-            }
-        }
-    }  
-                   
-       die('coming');    
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
