@@ -12,9 +12,9 @@ use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 ?>
 <?= $this->render('/print/_invoice-header', [
-       'paymentModel'=>$payment,
-       'userModel'=>$customer,
-       'locationModel'=>$customer->location->location,
+       'paymentModel' => $payment,
+       'userModel' => $customer,
+       'locationModel' => $customer->location->location,
 ]);
 ?>
 <?php if($payment): ?>
