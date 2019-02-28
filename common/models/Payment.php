@@ -86,11 +86,18 @@ class Payment extends ActiveRecord
    
     public function validateOnDelete($attributes)
     {
+        if ($this->isNegativePayment()) {	
+            $this->addError($attributes, "Negative Payments Cannot be deleted");	
+        }
         if ($this->hasInvoicePayments()) {
             foreach ($this->invoicePayments as $invoicePayment) {
                 if (!$invoicePayment->invoice->isInvoice()) {
                     $this->addError($attributes, "Used PFI's payments can't be deleted!");
                     break;
+                } else {	         
+                    if ($invoicePayment->invoice->isPaymentCreditInvoice() && !$this->isNegativePayment()) {	
+                        $this->addError($attributes, "Refunded payments cannot be deleted! ");	
+                    }
                 }
  
             }
