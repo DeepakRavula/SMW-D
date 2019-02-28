@@ -4,6 +4,7 @@ namespace common\models;
 
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use Yii;
+use Carbon\Carbon;
 
 /**
  * This is the model class for table "payment_cycle_lesson".
@@ -104,5 +105,15 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
             $this->isDeleted = false;
         }
         return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+        $firstLessonDate = $this->paymentCycle->firstLesson->date; 
+        $dueDate =  carbon::parse($firstLessonDate)->modify('- 15 days')->format('Y-m-d');
+        $this->lesson->updateAttributes(['dueDate' => $dueDate]); 
+        }
+        return parent::afterSave($insert, $changedAttributes);
     }
 }

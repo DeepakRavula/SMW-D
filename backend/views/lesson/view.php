@@ -62,11 +62,15 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         <?=$this->render('schedule/_view', [
     'model' => $model,
 ]);?>
+  <?= $this->render('_due-date', [
+    'model' => $model,
+]);?>
         <?php if (!$model->isGroup()): ?>
         <?=$this->render('_total-details', [
     'model' => $model,
 ]);?>
         <?php endif;?>
+      
     </div>
 </div>
 

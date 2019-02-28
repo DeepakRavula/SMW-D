@@ -17,6 +17,13 @@ use kartik\grid\GridView;
 <div class="grid-row-open p-10">
     <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
     <?php $columns = [
+        [
+            'label' => 'id',
+            'attribute' => 'id',
+            'value' => function ($data) {
+                return $data->id;
+            },
+        ],
             [
                 'label' => 'Student',
                 'attribute' => 'student',
@@ -32,10 +39,9 @@ use kartik\grid\GridView;
                 },
             ],
             [
-                'label' => 'Teacher',
-		        'attribute' => 'teacher',
+                'label' => 'isExploded',
                 'value' => function ($data) {
-                    return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+                    return $data->isExploded;
                 },
             ],
             [
@@ -46,47 +52,30 @@ use kartik\grid\GridView;
                     return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
                 }
             ],
-	        [
-                'label' => 'Duration',
+            [
+                'label' => 'Root    lesson',
                 'value' => function ($data) {
-                    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
-                    return $lessonDuration;
+                    $lessonId =  null;
+                   if ($data->rootLesson) {
+                     $lessonId = $data->rootLesson->id;
+                   }
+                   return $lessonId;
                 }
-            ]
+            ],
+	       
         ];       
         array_push($columns, 
             [
-                'label' => 'Price',
-                'attribute' => 'price',
-                'contentOptions' => ['class' => 'text-right'],
-                'headerOptions' => ['class' => 'text-right'],
+                'label' => 'course',
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
+                    return $data->course->id;
                 }
             ],
             [
-                'label' => 'Owing',
-                'attribute' => 'owing',
-                'contentOptions' => function ($data) {
-                    $highLightClass = 'text-right';
-                    if ($data->hasInvoice()) {
-                        if ($data->invoice->isOwing()) {
-                            $highLightClass .= ' danger';
-                        }
-                    } else if ($data->isOwing($data->enrolment->id)) {
-                        $highLightClass .= ' danger';
-                    }
-                    return ['class' => $highLightClass];
-                },
-                'headerOptions' => ['class' => 'text-right'],
+                'label' => 'Enrolment',
                 'value' => function ($data) {
-                    if ($data->hasInvoice()) {
-                        $owingAmount = $data->invoice->balance;
-                    } else {
-                        $owingAmount = $data->getOwingAmount($data->enrolment->id);
-                    }
-                    return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
-                },
+                    return $data->enrolment->id;
+                }
             ]
         );
      ?>   

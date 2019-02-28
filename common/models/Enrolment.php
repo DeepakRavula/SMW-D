@@ -803,6 +803,8 @@ class Enrolment extends \yii\db\ActiveRecord
         return true;
     }
 
+
+
     public function hasExplodedLesson()
     {
         $lessonSplits = Lesson::find()
