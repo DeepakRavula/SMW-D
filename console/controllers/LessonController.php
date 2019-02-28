@@ -27,7 +27,7 @@ class LessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'copy-total-and-status' || 'trigger-save' || 'get-owing-lessons' ? ['locationId'] : []
+            $actionID == 'copy-total-and-status' || 'trigger-save' || 'fix-lessons-without-paymentcycle'|| 'set-due-date' || 'get-owing-lessons' ? ['locationId'] : []
         );
     }
 
