@@ -122,6 +122,9 @@ class Payment extends ActiveRecord
 
     public function validateOnEdit($attributes)
     {
+        if ($this->isNegativePayment()) {	
+            $this->addError($attributes, "Negative Payments Cannot be Edited");	
+        }
         if ($this->isAutoPayments()) {
             $this->addError($attributes, "System generated payments can't be deleted!");
         }
@@ -129,7 +132,11 @@ class Payment extends ActiveRecord
             foreach ($this->invoicePayments as $invoicePayment) {
                 if (!$invoicePayment->invoice->isInvoice()) {
                     $this->addError($attributes, "Used PFI's payments can't be modified!");
-                } 
+                } else {	         
+                if ($invoicePayment->invoice->isPaymentCreditInvoice() && !$this->isNegativePayment()) {	
+                    $this->addError($attributes, "Refunded payments cannot be edited! ");	
+                }
+            }
             }
         }
     }
