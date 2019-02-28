@@ -55,6 +55,14 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         },
     ],
     [
+        'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+        'label' => 'Due Date',
+        'attribute' => 'dueDate',
+        'value' => function ($data) {
+            return !empty($data->dueDate) ? (new \DateTime($data->dueDate))->format('M d, Y') : null;
+        },
+    ],
+    [
         'label' => 'Date',
         'attribute' => 'dateRange',
         'filter' => '<div class="input-group drp-container">' . DateRangePicker::widget([
