@@ -213,7 +213,7 @@ class LessonController extends Controller
         foreach ($lessons as $lesson) {
             if ($lesson->paymentCycle) {
                 $totalLessonsCount++;
-                $firstLessonDate = $lesson->paymentCycle->firstLesson->date;
+                $firstLessonDate = $lesson->paymentCycle->firstLesson->getOriginalDate();
                 $dueDate = Carbon::parse($firstLessonDate)->modify('- 15 days')->format('Y-m-d');
                 $lesson->updateAttributes(['dueDate' => $dueDate]);
                 Console::output("processing: " . $lesson->id . 'added due date', Console::FG_GREEN, Console::BOLD);
