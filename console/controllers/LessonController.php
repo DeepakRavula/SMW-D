@@ -120,6 +120,42 @@ class LessonController extends Controller
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
+
+
+    public function actionDeleteLessonOwing()
+    {
+        LessonOwing::deleteAll();
+    }
+    public function actionFindLessonsWithoutPaymentcycle()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $totalLessonsCount = 0;
+        $lessonCountAddedToOwingTable = 0;
+        $lessons = Lesson::find()
+            ->isConfirmed()
+            ->notDeleted()
+            ->regular()
+            ->location($this->locationId)
+            ->activePrivateLessons()
+            ->notCanceled()
+            ->all();
+        foreach ($lessons as $lesson) {
+            $totalLessonsCount++;
+            if (!$lesson->paymentCycle) {
+                Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
+                   $lessonOwing = new LessonOwing();
+                   $lessonOwing->lessonId = $lesson->id;
+                   $lessonOwing->save();   
+                   $lessonCountAddedToOwingTable++;          
+               
+    }
+}
+        Console::output("Lessons Added to Owing Table " . $lessonCountAddedToOwingTable, Console::FG_GREEN, Console::BOLD);
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+    }
+
     public function actionSetDueDate()
     {
         set_time_limit(0);

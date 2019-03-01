@@ -27,6 +27,7 @@ use common\models\LessonPayment;
 use common\models\Payment;
 use common\models\PaymentCycle;
 use common\models\PaymentCycleLesson;
+use common\models\Enrolment;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
