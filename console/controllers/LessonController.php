@@ -5,8 +5,8 @@ namespace console\controllers;
 use Carbon\Carbon;
 use common\models\Lesson;
 use common\models\LessonOwing;
-use common\models\PaymentCycleLesson;
 use common\models\PaymentCycle;
+use common\models\PaymentCycleLesson;
 use common\models\User;
 use Yii;
 use yii\console\Controller;
@@ -27,7 +27,7 @@ class LessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'copy-total-and-status' || 'trigger-save' || 'fix-lessons-without-paymentcycle'|| 'set-due-date' || 'get-owing-lessons' ? ['locationId'] : []
+            $actionID == 'copy-total-and-status' || 'trigger-save' || 'fix-lessons-without-paymentcycle' || 'set-due-date' || 'get-owing-lessons' ? ['locationId'] : []
         );
     }
 
@@ -50,37 +50,6 @@ class LessonController extends Controller
         }
         return true;
     }
-    public function actionGetOwingLessons()
-    {
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
-
-        $lessonIds = [];
-        $lessons = Lesson::find()
-            ->notDeleted()
-            ->isconfirmed()
-            ->notCanceled()
-            ->regular()
-            ->location($this->locationId)
-            ->activePrivateLessons()
-            ->orderBy(['id' => SORT_ASC])
-            ->all();
-        $count = count($lessons);
-        Console::startProgress(0, $count, 'Updating Lessons with owing Amount...');
-        foreach ($lessons as $lesson) {
-            if ($lesson->enrolment) {
-                $owingAmount = $lesson->getOwingAmount($lesson->enrolment->id);
-                if (round($owingAmount, 2) >= 0.01 && round($owingAmount, 2) < 0.10) {
-                    $lessonOwing = new LessonOwing();
-                    $lessonOwing->lessonId = $lesson->id;
-                    $lessonOwing->save();
-                }
-            }
-            Console::output("processing: " . $lesson->id . 'added to lesson owing table', Console::FG_GREEN, Console::BOLD);    
-        }
-        Console::endProgress(true);
-        Console::output("done.", Console::FG_GREEN, Console::BOLD);
-    }
 
     public function actionFixLessonsWithoutPaymentcycle()
     {
@@ -98,28 +67,28 @@ class LessonController extends Controller
         foreach ($lessons as $lesson) {
             if (!$lesson->paymentCycle) {
                 if ($lesson->rootLesson) {
-                        if ($lesson->rootLesson->paymentCycle) {
-                            $paymentCycleLesson = new PaymentCycleLesson();
-                            $paymentCycleLesson->lessonId = $lesson->id;
-                            $paymentCycleLesson->paymentCycleId = $lesson->rootLesson->paymentCycle->id;
-                            if ($paymentCycleLesson->save()) {
-                                Console::output("\n" . $lesson->id . 'created new payment cycle' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
-                            } else {
-                                Console::output("\n" . $lesson->id . 'not created new payment cycle' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
-                            }
-                        } 
-                    }     
+                    if ($lesson->rootLesson->paymentCycle) {
+                        $paymentCycleLesson = new PaymentCycleLesson();
+                        $paymentCycleLesson->lessonId = $lesson->id;
+                        $paymentCycleLesson->paymentCycleId = $lesson->rootLesson->paymentCycle->id;
+                        if ($paymentCycleLesson->save()) {
+                            Console::output("\n" . $lesson->id . 'created new payment cycle' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
+                        } else {
+                            Console::output("\n" . $lesson->id . 'not created new payment cycle' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
+                        }
+                    }
+                }
+            }
         }
-    }
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
-
 
     public function actionDeleteLessonOwing()
     {
         LessonOwing::deleteAll();
     }
+
     public function actionFindLessonsWithoutPaymentcycle()
     {
         set_time_limit(0);
@@ -138,13 +107,13 @@ class LessonController extends Controller
             $totalLessonsCount++;
             if (!$lesson->paymentCycle) {
                 Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
-                   $lessonOwing = new LessonOwing();
-                   $lessonOwing->lessonId = $lesson->id;
-                   $lessonOwing->save();   
-                   $lessonCountAddedToOwingTable++;          
-               
-    }
-}
+                $lessonOwing = new LessonOwing();
+                $lessonOwing->lessonId = $lesson->id;
+                $lessonOwing->save();
+                $lessonCountAddedToOwingTable++;
+
+            }
+        }
         Console::output("Lessons Added to Owing Table " . $lessonCountAddedToOwingTable, Console::FG_GREEN, Console::BOLD);
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
@@ -222,8 +191,8 @@ class LessonController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-            
-        Console::startProgress(0, 'Rounding lessons to two decimal places...');    
+
+        Console::startProgress(0, 'Rounding lessons to two decimal places...');
         $lessons = Lesson::find()
             ->isConfirmed()
             ->location($this->locationId)
@@ -234,7 +203,7 @@ class LessonController extends Controller
                 $query->andWhere(['NOT', ['lesson_payment.id' => null]]);
             }])
             ->all();
-        
+
         foreach ($lessons as $lesson) {
             Console::output("processing: " . $lesson->id . 'rounded to two decimal place', Console::FG_GREEN, Console::BOLD);
             $status = Lesson::STATUS_PAID;
@@ -246,7 +215,7 @@ class LessonController extends Controller
             }
             $lesson->updateAttributes([
                 'paidStatus' => $status,
-                'total' => $lesson->netPrice
+                'total' => $lesson->netPrice,
             ]);
         }
         Console::endProgress(true);
