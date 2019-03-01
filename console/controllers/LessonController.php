@@ -81,14 +81,12 @@ class LessonController extends Controller
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
+
     public function actionFixLessonsWithoutPaymentcycle()
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $totalLessonsCount = 0;
         $lessonCountAddedToOwingTable = 0;
-        $lessonCountAddedDueDate = 0;
-        $explodedLessonsCount = 0;
         $lessons = Lesson::find()
             ->isConfirmed()
             ->notDeleted()
@@ -98,7 +96,6 @@ class LessonController extends Controller
             ->notCanceled()
             ->all();
         foreach ($lessons as $lesson) {
-            $totalLessonsCount++;
             if (!$lesson->paymentCycle) {
                 if ($lesson->rootLesson) {
                         if ($lesson->rootLesson->paymentCycle) {
@@ -111,12 +108,9 @@ class LessonController extends Controller
                                 Console::output("\n" . $lesson->id . 'not created new payment cycle' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
                             }
                         } 
-                    }
-               
+                    }     
         }
     }
-        Console::output("Lessons Added to Owing Table " . $lessonCountAddedToOwingTable, Console::FG_GREEN, Console::BOLD);
-        Console::output("Exploded Lessons Count " . $explodedLessonsCount, Console::FG_GREEN, Console::BOLD);
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
