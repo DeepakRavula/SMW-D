@@ -220,7 +220,6 @@ class RecurringPaymentController extends Controller
             ->andWhere(['>=', 'DATE(customer_recurring_payment.expiryDate)', $currentDate->format('Y-m-d')])
             ->isRecurringPaymentEnabled()
             ->andWhere(['>', 'amount', 0.00])
-            ->andWhere(['customer_recurring_payment.id' => 1390])
             ->joinWith(['customer' => function ($query) {
                 $query->notDeleted()
                     ->location([1, 4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22]);
