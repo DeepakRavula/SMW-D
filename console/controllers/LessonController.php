@@ -46,8 +46,11 @@ class LessonController extends Controller
             }])
             ->all();
         foreach ($lessons as $lesson) {
+            Console::output("Lessons save " . $lesson->id, Console::FG_GREEN, Console::BOLD);
             $lesson->save();
         }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
         return true;
     }
 
