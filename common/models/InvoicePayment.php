@@ -87,7 +87,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
     }
     public function validateIsOwing($attributes)
     {
-        if (!$this->invoice->isOwing()) {
+        if ($this->isNewRecord && !$this->invoice->isOwing()) {
             $this->addError($attributes, "Invoice is already Paid");
         }
     }
@@ -170,9 +170,9 @@ class InvoicePayment extends \yii\db\ActiveRecord
             $negativePayments = $this->invoice->invoicePayments;
             foreach ($negativePayments as $negativePayment) {
             $negativePayment->delete();
-            }
-            if ($this->payment->isNegativePayment()) {
+            if (!$this->payment->isNegativePayment()) {
                 $negativePayment->payment->delete();
+            }
             }
             }
         return true;
