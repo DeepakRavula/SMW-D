@@ -11,7 +11,7 @@ use DateInterval;
 use common\models\discount\LessonDiscount;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\data\ArrayDataProvider;
-use carbon\Carbon;
+use Carbon\Carbon;
 /**
  * This is the model class for table "enrolment".
  *
