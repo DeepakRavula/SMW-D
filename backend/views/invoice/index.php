@@ -58,27 +58,29 @@ $this->params['action-button'] = $actionButton; ?>
                         $date = Yii::$app->formatter->asDate($data->dueDate);
                         return !empty($date) ? $date : null;
                     },
-			  'filterType' => KartikGridView::FILTER_DATE_RANGE,
-			  'filterWidgetOptions' => [
-                    'model' => $searchModel,
-                    'convertFormat' => true,
-                    'initRangeExpr' => true,
-                    'attribute' => 'dateRange',
-                    'convertFormat' => true,
-                    'pluginOptions'=>[
-                        'autoApply' => true,
-                        'ranges' => [
-                            Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
-                            Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
-                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
-                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
-                        ],
-                        'locale' => [
-                            'format' => 'M d, Y',
-                        ],
-                        'opens' => 'right'
-                    ],
-                ],
+                    'filter' => '<div class="input-group drp-container">'. DateRangePicker::widget([
+                        'model' => $searchModel,
+                        'convertFormat' => true,
+                        'initRangeExpr' => true,
+                        'attribute' => 'dateRange',
+                            'options' => [
+                                'class' => 'form-control',
+                                'readOnly' => true,
+                            ],
+                            'pluginOptions' => [
+                            'autoApply' => true,
+                            'ranges' => [
+                                Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                                Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                                Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                                Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                            ],
+                            'locale' => [
+                                'format' => 'M d, Y',
+                            ],
+                                'opens' => 'right'
+                            ]
+                        ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
                 ],
                 [
 					'attribute' => 'customer',
@@ -307,11 +309,18 @@ $this->params['action-button'] = $actionButton; ?>
     ]); ?>
 	<?php \yii\widgets\Pjax::end(); ?>
     </div>
-    <script>
-        $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
+<script>
+    $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
         var dateRange = $("#invoicesearch-invoicedaterange").val();
         if (!$.isEmptyObject(dateRange)) {
             $("#invoicesearch-invoicedaterange").val('').trigger('change');
         }
     });
-    </script>
+
+    $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
+        var dateRange = $("#invoicesearch-daterange").val();
+        if (!$.isEmptyObject(dateRange)) {
+            $("#invoicesearch-daterange").val('').trigger('change');
+        }
+    });
+</script>
