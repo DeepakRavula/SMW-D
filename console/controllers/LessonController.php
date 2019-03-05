@@ -225,4 +225,31 @@ class LessonController extends Controller
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
         return true;
     }
+
+    public function actionGetOwingLessons()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        Console::startProgress(0, 'Rounding lessons to two decimal places...');
+        $lessons = Lesson::find()
+            ->isConfirmed()
+            ->location($this->locationId)
+            ->privateLessons()
+            ->notCanceled()
+            ->notDeleted()
+            ->all();
+
+        foreach ($lessons as $lesson) {
+            Console::output("processing: " . $lesson->id, Console::FG_GREEN, Console::BOLD);
+            if ($lesson->getOwingAmount($lesson->enrolment->id) >= -0.09 && $lesson->getOwingAmount($lesson->enrolment->id) <= 0.09  ) {
+              $lessonOwing =  new LessonOwing();
+              $lessonOwing->lessonId = $lesson->id;
+              $lessonOwing->save();
+            }
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
+    }
 }
