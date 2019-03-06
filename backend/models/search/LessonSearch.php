@@ -151,6 +151,12 @@ class LessonSearch extends Lesson
             $this->toDate = new \DateTime($this->toDate);
             $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         }
+        if ($this->dueDate) {
+            list($this->fromDate, $this->toDate) = explode(' - ', $this->dueDate);
+            $this->fromDate = new \DateTime($this->fromDate);
+            $this->toDate = new \DateTime($this->toDate);
+            $query->andWhere(['between', 'DATE(lesson.dueDate)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+        }
  
         $query->joinWith('teacherProfile');
         $dataProvider->setSort([
