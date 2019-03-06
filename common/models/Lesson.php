@@ -441,8 +441,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                    ->via('paymentCycleLesson');
-                    //->onCondition(['payment_cycle.isDeleted' => false]);
+                    ->via('paymentCycleLesson')
+                    ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getLessonPayments()
