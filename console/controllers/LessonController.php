@@ -102,7 +102,7 @@ class LessonController extends Controller
         foreach ($lessons as $lesson) {
             if (!$lesson->paymentCycle) {
                 Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
-             if ($lesson->isExploded === 1) {
+             if ($lesson->isExploded) {
                 $paymentCycle = $lesson->rootLesson->paymentCycle;
                 if (!$paymentCycle) {
                   $childLessons = $lesson->rootLesson->getLeafs();
