@@ -87,6 +87,47 @@ class LessonController extends Controller
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
 
+    public function actionFixExplodeLessonsWithoutPaymentcycle()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $totalLessonsCount = 0;
+        $lessonCountAddedToOwingTable = 0;
+        $lessons = Lesson::find()
+            ->isConfirmed()
+            ->notDeleted()
+            ->regular()
+            ->location($this->locationId)
+            ->activePrivateLessons()
+            ->notCanceled()
+            ->all();
+        foreach ($lessons as $lesson) {
+            $totalLessonsCount++;
+            if (!$lesson->paymentCycle) {
+                Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
+             if ($lesson->isExploded === 1) {
+                $paymentCycle = $lesson->rootLesson->paymentCycle;
+                if (!$paymentCycle) {
+                $previousLessonId = $lesson->id -1;
+                $previousLesson = Lesson::find()->andWhere(['id' => $previousLessonId])->one();
+                $paymentCycle = $previousLesson->paymentCycle;
+                if ($paymentCycle) {
+                    $paymentCycleLesson = new PaymentCycleLesson();
+                    $paymentCycleLesson->lessonId = $lesson->id;
+                    $paymentCycleLesson->paymentCycleId = $paymentCycle->id;
+                    $paymentCycleLesson->save();
+                }
+            }
+        }
+
+
+            }
+        }
+        Console::output("Lessons Added to Owing Table " . $lessonCountAddedToOwingTable, Console::FG_GREEN, Console::BOLD);
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+    }
+
     public function actionFixxLessonsWithoutPaymentcycle()
     {
         set_time_limit(0);
@@ -177,7 +218,7 @@ class LessonController extends Controller
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
-
+   
     public function actionDeleteLessonOwing()
     {
         LessonOwing::deleteAll();
@@ -212,6 +253,8 @@ class LessonController extends Controller
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
+
+
 
     public function actionSetDueDate()
     {
