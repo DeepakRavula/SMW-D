@@ -91,8 +91,6 @@ class LessonController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $totalLessonsCount = 0;
-        $lessonCountAddedToOwingTable = 0;
         $lessons = Lesson::find()
             ->isConfirmed()
             ->notDeleted()
@@ -102,7 +100,6 @@ class LessonController extends Controller
             ->notCanceled()
             ->all();
         foreach ($lessons as $lesson) {
-            $totalLessonsCount++;
             if (!$lesson->paymentCycle) {
                 Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
              if ($lesson->isExploded === 1) {
@@ -126,7 +123,6 @@ class LessonController extends Controller
 
             }
         }
-        Console::output("Lessons Added to Owing Table " . $lessonCountAddedToOwingTable, Console::FG_GREEN, Console::BOLD);
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
