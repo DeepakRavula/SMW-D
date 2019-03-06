@@ -174,9 +174,14 @@ class LessonController extends Controller
                         ->andWhere(['<=', 'payment_cycle.endDate', Carbon::parse($lesson->date)->format('Y-m-d')])
                         ->andWhere(['isDeleted' => false])
                         ->one();
-                $newPaymentCycle->startDate = Carbon::parse($oldPaymentCycle->endDate)->modify('+1days')->format('Y-m-d');
+                        if ($oldPaymentCycle) {
+                            $startDate = Carbon::parse($oldPaymentCycle->endDate)->modify('+1days')->modify('first day of this month');
+                        } else {
+                            $startDate = Carbon::parse($lesson->rootLesson->date)->modify('first day of this month');
+                        }     
+                        $newPaymentCycle->startDate = $startDate->format('Y-m-d');
                 $paymentFrequencyDays = ($lesson->enrolment->paymentFrequencyId)*30;
-                $newPaymentCycle->endDate = Carbon::parse($newPaymentCycle->startDate)->modify('+'.$paymentFrequencyDays.'days')->format('Y-m-d');
+                $newPaymentCycle->endDate = Carbon::parse($newPaymentCycle->startDate)->modify('+'.$paymentFrequencyDays.'days')->modify('last day of this month')->format('Y-m-d');
                 $newPaymentCycle->isDeleted = false;
                 $newPaymentCycle->isPreferredPaymentEnabled = false;
                 $newPaymentCycle->save();
@@ -204,9 +209,14 @@ class LessonController extends Controller
                                 ->andWhere(['<=', 'payment_cycle.endDate', Carbon::parse($lesson->date)->format('Y-m-d')])
                                 ->andWhere(['isDeleted' => false])
                                 ->one();
-                        $newPaymentCycle->startDate = Carbon::parse($oldPaymentCycle->endDate)->modify('+1days')->format('Y-m-d');
+                        if ($oldPaymentCycle) {
+                            $startDate = Carbon::parse($oldPaymentCycle->endDate)->modify('+1days')->modify('first day of this month');
+                        } else {
+                            $startDate = Carbon::parse($lesson->date)->modify('first day of this month');
+                        }     
+                        $newPaymentCycle->startDate = $startDate->format('Y-m-d');
                         $paymentFrequencyDays = ($lesson->enrolment->paymentFrequencyId)*30;
-                        $newPaymentCycle->endDate = Carbon::parse($newPaymentCycle->startDate)->modify('+'.$paymentFrequencyDays.'days')->format('Y-m-d');
+                        $newPaymentCycle->endDate = Carbon::parse($newPaymentCycle->startDate)->modify('+'.$paymentFrequencyDays.'days')->modify('last day of this month')->format('Y-m-d');
                         $newPaymentCycle->isDeleted = false;
                         $newPaymentCycle->isPreferredPaymentEnabled = false;
                         $newPaymentCycle->save();
