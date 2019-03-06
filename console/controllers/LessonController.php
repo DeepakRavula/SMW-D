@@ -108,9 +108,12 @@ class LessonController extends Controller
              if ($lesson->isExploded === 1) {
                 $paymentCycle = $lesson->rootLesson->paymentCycle;
                 if (!$paymentCycle) {
-                $previousLessonId = $lesson->id -1;
-                $previousLesson = Lesson::find()->andWhere(['id' => $previousLessonId])->one();
-                $paymentCycle = $previousLesson->paymentCycle;
+                  $childLessons = $lesson->rootLesson->getLeafs();
+                  foreach ($childLessons as $childLesson) {
+                      if ($childLesson->paymentCycle) {
+                        $paymentCycle = $childLesson->paymentCycle;
+                      }
+                  }
                 if ($paymentCycle) {
                     $paymentCycleLesson = new PaymentCycleLesson();
                     $paymentCycleLesson->lessonId = $lesson->id;
