@@ -89,11 +89,11 @@ in the amount of <?= $model->amount; ?> via <?= $paymentModel->paymentMethod->na
     $(document).ready(function () {
         var amountValue = '<?= $model->amount ?>';
         var amount  = parseFloat(amountValue);
-        var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Transaction Receipt</h4> </div> </div>'; 
+        var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Payment Receipt</h4> </div> </div>'; 
         if (amount > 0) {
-            header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Transaction Receipt</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Received $<span class="">'+ amount +'</span></h4> </div> </div>';   
+            header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Payment Receipt</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Received $<span class="">'+ amount +'</span></h4> </div> </div>';   
         }
-        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        $('#popup-modal .modal-dialog').css({'width': '1100px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').show();
         $('.modal-save').text('Email');

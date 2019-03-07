@@ -40,8 +40,7 @@ use yii\bootstrap\ActiveForm;
                 return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
             }
         ]);
-
-        
+  
         array_push($columns, [
             'headerOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],

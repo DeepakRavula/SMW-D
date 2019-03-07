@@ -44,6 +44,17 @@ use yii\bootstrap\ActiveForm;
         ]);
 
         array_push($columns, [
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+            'label' => 'Due Date',
+            'value' => function ($data) {
+                $date = Yii::$app->formatter->asDate($data->dueDate);
+                $lessonTime = (new \DateTime($data->dueDate))->format('H:i:s');
+                return !empty($date) ? $date : null;
+            }
+        ]);
+
+        array_push($columns, [
             'label' => 'Student',
             'attribute' => 'student',
             'value' => function ($data) use($searchModel) {
