@@ -283,7 +283,7 @@ use yii\bootstrap\Html;
     $(document).ready(function () {
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
-        $('#popup-modal .modal-dialog').css({'width': '1200px'});
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('#modal-save').text('Save');
         $('.modal-cancel').text('Close');
