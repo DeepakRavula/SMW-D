@@ -81,14 +81,20 @@ class PaymentCycleLessonController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
+    
         $lessons = Lesson::find()
-            ->isConfirmed()
-            ->notDeleted()
-            ->regular()
-            ->location($this->locationId)
-            ->activePrivateLessons()
-            ->notCanceled()
-            ->all();
+        ->joinWith(['paymentCycleLesson' => function ($query)  {
+            $query->joinWith(['paymentCycle' => function ($query) {
+                    $query->andWhere(['payment_cycle.isDeleted' => false]);
+            }]);
+        }])
+        ->isConfirmed()
+        ->notDeleted()
+        ->regular()
+        ->location(4,9,14,15,16,17,18,19,20,21)
+        ->activePrivateLessons()
+        ->notCanceled()
+        ->all();
         foreach ($lessons as $lesson) {
             if (!$lesson->paymentCycle) {
                 Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
@@ -123,13 +129,18 @@ class PaymentCycleLessonController extends Controller
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $lessons = Lesson::find()
-            ->isConfirmed()
-            ->notDeleted()
-            ->regular()
-            ->location($this->locationId)
-            ->activePrivateLessons()
-            ->notCanceled()
-            ->all();
+        ->joinWith(['paymentCycleLesson' => function ($query)  {
+            $query->joinWith(['paymentCycle' => function ($query) {
+                    $query->andWhere(['payment_cycle.isDeleted' => false]);
+            }]);
+        }])
+        ->isConfirmed()
+        ->notDeleted()
+        ->regular()
+        ->location(4,9,14,15,16,17,18,19,20,21)
+        ->activePrivateLessons()
+        ->notCanceled()
+        ->all();
         foreach ($lessons as $lesson) {
             if (!$lesson->paymentCycle) {
                 if ($lesson->rootLesson) {
@@ -188,15 +199,21 @@ class PaymentCycleLessonController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $lessonCountAddedToOwingTable = 0;
+      
         $lessons = Lesson::find()
-            ->isConfirmed()
-            ->notDeleted()
-            ->regular()
-            ->location($this->locationId)
-            ->activePrivateLessons()
-            ->notCanceled()
-            ->all();
+        ->joinWith(['paymentCycleLesson' => function ($query)  {
+            $query->andWhere(['payment_cycle_lesson.isDeleted' => false]);
+            $query->joinWith(['paymentCycle' => function ($query) {
+                    $query->andWhere(['payment_cycle.isDeleted' => false]);
+            }]);
+        }])
+        ->isConfirmed()
+        ->notDeleted()
+        ->regular()
+        ->location(4,9,14,15,16,17,18,19,20,21)
+        ->activePrivateLessons()
+        ->notCanceled()
+        ->all();
         foreach ($lessons as $lesson) {
             if (!$lesson->paymentCycle) {
                 if (!$lesson->rootLesson) {
