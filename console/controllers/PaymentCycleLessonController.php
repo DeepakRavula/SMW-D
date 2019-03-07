@@ -91,7 +91,7 @@ class PaymentCycleLessonController extends Controller
         ->isConfirmed()
         ->notDeleted()
         ->regular()
-        ->location(4,9,14,15,16,17,18,19,20,21)
+        ->location($this->locationId)
         ->activePrivateLessons()
         ->notCanceled()
         ->all();
@@ -137,7 +137,7 @@ class PaymentCycleLessonController extends Controller
         ->isConfirmed()
         ->notDeleted()
         ->regular()
-        ->location(4,9,14,15,16,17,18,19,20,21)
+        ->location($this->locationId)
         ->activePrivateLessons()
         ->notCanceled()
         ->all();
@@ -210,7 +210,7 @@ class PaymentCycleLessonController extends Controller
         ->isConfirmed()
         ->notDeleted()
         ->regular()
-        ->location(4,9,14,15,16,17,18,19,20,21)
+        ->location($this->locationId)
         ->activePrivateLessons()
         ->notCanceled()
         ->all();

@@ -75,6 +75,19 @@ class ScheduleController extends BaseController
     public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $lessons = Lesson::find()
+        ->joinWith(['paymentCycleLesson' => function ($query)  {
+            $query->joinWith(['paymentCycle' => function ($query) {
+                    $query->andWhere(['payment_cycle.isDelete' => false]);
+            }]);
+        }])
+        ->isConfirmed()
+        ->notDeleted()
+        ->regular()
+        ->location([4,9,14,15,16,17,18,19,20,21])
+        ->activePrivateLessons()
+        ->notCanceled()
+        ->all();
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
