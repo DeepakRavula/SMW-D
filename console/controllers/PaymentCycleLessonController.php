@@ -27,7 +27,7 @@ class PaymentCycleLessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'fix-explode-lessons-without-paymentcycle' || 'fix-root-lessons-without-paymentcycle' ||'fix-child-lessons-without-paymentcycle' || 'set-due-date' ? ['locationId'] : []
+            $actionID == 'fix-root-lessons-without-paymentcycle' ||'fix-child-lessons-without-paymentcycle' || 'set-due-date' ? ['locationId'] : []
         );
     }
 
@@ -84,7 +84,8 @@ class PaymentCycleLessonController extends Controller
     
         $lessons = Lesson::find()
         ->leftJoin(['payment_cycle_lesson pcl'], 'pcl.lessonId = lesson.id')
-        ->andWhere(['OR', ['pcl.id' => null],['pcl.isDeleted' => true]])          
+        ->join('LEFT JOIN', 'payment_cycle_lesson pc2', 'pcl.lessonId = pc2.lessonId AND pcl.id < pc2.id')
+        ->andWhere(['OR', ['pc2.id' => null],['pc2.isDeleted' => true]])          
         ->isConfirmed()
         ->notDeleted()
         ->regular()
@@ -94,6 +95,7 @@ class PaymentCycleLessonController extends Controller
         ->split()
         ->all();
         foreach ($lessons as $lesson) {
+            $lesson = Lesson::findOne(['id' => $lesson->id]);
             if (!$lesson->paymentCycle) {
                 Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
                 $paymentCycle = $lesson->rootLesson->paymentCycle;
@@ -125,7 +127,8 @@ class PaymentCycleLessonController extends Controller
         ini_set('memory_limit', '-1');  
         $lessons = Lesson::find()
         ->leftJoin(['payment_cycle_lesson pcl'], 'pcl.lessonId = lesson.id')
-        ->andWhere(['OR', ['pcl.id' => null],['pcl.isDeleted' => true]])          
+        ->join('LEFT JOIN', 'payment_cycle_lesson pc2', 'pcl.lessonId = pc2.lessonId AND pcl.id < pc2.id')
+        ->andWhere(['OR', ['pc2.id' => null],['pc2.isDeleted' => true]])          
         ->isConfirmed()
         ->notDeleted()
         ->regular()
@@ -134,6 +137,7 @@ class PaymentCycleLessonController extends Controller
         ->notCanceled()
         ->all();
         foreach ($lessons as $lesson) {
+            $lesson = Lesson::findOne(['id' => $lesson->id]);
             if(!$lesson->paymentCycle) {
                 if ($lesson->rootLesson) {
                     Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
@@ -142,9 +146,9 @@ class PaymentCycleLessonController extends Controller
                         $paymentCycleLesson->lessonId = $lesson->id;
                         $paymentCycleLesson->paymentCycleId = $lesson->rootLesson->paymentCycle->id;
                         if ($paymentCycleLesson->save()) {
-                            Console::output("\n" . $lesson->id . 'created new payment cycle' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
+                            Console::output("\n" . $lesson->id . 'created new payment cycle lesson' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
                         } else {
-                            Console::output("\n" . $lesson->id . 'not created new payment cycle' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
+                            Console::output("\n" . $lesson->id . 'not created new payment cycle lesson' . $paymentCycleLesson->id, Console::FG_GREEN, Console::BOLD);
                         }
                     } else {
                         $findPaymentCycle = PaymentCycle::find()
@@ -154,6 +158,7 @@ class PaymentCycleLessonController extends Controller
                         ['>=', 'payment_cycle.endDate', Carbon::parse($lesson->rootLesson->date)->format('Y-m-d')]
                     ])
                     ->andWhere(['isDeleted' => false])
+                    ->orderBy(['payment_cycle.endDate' => SORT_DESC])
                     ->one();
             if ($findPaymentCycle) {
                 $paymentCycleLesson = new PaymentCycleLesson();
@@ -173,12 +178,14 @@ class PaymentCycleLessonController extends Controller
                         } else {
                             $startDate = Carbon::parse($lesson->rootLesson->date)->modify('first day of this month');
                         }     
-                        $newPaymentCycle->startDate = $startDate->format('Y-m-d');
+                $newPaymentCycle->startDate = $startDate->format('Y-m-d');
                 $paymentFrequencyDays = ($lesson->enrolment->paymentFrequencyId)*30;
                 $newPaymentCycle->endDate = Carbon::parse($newPaymentCycle->startDate)->modify('+'.$paymentFrequencyDays.'days')->modify('last day of this month')->format('Y-m-d');
                 $newPaymentCycle->isDeleted = false;
                 $newPaymentCycle->isPreferredPaymentEnabled = false;
-                $newPaymentCycle->save();
+                if ($newPaymentCycle->save()) {
+                    Console::output("\n" . $lesson->id . 'created new payment cycle' . $newPaymentCycle->id, Console::FG_GREEN, Console::BOLD);
+                }
             }      
                     }
                 }
@@ -194,7 +201,8 @@ class PaymentCycleLessonController extends Controller
       
         $lessons = Lesson::find()
         ->leftJoin(['payment_cycle_lesson pcl'], 'pcl.lessonId = lesson.id')
-        ->andWhere(['OR', ['pcl.id' => null],['pcl.isDeleted' => true]])          
+        ->join('LEFT JOIN', 'payment_cycle_lesson pc2', 'pcl.lessonId = pc2.lessonId AND pcl.id < pc2.id')
+        ->andWhere(['OR', ['pc2.id' => null],['pc2.isDeleted' => true]])          
         ->isConfirmed()
         ->notDeleted()
         ->regular()
@@ -202,7 +210,9 @@ class PaymentCycleLessonController extends Controller
         ->activePrivateLessons()
         ->notCanceled()
         ->all();
-        foreach ($lessons as $lesson) {
+        print_r("\nCount of Lesssons".count($lessons));
+        foreach ($lessons as $oneLesson) {
+            $lesson = Lesson::find()->andWhere(['id' => $oneLesson->id])->one();
             if (!$lesson->paymentCycle) {
                 if (!$lesson->rootLesson) {
                     Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
@@ -226,6 +236,7 @@ class PaymentCycleLessonController extends Controller
                     ->andWhere(['enrolmentId' => $lesson->enrolment->id])
                     ->andWhere(['<=', 'payment_cycle.endDate', Carbon::parse($lesson->date)->format('Y-m-d')])
                     ->andWhere(['isDeleted' => false])
+                    ->orderBy(['payment_cycle.endDate' => SORT_DESC])
                     ->one();
             if ($oldPaymentCycle) {
                 $startDate = Carbon::parse($oldPaymentCycle->endDate)->modify('+1days')->modify('first day of this month');
@@ -237,11 +248,15 @@ class PaymentCycleLessonController extends Controller
             $newPaymentCycle->endDate = Carbon::parse($newPaymentCycle->startDate)->modify('+'.$paymentFrequencyDays.'days')->modify('last day of this month')->format('Y-m-d');
             $newPaymentCycle->isDeleted = false;
             $newPaymentCycle->isPreferredPaymentEnabled = false;
-            $newPaymentCycle->save();
+            if ($newPaymentCycle->save()) {
+                Console::output("\n" . $lesson->id . 'created new payment cycle' . $newPaymentCycle->id, Console::FG_GREEN, Console::BOLD);
+            }
         }      
     }
     }
 }
+Console::endProgress(true);
+Console::output("done.", Console::FG_GREEN, Console::BOLD);
 }
    
     public function actionDeleteLessonOwing()
