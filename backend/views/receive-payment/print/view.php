@@ -11,6 +11,12 @@ use yii\bootstrap\Html;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 ?>
+<?= $this->render('/print/_invoice-header', [
+       'paymentModel' => $payment,
+       'userModel' => $customer,
+       'locationModel' => $customer->location->location,
+]);
+?>
 <?php if($payment): ?>
 <div>
 <h4 class = "payment-receipt">Thank you for your payment!</h4>

@@ -163,9 +163,6 @@ td.kv-group-odd {
                 ],
             ]); ?>
         </div>
-        <div class="col-md-1 form-group">
-            <?= Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-        </div>
         <div class="clearfix"></div>
     </div>
     <?php ActiveForm::end(); ?>
@@ -194,5 +191,9 @@ td.kv-group-odd {
         var params = $.param({ 'InvoiceSearch[dateRange]': dateRange});
         $.pjax.reload({container: "#time-voucher-grid", replace: false, timeout: 6000, data: $(this).serialize()});
         return false;
+    });
+
+    $(document).off('change', '#invoicesearch-daterange').on('change', '#invoicesearch-daterange', function() {
+        $("#time-voucher-search-form").submit();
     });
 </script>

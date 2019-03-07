@@ -164,7 +164,7 @@ class PrivateLessonController extends BaseController
                 'message' => $message,
             ];
         }
-
+        Lesson::triggerPusher();
         return $response;
     }
     public function actionEditDuration()
@@ -281,6 +281,7 @@ class PrivateLessonController extends BaseController
         $model = $this->findModel($id);
         $post = Yii::$app->request->post();
         if ($model->load($post) && $model->save()) {
+            Lesson::triggerPusher();
             return [
                 'status' => true,
             ];
@@ -376,6 +377,7 @@ class PrivateLessonController extends BaseController
                     $model->classroomId = $editClassroomModel->classroomId;
                     $model->save();
                 }
+                Lesson::triggerPusher();
                 $response = [
                     'status' => true,
                     'message' => 'Lesson Classroom Edited Sucessfully',

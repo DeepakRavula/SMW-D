@@ -55,6 +55,37 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         },
     ],
     [
+        'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+        'label' => 'Due Date',
+        'attribute' => 'dueDate',
+        'filter' => DateRangePicker::widget([
+            'model' => $searchModel,
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'attribute' => 'dueDate',
+            'options' => [
+                'class' => 'form-control',
+                'readOnly' => true,
+            ],
+            'pluginOptions' => [
+                'autoApply' => true,
+                'ranges' => [
+                    Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                    Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                    Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                    Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                ],
+                'locale' => [
+                    'format' => 'M d, Y',
+                ],
+                'opens' => 'left',
+            ],
+        ]),
+        'value' => function ($data) {
+            return !empty($data->dueDate) ? (new \DateTime($data->dueDate))->format('M d, Y') : null;
+        },
+    ],
+    [
         'label' => 'Date',
         'attribute' => 'dateRange',
         'filter' => '<div class="input-group drp-container">' . DateRangePicker::widget([
@@ -432,35 +463,24 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     $(document).off('click', '#lesson-unschedule').on('click', '#lesson-unschedule', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if (!$.isEmptyObject(lessonIds)) {
+            var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds, 'UnscheduleLesson[isBulk]': true});
             $('#menu-shown').hide();
                bootbox.confirm({
                 message: "Are you sure you want to unschedule?",
                 callback: function(result) {
                     if(result) {
                         $('.bootbox').modal('hide');
-                        $('#loader').show();
-                        var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds});
-                    $.ajax({
-                        url    : '<?=Url::to(['unscheduled-lesson/bulk-unschedule'])?>?' +params,
-                        type   : 'post',
+                        $.ajax({
+                        url    : '<?=Url::to(['unscheduled-lesson/reason-to-unschedule'])?>?' +params,
+                        type   : 'get',
                         success: function(response)
                         {
                             if (response.status) {
-                                $.pjax.reload({container: "#lesson-index", replace: false, timeout: 25000});
-                                $('#loader').hide();
+                                $('#modal-content').html(response.data);
+                                $('#popup-modal').modal('show');
                                 }
-                            else {
-                                if (response.message) {
-                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
-                                    $('#loader').hide();
-                                }
-                                if (response.error) {
-                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
-                                    $('#loader').hide();
-                                }
-                            }
                         }
-                    });
+                    });                  
         }
                 }
                });

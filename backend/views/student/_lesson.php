@@ -35,6 +35,12 @@ use common\models\Lesson;
                 },
             ],
             [
+                'label' => 'Due Date',
+                'value' => function ($data) {
+                    return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
+                },
+            ],
+            [
                 'label' => 'Status',
                 'value' => function ($data) {
                     return $data->getStatus();

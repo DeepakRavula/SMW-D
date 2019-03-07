@@ -102,7 +102,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['isSent'], 'boolean'],
             [['paymentAmount'], 'number'],
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount',
-                'isDeleted', 'isCanceled', 'isVoid'], 'safe'],
+                'isDeleted', 'isCanceled', 'isVoid', 'paidStatus', 'totalCopy'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'date',

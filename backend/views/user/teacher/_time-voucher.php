@@ -37,9 +37,6 @@ use common\models\InvoiceLineItem;
             ]); ?>
         </div>
         <div class="col-md-1 form-group">
-            <?= Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-        </div>
-        <div class="col-md-1 form-group">
             <?= Html::a('<i class="fa fa-print"></i> Print', null, ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default m-r-10']) ?>
         </div>
         <div class="pull-right checkbox">
@@ -59,6 +56,10 @@ use common\models\InvoiceLineItem;
 
 
 <script>
+    $(document).off('change', '#invoicesearch-daterange').on('change', '#invoicesearch-daterange', function() {
+        $("#time-voucher-search-form").submit();
+    });
+
     $(document).on('beforeSubmit', '#time-voucher-search-form', function () {
         var dateRange = $('#invoicesearch-daterange').val();
         var params = $.param({ 'InvoiceSearch[dateRange]': dateRange});

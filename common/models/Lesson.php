@@ -441,8 +441,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                    ->via('paymentCycleLesson');
-                    //->onCondition(['payment_cycle.isDeleted' => false]);
+                    ->via('paymentCycleLesson')
+                    ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getLessonPayments()
@@ -940,7 +940,6 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
                 }
             }
-            
             if ($this->isPrivate()) {
                 $amount = $this->getCreditAppliedAmount($this->enrolment->id);
                 if ($amount > $this->netPrice) {
@@ -1263,8 +1262,14 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->children()->orderBy(['lesson.id' => SORT_DESC])->one();
     }
 
-    public function unschedule()
+    public function unschedule($reasonToUnschedule)
     {
+        $note = new Note();
+        $note->content = $reasonToUnschedule;
+        $note->instanceId = $this->id;
+        $note->instanceType = Note::INSTANCE_TYPE_LESSON;
+        $note->createdUserId = Yii::$app->user->id;
+        $note->save();
         $this->status = self::STATUS_UNSCHEDULED;
         $this->save();
         return true;

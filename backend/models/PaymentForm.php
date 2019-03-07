@@ -500,14 +500,14 @@ class PaymentForm extends Model
                         $creditPaymentAmount = $amount;
                     }
                     $invoicePaymentModel = new InvoicePayment();
-                    $invoicePaymentModel->amount = $paymentCredit['value'];
-                    $invoicePaymentModel->invoice_id = $creditInvoice->id;
-                    $invoicePaymentModel->payment_id = $paymentCredit['id'];
-                    $invoicePaymentModel->save();
-                    $invoicePaymentModel = new InvoicePayment();
                     $invoicePaymentModel->amount = -$paymentCredit['value'];
                     $invoicePaymentModel->invoice_id = $creditInvoice->id;
                     $invoicePaymentModel->payment_id = $this->paymentId;
+                    $invoicePaymentModel->save();
+                    $invoicePaymentModel = new InvoicePayment();
+                    $invoicePaymentModel->amount = $paymentCredit['value'];
+                    $invoicePaymentModel->invoice_id = $creditInvoice->id;
+                    $invoicePaymentModel->payment_id = $paymentCredit['id'];
                     $invoicePaymentModel->save();
                     $amount -= $creditPaymentAmount;
                     $creditInvoice->save();

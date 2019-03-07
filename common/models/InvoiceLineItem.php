@@ -320,7 +320,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                     }
                 }
                 if ($this->lessonCanBeUnscheduled) {
-                    $this->lesson->unschedule();
+                    $this->lesson->unschedule('Invoice Line Item Deleted');
                 }
             }
         }

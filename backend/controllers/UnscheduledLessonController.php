@@ -14,6 +14,7 @@ use backend\models\search\UnscheduledLessonSearch;
 use yii\web\Response;
 use common\models\UnscheduleLesson;
 use common\models\Lesson;
+use common\models\Note;
 
 /**
  * LogController implements the CRUD actions for SystemLog model.
@@ -26,7 +27,7 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'bulk-unschedule'
+                    'bulk-unschedule', 'reason-to-unschedule'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -38,7 +39,7 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['bulk-unschedule','index'
+                        'actions' => ['bulk-unschedule','index', 'reason-to-unschedule'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -66,11 +67,14 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
     {
             $unscheduleLessonModel = new UnscheduleLesson();
             $unscheduleLessonModel->setScenario(UnscheduleLesson::SCENARIO_BULK_UNSCHEDULE);
+            $post  = Yii::$app->request->post();
+            
             if ($unscheduleLessonModel->load(Yii::$app->request->get()) && $unscheduleLessonModel->validate()) {
                 foreach ($unscheduleLessonModel->lessonIds as $lessonId) {
                     $model = $this->findModel($lessonId);
-                    $model->unschedule();
+                    $model->unschedule($unscheduleLessonModel->reason);
                 }
+                Lesson::triggerPusher();
                 $response = [
                     'status' => true,
                     'message' => 'Lessons unscheduled successfully',
@@ -83,6 +87,22 @@ class UnscheduledLessonController extends \common\components\controllers\BaseCon
             }
 
         return $response;
+ 
+    }
+
+    public function actionReasonToUnschedule()
+    {
+        $unscheduleLessonModel = new UnscheduleLesson();
+        $unscheduleLessonModel->setScenario(UnscheduleLesson::SCENARIO_BULK_UNSCHEDULE);
+        $unscheduleLessonModel->load(Yii::$app->request->get());
+        $data = $this->renderAjax('/lesson/_reason-to-unschedule', [
+            'note' => new Note(),
+            'unscheduleLessonModel' => $unscheduleLessonModel,
+        ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
  
     }
 

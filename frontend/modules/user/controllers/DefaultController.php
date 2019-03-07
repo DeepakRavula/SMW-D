@@ -18,6 +18,7 @@ use yii\base\Model;
 use common\models\UserProfile;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
+use backend\models\search\UserSearch;
 use yii\data\ActiveDataProvider;
 use common\models\Invoice;
 
@@ -104,13 +105,12 @@ class DefaultController extends Controller
         $model = User::findOne(['id' => $id]);
         $request = Yii::$app->request;
         $invoiceSearchModel = new InvoiceSearch();
-        $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
-        if ($invoiceSearchModel->load($request->get())) {
-            list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
-        }
+        $invoiceSearchModel->dateRange = (new \DateTime('previous week monday'))->format('M d,Y') . ' - ' . (new \DateTime('previous week saturday'))->format('M d,Y');
+        $invoiceSearchModel->load($request->get());
+        list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
         return $this->render('view', [
             'model' => $model,
-            'searchModel' => $invoiceSearchModel,
+            'invoiceSearchModel' => $invoiceSearchModel,
             'invoicedLessonsDataProvider' => $this->getInvoicedLessonsDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate),
         ]);
     }

@@ -380,25 +380,24 @@ echo Tabs::widget([
     });
 
 $(document).on('click', '#lesson-unschedule', function () {
-        $('#loader').show();
         $.ajax({
-            url: '<?=Url::to(['lesson/unschedule', 'id' => $model->id]);?>',
-            type: 'post',
-            dataType: "json",
-            data: $(this).serialize(),
+            url: '<?=Url::to(['unscheduled-lesson/reason-to-unschedule', 'UnscheduleLesson[lessonIds]' => $model->id,'UnscheduleLesson[isBulk]' => false]);?>',
+            type: 'get',
             success: function (response)
             {
                 if (response.status)
                 {
                     $('#menu-shown').hide();
-                    $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
-                    $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: '#lesson-detail', replace: false, async: false, timeout: 6000});
-                    if ($('#lesson-more-action').length) {
-                        $.pjax.reload({container: "#lesson-more-action", replace: false, async: false, timeout: 6000});
-                    }
-                    $('#attendance-panel').hide();
-                    $('#loader').hide();
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    // $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
+                    // $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
+                    // $.pjax.reload({container: '#lesson-detail', replace: false, async: false, timeout: 6000});
+                    // if ($('#lesson-more-action').length) {
+                    //     $.pjax.reload({container: "#lesson-more-action", replace: false, async: false, timeout: 6000});
+                    // }
+                    // $('#attendance-panel').hide();
+                    // $('#loader').hide();
                 } else {
                     $('#menu-shown').hide();
                     $('#error-notification').html(response.message).fadeIn().delay(3000).fadeOut();

@@ -38,7 +38,8 @@ class InvoicePayment extends \yii\db\ActiveRecord
             [['payment_id', 'invoice_id'], 'required'],
             [['payment_id', 'invoice_id', 'receiptId'], 'integer'],
             [['isDeleted', 'date', 'createdByUserId', 
-            'updatedByUserId', 'updatedOn', 'createdOn'], 'safe']
+            'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            //[['amount'], 'validateIsOwing'],
         ];
     }
 
@@ -84,7 +85,12 @@ class InvoicePayment extends \yii\db\ActiveRecord
             ],
         ];
     }
-
+    public function validateIsOwing($attributes)
+    {
+        if ($this->isNewRecord && !$this->invoice->isOwing()) {
+            $this->addError($attributes, "Invoice is already Paid");
+        }
+    }
     public static function find()
     {
         return new \common\models\query\InvoicePaymentQuery(get_called_class());
@@ -160,6 +166,15 @@ class InvoicePayment extends \yii\db\ActiveRecord
         if ($this->invoice) {
             $this->invoice->save();
         }
+        if ($this->invoice->isPaymentCreditInvoice()) {
+            $negativePayments = $this->invoice->invoicePayments;
+            foreach ($negativePayments as $negativePayment) {
+            $negativePayment->delete();
+            if (!$this->payment->isNegativePayment()) {
+                $negativePayment->payment->delete();
+            }
+            }
+            }
         return true;
     }
 }

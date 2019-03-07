@@ -29,10 +29,9 @@ use common\models\Lesson;
         </td>
     </tr>
     <?php if ($model->isRescheduled() || $model->isUnscheduled()) : ?>
-        <?php $date = $model->rootLesson ? $model->rootLesson->date : $model->date ; ?>
     <tr>
         <td>Original Date</td>
-        <td><?= (new \DateTime($date))->format('l, F jS, Y'); ?></td>
+        <td><?= (new \DateTime($model->getOriginalDate()))->format('l, F jS, Y'); ?></td>
     </tr>
     <?php endif; ?>
     <?php if (!($model->isUnscheduled())) : ?>

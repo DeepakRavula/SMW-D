@@ -23,6 +23,7 @@ class Note extends \yii\db\ActiveRecord
     const INSTANCE_TYPE_INVOICE = 4;
     const INSTANCE_TYPE_PROFORMA = 5;
     public $hasEditable;
+    public $reasonToUnschedule;
     /**
      * @inheritdoc
      */
@@ -41,7 +42,7 @@ class Note extends \yii\db\ActiveRecord
             [['instanceId', 'instanceType', 'createdUserId'], 'integer'],
             [['content'], 'string'],
             [['content'], 'trim'],
-            [['createdOn', 'updatedOn', 'hasEditable'], 'safe'],
+            [['createdOn', 'updatedOn', 'hasEditable', 'reasonToUnschedule'], 'safe'],
         ];
     }
 
