@@ -957,7 +957,9 @@ class Lesson extends \yii\db\ActiveRecord
             }
             $this->course->updateDates();
         }
-        
+        if ($this->privateLesson) {
+            $this->privateLesson->save();
+        }
         return parent::afterSave($insert, $changedAttributes);
     }
 
