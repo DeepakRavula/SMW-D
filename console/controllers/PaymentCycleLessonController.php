@@ -172,6 +172,7 @@ class PaymentCycleLessonController extends Controller
                         ->andWhere(['enrolmentId' => $lesson->enrolment->id])
                         ->andWhere(['<=', 'payment_cycle.endDate', Carbon::parse($lesson->date)->format('Y-m-d')])
                         ->andWhere(['isDeleted' => false])
+                        ->orderBy(['payment_cycle.endDate' => SORT_DESC])
                         ->one();
                         if ($oldPaymentCycle) {
                             $startDate = Carbon::parse($oldPaymentCycle->endDate)->modify('+1days')->modify('first day of this month');
