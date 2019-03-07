@@ -103,15 +103,8 @@ class DefaultController extends Controller
     {
         $id = Yii::$app->user->id;
         $model = User::findOne(['id' => $id]);
-        $request = Yii::$app->request;
-        $invoiceSearchModel = new InvoiceSearch();
-        $invoiceSearchModel->dateRange = (new \DateTime('previous week monday'))->format('M d,Y') . ' - ' . (new \DateTime('previous week saturday'))->format('M d,Y');
-        $invoiceSearchModel->load($request->get());
-        list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
         return $this->render('view', [
             'model' => $model,
-            'invoiceSearchModel' => $invoiceSearchModel,
-            'invoicedLessonsDataProvider' => $this->getInvoicedLessonsDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate),
         ]);
     }
     public function actionEditProfile($id)
