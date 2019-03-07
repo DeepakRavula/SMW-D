@@ -94,11 +94,11 @@ class PaymentCycleLessonController extends Controller
         ->location($this->locationId)
         ->activePrivateLessons()
         ->notCanceled()
+        ->split()
         ->all();
         foreach ($lessons as $lesson) {
             if (!$lesson->paymentCycle) {
                 Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
-             if ($lesson->isExploded) {
                 $paymentCycle = $lesson->rootLesson->paymentCycle;
                 if (!$paymentCycle) {
                   $childLessons = $lesson->rootLesson->getLeafs();
@@ -116,8 +116,6 @@ class PaymentCycleLessonController extends Controller
             }
         }
 
-
-            }
         }
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
@@ -142,7 +140,6 @@ class PaymentCycleLessonController extends Controller
         ->notCanceled()
         ->all();
         foreach ($lessons as $lesson) {
-            if (!$lesson->paymentCycle) {
                 if ($lesson->rootLesson) {
                     Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
                     if ($lesson->rootLesson->paymentCycle) {
@@ -190,7 +187,6 @@ class PaymentCycleLessonController extends Controller
             }      
                     }
                 }
-            }
         } 
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
