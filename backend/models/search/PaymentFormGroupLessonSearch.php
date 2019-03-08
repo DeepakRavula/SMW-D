@@ -62,7 +62,7 @@ class PaymentFormGroupLessonSearch extends Lesson
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->between($fromDate, $toDate)
+                ->dueLessons()
                 ->groupLessons()
                 ->customer($this->userId);
             if ($this->student) {
