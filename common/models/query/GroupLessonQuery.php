@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models;
+namespace common\models\query;
 
 /**
  * This is the ActiveQuery class for [[GroupLesson]].
