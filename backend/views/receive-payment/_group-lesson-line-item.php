@@ -34,35 +34,23 @@ use yii\bootstrap\ActiveForm;
         array_push($columns, [
             'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-            'attribute' => 'dateRange',
             'label' => 'Date',
-            'filterType' => KartikGridView::FILTER_DATE_RANGE,
-            'filterWidgetOptions' => [
-                'model' => $searchModel,
-                'convertFormat' => true,
-                'initRangeExpr' => true,
-                'attribute' => 'dateRange',
-                'convertFormat' => true,
-                'pluginOptions' => [
-                    'autoApply' => true,
-                    'ranges' => [
-                        Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
-                        Yii::t('kvdrp', 'Next Month') => ["moment().add(1, 'month').startOf('month')", "moment().add(1, 'month').endOf('month')"],
-                        Yii::t('kvdrp', 'Next 3 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(3, 'month').endOf('month')"],
-                        Yii::t('kvdrp', 'Next 6 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(6, 'month').endOf('month')"],
-                        Yii::t('kvdrp', 'Next 12 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(12, 'month').endOf('month')"],
-                    ],
-                    'locale' => [
-                        'format' => 'M d, Y',
-                    ],
-                    'opens' => 'right'
-                ]
-            ],
             'value' => function ($data) {
                 $date = Yii::$app->formatter->asDate($data->date);
                 $lessonTime = (new \DateTime($data->date))->format('H:i:s');
 
                 return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+            }
+        ]);
+
+        array_push($columns, [
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+            'label' => 'Due Date',
+            'value' => function ($data) {
+                $date = Yii::$app->formatter->asDate($data->dueDate);
+                $lessonTime = (new \DateTime($data->dueDate))->format('H:i:s');
+                return !empty($date) ? $date : null;
             }
         ]);
 

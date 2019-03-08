@@ -61,7 +61,7 @@ class PaymentFormLessonSearch extends Lesson
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->between($fromDate, $toDate)
+                ->dueLessons()
                 ->privateLessons()
                 ->customer($this->userId)
                 ->invoiced();
@@ -69,7 +69,7 @@ class PaymentFormLessonSearch extends Lesson
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->between($fromDate, $toDate)
+                ->dueLessons()
                 ->privateLessons()
                 ->customer($this->userId)
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
