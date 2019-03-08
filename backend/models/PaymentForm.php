@@ -175,8 +175,8 @@ class PaymentForm extends Model
                                     $lesson = Lesson::findOne($lessonPayment['id']);
                                     $lessonPaymentAmount = $lessonPayment['value'];
                                     if ($lesson->isOwing($lesson->enrolment->id)) {
-                                        if (round($lessonPaymentAmount, 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
-                                            $lessonPaymentAmount = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
+                                        if (round($lessonPaymentAmount, 2) > round($lesson->privateLesson->balance, 2)) {
+                                            $lessonPaymentAmount = round($lesson->privateLesson->balance, 2);
                                         }
                                         if (round($lessonPaymentAmount, 2) > 0.00) {
                                             $paymentModel = new Payment();
@@ -276,8 +276,8 @@ class PaymentForm extends Model
                                     $lesson = Lesson::findOne($lessonPayment['id']);
                                     $lessonPaymentAmount = $lessonPayment['value'];
                                     if ($lesson->isOwing($lesson->enrolment->id)) {
-                                        if (round($lessonPaymentAmount, 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
-                                            $lessonPaymentAmount = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
+                                        if (round($lessonPaymentAmount, 2) > round($lesson->privateLesson->balance, 2)) {
+                                            $lessonPaymentAmount = round($lesson->privateLesson->balance, 2);
                                         }
                                         if (round($creditPaymentAmount, 2) > 0.00) {
                                             if (round($lessonPaymentAmount, 2) > round($creditPaymentAmount, 2)) {
@@ -381,8 +381,8 @@ class PaymentForm extends Model
                     $lesson = Lesson::findOne($lessonPayment['id']);
                     $lessonPaymentAmount = $lessonPayment['value'];
                     if ($lesson->isOwing($lesson->enrolment->id)) {
-                        if (round($lessonPaymentAmount, 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
-                            $lessonPaymentAmount = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
+                        if (round($lessonPaymentAmount, 2) > round($lesson->privateLesson->balance, 2)) {
+                            $lessonPaymentAmount = round($lesson->privateLesson->balance, 2);
                         }
                         if (round($lessonPaymentAmount, 2) > 0.00) {
                             if (round($amount, 2) > 0.00) {
@@ -646,7 +646,7 @@ class PaymentForm extends Model
                     'teacher' => $lesson->teacher->publicIdentity,
                     'amount' => Yii::$app->formatter->asCurrency(round($lesson->getGroupNetPrice($enrolment), 2)),
                     'payment' => $groupLessonPayment['value'],
-                    'balance' => Yii::$app->formatter->asCurrency(round($lesson->getOwingAmount($enrolment->id), 2)),
+                    'balance' => Yii::$app->formatter->asCurrency(round($lesson->privateLesson->balance, 2)),
                 ];
             }
         }
@@ -677,7 +677,7 @@ class PaymentForm extends Model
                     'teacher' => $lesson->teacher->publicIdentity,
                     'amount' => Yii::$app->formatter->asCurrency(round($lesson->getNetPrice($enrolment), 2)),
                     'payment' => $lessonPayment['value'],
-                    'balance' => Yii::$app->formatter->asCurrency(round($lesson->getOwingAmount($enrolment->id), 2)),
+                    'balance' => Yii::$app->formatter->asCurrency(round($lesson->privateLesson->balance, 2)),
                 ];
             }
         }

@@ -153,7 +153,7 @@ array_push($columns,
         'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
         'value' => function ($data) {
-            return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
+            return Yii::$app->formatter->asCurrency(round($data->privateLesson->total, 2));
         },
     ],
     [
@@ -175,7 +175,7 @@ array_push($columns,
             if ($data->hasInvoice()) {
                 $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
             } else {
-                $owingAmount = $data->getOwingAmount($data->enrolment->id) > 0.09 ? $data->getOwingAmount($data->enrolment->id) : 0.00;
+                $owingAmount = $data->privateLesson->balance > 0.09 ? $data->privateLesson->balance : 0.00;
             }
             return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
         },
