@@ -47,6 +47,9 @@ $bundle = FrontendAsset::register($this);
 					<li class="notifications-menu" data-toggle="tooltip" data-original-title="Schedule" data-placement="bottom">
 						<a href="<?php echo Url::to(['/schedule/index']) ?>">Schedule</a>
 					</li>
+					<li class="notifications-menu" data-toggle="tooltip" data-original-title="Lessons" data-placement="bottom">
+						<a href="<?php echo Url::to(['/user/default/invoiced-lessons']) ?>">Invoiced Lessons</a>
+					</li>
 					<li class="dropdown user user-menu">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" id="user-menu">
 							<span class="glyphicon glyphicon-user"></span>
