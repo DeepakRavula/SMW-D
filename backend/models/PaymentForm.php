@@ -646,7 +646,7 @@ class PaymentForm extends Model
                     'teacher' => $lesson->teacher->publicIdentity,
                     'amount' => Yii::$app->formatter->asCurrency(round($lesson->getGroupNetPrice($enrolment), 2)),
                     'payment' => $groupLessonPayment['value'],
-                    'balance' => Yii::$app->formatter->asCurrency(round($lesson->privateLesson->balance, 2)),
+                    'balance' => Yii::$app->formatter->asCurrency(round($lesson->getOwingAmount($enrolment->id), 2)),
                 ];
             }
         }

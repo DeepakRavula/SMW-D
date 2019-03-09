@@ -137,8 +137,13 @@ class PrivateLesson extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        $this->total = $this->netPrice;
-        $this->balance = $this->getOwingAmount($this->enrolment->id);
+        if ($insert) {
+            $this->total = $this->lesson->netPrice;
+            $this->balance = $this->lesson->netPrice;
+        } else {
+            $this->balance = $this->lesson->getOwingAmount($this->lesson->enrolment->id);
+        }
+        
         return parent::beforeSave($insert);
     }
     
