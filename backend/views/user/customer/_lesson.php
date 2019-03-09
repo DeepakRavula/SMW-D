@@ -92,7 +92,7 @@ echo GridView::widget([
                 if ($data->isPrivate()) {
                     $enrolment = $data->enrolment;
                 }
-                return Yii::$app->formatter->asCurrency($data->privateLesson->balance);
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
             },
         ],
     ],

@@ -245,7 +245,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                         ->one();
                     $enrolmentId = $enrolment->id;
                 }
-                $subtotal += $lineItem->lesson->privateLesson->balance;
+                $subtotal += $lineItem->lesson->getOwingAmount($enrolmentId);
             }
             if ($lineItem->invoiceLineItem) {
                 $subtotal += $lineItem->invoice->balance;

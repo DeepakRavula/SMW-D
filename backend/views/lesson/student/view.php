@@ -80,7 +80,7 @@ use common\models\LessonPayment;
                     $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
                             ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $data->id])->one();
-                    return Yii::$app->formatter->asCurrency($lessonModel->privateLesson->balance);
+                    return Yii::$app->formatter->asCurrency($lessonModel->getOwingAmount($enrolment->id));
                 },
             ],
             ['class' => 'yii\grid\ActionColumn',
