@@ -61,7 +61,7 @@ class PaymentFormLessonSearch extends Lesson
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->between($fromDate, $toDate)
+                ->dueLessons()
                 ->privateLessons()
                 ->customer($this->userId)
                 ->joinWith(['privateLesson' => function($query) {
@@ -72,7 +72,7 @@ class PaymentFormLessonSearch extends Lesson
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->between($fromDate, $toDate)
+                ->dueLessons()
                 ->privateLessons()
                 ->customer($this->userId)
                 ->joinWith(['privateLesson' => function($query) {

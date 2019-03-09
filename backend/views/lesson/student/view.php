@@ -91,7 +91,7 @@ use common\models\LessonPayment;
                             ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
                         if (!$enrolment->hasInvoice($lessonModel->id)) {
-                            $url = Url::to(['group-lesson/apply-discount', 'GroupLesson[enrolmentId]' => $enrolment->id, 'GroupLesson[lessonId]' => [$lessonModel->id]]);
+                            $url = Url::to(['group-lesson/apply-discount', 'GroupLessonDiscount[enrolmentId]' => $enrolment->id, 'GroupLessonDiscount[lessonId]' => [$lessonModel->id]]);
                             return Html::a('Edit Discount', '#', [
                                 'title' => Yii::t('yii', 'Edit Discount'),
                                 'class' => ['btn-info btn-sm group-lesson-discount'],

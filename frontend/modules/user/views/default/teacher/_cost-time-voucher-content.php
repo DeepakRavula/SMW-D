@@ -144,7 +144,7 @@ td.kv-group-odd {
     <div class="row">
         <div class="col-md-3 form-group">
             <?= DateRangePicker::widget([
-                'model' => $searchModel,
+                'model' => $invoiceSearchModel,
                 'attribute' => 'dateRange',
                 'convertFormat' => true,
                 'initRangeExpr' => true,
