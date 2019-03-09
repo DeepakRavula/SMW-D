@@ -294,7 +294,7 @@ trait Invoiceable
         $lessons = $query->all();
         $lessonIds = [];
         foreach ($lessons as $lesson) {
-            if ($lesson->isOwing($this->id)) {
+            if ($lesson->privateLesson->balance > 0) {
                 $lessonIds[] = $lesson->id;
             }
         }

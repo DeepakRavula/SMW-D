@@ -80,7 +80,7 @@ class PaymentFormLessonSearch extends Lesson
             $allLessons = $query->all();
             $lessonIds = [];
             foreach ($allLessons as $lesson) {
-                if ($lesson->isOwing($lesson->enrolment->id)) {
+                if ($lesson->privateLesson->balance > 0) {
                     $lessonIds[] = $lesson->id;
                 }
             }

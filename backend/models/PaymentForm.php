@@ -174,7 +174,7 @@ class PaymentForm extends Model
                                 foreach ($lessonPayments as $i => $lessonPayment) {
                                     $lesson = Lesson::findOne($lessonPayment['id']);
                                     $lessonPaymentAmount = $lessonPayment['value'];
-                                    if ($lesson->isOwing($lesson->enrolment->id)) {
+                                    if ($lesson->privateLesson->balance > 0) {
                                         if (round($lessonPaymentAmount, 2) > round($lesson->privateLesson->balance, 2)) {
                                             $lessonPaymentAmount = round($lesson->privateLesson->balance, 2);
                                         }
@@ -275,7 +275,7 @@ class PaymentForm extends Model
                                 foreach ($lessonPayments as $i => $lessonPayment) {
                                     $lesson = Lesson::findOne($lessonPayment['id']);
                                     $lessonPaymentAmount = $lessonPayment['value'];
-                                    if ($lesson->isOwing($lesson->enrolment->id)) {
+                                    if ($lesson->privateLesson->balance > 0) {
                                         if (round($lessonPaymentAmount, 2) > round($lesson->privateLesson->balance, 2)) {
                                             $lessonPaymentAmount = round($lesson->privateLesson->balance, 2);
                                         }
@@ -380,7 +380,7 @@ class PaymentForm extends Model
                 foreach ($lessonPayments as $lessonPayment) {
                     $lesson = Lesson::findOne($lessonPayment['id']);
                     $lessonPaymentAmount = $lessonPayment['value'];
-                    if ($lesson->isOwing($lesson->enrolment->id)) {
+                    if ($lesson->privateLesson->balance > 0) {
                         if (round($lessonPaymentAmount, 2) > round($lesson->privateLesson->balance, 2)) {
                             $lessonPaymentAmount = round($lesson->privateLesson->balance, 2);
                         }

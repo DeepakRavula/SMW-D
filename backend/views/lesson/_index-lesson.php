@@ -165,7 +165,7 @@ array_push($columns,
                 if ($data->invoice->isOwing()) {
                     $highLightClass .= ' danger';
                 }
-            } else if ($data->isOwing($data->enrolment->id)) {
+            } else if ($data->privateLesson->balance > 0) {
                 $highLightClass .= ' danger';
             }
             return ['class' => $highLightClass];
