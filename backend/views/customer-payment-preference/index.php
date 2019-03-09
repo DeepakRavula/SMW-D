@@ -185,7 +185,7 @@ $columns = [
             $unInvoicedLessons = $query->all();
             $owingLessonIds = [];
             foreach ($unInvoicedLessons as $lesson) {
-                if ($lesson->privateLesson->balance > 0) {
+                if ($lesson->isOwing($data->id)) {
                     $owingLessonIds[] = $lesson->id;
                 }
             }

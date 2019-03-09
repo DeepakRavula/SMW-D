@@ -942,9 +942,9 @@ class Lesson extends \yii\db\ActiveRecord
             }
             if ($this->isPrivate()) {
                 $amount = $this->getCreditAppliedAmount($this->enrolment->id);
-                if ($amount > $this->netPrice) {
+                if ($amount > $this->privateLesson->total) {
                     foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
-                        $balance = $this->getCreditAppliedAmount($this->enrolment->id) - $this->privateLesson->total;
+                        $balance = $this->privateLesson->balance;
                         if ($lessonPayment->amount <= $balance) {
                             $balance = $balance - $lessonPayment->amount;
                             $lessonPayment->delete();
@@ -1185,8 +1185,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function hasCredit($enrolmentId)
     {
         $enrolment = Enrolment::findOne($enrolmentId);
-        return round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->isPrivate() ? $this->privateLesson->total  : $this->getGroupNetPrice($enrolment), 2)
-            && round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->getCreditUsedAmount($enrolmentId), 2);
+        return  $this->isPrivate() ? $this->privateLesson->balance < 0 : round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->getGroupNetPrice($enrolment), 2) 
+        && round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->getCreditUsedAmount($enrolmentId), 2);
     }
 
     public function getCreditAmount($enrolmentId)
