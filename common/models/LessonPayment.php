@@ -99,17 +99,6 @@ class LessonPayment extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
     }
 
-    public function hasCredit()
-    {
-        return round($this->lesson->getCreditAppliedAmount($this->enrolment->id), 2) > round($this->lesson->privateLesson->total, 2);
-    }
-
-    public function getCreditAmount()
-    {
-        $diffAmount = round($this->lesson->getCreditAppliedAmount($this->enrolment->id), 2) - round($this->lesson->privateLesson->total, 2);
-        return $diffAmount > $this->amount ? $this->amount : $this->amount - $diffAmount;
-    }
-
     public function getPayment()
     {
         return $this->hasOne(Payment::className(), ['id' => 'paymentId']);

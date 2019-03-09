@@ -185,8 +185,8 @@ $columns = [
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                 ->andWhere(['invoiced_lesson.id' => null])
                 ->orderBy(['lesson.date' => SORT_ASC])
-                ->all();
-            return count($unInvoicedLessons);
+                ->count();
+            return $unInvoicedLessons;
         }
     ]
 ];

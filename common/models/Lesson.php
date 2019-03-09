@@ -942,7 +942,7 @@ class Lesson extends \yii\db\ActiveRecord
             }
             if ($this->isPrivate()) {
                 $amount = $this->getCreditAppliedAmount($this->enrolment->id);
-                if ($amount > $this->privateLesson->total) {
+                if ($amount > $this->netPrice) {
                     foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
                         $balance = $this->privateLesson->balance;
                         if ($lessonPayment->amount <= $balance) {
