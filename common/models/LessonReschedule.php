@@ -59,6 +59,18 @@ class LessonReschedule extends Model
             }
             if ($oldLesson->paymentCycleLesson) {
                 $oldLesson->paymentCycleLesson->updateAttributes(['lessonId' => $rescheduledLesson->id]);
+            } else {
+                if ($rescheduledLesson->isExploded) {
+                    $leafs = $oldLesson->getLeafs();
+                   foreach ($leafs as $leaf) {
+                       if ($leaf->paymentCycleLesson) {
+                           $paymentCycleLesson =  new PaymentCycleLesson();
+                           $paymentCycleLesson->lessonId = $rescheduledLesson->id;
+                           $paymentCycleLesson->paymentCycleId = $leaf->paymentCycleLesson->id;
+                           $paymentCycleLesson->save();
+                       }
+                   }
+                }
             }
         }
         foreach ($oldLesson->lessonPayments as $lessonPayment) {
