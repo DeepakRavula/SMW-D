@@ -15,9 +15,12 @@ use common\models\Enrolment;
 class PaymentFormGroupLessonSearch extends Lesson
 {
     public $dateRange;
+    public $dueDateRange;
     public $student;
     public $toDate;
     public $fromDate;
+    public $toDueDate;
+    public $fromDueDate;
     public $lessonId;
     public $lessonIds;
     public $showCheckBox;
@@ -28,7 +31,7 @@ class PaymentFormGroupLessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['showCheckBox', 'dateRange', 'lessonId', 'fromDate', 'toDate',
+            [['showCheckBox', 'dateRange', 'lessonId', 'fromDate', 'toDate', 'fromDueDate', 'toDueDate', 'dueDateRange',
                 'lessonIds', 'student','userId'], 'safe'],
         ];
     }
@@ -54,6 +57,11 @@ class PaymentFormGroupLessonSearch extends Lesson
             $fromDate = new \DateTime($this->fromDate);
             $toDate = new \DateTime($this->toDate);
         }
+        if ($this->dueDateRange) {
+            list($this->fromDueDate, $this->toDueDate) = explode(' - ', $this->dueDateRange);
+            $fromDueDate = new \DateTime($this->fromDueDate);
+            $toDueDate = new \DateTime($this->toDueDate);
+        }
         $lessonsQuery = Lesson::find();
         if (isset($this->lessonIds)) {
             $lessonsQuery->andWhere(['id' => $this->lessonIds]);
@@ -61,9 +69,13 @@ class PaymentFormGroupLessonSearch extends Lesson
             $query = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
-                ->notCanceled()
-                ->dueLessons()
-                ->groupLessons()
+                ->notCanceled();
+                if ($this->dueDateRange) {
+                    $query->dueBetween($fromDueDate, $toDueDate);
+                } else {
+                    $query->dueLessons();
+                }
+                $query->groupLessons()
                 ->customer($this->userId);
             if ($this->student) {
                 $query->student($this->student);

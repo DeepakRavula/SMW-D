@@ -14,9 +14,12 @@ use common\models\Lesson;
 class PaymentFormLessonSearch extends Lesson
 {
     public $dateRange;
+    public $dueDateRange;
     public $student;
     public $toDate;
     public $fromDate;
+    public $toDueDate;
+    public $fromDueDate;
     public $lessonId;
     public $lessonIds;
     public $showCheckBox;
@@ -27,7 +30,7 @@ class PaymentFormLessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['showCheckBox', 'dateRange', 'lessonId', 'fromDate', 'toDate',
+            [['showCheckBox', 'dateRange', 'dueDateRange',  'lessonId', 'fromDate', 'toDate', 'fromDueDate', 'toDueDate',
                 'lessonIds', 'student','userId'], 'safe'],
         ];
     }
@@ -53,6 +56,11 @@ class PaymentFormLessonSearch extends Lesson
             $fromDate = new \DateTime($this->fromDate);
             $toDate = new \DateTime($this->toDate);
         }
+        if ($this->dueDateRange) {
+            list($this->fromDueDate, $this->toDueDate) = explode(' - ', $this->dueDateRange);
+            $fromDueDate = new \DateTime($this->fromDueDate);
+            $toDueDate = new \DateTime($this->toDueDate);
+        }
         $lessonsQuery = Lesson::find();
         if (isset($this->lessonIds)) {
             $lessonsQuery->andWhere(['id' => $this->lessonIds]);
@@ -60,17 +68,25 @@ class PaymentFormLessonSearch extends Lesson
             $invoicedLessons = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
-                ->notCanceled()
-                ->dueLessons()
-                ->privateLessons()
+                ->notCanceled();
+                if ($this->dueDateRange) {
+                    $invoicedLessons->dueBetween($fromDueDate, $toDueDate);
+                } else {
+                    $invoicedLessons->dueLessons();
+                }
+                $invoicedLessons->privateLessons()
                 ->customer($this->userId)
                 ->invoiced();
             $query = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
-                ->notCanceled()
-                ->dueLessons()
-                ->privateLessons()
+                ->notCanceled();
+                if ($this->dueDateRange) {
+                $query->dueBetween($fromDueDate, $toDueDate);
+                } else {
+                   $query->dueLessons(); 
+                }
+                $query->privateLessons()
                 ->customer($this->userId)
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                 ->andWhere(['invoiced_lesson.id' => null]);
