@@ -27,7 +27,7 @@ class LessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'copy-total-and-status' || 'trigger-save' || 'fix-lessons-without-paymentcycle' || 'set-due-date' || 'get-owing-lessons' || 'add-total-balance' ? ['locationId'] : []
+            $actionID == 'copy-total-and-status' || 'trigger-save' || 'fix-lessons-without-paymentcycle' || 'set-due-date' || 'get-owing-lessons' ? ['locationId'] : []
         );
     }
 
@@ -143,58 +143,6 @@ class LessonController extends Controller
               $lessonOwing =  new LessonOwing();
               $lessonOwing->lessonId = $lesson->id;
               $lessonOwing->save();
-            }
-        }
-        Console::endProgress(true);
-        Console::output("done.", Console::FG_GREEN, Console::BOLD);
-        return true;
-    }
-
-    public function actionFixPaymentCycle()
-    {
-        $lessonIds = [452376, 459444, 266756, 268397, 346235, 369434, 441712, 449727, 
-        482592, 488387, 447658, 456975, 461370, 467867, 476370, 212102, 221627, 244205, 
-        446676, 483577, 160905, 182392, 200867, 222518, 289760, 455885, 94602, 95416, 
-        100110, 124703, 217435, 217768, 219077, 466620, 316613, 316715, 401435, 401998, 
-        464533, 489503, 489760, 488604, 482201, 477613, 470827, 465051, 463352, 453001, 
-        89467, 101240, 220693, 220798, 221351, 460041];
-            $lessons = Lesson::find()
-                ->andWhere(['lesson.id' => $lessonIds])
-                ->all();
-            foreach ($lessons as $lesson) {
-                if (!$lesson->paymentCycle) {
-                    $paymentCycle = new PaymentCycle();
-                    $paymentCycle->enrolmentId = $lesson->enrolment->id;
-                    $date = (new \DateTime($lesson->date))->format('Y-m-d');
-                    $paymentCycle->startDate = (new \DateTime($date))->modify('first day of this month')->format('Y-m-d');
-                    $paymentCycle->endDate = (new \DateTime($date))->modify('last day of this month')->format('Y-m-d');
-                    $paymentCycle->isDeleted = false;
-                    $paymentCycle->isPreferredPaymentEnabled = 0;
-                    $paymentCycle->save();
-                }
-            }
-    }
-
-    public function actionAddTotalBalance()
-    {
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
-        
-        $lessons = Lesson::find()
-            ->notDeleted()
-            ->notCanceled()
-            ->isConfirmed()
-            ->location($this->locationId)
-            ->privateLessons() 
-            ->all();
-        Console::startProgress(0, 'Updating Lessons total and balance...');
-        foreach ($lessons as $lesson) {
-            if ($lesson->privateLesson) {
-                $lesson->privateLesson->updateAttributes([
-                    'total' => $lesson->netPrice,
-                    'balance' => $lesson->getOwingAmount($lesson->enrolment->id)
-                ]);
-                Console::output("processing: " . $lesson->id . 'added lesson total and balance', Console::FG_GREEN, Console::BOLD);
             }
         }
         Console::endProgress(true);
