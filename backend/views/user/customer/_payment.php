@@ -59,8 +59,10 @@ $columns = [
 			$balance = round($data->balance, 2);
 			return Yii::$app->formatter->asCurrency($balance);
 		},
+		'footer' => Yii::$app->formatter->asCurrency($paymentsDataProvider->query->sum('balance')),
 		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
 		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+		'footerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
     ],
 ];
 ?>
@@ -80,7 +82,8 @@ $columns = [
 		'dataProvider' => $paymentsDataProvider,
 		'options' => ['class' => 'col-md-12'],
 		'summary' => false,
-    	'emptyText' => false,
+		'emptyText' => false,
+		'showFooter' => true,
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'tableOptions' => ['class' => 'table table-bordered table table-condensed', 'id' => 'payment'],
 		'columns' => $columns,
