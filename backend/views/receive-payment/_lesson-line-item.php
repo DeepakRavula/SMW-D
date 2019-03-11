@@ -31,16 +31,27 @@ use yii\bootstrap\ActiveForm;
         }
 
         array_push($columns, [
-            'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-            'attribute' => 'dateRange',
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:12%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:12%'],
             'label' => 'Date',
+            'value' => function ($data) {
+                $date = Yii::$app->formatter->asDate($data->date);
+                $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+                return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+            }
+        ]);
+  
+        array_push($columns, [
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:18%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:18%'],
+            'label' => 'Due Date',
+            'attribute' => 'dueDateRange',
             'filterType' => KartikGridView::FILTER_DATE_RANGE,
             'filterWidgetOptions' => [
                 'model' => $searchModel,
                 'convertFormat' => true,
                 'initRangeExpr' => true,
-                'attribute' => 'dateRange',
+                'attribute' => 'dueDateRange',
                 'convertFormat' => true,
                 'pluginOptions' => [
                     'autoApply' => true,
@@ -58,10 +69,9 @@ use yii\bootstrap\ActiveForm;
                 ]
             ],
             'value' => function ($data) {
-                $date = Yii::$app->formatter->asDate($data->date);
-                $lessonTime = (new \DateTime($data->date))->format('H:i:s');
-
-                return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+                $date = Yii::$app->formatter->asDate($data->dueDate);
+                $lessonTime = (new \DateTime($data->dueDate))->format('H:i:s');
+                return !empty($date) ? $date : null;
             }
         ]);
 
@@ -146,8 +156,8 @@ use yii\bootstrap\ActiveForm;
 
         if ($searchModel->showCheckBox && !$isCreatePfi) {
             array_push($columns, [
-                'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
-                'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+                'headerOptions' => ['class' => 'text-right', 'style' => 'width:120px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'width:120px'],
                 'label' => 'Payment',
                 'value' => function ($data) use ($form) {
                     return $form->field($data, 'paymentAmount')->textInput([

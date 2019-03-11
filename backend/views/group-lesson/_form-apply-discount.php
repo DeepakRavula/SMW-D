@@ -15,8 +15,8 @@ use yii\helpers\Url;
 <div id="apply-discount-modal" class="apply-discount-form">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['group-lesson/apply-discount', 'GroupLesson[lessonId]' => $groupLesson->lessonId, 
-            'GroupLesson[enrolmentId]' => $groupLesson->enrolmentId, 'GroupLesson[isPreview]' => $isPreview]),
+        'action' => Url::to(['group-lesson/apply-discount', 'GroupLessonDiscount[lessonId]' => $groupLesson->lessonId, 
+            'GroupLessonDiscount[enrolmentId]' => $groupLesson->enrolmentId, 'GroupLessonDiscount[isPreview]' => $isPreview]),
     ]); ?>
     <div class="row">
         <div class="col-xs-3 pull-left">

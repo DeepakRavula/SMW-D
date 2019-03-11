@@ -7,6 +7,7 @@ use yii\console\Controller;
 use common\models\Invoice;
 use common\models\User;
 use common\models\Lesson;
+use yii\helpers\Console;
 use common\models\Location;
 
 class InvoiceController extends Controller
@@ -24,7 +25,7 @@ class InvoiceController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'copy-total-and-status' || 'trigger-save' ? ['locationId'] : []
+            $actionID == 'copy-total-status' || 'trigger-save' ? ['locationId'] : []
         );
     }
 
@@ -104,6 +105,9 @@ class InvoiceController extends Controller
 
     public function actionCopyTotalStatus()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        
         Console::startProgress(0, 'Rounding invoices to two decimal places...');    
         $invoices = Invoice::find()
             ->location($this->locationId)

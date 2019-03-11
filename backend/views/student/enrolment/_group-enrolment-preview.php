@@ -109,7 +109,7 @@ use backend\assets\CustomGridAsset;
                 'template' => '{update}', 
                 'buttons' => [
                     'update' => function ($url, $lesson) use ($model) {
-                        $action = Url::to(['group-lesson/apply-discount', 'GroupLesson[lessonId]' => $lesson->id, 'GroupLesson[enrolmentId]' => $model->id, 'GroupLesson[isPreview]' => true]);
+                        $action = Url::to(['group-lesson/apply-discount', 'GroupLessonDiscount[lessonId]' => $lesson->id, 'GroupLessonDiscount[enrolmentId]' => $model->id, 'GroupLessonDiscount[isPreview]' => true]);
                         return Html::a('', '#', [
                             'title' => Yii::t('yii', 'Update'),
                             'class' => ['glyphicon glyphicon-pencil group-lesson-discount-edit'],

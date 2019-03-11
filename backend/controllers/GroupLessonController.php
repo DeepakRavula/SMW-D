@@ -6,7 +6,7 @@ use Yii;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\GroupLesson;
+use common\models\GroupLessonDiscount;
 use yii\filters\ContentNegotiator;
 use common\components\controllers\BaseController;
 use common\models\Lesson;
@@ -52,7 +52,7 @@ class GroupLessonController extends BaseController
 
     public function actionApplyDiscount()
     {
-        $groupLesson = new GroupLesson();
+        $groupLesson = new GroupLessonDiscount();
         $groupLesson->load(Yii::$app->request->get());
         $model = Lesson::findOne($groupLesson->lessonId);
         $model->enrolmentId = $groupLesson->enrolmentId;

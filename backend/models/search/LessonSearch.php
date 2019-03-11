@@ -37,6 +37,7 @@ class LessonSearch extends Lesson
     public $showAll;
     public $studentId;
     public $programId;
+    public $dueDate;
     /**
      * {@inheritdoc}
      */
@@ -46,7 +47,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId','studentId', 'programId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll', 'dueDate'], 'safe'],
         ];
     }
     
@@ -149,6 +150,12 @@ class LessonSearch extends Lesson
             $this->fromDate = new \DateTime($this->fromDate);
             $this->toDate = new \DateTime($this->toDate);
             $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+        }
+        if ($this->dueDate) {
+            list($this->fromDate, $this->toDate) = explode(' - ', $this->dueDate);
+            $this->fromDate = new \DateTime($this->fromDate);
+            $this->toDate = new \DateTime($this->toDate);
+            $query->andWhere(['between', 'DATE(lesson.dueDate)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         }
  
         $query->joinWith('teacherProfile');

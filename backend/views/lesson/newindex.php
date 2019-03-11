@@ -32,11 +32,13 @@ use kartik\grid\GridView;
                 },
             ],
             [
-                'label' => 'Program',
-                'attribute' => 'program',
+                'label' => 'due date',
+                'attribute' => 'dueDate',
                 'value' => function ($data) {
-                    return !empty($data->course->program->name) ? $data->course->program->name : null;
-                },
+                    $dueDate = Yii::$app->formatter->asDate($data->dueDate);
+                    $lessonTime = (new \DateTime($data->dueDate))->format('M d,Y');
+                    return !empty($dueDate) ? $dueDate : null;
+                }
             ],
             [
                 'label' => 'isExploded',
@@ -62,6 +64,18 @@ use kartik\grid\GridView;
                    return $lessonId;
                 }
             ],
+            [
+                'label' => 'Original Date',
+                'value' => function ($data) {
+                   
+                    $lessonId =  null;
+                   if ($data->rootLesson) {
+                    $date = Yii::$app->formatter->asDate($data->getOriginalDate());
+                   }
+                   return !empty($date) ? $date:null;
+                }
+            ],
+
 	       
         ];       
         array_push($columns, 

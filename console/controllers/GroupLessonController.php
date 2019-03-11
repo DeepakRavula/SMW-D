@@ -6,8 +6,11 @@ use yii\console\Controller;
 use Yii;
 use yii\db\Migration;
 use common\models\User;
+use yii\helpers\Console;
 use common\models\Lesson;
 use common\models\Course;
+use common\models\Enrolment;
+use common\models\GroupLesson;
 use common\models\InvoiceLineItem;
 
 class GroupLessonController extends Controller
@@ -25,7 +28,7 @@ class GroupLessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'refactor-price' ? ['locationId'] : []
+            $actionID == 'refactor-price' || 'copy-total-status' ? ['locationId'] : []
         );
     }
     
@@ -78,5 +81,47 @@ class GroupLessonController extends Controller
                 }
             }
         }
+    }
+
+    public function actionCopyTotalStatus()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        Console::startProgress(0, 'Rounding lessons to two decimal places...');
+        $lessons = Lesson::find()
+            ->isConfirmed()
+            ->location($this->locationId)
+            ->groupLessons()
+            ->notCanceled()
+            ->notDeleted()
+            ->all();
+
+        foreach ($lessons as $lesson) {
+            $enrolments = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['courseId' => $lesson->courseId])
+                ->all();
+            foreach ($enrolments as $enrolment) {
+                Console::output("processing: Lesson " . $lesson->id . ' with enrolment ' . $enrolment->id, Console::FG_GREEN, Console::BOLD);
+                $groupLesson = new GroupLesson();
+                $groupLesson->lessonId = $lesson->id;
+                $groupLesson->enrolmentId = $enrolment->id;
+                $groupLesson->total = $lesson->getGroupNetPrice($enrolment);
+                $groupLesson->balance = $lesson->getOwingAmount($enrolment->id);
+                $status = GroupLesson::STATUS_PAID;
+                if ($groupLesson->balance > 0) {
+                    $status = GroupLesson::STATUS_OWING;
+                } else if ($groupLesson->balance < 0) {
+                    $status = GroupLesson::STATUS_CREDIT;
+                }
+                $groupLesson->paidStatus = $status;
+                $groupLesson->save();
+            }
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
     }
 }

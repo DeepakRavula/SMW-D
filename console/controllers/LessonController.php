@@ -87,109 +87,6 @@ class LessonController extends Controller
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
 
-    public function actionDeleteLessonOwing()
-    {
-        LessonOwing::deleteAll();
-    }
-
-    public function actionFindLessonsWithoutPaymentcycle()
-    {
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
-        $totalLessonsCount = 0;
-        $lessonCountAddedToOwingTable = 0;
-        $lessons = Lesson::find()
-            ->isConfirmed()
-            ->notDeleted()
-            ->regular()
-            ->location($this->locationId)
-            ->activePrivateLessons()
-            ->notCanceled()
-            ->all();
-        foreach ($lessons as $lesson) {
-            $totalLessonsCount++;
-            if (!$lesson->paymentCycle) {
-                Console::output("\nProcessing" . $lesson->id, Console::FG_GREEN, Console::BOLD);
-                $lessonOwing = new LessonOwing();
-                $lessonOwing->lessonId = $lesson->id;
-                $lessonOwing->save();
-                $lessonCountAddedToOwingTable++;
-
-            }
-        }
-        Console::output("Lessons Added to Owing Table " . $lessonCountAddedToOwingTable, Console::FG_GREEN, Console::BOLD);
-        Console::endProgress(true);
-        Console::output("done.", Console::FG_GREEN, Console::BOLD);
-    }
-
-    public function actionSetDueDate()
-    {
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
-        LessonOwing::deleteAll();
-        $totalLessonsCount = 0;
-        $lessonCountAddedToOwingTable = 0;
-        $lessonCountAddedDueDate = 0;
-        $totalExtraLessonsCount = 0;
-        $totalGroupLessonsCount = 0;
-        $lessons = Lesson::find()
-            ->isConfirmed()
-            ->notDeleted()
-            ->regular()
-            ->location($this->locationId)
-            ->activePrivateLessons()
-            ->notCanceled()
-            ->all();
-        foreach ($lessons as $lesson) {
-            if ($lesson->paymentCycle) {
-                $totalLessonsCount++;
-                $firstLessonDate = $lesson->paymentCycle->firstLesson->getOriginalDate();
-                $dueDate = Carbon::parse($firstLessonDate)->modify('- 15 days')->format('Y-m-d');
-                $lesson->updateAttributes(['dueDate' => $dueDate]);
-                Console::output("processing: " . $lesson->id . 'added due date', Console::FG_GREEN, Console::BOLD);
-            }
-        }
-
-        $extraLessons = Lesson::find()
-            ->isConfirmed()
-            ->notDeleted()
-            ->extra()
-            ->location($this->locationId)
-            ->activePrivateLessons()
-            ->notCanceled()
-            ->all();
-        foreach ($extraLessons as $extraLesson) {
-            $totalExtraLessonsCount++;
-            $extraLessonDate = $extraLesson->date;
-            $dueDate = Carbon::parse($extraLessonDate)->format('Y-m-d');
-            $extraLesson->updateAttributes(['dueDate' => $dueDate]);
-            Console::output("processing: " . $lesson->id . 'added due date', Console::FG_GREEN, Console::BOLD);
-        }
-
-        $groupLessons = Lesson::find()
-            ->isConfirmed()
-            ->notDeleted()
-            ->location($this->locationId)
-            ->groupLessons()
-            ->notCanceled()
-            ->all();
-
-        foreach ($groupLessons as $groupLesson) {
-            $totalGroupLessonsCount++;
-            $groupLessonDate = $groupLesson->date;
-            $dueDate = Carbon::parse($groupLessonDate)->format('Y-m-d');
-            $groupLesson->updateAttributes(['dueDate' => $dueDate]);
-            Console::output("processing: " . $lesson->id . 'added due date', Console::FG_GREEN, Console::BOLD);
-        }
-
-        Console::output("Processed Regular private lessons" . $totalLessonsCount, Console::FG_GREEN, Console::BOLD);
-        Console::output("Processed extra private lessons" . $totalExtraLessonsCount, Console::FG_GREEN, Console::BOLD);
-        Console::output("Processed group lessons" . $totalGroupLessonsCount, Console::FG_GREEN, Console::BOLD);
-        Console::endProgress(true);
-        Console::output("done.", Console::FG_GREEN, Console::BOLD);
-        return true;
-    }
-
     public function actionCopyTotalAndStatus()
     {
         set_time_limit(0);
@@ -225,4 +122,33 @@ class LessonController extends Controller
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
         return true;
     }
+
+    public function actionGetOwingLessons()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        Console::startProgress(0, 'Rounding lessons to two decimal places...');
+        $lessons = Lesson::find()
+            ->isConfirmed()
+            ->location($this->locationId)
+            ->privateLessons()
+            ->notCanceled()
+            ->notDeleted()
+            ->all();
+
+        foreach ($lessons as $lesson) {
+            Console::output("processing: " . $lesson->id, Console::FG_GREEN, Console::BOLD);
+            if ($lesson->getOwingAmount($lesson->enrolment->id) >= -0.09 && $lesson->getOwingAmount($lesson->enrolment->id) <= 0.09  ) {
+              $lessonOwing =  new LessonOwing();
+              $lessonOwing->lessonId = $lesson->id;
+              $lessonOwing->save();
+            }
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
+    }
+
+    
 }
