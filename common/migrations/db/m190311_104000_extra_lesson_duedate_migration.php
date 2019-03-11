@@ -18,7 +18,6 @@ class m190311_104000_extra_lesson_duedate_migration extends Migration
         ->isConfirmed()
         ->notDeleted()
         ->extra()
-        ->location([4,9,14,15,16,17,18,19,20,21])
         ->activePrivateLessons()
         ->notCanceled()
         ->all();
