@@ -14,6 +14,12 @@ use yii\grid\GridView;
 
 <?php
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+$totalBalance = Payment::find()
+	->andWhere(['user_id' => $userModel->id])
+	->notDeleted()
+	->exceptAutoPayments()
+	->sum('balance');
+				
 $columns = [
     [
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
@@ -59,7 +65,7 @@ $columns = [
 			$balance = round($data->balance, 2);
 			return Yii::$app->formatter->asCurrency($balance);
 		},
-		'footer' => Yii::$app->formatter->asCurrency($paymentsDataProvider->query->sum('balance')),
+		'footer' => Yii::$app->formatter->asCurrency($totalBalance),
 		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
 		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
 		'footerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],

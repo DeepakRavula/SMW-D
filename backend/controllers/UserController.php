@@ -524,7 +524,6 @@ class UserController extends BaseController
             'openingBalanceCredit' => $this->getOpeningBalanceCredit($id),
             'teacherLessonDataProvider' => $this->getTeacherLessonDataProvider($id, $locationId,$lessonSearchModel->summariseReport),
             'noteDataProvider' => $this->getNoteDataProvider($id),
-            //'accountDataProvider' => $this->getAccountDataProvider($id),
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
             'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
             'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
