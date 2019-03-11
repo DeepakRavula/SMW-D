@@ -158,6 +158,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
         foreach ($this->invoice->paymentRequests as $paymentRequest) {
             $paymentRequest->save();
         }
+        $this->payment->save();
         return true;
     }
 
@@ -169,12 +170,13 @@ class InvoicePayment extends \yii\db\ActiveRecord
         if ($this->invoice->isPaymentCreditInvoice()) {
             $negativePayments = $this->invoice->invoicePayments;
             foreach ($negativePayments as $negativePayment) {
-            $negativePayment->delete();
-            if (!$this->payment->isNegativePayment()) {
-                $negativePayment->payment->delete();
+                $negativePayment->delete();
+                if (!$this->payment->isNegativePayment()) {
+                    $negativePayment->payment->delete();
+                }
             }
-            }
-            }
+        }
+        $this->payment->save();
         return true;
     }
 }

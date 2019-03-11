@@ -14,9 +14,7 @@ $boxTools = ['<i title="Edit" class="fa fa-pencil user-edit-button m-r-10"></i>'
     </ul>'; ?>
         <?php $boxTools = array_merge($boxTools, $merge); ?>
 <?php endif;?>
-<?php Pjax::begin([
-    'id' => 'user-profile'
-]); ?>
+
 	<?php
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
@@ -42,4 +40,3 @@ $boxTools = ['<i title="Edit" class="fa fa-pencil user-edit-button m-r-10"></i>'
 		<?php endif;?>
 	</dl>
 	<?php LteBox::end() ?>
-<?php Pjax::end(); ?>
