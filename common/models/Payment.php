@@ -78,7 +78,7 @@ class Payment extends ActiveRecord
             [['paymentAmount'], 'number'],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
                 'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId', 'createdByUserId', 
-                'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+                'updatedByUserId', 'updatedOn', 'createdOn', 'balance'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],   
         ];
@@ -322,6 +322,21 @@ class Payment extends ActiveRecord
         }
         return $amount;
     }
+
+    public function getBalanceAmount()
+    {
+        $amountUsed = 0.0;
+        $amountUsed += InvoicePayment::find()
+            ->andWhere(['payment_id' => $this->id])
+            ->notDeleted()
+            ->sum('amount');
+        $amountUsed += LessonPayment::find()
+            ->andWhere(['paymentId' => $this->id])
+            ->notDeleted()
+            ->sum('amount');
+        $balance = $this->amount - $amountUsed;
+        return $balance;
+    }
         
     public function beforeSave($insert)
     {
@@ -337,6 +352,7 @@ class Payment extends ActiveRecord
                 $this->amount = abs($invoice->balance);
             }
         }
+        $this->balance = $this->getBalanceAmount();
         if (!$insert) {
             return parent::beforeSave($insert);
         }

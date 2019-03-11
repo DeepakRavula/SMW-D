@@ -12,13 +12,7 @@ use insolita\wgadminlte\LteConst;
     }
 
     ?>
-    <?php
-    yii\widgets\Pjax::begin([
-        'id' => 'payment-preference-listing',
-        'timeout' => 6000,
-    ])
-
-    ?>
+    
     <?php
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
@@ -39,7 +33,7 @@ use insolita\wgadminlte\LteConst;
     </dl>
 <?php endif;?>
 <?php LteBox::end() ?>
-<?php \yii\widgets\Pjax::end(); ?>
+
 
 <script>
     $(document).off('click', '#payment-preference').on('click', '#payment-preference', function () {

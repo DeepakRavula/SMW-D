@@ -16,8 +16,8 @@ use yii\grid\GridView;
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $columns = [
     [
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
 		'label' => 'Date',
 		'value' => function ($data) {
 			if (!empty($data->date)) {
@@ -32,14 +32,32 @@ $columns = [
 		'value' => function ($data) {
 			return $data->notes;
 		},
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:70%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:70%'],
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:55%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:55%'],
     ],
     [
 		'label' => 'Amount',
 		'value' => function ($data) {
 			$amount = round($data->amount, 2);
 			return Yii::$app->formatter->asCurrency($amount);
+		},
+		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+	],
+	[
+		'label' => 'Used',
+		'value' => function ($data) {
+			$usedAmount = round($data->amount - $data->balance, 2);
+			return Yii::$app->formatter->asCurrency($usedAmount);
+		},
+		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+	],
+	[
+		'label' => 'Remaining',
+		'value' => function ($data) {
+			$balance = round($data->balance, 2);
+			return Yii::$app->formatter->asCurrency($balance);
 		},
 		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
 		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
