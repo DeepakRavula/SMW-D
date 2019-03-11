@@ -312,15 +312,15 @@ $this->params['action-button'] = $actionButton; ?>
 <script>
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
         var dateRange = $("#invoicesearch-invoicedaterange").val();
-        if (!$.isEmptyObject(dateRange)) {
-            $("#invoicesearch-invoicedaterange").val('').trigger('change');
-        }
-    });
-
-    $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
-        var dateRange = $("#invoicesearch-daterange").val();
-        if (!$.isEmptyObject(dateRange)) {
-            $("#invoicesearch-daterange").val('').trigger('change');
+        if (dateRange) {
+            if (!$.isEmptyObject(dateRange)) {
+                $("#invoicesearch-invoicedaterange").val('').trigger('change');
+            }
+        } else {
+            var dateRange = $("#invoicesearch-daterange").val();
+            if (!$.isEmptyObject(dateRange)) {
+                $("#invoicesearch-daterange").val('').trigger('change');
+            }
         }
     });
 </script>
