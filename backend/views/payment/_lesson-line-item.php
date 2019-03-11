@@ -51,7 +51,7 @@ use yii\bootstrap\ActiveForm;
 	    [   
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
+                return Yii::$app->formatter->asCurrency(round($data->privateLesson->total, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -67,7 +67,7 @@ use yii\bootstrap\ActiveForm;
 	    [
             'label' => 'Balance',
             'value' => function ($data) use ($model, $canEdit) {
-                $balance = $data->getOwingAmount($data->enrolment->id);
+                $balance = $data->privateLesson->balance;
                 if ($canEdit) {
                     $balance += $data->getPaidAmount($model->id);
                 }

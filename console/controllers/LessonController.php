@@ -149,6 +149,4 @@ class LessonController extends Controller
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
         return true;
     }
-
-    
 }

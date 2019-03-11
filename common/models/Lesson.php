@@ -429,13 +429,13 @@ class Lesson extends \yii\db\ActiveRecord
     public function isOwing($enrolmentId)
     {
         $enrolment = Enrolment::findOne($enrolmentId);
-        return (round($this->getCreditAppliedAmount($enrolmentId), 2) - round($this->isPrivate() ? $this->netPrice  : $this->getGroupNetPrice($enrolment), 2)) < -0.09;
+        return (round($this->getCreditAppliedAmount($enrolmentId), 2) - round($this->isPrivate() ? $this->privateLesson->total  : $this->getGroupNetPrice($enrolment), 2)) < -0.09;
     }
 
     public function getOwingAmount($enrolmentId)
     {
         $enrolment = Enrolment::findOne($enrolmentId);
-        return round($this->isPrivate() ? $this->netPrice  : $this->getGroupNetPrice($enrolment), 2) - round($this->getCreditAppliedAmount($enrolmentId), 2);
+        return round($this->isPrivate() ? $this->privateLesson->total  : $this->getGroupNetPrice($enrolment), 2) - round($this->getCreditAppliedAmount($enrolmentId), 2);
     }
 
     public function getPaymentCycle()
@@ -944,7 +944,7 @@ class Lesson extends \yii\db\ActiveRecord
                 $amount = $this->getCreditAppliedAmount($this->enrolment->id);
                 if ($amount > $this->netPrice) {
                     foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
-                        $balance = $this->getCreditAppliedAmount($this->enrolment->id) - $this->netPrice;
+                        $balance = $this->privateLesson->balance;
                         if ($lessonPayment->amount <= $balance) {
                             $balance = $balance - $lessonPayment->amount;
                             $lessonPayment->delete();
@@ -957,7 +957,9 @@ class Lesson extends \yii\db\ActiveRecord
             }
             $this->course->updateDates();
         }
-        
+        if ($this->privateLesson) {
+            $this->privateLesson->save();
+        }
         return parent::afterSave($insert, $changedAttributes);
     }
 
@@ -1183,8 +1185,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function hasCredit($enrolmentId)
     {
         $enrolment = Enrolment::findOne($enrolmentId);
-        return round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->isPrivate() ? $this->netPrice  : $this->getGroupNetPrice($enrolment), 2)
-            && round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->getCreditUsedAmount($enrolmentId), 2);
+        return  $this->isPrivate() ? $this->privateLesson->balance < 0 : round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->getGroupNetPrice($enrolment), 2) 
+        && round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->getCreditUsedAmount($enrolmentId), 2);
     }
 
     public function getCreditAmount($enrolmentId)

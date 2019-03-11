@@ -281,30 +281,23 @@ trait Invoiceable
             ->between($fromDate, $toDate)
             ->enrolment($this->id)
             ->invoiced();
-        $query = Lesson::find()   
+        $lessons = Lesson::find()   
             ->notDeleted()
             ->isConfirmed()
             ->notCanceled()
             ->privateLessons()
             ->between($fromDate, $toDate)
             ->enrolment($this->id)
+            ->joinWith(['privateLesson' => function($query) {
+                $query->andWhere(['>', 'private_lesson.balance', 0]);
+            }])
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
             ->andWhere(['invoiced_lesson.id' => null])
-            ->orderBy(['lesson.date' => SORT_ASC]);
-        $lessons = $query->all();
-        $lessonIds = [];
-        foreach ($lessons as $lesson) {
-            if ($lesson->isOwing($this->id)) {
-                $lessonIds[] = $lesson->id;
-            }
-        }
-        if ($lessonIds) {
-            $query = Lesson::find()
-                ->andWhere(['id' => $lessonIds])
-                ->orderBy(['lesson.date' => SORT_ASC]);
-            $firstLesson = $query->one();
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->all();
+        if ($lessons) {
+            $firstLesson = current($lessons);
             if (!$firstLesson->hasAutomatedPaymentRequest()) {
-                $lessons = $query->all();
                 $model = new ProformaInvoice();
                 $model->userId = $this->customer->id;
                 $model->locationId = $this->customer->userLocation->location_id;
