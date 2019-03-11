@@ -173,7 +173,7 @@ $columns = [
                 ->between($fromDate, $toDate)
                 ->enrolment($data->id)
                 ->invoiced();
-            $unInvoicedLessons = Lesson::find()   
+            $lessons = Lesson::find()   
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
@@ -186,7 +186,7 @@ $columns = [
                 ->andWhere(['invoiced_lesson.id' => null])
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->count();
-            return $unInvoicedLessons;
+            return $lessons;
         }
     ]
 ];

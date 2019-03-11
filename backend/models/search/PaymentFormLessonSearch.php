@@ -64,9 +64,6 @@ class PaymentFormLessonSearch extends Lesson
                 ->dueLessons()
                 ->privateLessons()
                 ->customer($this->userId)
-                ->joinWith(['privateLesson' => function($query) {
-                    $query->andWhere(['>', 'private_lesson.balance', 0.00]);
-                }])
                 ->invoiced();
             $lessonsQuery = Lesson::find()
                 ->notDeleted()
