@@ -63,9 +63,9 @@ $columns = [
 		'label' => 'Remaining',
 		'value' => function ($data) {
 			$balance = round($data->balance, 2);
-			return Yii::$app->formatter->asCurrency($balance);
+			return Yii::$app->formatter->asCurrency($balance > -0.9 && $balance < 0.09 ? 0.0 : $balance);
 		},
-		'footer' => Yii::$app->formatter->asCurrency($totalBalance),
+		'footer' => Yii::$app->formatter->asCurrency($totalBalance > -0.9 && $totalBalance < 0.09 ? 0.0 : $totalBalance),
 		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
 		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
 		'footerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
