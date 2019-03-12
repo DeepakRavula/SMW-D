@@ -21,6 +21,13 @@ class PrivateLessonController extends Controller
         Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
     }
 
+    public function options($actionID)
+    {
+        return array_merge(parent::options($actionID),
+            $actionID == 'add-total-balance' ? ['locationId'] : []
+        );
+    }
+
     public function actionAddTotalBalance()
     {
         set_time_limit(0);
