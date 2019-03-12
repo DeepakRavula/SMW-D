@@ -534,6 +534,8 @@ class UserController extends BaseController
             'invoiceCount' => $this->getInvoiceCount($model, $locationId),
             'paymentsDataProvider' => $this->getPaymentsDataProvider($id),
             'paymentCount' => $this->getPaymentCount($id),
+            'credits' => $this->getTotalCredits($id),
+            'invoiceOwingAmountTotal' => $this->getInvoiceOwingAmountTotal($id),
         ]);
     }
 
@@ -734,5 +736,57 @@ class UserController extends BaseController
                 ->exceptAutoPayments()
 		        ->count();
 	    return $paymentCount;
+    }
+
+    public function getTotalCredits($id) 
+    {
+        $invoiceCredits = Invoice::find()
+            ->notDeleted()
+            ->invoiceCredit($id)
+            ->all(); 
+        $paymentCredits = Payment::find()
+            ->notDeleted()
+            ->exceptAutoPayments()
+            ->customer($id)
+            ->orderBy(['payment.id' => SORT_ASC])
+            ->all();
+        $invoice_credits = 0;
+        if ($invoiceCredits) {
+            foreach ($invoiceCredits as $invoiceCredit) {
+                    $invoice_credits += round(abs($invoiceCredit->balance), 2);
+            }
+        }
+        $payment_credits = 0;
+        if ($paymentCredits) {
+            foreach ($paymentCredits as $paymentCredit) {
+                if ($paymentCredit->hasCredit()) {
+                    $payment_credits += round($paymentCredit->creditAmount, 2);
+                }
+            }
+        }
+        $totalCredits = $invoice_credits + $payment_credits;
+        return $totalCredits;
+    }
+
+    protected function getInvoiceOwingAmountTotal($id)
+    {
+        $invoices = Invoice::find()
+                ->andWhere([
+                    'invoice.user_id' => $id,
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                ])
+                ->notDeleted()
+                ->all();
+        $invoiceCount = 0;
+        foreach ($invoices as $invoice) {
+            if ($invoice->isOwing()) {
+                $invoiceCount += $invoice->balance;
+            }
+        }
+        return $invoiceCount;
+    }
+    public function getLessonsDue()
+    {
+        
     }
 }

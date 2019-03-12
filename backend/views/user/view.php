@@ -51,7 +51,41 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <br>
 <?php yii\widgets\Pjax::begin(['id' => 'customer-view']) ?>
-    
+
+<div class="row">
+    <div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=> LteConst::COLOR_AQUA,
+                      'number'=> 0,
+                      'text'=> 'LESSONS DUE',
+                      'icon'=> 'fa fa-dollar',
+                  ])?>
+</div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=> LteConst::COLOR_RED,
+                      'number'=> $invoiceOwingAmountTotal,
+                      'text'=> 'OUTSTANDING INVOICE',
+                      'icon'=> 'fa fa-dollar',
+                  ])?>
+</div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=> LteConst::COLOR_GREEN,
+                      'number'=> $credits,
+                      'text'=> 'CREDITS',
+                      'icon'=> 'fa fa-dollar',
+                  ])?>
+</div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=> LteConst::COLOR_ORANGE,
+                      'number'=>0,
+                      'text'=> 'BALANCE',
+                      'icon'=> 'fa fa-dollar',
+                  ])?>
+</div>
+</div>
 <div class="row">
     <div class="col-md-6">  
         <?php
