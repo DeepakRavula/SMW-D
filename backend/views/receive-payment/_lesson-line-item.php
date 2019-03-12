@@ -31,8 +31,8 @@ use yii\bootstrap\ActiveForm;
         }
 
         array_push($columns, [
-            'headerOptions' => ['class' => 'text-left', 'style' => 'width:12%'],
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:12%'],
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:13%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:13%'],
             'label' => 'Date',
             'value' => function ($data) {
                 $date = Yii::$app->formatter->asDate($data->date);
@@ -42,8 +42,8 @@ use yii\bootstrap\ActiveForm;
         ]);
   
         array_push($columns, [
-            'headerOptions' => ['class' => 'text-left', 'style' => 'width:18%'],
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:18%'],
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:17%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:17%'],
             'label' => 'Due Date',
             'attribute' => 'dueDateRange',
             'filterType' => KartikGridView::FILTER_DATE_RANGE,

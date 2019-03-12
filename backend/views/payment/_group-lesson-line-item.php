@@ -37,7 +37,7 @@ use yii\bootstrap\ActiveForm;
                     ->andWhere(['courseId' => $data->courseId])
                     ->customer($model->user_id)
                     ->one();
-                return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+                return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
             },
         ],
 	    [

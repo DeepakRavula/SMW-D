@@ -82,11 +82,11 @@ class PaymentFormLessonSearch extends Lesson
                 ->isConfirmed()
                 ->notCanceled();
                 if ($this->dueDateRange) {
-                $query->dueBetween($fromDueDate, $toDueDate);
+                    $lessonsQuery->dueBetween($fromDueDate, $toDueDate);
                 } else {
-                   $query->dueLessons(); 
+                    $lessonsQuery->dueLessons(); 
                 }
-                $query->privateLessons()
+                $lessonsQuery->privateLessons()
                 ->customer($this->userId)
                 ->joinWith(['privateLesson' => function($query) {
                     $query->andWhere(['>', 'private_lesson.balance', 0.00]);
