@@ -311,16 +311,7 @@ $this->params['action-button'] = $actionButton; ?>
     </div>
 <script>
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
-        var dateRange = $("#invoicesearch-invoicedaterange").val();
-        if (dateRange) {
-            if (!$.isEmptyObject(dateRange)) {
-                $("#invoicesearch-invoicedaterange").val('').trigger('change');
-            }
-        } else {
-            var dateRange = $("#invoicesearch-daterange").val();
-            if (!$.isEmptyObject(dateRange)) {
-                $("#invoicesearch-daterange").val('').trigger('change');
-            }
-        }
+        $(this).parent().find('input').val('').trigger('change');
+        return false;
     });
 </script>
