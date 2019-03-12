@@ -60,7 +60,7 @@ foreach ($roleNames as $name => $description) {
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_AQUA,
-                      'number'=> 0,
+                      'number'=> $lessonsDue,
                       'text'=> 'LESSONS DUE',
                       'icon'=> 'fa fa-dollar',
                   ])?>
@@ -84,7 +84,7 @@ foreach ($roleNames as $name => $description) {
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_ORANGE,
-                      'number'=>0,
+                      'number'=> ($lessonsDue + $invoiceOwingAmountTotal) - $credits ,
                       'text'=> 'BALANCE',
                       'icon'=> 'fa fa-dollar',
                   ])?>

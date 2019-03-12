@@ -535,6 +535,7 @@ class UserController extends BaseController
             'paymentCount' => $this->getPaymentCount($id),
             'credits' => $this->getTotalCredits($id),
             'invoiceOwingAmountTotal' => $this->getInvoiceOwingAmountTotal($id),
+            'lessonsDue' => $this->getLessonsDue($id),
         ]);
     }
 
@@ -784,8 +785,20 @@ class UserController extends BaseController
         }
         return $invoiceCount;
     }
-    public function getLessonsDue()
+    public function getLessonsDue($id)
     {
-        
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->dueLessons()
+            ->privateLessons()
+            ->customer($id)
+            ->all();
+        $lessonsDue = 0;
+        foreach ($lessons as $lesson) {
+            $lessonsDue += $lesson->getOwingAmount($lesson->enrolment->id);
+        }
+        return $lessonsDue;
     }
 }
