@@ -27,17 +27,22 @@ foreach ($roleNames as $name => $description) {
     if ($name === $searchModel->role_name) {
         $roleName = $description;
     }
-}
-$this->title = $model->publicIdentity;
-$this->params['label'] = $this->render('_title', [
-    'model' => $model,
-    'searchModel' => $searchModel,
-    'roleName' => $roleName
-]);
-$this->params['action-button'] = $this->render('_action-button', [
-    'model' => $model,
-    'searchModel' => $searchModel,
-]);?>
+} ?>
+<div class="row">
+    <div class="col-md-12">  
+        <?php $this->title = $model->publicIdentity;
+        $this->params['label'] = $this->render('_title', [
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'roleName' => $roleName
+        ]);
+        $this->params['action-button'] = $this->render('_action-button', [
+            'model' => $model,
+            'searchModel' => $searchModel,
+        ]); ?>
+    </div>
+</div>
+
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
@@ -49,9 +54,8 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
-<br>
-<?php yii\widgets\Pjax::begin(['id' => 'customer-view']) ?>
 
+<?php Pjax::begin(['id' => 'customer-view']) ?>
 <div class="row">
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
@@ -87,94 +91,100 @@ $this->params['action-button'] = $this->render('_action-button', [
 </div>
 </div>
 <div class="row">
-    <div class="col-md-6">  
-        <?php
-        echo $this->render('_profile', [
-            'model' => $model,
-            'role' => $roleName,
-        ]);
-        ?>
+    <div class="col-md-6">
+        <?php Pjax::begin(['id' => 'user-profile']); ?>
+            <?= $this->render('_profile', [
+                'model' => $model,
+                'role' => $roleName,
+            ]); ?>
+        <?php Pjax::end(); ?>
+
         <?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
-            <?php Pjax::Begin([
-            'id' => 'private-quali-list'
-        ]) ?> 
-        <?= $this->render('teacher/_private-qualification', [
-            'privateQualificationDataProvider' => $privateQualificationDataProvider,
-            'groupQualificationDataProvider' => $groupQualificationDataProvider,
-            'model' => $model,
-            'searchModel' => $searchModel,
-        ]);
-        ?>
-        <?php Pjax::end() ?>    
-            <?php Pjax::Begin([
-            'id' => 'group-quali-list'
-        ]) ?> 
-        <?= $this->render('teacher/_group-qualification', [
-            'privateQualificationDataProvider' => $privateQualificationDataProvider,
-            'groupQualificationDataProvider' => $groupQualificationDataProvider,
-            'model' => $model,
-            'searchModel' => $searchModel,
-        ]);
-        ?>
-        <?php Pjax::end() ?> 
-        <?php endif;?>
+            <?php Pjax::Begin(['id' => 'private-quali-list']) ?> 
+                <?= $this->render('teacher/_private-qualification', [
+                    'privateQualificationDataProvider' => $privateQualificationDataProvider,
+                    'groupQualificationDataProvider' => $groupQualificationDataProvider,
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                ]); ?>
+            <?php Pjax::end() ?>
+
+            <?php Pjax::Begin(['id' => 'group-quali-list']) ?> 
+                <?= $this->render('teacher/_group-qualification', [
+                    'privateQualificationDataProvider' => $privateQualificationDataProvider,
+                    'groupQualificationDataProvider' => $groupQualificationDataProvider,
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                ]); ?>
+            <?php Pjax::end() ?> 
+        <?php endif;?>
+
         <?php if ($searchModel->role_name == 'customer'):?>
-        <?php Pjax::Begin([
-            'id' => 'discount-customer'
-        ]) ?> 
-        <?= $this->render('customer/_discount', [
-            'model' => $model,
-        ]);
-        ?>
-        <?php Pjax::end() ?> 
-    <?php Pjax::Begin([
-        'id' => 'customer-ob'
-    ]) ?> 
-        <?= $this->render('customer/_opening-balance', [
-            'model' => $model,
-            'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
-            'openingBalanceCredit' => $openingBalanceCredit
-        ]);
-        ?>
-    <?php Pjax::end() ?>
-        <?=$this->render('customer/_payment-preference', [
-            'model' => $model,
-        ]); ?>
-        <?= $this->render('customer/_invoice', [
-            'invoiceDataProvider' => $invoiceDataProvider,
-            'count' => $invoiceCount,
-            'userModel' => $model,
-        ]);
-        ?>
-        
-    <?php endif;?>
-        
+            <?= $this->render('customer/_invoice', [
+                'invoiceDataProvider' => $invoiceDataProvider,
+                'count' => $invoiceCount,
+                'userModel' => $model,
+            ]); ?>
+        <?php endif;?>
+    </div>
+    <div class="col-md-6">
+        <?php Pjax::begin(['id' => 'user-email']); ?>
+            <?= $this->render('_email', [
+                'model' => $model,
+            ]); ?>
+        <?php Pjax::end(); ?>
+
+        <?php Pjax::begin(['id' => 'user-phone']); ?>
+            <?= $this->render('_phone', [
+                'model' => $model,
+            ]); ?>
+        <?php Pjax::end(); ?>
+
+        <?php Pjax::begin(['id' => 'user-address']); ?>
+            <?= $this->render('_address', [
+                'model' => $model,
+            ]); ?>
+        <?php Pjax::end(); ?>
+
+        <?php if ($searchModel->role_name == 'customer'):?>
+            <?php Pjax::Begin(['id' => 'discount-customer']) ?> 
+                <?= $this->render('customer/_discount', [
+                    'model' => $model,
+                ]); ?>
+            <?php Pjax::end() ?>
+
+            <?php Pjax::Begin(['id' => 'customer-ob']) ?> 
+                <?= $this->render('customer/_opening-balance', [
+                    'model' => $model,
+                    'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
+                    'openingBalanceCredit' => $openingBalanceCredit
+                ]);
+                ?>
+            <?php Pjax::end() ?>
+            
+            <?php Pjax::begin(['id' => 'payment-preference-listing', 'timeout' => 6000]) ?>
+                <?=$this->render('customer/_payment-preference', [
+                    'model' => $model,
+                ]); ?>
+            <?php Pjax::end(); ?>
+        <?php endif;?>
     </div> 
-    <div class="col-md-6">  
-            <?php
-        echo $this->render('_email', [
-            'model' => $model,
-        ]);
-        ?>
-        <?php
-        echo $this->render('_phone', [
-            'model' => $model,
-        ]);
-        ?>
-        <?= $this->render('_address', [
-            'model' => $model,
-        ]);
-        ?>
-        <?php if ($searchModel->role_name == 'customer'):?>
+</div>
+
+<?php if ($searchModel->role_name == 'customer'):?>
+<div class="row">
+	<div class="col-md-12">
         <?= $this->render('customer/_payment', [
             'paymentsDataProvider' => $paymentsDataProvider,
             'count' => $paymentCount,
             'userModel' => $model,
-        ]);
-        ?>
-        <?php endif;?>
-    </div> 
+        ]); ?>
+    </div>
 </div>
+<?php endif;?>
+
+<div class="row">
+	<div class="col-md-12">
     <div class="nav-tabs-custom">
         <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles); ?>
         <?php
@@ -310,14 +320,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                 'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
                 'userModel' => $model,
             ]);
-
-//            $paymentContent = $this->render('customer/_account', [
-//                'isCustomerView' => $isCustomerView,
-//                'model' => $model,
-//                'accountDataProvider' => $accountDataProvider,
-//                'userModel' => $model,
-//                'searchModel' => $searchModel,
-//            ]);
+            
             $customerItems = [
                 [
                     'label' => 'Students',
@@ -347,13 +350,6 @@ $this->params['action-button'] = $this->render('_action-button', [
                         'id' => 'pro-forma-invoice',
                     ],
                 ],
-//                [
-//                    'label' => 'Accounts',
-//                    'content' => $paymentContent,
-//                    'options' => [
-//                        'id' => 'account',
-//                    ],
-//                ],
                 [
                     'label' => 'Comments',
                     'content' => $noteContent,
@@ -370,7 +366,8 @@ $this->params['action-button'] = $this->render('_action-button', [
             'items' => $items,
         ]);
         ?>
-        <div class="clearfix"></div>
+    </div>
+    </div>
 </div>
 
 <?php $userForm = new UserForm(); 
@@ -379,7 +376,7 @@ $this->params['action-button'] = $this->render('_action-button', [
     if ($userModel->customerReferralSource) {
       $customerReferralSource = $userModel->customerReferralSource;
     } else {
-    $customerReferralSource = new CustomerReferralSource();  
+        $customerReferralSource = new CustomerReferralSource();  
     }
     ?>
 <?php Modal::begin([
@@ -423,7 +420,8 @@ $this->params['action-button'] = $this->render('_action-button', [
 ]); ?>
 <div id="address-content"></div>
 <?php Modal::end(); $studentId = null?>
-<?php \yii\widgets\Pjax::end(); ?>
+<?php Pjax::end(); ?>
+
 <script>
     var lesson = {
         update :function(params) {
@@ -534,6 +532,9 @@ $this->params['action-button'] = $this->render('_action-button', [
         }
         if ($('#group-quali-list').length) {
             $.pjax.reload({container: '#group-quali-list', replace:false, async: false, timeout: 6000});
+        }
+        if ($('#customer-payment-listing').length) {
+            $.pjax.reload({container: '#customer-payment-listing', replace:false, async: false, timeout: 6000});
         }
         return false;
     });

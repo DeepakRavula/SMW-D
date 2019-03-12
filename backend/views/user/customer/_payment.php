@@ -14,10 +14,16 @@ use yii\grid\GridView;
 
 <?php
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+$totalBalance = Payment::find()
+	->andWhere(['user_id' => $userModel->id])
+	->notDeleted()
+	->exceptAutoPayments()
+	->sum('balance');
+				
 $columns = [
     [
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
 		'label' => 'Date',
 		'value' => function ($data) {
 			if (!empty($data->date)) {
@@ -32,8 +38,8 @@ $columns = [
 		'value' => function ($data) {
 			return $data->notes;
 		},
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:70%'],
-		'headerOptions' => ['class' => 'text-left', 'style' => 'width:70%'],
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:55%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:55%'],
     ],
     [
 		'label' => 'Amount',
@@ -43,6 +49,26 @@ $columns = [
 		},
 		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
 		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+	],
+	[
+		'label' => 'Used',
+		'value' => function ($data) {
+			$usedAmount = round($data->amount - $data->balance, 2);
+			return Yii::$app->formatter->asCurrency($usedAmount);
+		},
+		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+	],
+	[
+		'label' => 'Remaining',
+		'value' => function ($data) {
+			$balance = round($data->balance, 2);
+			return Yii::$app->formatter->asCurrency($balance);
+		},
+		'footer' => Yii::$app->formatter->asCurrency($totalBalance),
+		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+		'footerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
     ],
 ];
 ?>
@@ -62,7 +88,8 @@ $columns = [
 		'dataProvider' => $paymentsDataProvider,
 		'options' => ['class' => 'col-md-12'],
 		'summary' => false,
-    	'emptyText' => false,
+		'emptyText' => false,
+		'showFooter' => true,
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'tableOptions' => ['class' => 'table table-bordered table table-condensed', 'id' => 'payment'],
 		'columns' => $columns,

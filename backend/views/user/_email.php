@@ -5,9 +5,7 @@ use yii\widgets\Pjax;
 use kartik\sortinput\SortableInput;
 
 ?>
-<?php Pjax::begin([
-    'id' => 'user-email'
-]); ?>
+
 	<?php
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
@@ -48,4 +46,3 @@ use kartik\sortinput\SortableInput;
     ]);?>	
 	<?php endif; ?>
 	<?php LteBox::end() ?>
-<?php Pjax::end(); ?>

@@ -17,9 +17,7 @@ use kartik\sortinput\SortableInput;
 	list-style: none;
 }
 </style>
-<?php Pjax::begin([
-    'id' => 'user-address'
-]); ?>
+
 <?php
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
@@ -60,4 +58,3 @@ LteBox::begin([
     ]);?>	
 	<?php endif; ?>
 	<?php LteBox::end() ?>
-<?php Pjax::end(); ?>

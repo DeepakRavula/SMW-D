@@ -79,4 +79,5 @@ use yii\helpers\Url;
     ]);
     ?>
 <?php \yii\widgets\Pjax::end(); ?>
+<div class="clearfix"></div>
 </div>

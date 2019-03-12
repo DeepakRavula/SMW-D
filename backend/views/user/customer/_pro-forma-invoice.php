@@ -74,6 +74,7 @@ use common\models\Invoice;
     ],
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
+<div class="clearfix"></div>
 </div>
 <script>
     $('.add-new-invoice').click(function(){

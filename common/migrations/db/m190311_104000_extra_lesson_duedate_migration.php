@@ -22,7 +22,7 @@ class m190311_104000_extra_lesson_duedate_migration extends Migration
         ->notCanceled()
         ->all();
     foreach ($extraLessons as $extraLesson) {
-        $dueDate = Carbon::parse()->format('Y-m-d');
+        $dueDate = Carbon::parse($extraLesson->createdOn)->format('Y-m-d');
         $extraLesson->updateAttributes(['dueDate' => $dueDate]);
         Console::output("processing: " . $extraLesson->id . 'added due date', Console::FG_GREEN, Console::BOLD);
     }
