@@ -158,6 +158,7 @@ class LessonPayment extends \yii\db\ActiveRecord
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
         }
+        $this->payment->save();
         if ($this->lesson->privateLesson) {
             $this->lesson->privateLesson->save();
         } 
@@ -169,6 +170,7 @@ class LessonPayment extends \yii\db\ActiveRecord
         if ($this->payment->isAutoPayments() && !$this->payment->isDeleted) {
             $this->payment->delete();
         }
+        $this->payment->save();
         if ($this->lesson->privateLesson) {
             $this->lesson->privateLesson->save();
         }
