@@ -66,7 +66,7 @@ class LessonReschedule extends Model
                        if ($leaf->paymentCycleLesson) {
                            $paymentCycleLesson =  new PaymentCycleLesson();
                            $paymentCycleLesson->lessonId = $rescheduledLesson->id;
-                           $paymentCycleLesson->paymentCycleId = $leaf->paymentCycleLesson->id;
+                           $paymentCycleLesson->paymentCycleId = $leaf->paymentCycleLesson->paymentCycleId;
                            $paymentCycleLesson->save();
                        }
                    }
