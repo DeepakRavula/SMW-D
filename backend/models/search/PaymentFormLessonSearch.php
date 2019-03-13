@@ -77,30 +77,25 @@ class PaymentFormLessonSearch extends Lesson
                 $invoicedLessons->privateLessons()
                 ->customer($this->userId)
                 ->invoiced();
-            $query = Lesson::find()
+            $lessonsQuery = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled();
                 if ($this->dueDateRange) {
-                $query->dueBetween($fromDueDate, $toDueDate);
+                    $lessonsQuery->dueBetween($fromDueDate, $toDueDate);
                 } else {
-                   $query->dueLessons(); 
+                    $lessonsQuery->dueLessons(); 
                 }
-                $query->privateLessons()
+                $lessonsQuery->privateLessons()
                 ->customer($this->userId)
+                ->joinWith(['privateLesson' => function($query) {
+                    $query->andWhere(['>', 'private_lesson.balance', 0.00]);
+                }])
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                 ->andWhere(['invoiced_lesson.id' => null]);
             if ($this->student) {
-                $query->student($this->student);
+                $lessonsQuery->student($this->student);
             }
-            $allLessons = $query->all();
-            $lessonIds = [];
-            foreach ($allLessons as $lesson) {
-                if ($lesson->isOwing($lesson->enrolment->id)) {
-                    $lessonIds[] = $lesson->id;
-                }
-            }
-            $lessonsQuery->andWhere(['id' => $lessonIds]);
         }
        
         return $lessonsQuery;

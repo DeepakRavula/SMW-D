@@ -60,7 +60,7 @@ use common\models\Lesson;
 <?php endif; ?>
 
 </table>
-<?php if (!empty($model->reschedule) && !empty($model->enrolment)) : ?>
+<?php if (!empty($model->reschedule) && !empty($model->enrolment) && !$model->bulkRescheduleLesson) : ?>
 <?php 
 $lesson = Lesson::findOne(['lesson.id' => $model->reschedule->lessonId]);
 $duration = \DateTime::createFromFormat('H:i:s', $model->duration);
@@ -70,7 +70,7 @@ $oldLessonDuration = ($duration->format('H') * 60) + $duration->format('i');
 $studentName = $lesson->enrolment->student->fullname;
 $programName = $lesson->course->program->name;
 $teacherName = $lesson->teacher->publicIdentity;
-$oldLessonDate = (new \DateTime($lesson->date))->format('l, F jS, Y');
+$oldLessonDate = (new \DateTime($model->originalDate))->format('l, F jS, Y');
 $oldLessonTime = Yii::$app->formatter->asTime($lesson->date);
 $lessonTime = Yii::$app->formatter->asTime($model->date);
 $lessonDate = (new \DateTime($model->date))->format('l, F jS, Y');

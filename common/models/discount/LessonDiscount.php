@@ -103,6 +103,9 @@ class LessonDiscount extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
+        if ($this->lesson->privateLesson) {
+            $this->lesson->privateLesson->save();
+        }
         $this->lesson->save();
         return parent::afterSave($insert, $changedAttributes);
     }

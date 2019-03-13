@@ -173,26 +173,20 @@ $columns = [
                 ->between($fromDate, $toDate)
                 ->enrolment($data->id)
                 ->invoiced();
-            $query = Lesson::find()   
+            $lessons = Lesson::find()   
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
                 ->between($fromDate, $toDate)
                 ->enrolment($data->id)
+                ->joinWith(['privateLesson' => function($query) {
+                    $query->andWhere(['>', 'private_lesson.balance', 0]);
+                }])
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                 ->andWhere(['invoiced_lesson.id' => null])
-                ->orderBy(['lesson.date' => SORT_ASC]);
-            $unInvoicedLessons = $query->all();
-            $owingLessonIds = [];
-            foreach ($unInvoicedLessons as $lesson) {
-                if ($lesson->isOwing($data->id)) {
-                    $owingLessonIds[] = $lesson->id;
-                }
-            }
-            $lessonsToPay = Lesson::find()
-                ->andWhere(['id' => $owingLessonIds])
-                ->all();
-            return count($lessonsToPay);
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->count();
+            return $lessons;
         }
     ]
 ];
