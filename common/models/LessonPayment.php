@@ -183,6 +183,9 @@ class LessonPayment extends \yii\db\ActiveRecord
         if ($this->lesson->privateLesson) {
             $this->lesson->privateLesson->save();
         }
+        if ($this->groupLesson) {
+            $this->groupLesson->save();
+        } 
         return true;
     }
 }
