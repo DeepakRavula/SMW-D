@@ -17,6 +17,7 @@ use yii\web\Response;
 use common\models\Label;
 use backend\models\EnrolmentForm;
 use common\models\Student;
+use common\models\GroupLesson;
 use yii\filters\ContentNegotiator;
 use common\models\log\LogHistory;
 use common\models\log\EnrolmentLog;
@@ -262,6 +263,21 @@ class EnrolmentController extends BaseController
             }
         }
         if ($enrolmentModel->save()) {
+            $lessons = Lesson::find()
+                ->isConfirmed()
+                ->notDeleted()
+                ->notCanceled()
+                ->andWhere(['courseId' => $course->id])
+                ->all();
+            foreach ($lessons as $lesson) {
+                $groupLesson = new GroupLesson();
+                $groupLesson->lessonId = $lesson->id;
+                $groupLesson->enrolmentId = $enrolmentId;
+                $groupLesson->dueDate = (new \DateTime())->format('Y-m-d');
+                if (!$groupLesson->save()) {
+                    print_r($groupLesson->getErrors());die;
+                }
+            }
             $enrolmentModel->setStatus();
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,

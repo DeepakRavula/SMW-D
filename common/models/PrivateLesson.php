@@ -28,7 +28,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
         return [
             [['lessonId'], 'required'],
             [['lessonId'], 'integer'],
-            [['expiryDate'], 'safe'],
+            [['expiryDate', 'total', 'balance'], 'safe'],
         ];
     }
 
@@ -135,6 +135,19 @@ class PrivateLesson extends \yii\db\ActiveRecord
         $lesson->cancel();
     }
 
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->total = $this->lesson->netPrice;
+            $this->balance = $this->lesson->netPrice;
+        } else {
+        $this->total = $this->lesson->netPrice;
+        $this->balance = $this->lesson->getOwingAmount($this->lesson->enrolment->id);
+        }
+        
+        return parent::beforeSave($insert);
+    }
+    
     public function afterSave($insert, $changedAttributes)
     {
         if ($this->lesson->rootLesson) {

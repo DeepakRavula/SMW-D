@@ -41,7 +41,7 @@ use common\models\UserProfile;
 		'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) use ($model) {
-		    return Yii::$app->formatter->asCurrency(round($data->isPrivate() ? $data->netPrice : $data->getGroupNetPrice($model), 2));
+		    return Yii::$app->formatter->asCurrency(round($data->isPrivate() ? $data->privateLesson->total : $data->getGroupNetPrice($model), 2));
 	    },
 	],
 	[

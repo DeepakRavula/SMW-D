@@ -131,11 +131,13 @@ class LessonReschedule extends Model
             $lessonModel->type = $oldLesson->type;
         }
         if ($lessonModel->save()) {
+            $lesson = Lesson::findOne($lessonModel->id);
             $lessonModel->updateAttributes([
                 'classroomId' => $classroomId,
             ]);
             $originalLesson = Lesson::findOne($originalLessonId);
             $originalLesson->rescheduleTo($lessonModel);
+            $lesson->save();
         }
     }
 }
