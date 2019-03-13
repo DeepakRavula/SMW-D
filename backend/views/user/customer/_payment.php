@@ -8,7 +8,8 @@ use common\models\User;
 use yii\widgets\Pjax;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-use yii\grid\GridView;
+use kartik\grid\GridView;
+use backend\assets\CustomGridAsset;
 
 ?>
 
@@ -63,12 +64,15 @@ $columns = [
 		'label' => 'Remaining',
 		'value' => function ($data) {
 			$balance = round($data->balance, 2);
-			return Yii::$app->formatter->asCurrency($balance > -0.9 && $balance < 0.09 ? 0.0 : $balance);
+			return $balance > -0.9 && $balance < 0.09 ? 0.0 : $balance;
 		},
-		'footer' => Yii::$app->formatter->asCurrency($totalBalance > -0.9 && $totalBalance < 0.09 ? 0.0 : $totalBalance),
-		'contentOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
+		'format' => ['decimal', 2],
+		'hAlign' => 'right',
+		'pageSummary' => true,
+		'pageSummaryFunc' => GridView::F_SUM,
+		'pageSummaryOptions' => ['class' => 'dollar'],
+		'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width:10%'],
 		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
-		'footerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
     ],
 ];
 ?>
@@ -89,7 +93,7 @@ $columns = [
 		'options' => ['class' => 'col-md-12'],
 		'summary' => false,
 		'emptyText' => false,
-		'showFooter' => true,
+		'showPageSummary' => true,
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'tableOptions' => ['class' => 'table table-bordered table table-condensed', 'id' => 'payment'],
 		'columns' => $columns,
