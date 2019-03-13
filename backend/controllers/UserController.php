@@ -792,8 +792,19 @@ class UserController extends BaseController
             ->isConfirmed()
             ->notCanceled()
             ->dueLessons()
+            ->privateLessons()
+            ->joinWith(['privateLesson'])
             ->customer($id)
-            ->all();
+            ->sum('private_lesson.balance');
+        $groupLessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->dueLessons()
+            ->groupLessons()
+            ->customer($id)
+            ->sum('group_lesson.balance');
+        print_r($lessons+$groupLessons);die('sss');
         $lessonsDue = 0;
         foreach ($lessons as $lesson) {
             $enrolment = Enrolment::find()
