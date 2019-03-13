@@ -97,7 +97,7 @@ class LessonPayment extends \yii\db\ActiveRecord
     public function getGroupLesson()
     {
         return $this->hasOne(GroupLesson::className(), ['lessonId' => 'lessonId'])
-            ->onCondition(['enrolmentId' => $this->enrolmentId]);
+            ->onCondition(['group_lesson.enrolmentId' => $this->enrolmentId]);
     }
 
     public function getEnrolment()
