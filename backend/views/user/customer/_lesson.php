@@ -14,7 +14,7 @@ use common\models\Enrolment;
 <?php
 echo GridView::widget([
     'dataProvider' => $lessonDataProvider,
-    'options' => ['class' => 'col-md-12'],
+    'options' => ['class' => 'col-md-12', 'id' => 'lesson-listing-customer-view'],
     'summary' => false,
     'emptyText' => false,
     'rowOptions' => function ($model, $key, $index, $grid) {
@@ -99,4 +99,5 @@ echo GridView::widget([
 ]);
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
+<div class="clearfix"></div>
 </div>
