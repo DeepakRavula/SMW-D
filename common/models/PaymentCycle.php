@@ -238,7 +238,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             $status = false;
         }
         foreach ($lessons as $lesson) {
-            if (round($lesson->getOwingAmount($this->enrolment->id), 2) != 0.00 ) {
+            if (round($lesson->privateLesson->balance, 2) != 0.00 ) {
                 if($lesson->hasInvoice()) {
                     if(!$lesson->invoice->isPaid()) {
                         $status = false;

@@ -99,17 +99,6 @@ class LessonPayment extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
     }
 
-    public function hasCredit()
-    {
-        return round($this->lesson->getCreditAppliedAmount($this->enrolment->id), 2) > round($this->lesson->netPrice, 2);
-    }
-
-    public function getCreditAmount()
-    {
-        $diffAmount = round($this->lesson->getCreditAppliedAmount($this->enrolment->id), 2) - round($this->lesson->netPrice, 2);
-        return $diffAmount > $this->amount ? $this->amount : $this->amount - $diffAmount;
-    }
-
     public function getPayment()
     {
         return $this->hasOne(Payment::className(), ['id' => 'paymentId']);
@@ -170,6 +159,9 @@ class LessonPayment extends \yii\db\ActiveRecord
             }
         }
         $this->payment->save();
+        if ($this->lesson->privateLesson) {
+            $this->lesson->privateLesson->save();
+        } 
         return parent::afterSave($insert, $changedAttributes);
     }
 
@@ -179,6 +171,9 @@ class LessonPayment extends \yii\db\ActiveRecord
             $this->payment->delete();
         }
         $this->payment->save();
+        if ($this->lesson->privateLesson) {
+            $this->lesson->privateLesson->save();
+        }
         return true;
     }
 }

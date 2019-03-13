@@ -31,8 +31,8 @@ use yii\bootstrap\ActiveForm;
         }
 
         array_push($columns, [
-            'headerOptions' => ['class' => 'text-left', 'style' => 'width:12%'],
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:12%'],
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:13%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:13%'],
             'label' => 'Date',
             'value' => function ($data) {
                 $date = Yii::$app->formatter->asDate($data->date);
@@ -42,8 +42,8 @@ use yii\bootstrap\ActiveForm;
         ]);
   
         array_push($columns, [
-            'headerOptions' => ['class' => 'text-left', 'style' => 'width:18%'],
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:18%'],
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:17%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:17%'],
             'label' => 'Due Date',
             'attribute' => 'dueDateRange',
             'filterType' => KartikGridView::FILTER_DATE_RANGE,
@@ -128,7 +128,7 @@ use yii\bootstrap\ActiveForm;
             'label' => 'Amount',
             'attribute' => 'amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
+                return Yii::$app->formatter->asCurrency(round($data->privateLesson->total, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -138,7 +138,7 @@ use yii\bootstrap\ActiveForm;
             'attribute' => 'balance',
             'label' => 'Balance',
             'value' => function ($data) {
-                return Yii::$app->formatter->asBalance(round($data->getOwingAmount($data->enrolment->id), 2));
+                return Yii::$app->formatter->asBalance(round($data->privateLesson->balance, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
@@ -161,7 +161,7 @@ use yii\bootstrap\ActiveForm;
                 'label' => 'Payment',
                 'value' => function ($data) use ($form) {
                     return $form->field($data, 'paymentAmount')->textInput([
-                        'value' => round($data->getOwingAmount($data->enrolment->id), 2),
+                        'value' => round($data->privateLesson->balance, 2),
                         'class' => 'form-control text-right payment-amount',
                         'id' => 'lesson-payment-' . $data->id,
                         'lessonId' => $data->id
