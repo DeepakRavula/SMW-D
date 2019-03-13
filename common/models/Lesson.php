@@ -435,7 +435,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getOwingAmount($enrolmentId)
     {
         $enrolment = Enrolment::findOne($enrolmentId);
-        return round($this->isPrivate() ? $this->privateLesson->total  : $this->getGroupNetPrice($enrolment), 2) - round($this->getCreditAppliedAmount($enrolmentId), 2);
+        return round($this->isPrivate() ? $this->netPrice  : $this->getGroupNetPrice($enrolment), 2) - round($this->getCreditAppliedAmount($enrolmentId), 2);
     }
 
     public function getPaymentCycle()
