@@ -77,8 +77,8 @@ $lessonDate = (new \DateTime($model->date))->format('l, F jS, Y');
 $newTeacherName = $model->teacher->publicIdentity;
 ?>
 <?php if (!empty($model->date) && new \DateTime($model->date) != new \DateTime($lesson->date)) : ?>
-    <?= $studentName . '\'s ' . $programName . ' lesson with ' . $teacherName . ' on ' . $oldLessonDate . ' @ ' . $oldLessonTime . ' for ' . $oldLessonDuration . ' minutes has been rescheduled to ' . $lessonDate . ' @ ' . $lessonTime . ' for ' . $lessonDuration . ' minutes.'; ?>
+    <?= $studentName . '\'s ' . $programName . ' lesson with ' . $teacherName . ' on ' . $oldLessonDate . ' @ ' . $oldLessonTime . ' for ' . $oldLessonDuration . ' minutes has been rescheduled to ' . $lessonDate . ' @ ' . $lessonTime . ' for ' . $lessonDuration . ' minutes with ' . $newTeacherName. ".";?>
 <?php elseif ((int)$model->teacherId !== (int)$lesson->teacherId) : ?>
-    <?= $studentName . '\'s ' . $programName . ' lesson with ' . $teacherName . ' on ' . $oldLessonDate . ' @ ' . $oldLessonTime . ' for ' . $oldLessonDuration . ' minutes has been rescheduled to ' . $lessonDate . ' @ ' . $lessonTime . ' for ' . $lessonDuration . ' minutes ' . $newTeacherName; ?>
+    <?= $studentName . '\'s ' . $programName . ' lesson with ' . $teacherName . ' on ' . $oldLessonDate . ' @ ' . $oldLessonTime . ' for ' . $oldLessonDuration . ' minutes has been rescheduled to ' . $lessonDate . ' @ ' . $lessonTime . ' for ' . $lessonDuration . ' minutes with  ' . $newTeacherName. "."; ?>
 <?php endif; ?>
 <?php endif; ?>
