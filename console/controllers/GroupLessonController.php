@@ -152,9 +152,9 @@ class GroupLessonController extends Controller
                     $groupLesson = new GroupLesson();
                     $groupLesson->lessonId = $lesson->id;
                     $groupLesson->enrolmentId = $enrolment->id;
-                    $groupLesson->dueDate = (new \DateTime($enrolment->createdAt))->format('Y-m-d');
-                    $groupLesson->save();
                 }
+                $groupLesson->dueDate = (new \DateTime($enrolment->createdAt))->format('Y-m-d');
+                $groupLesson->save();
             }
         }
         Console::endProgress(true);
