@@ -5,6 +5,7 @@ namespace common\models\discount;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use common\models\Lesson;
+use common\models\GroupLesson;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
