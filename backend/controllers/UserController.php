@@ -802,22 +802,10 @@ class UserController extends BaseController
             ->notCanceled()
             ->dueLessons()
             ->groupLessons()
+            ->joinWith(['groupLesson'])
             ->customer($id)
             ->sum('group_lesson.balance');
-        print_r($lessons+$groupLessons);die('sss');
-        $lessonsDue = 0;
-        foreach ($lessons as $lesson) {
-            $enrolment = Enrolment::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->andWhere(['courseId' => $lesson->courseId])
-                ->customer($id)
-                ->one();
-            if ($lesson->isPrivate()) {
-                $enrolment = $lesson->enrolment;
-            }
-            $lessonsDue += $lesson->getOwingAmount($enrolment->id);
-        }
+        $lessonsDue = $lessons + $groupLessons;
         return $lessonsDue;
     }
 }

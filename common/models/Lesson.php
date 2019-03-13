@@ -415,6 +415,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id']);
     }
     
+    public function getGroupLesson()
+    {
+        return $this->hasOne(GroupLesson::className(), ['lessonId' => 'id']);
+    }
+
     public function getCourseProgramRate()
     {
         return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'courseId']);
