@@ -91,6 +91,12 @@ class LessonDiscount extends \yii\db\ActiveRecord
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
 
+    public function getGroupLesson()
+    {
+        return $this->hasOne(GroupLesson::className(), ['lessonId' => 'lessonId'])
+            ->onCondition(['enrolmentId' => $this->enrolmentId]);
+    }
+
     public function isPfDiscount()
     {
         return (int) $this->type === (int) self::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
@@ -106,6 +112,9 @@ class LessonDiscount extends \yii\db\ActiveRecord
         if ($this->lesson->privateLesson) {
             $this->lesson->privateLesson->save();
         }
+        if ($this->groupLesson) {
+            $this->groupLesson->save();
+        } 
         $this->lesson->save();
         return parent::afterSave($insert, $changedAttributes);
     }
