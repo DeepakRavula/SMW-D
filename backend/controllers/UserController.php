@@ -792,12 +792,20 @@ class UserController extends BaseController
             ->isConfirmed()
             ->notCanceled()
             ->dueLessons()
-            ->privateLessons()
             ->customer($id)
             ->all();
         $lessonsDue = 0;
         foreach ($lessons as $lesson) {
-            $lessonsDue += $lesson->getOwingAmount($lesson->enrolment->id);
+            $enrolment = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['courseId' => $lesson->courseId])
+                ->customer($id)
+                ->one();
+            if ($lesson->isPrivate()) {
+                $enrolment = $lesson->enrolment;
+            }
+            $lessonsDue += $lesson->getOwingAmount($enrolment->id);
         }
         return $lessonsDue;
     }
