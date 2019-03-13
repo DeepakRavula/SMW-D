@@ -28,7 +28,7 @@ class GroupLessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'refactor-price' || 'copy-total-status' ? ['locationId'] : []
+            $actionID == 'refactor-price' || 'copy-total-status' || 'set-due-date' ? ['locationId'] : []
         );
     }
     
@@ -118,6 +118,43 @@ class GroupLessonController extends Controller
                 }
                 $groupLesson->paidStatus = $status;
                 $groupLesson->save();
+            }
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
+    }
+
+    public function actionSetDueDate()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        Console::startProgress(0, 'Rounding lessons to two decimal places...');
+        $lessons = Lesson::find()
+            ->isConfirmed()
+            ->location($this->locationId)
+            ->groupLessons()
+            ->notCanceled()
+            ->notDeleted()
+            ->all();
+
+        foreach ($lessons as $lesson) {
+            $enrolments = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['courseId' => $lesson->courseId])
+                ->all();
+            foreach ($enrolments as $enrolment) {
+                Console::output("processing: Lesson " . $lesson->id . ' with enrolment ' . $enrolment->id, Console::FG_GREEN, Console::BOLD);
+                $groupLesson = GroupLesson::findOne(['lessonid' => $lesson->id, 'enrolmentId' => $enrolment->id]);
+                if (!$groupLesson) {
+                    $groupLesson = new GroupLesson();
+                    $groupLesson->lessonId = $lesson->id;
+                    $groupLesson->enrolmentId = $enrolment->id;
+                    $groupLesson->dueDate = (new \DateTime($enrolment->createdAt))->format('Y-m-d');
+                    $groupLesson->save();
+                }
             }
         }
         Console::endProgress(true);
