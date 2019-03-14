@@ -113,6 +113,11 @@ class GroupLesson extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
+    public function getOwingStatus() 
+    {
+        return $this->balance > 0.0 ? 'Unpaid' : 'Paid';
+    }
+
     public function getStatus() 
     {
         $paidStatus = 0;

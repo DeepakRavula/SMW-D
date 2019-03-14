@@ -54,6 +54,7 @@ class PaymentFormGroupLessonSearch extends Lesson
     public function search($params)
     {
         $userId = $this->userId;
+        $student = $this->student;
         $dueDateRange = $this->dueDateRange;
         if ($this->dateRange) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
@@ -66,32 +67,26 @@ class PaymentFormGroupLessonSearch extends Lesson
             $toDueDate = new \DateTime($this->toDueDate);
         }
         $lessonsQuery = GroupLesson::find()
+            ->joinWith(['lesson' => function($query) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled();
+            }])
+            ->joinWith(['enrolment' => function($query) use ($userId, $student) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->customer($userId);
+                if ($student) {
+                    $query->student($student);
+                }
+            }])
             ->andWhere(['>', 'group_lesson.balance', 0.0]);
         if (isset($this->lessonIds)) {
-            $lessonsQuery->joinWith(['lesson' => function($query) {
-                $query->andWhere(['lesson.id' => $this->lessonIds]);
-            }]);
-        } else if ($this->dateRange) {
-            $lessonsQuery->joinWith(['lesson' => function($query) use ($userId, $dueDateRange) {
-                $query->notDeleted()
-                    ->isConfirmed()
-                    ->notCanceled();
-                    if ($dueDateRange) {
-                        $query->dueBetween($fromDueDate, $toDueDate);
-                    } else {
-                        $query->dueLessons();
-                    }
-            }]);
-            $lessonsQuery->joinWith(['lesson' => function($query) use ($userId, $dueDateRange) {
-                $query->notDeleted()
-                    ->isConfirmed()
-                    ->notCanceled();
-                    if ($dueDateRange) {
-                        $query->dueBetween($fromDueDate, $toDueDate);
-                    } else {
-                        $query->dueLessons();
-                    }
-            }]);
+            $lessonsQuery->andWhere(['group_lesson.lessonId' => $this->lessonIds]);
+        } else if ($this->dueDateRange) {
+            $lessonsQuery->dueBetween($fromDueDate, $toDueDate);
+        } else {
+            $lessonsQuery->dueLessons();
         }
        
         return $lessonsQuery;

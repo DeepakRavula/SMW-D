@@ -36,8 +36,8 @@ use yii\bootstrap\ActiveForm;
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
             'label' => 'Date',
             'value' => function ($data) {
-                $date = Yii::$app->formatter->asDate($data->date);
-                $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+                $date = Yii::$app->formatter->asDate($data->lesson->date);
+                $lessonTime = (new \DateTime($data->lesson->date))->format('H:i:s');
 
                 return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
             }
@@ -81,13 +81,7 @@ use yii\bootstrap\ActiveForm;
             'label' => 'Student',
             'attribute' => 'student',
             'value' => function ($data) use($searchModel) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($searchModel->userId)
-                    ->one();
-                return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
+                return $data->enrolment->student->fullName;
             },
             'filterType' => KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(Student::find()
@@ -119,7 +113,7 @@ use yii\bootstrap\ActiveForm;
             'attribute' => 'program',
             'label' => 'Program',
             'value' => function ($model) {
-                return $model->course->program->name;
+                return $model->lesson->course->program->name;
             }
         ]);
 
@@ -128,7 +122,7 @@ use yii\bootstrap\ActiveForm;
             'headerOptions' => ['class' => 'text-left'],
             'label' => 'Teacher',
             'value' => function ($data) {
-                return $data->teacher->publicIdentity;
+                return $data->lesson->teacher->publicIdentity;
             }
         ]);
 
@@ -136,13 +130,7 @@ use yii\bootstrap\ActiveForm;
             'label' => 'Amount',
             'attribute' => 'amount',
             'value' => function ($data) use ($searchModel) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($searchModel->userId)
-                    ->one();
-                return Yii::$app->formatter->asCurrency(round($data->getGroupNetPrice($enrolment), 2));
+                return Yii::$app->formatter->asCurrency(round($data->total, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -152,13 +140,7 @@ use yii\bootstrap\ActiveForm;
             'attribute' => 'balance',
             'label' => 'Balance',
             'value' => function ($data) use ($searchModel) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($searchModel->userId)
-                    ->one();
-                return Yii::$app->formatter->asCurrency(round($data->getOwingAmount($enrolment->id), 2));
+                return Yii::$app->formatter->asCurrency(round($data->total, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
@@ -168,13 +150,7 @@ use yii\bootstrap\ActiveForm;
             array_push($columns, [
                 'label' => 'Status',
                 'value' => function ($data) use ($searchModel) {
-                    $enrolment = Enrolment::find()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->andWhere(['courseId' => $data->courseId])
-                        ->customer($searchModel->userId)
-                        ->one();
-                    return $data->getPaidStatus($enrolment->id);
+                    return $data->getOwingStatus();
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right invoice-value']
@@ -187,17 +163,11 @@ use yii\bootstrap\ActiveForm;
                 'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'label' => 'Payment',
                 'value' => function ($data) use ($searchModel, $form) {
-                    $enrolment = Enrolment::find()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->andWhere(['courseId' => $data->courseId])
-                        ->customer($searchModel->userId)
-                        ->one();
                     return $form->field($data, 'paymentAmount')->textInput([
-                        'value' => round($data->getOwingAmount($enrolment->id), 2), 
+                        'value' => round($data->balance, 2), 
                         'class' => 'form-control text-right payment-amount',
-                        'id' => 'group-lesson-payment-' . $data->id,
-                        'lessonId' => $data->id
+                        'id' => 'group-lesson-payment-' . $data->lessonId,
+                        'lessonId' => $data->lessonId
                     ])->label(false);
                 },
                 'attribute' => 'new_activity',
