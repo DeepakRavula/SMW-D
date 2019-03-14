@@ -31,4 +31,9 @@ class GroupLessonQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function dueLessons()
+    {
+        return $this->andFilterWhere(['<', 'group_lesson.dueDate', (new \DateTime())->format('Y-m-d H:i:s')]);
+    }
 }
