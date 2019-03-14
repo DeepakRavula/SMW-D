@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Location;
 use common\models\Lesson;
+use common\models\GroupLesson;
 use common\models\Enrolment;
 
 /**
@@ -52,6 +53,8 @@ class PaymentFormGroupLessonSearch extends Lesson
      */
     public function search($params)
     {
+        $userId = $this->userId;
+        $dueDateRange = $this->dueDateRange;
         if ($this->dateRange) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
             $fromDate = new \DateTime($this->fromDate);
@@ -62,49 +65,25 @@ class PaymentFormGroupLessonSearch extends Lesson
             $fromDueDate = new \DateTime($this->fromDueDate);
             $toDueDate = new \DateTime($this->toDueDate);
         }
-        $lessonsQuery = Lesson::find();
+        $lessonsQuery = GroupLesson::find()
+            ->andWhere(['>', 'group_lesson.balance', 0.0]);
         if (isset($this->lessonIds)) {
-            $lessonsQuery->andWhere(['id' => $this->lessonIds]);
+            $lessonsQuery->joinWith(['lesson' => function($query) {
+                $query->andWhere(['lesson.id' => $this->lessonIds]);
+            }]);
         } else if ($this->dateRange) {
-            $query = Lesson::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->notCanceled();
-                if ($this->dueDateRange) {
-                    $query->dueBetween($fromDueDate, $toDueDate);
-                } else {
-                    $query->dueLessons();
-                }
-                $query->groupLessons()
-                ->customer($this->userId);
-            if ($this->student) {
-                $query->student($this->student);
-            }
-            $allLessons = $query->all();
-            $lessonIds = [];
-            foreach ($allLessons as $lesson) {
-                if ($this->student) {
-                    $enrolment = Enrolment::find()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->andWhere(['courseId' => $lesson->courseId])
-                        ->andWhere(['studentId' => $this->student])
-                        ->one();
-                } else {
-                    $enrolment = Enrolment::find()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->andWhere(['courseId' => $lesson->courseId])
-                        ->customer($this->userId)
-                        ->one();
-                }
-                if (!$enrolment->hasinvoice($lesson->id)) {
-                    if ($lesson->isOwing($enrolment->id)) {
-                        $lessonIds[] = $lesson->id;
+            $lessonsQuery->joinWith(['lesson' => function($query) use ($userId, $dueDateRange) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled()
+                    ->customer($userId)
+                    ->dueLessons();
+                    if ($dueDateRange) {
+                        $query->dueBetween($fromDueDate, $toDueDate);
+                    } else {
+                        $query->dueLessons();
                     }
-                }
-            }
-            $lessonsQuery->andWhere(['id' => $lessonIds]);
+            }]);
         }
        
         return $lessonsQuery;
