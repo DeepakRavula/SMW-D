@@ -39,6 +39,7 @@ use yii\filters\AccessControl;
 use common\models\Payment;
 use common\models\Transaction;
 use common\models\CustomerReferralSource;
+use common\models\GroupLesson;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -796,14 +797,23 @@ class UserController extends BaseController
             ->joinWith(['privateLesson'])
             ->customer($id)
             ->sum('private_lesson.balance');
-        $groupLessons = Lesson::find()
+        $enrolments = Enrolment::find()
             ->notDeleted()
             ->isConfirmed()
-            ->notCanceled()
-            ->dueLessons()
-            ->groupLessons()
-            ->joinWith(['groupLesson'])
             ->customer($id)
+            ->all();
+        $enrolmentIds = [];
+            foreach ($enrolments as $enrolment) {
+                $enrolmentIds[] = $enrolment->id;
+            }
+        $groupLessons = GroupLesson::find()
+            ->joinWith(['lesson' => function($query) use ($id) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled()
+                    ->dueLessons();
+            }])
+            ->andWhere(['group_lesson.enrolmentId' => $enrolmentIds])
             ->sum('group_lesson.balance');
         $lessonsDue = $lessons + $groupLessons;
         return $lessonsDue;
