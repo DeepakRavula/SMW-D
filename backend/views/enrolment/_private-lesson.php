@@ -53,6 +53,17 @@ use common\models\UserProfile;
 		    return Yii::$app->formatter->asBalance($data->getOwingAmount($model->id));
 	    },
 	],
+	[
+		'label' => 'Due Date',
+		'value' => function ($data) {
+			if ($data->isPrivate()) {
+				$dueDate = $data->dueDate;
+			} else {
+				$dueDate = $data->groupLesson->dueDate;
+			}
+			return $dueDate ? Yii::$app->formatter->asDate($dueDate) : null;
+		},
+	],
     ];
     ?>
     <div class="grid-row-open">
