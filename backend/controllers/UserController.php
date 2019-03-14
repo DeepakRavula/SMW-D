@@ -744,78 +744,60 @@ class UserController extends BaseController
         $invoiceCredits = Invoice::find()
             ->notDeleted()
             ->invoiceCredit($id)
-            ->all(); 
+            ->sum('invoice.balance'); 
+
         $paymentCredits = Payment::find()
             ->notDeleted()
             ->exceptAutoPayments()
             ->customer($id)
+            ->credit()
             ->orderBy(['payment.id' => SORT_ASC])
-            ->all();
-        $invoice_credits = 0;
-        if ($invoiceCredits) {
-            foreach ($invoiceCredits as $invoiceCredit) {
-                    $invoice_credits += round(abs($invoiceCredit->balance), 2);
-            }
-        }
-        $payment_credits = 0;
-        if ($paymentCredits) {
-            foreach ($paymentCredits as $paymentCredit) {
-                if ($paymentCredit->hasCredit()) {
-                    $payment_credits += round($paymentCredit->creditAmount, 2);
-                }
-            }
-        }
-        $totalCredits = $invoice_credits + $payment_credits;
+            ->sum('payment.balance'); 
+
+        $totalCredits = abs($invoiceCredits) + abs($paymentCredits);
         return $totalCredits;
     }
 
     protected function getInvoiceOwingAmountTotal($id)
     {
-        $invoices = Invoice::find()
+        $invoiceOwingAmount = Invoice::find()
                 ->andWhere([
                     'invoice.user_id' => $id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
                 ])
+                ->andWhere(['>', 'invoice.balance', 0.0])
                 ->notDeleted()
-                ->all();
-        $invoiceCount = 0;
-        foreach ($invoices as $invoice) {
-            if ($invoice->isOwing()) {
-                $invoiceCount += $invoice->balance;
-            }
-        }
-        return $invoiceCount;
+                ->sum('invoice.balance');
+                
+        return $invoiceOwingAmount;
     }
     public function getLessonsDue($id)
     {
-        $lessons = Lesson::find()
+        $lessonsOwingAmount = Lesson::find()
             ->notDeleted()
             ->isConfirmed()
             ->notCanceled()
             ->dueLessons()
             ->privateLessons()
-            ->joinWith(['privateLesson'])
+            ->joinWith(['privateLesson' => function ($query) use ($id) {
+                $query->andWhere(['>', 'private_lesson.balance', 0.0]);
+            }])
             ->customer($id)
             ->sum('private_lesson.balance');
-        $enrolments = Enrolment::find()
-            ->notDeleted()
-            ->isConfirmed()
-            ->customer($id)
-            ->all();
-        $enrolmentIds = [];
-            foreach ($enrolments as $enrolment) {
-                $enrolmentIds[] = $enrolment->id;
-            }
-        $groupLessons = GroupLesson::find()
+
+        
+        $groupLessonsOwingAmount = GroupLesson::find()
             ->joinWith(['lesson' => function($query) use ($id) {
                 $query->notDeleted()
                     ->isConfirmed()
                     ->notCanceled()
+                    ->customer($id)
                     ->dueLessons();
             }])
-            ->andWhere(['group_lesson.enrolmentId' => $enrolmentIds])
+            ->andWhere(['>', 'group_lesson.balance', 0.0])
             ->sum('group_lesson.balance');
-        $lessonsDue = $lessons + $groupLessons;
+
+        $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
         return $lessonsDue;
     }
 }
