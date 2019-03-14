@@ -787,13 +787,17 @@ class UserController extends BaseController
 
         
         $groupLessonsOwingAmount = GroupLesson::find()
-            ->joinWith(['lesson' => function($query) use ($id) {
+            ->joinWith(['lesson' => function($query) {
                 $query->notDeleted()
                     ->isConfirmed()
-                    ->notCanceled()
-                    ->customer($id)
-                    ->dueLessons();
+                    ->notCanceled();
             }])
+            ->joinWith(['enrolment' => function($query) use ($id) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->customer($id);
+            }])
+            ->dueLessons()
             ->andWhere(['>', 'group_lesson.balance', 0.0])
             ->sum('group_lesson.balance');
 
