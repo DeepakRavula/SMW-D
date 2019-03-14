@@ -94,6 +94,12 @@ class LessonPayment extends \yii\db\ActiveRecord
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
 
+    public function getGroupLesson()
+    {
+        return $this->hasOne(GroupLesson::className(), ['lessonId' => 'lessonId'])
+            ->onCondition(['group_lesson.enrolmentId' => $this->enrolmentId]);
+    }
+
     public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
@@ -161,6 +167,9 @@ class LessonPayment extends \yii\db\ActiveRecord
         $this->payment->save();
         if ($this->lesson->privateLesson) {
             $this->lesson->privateLesson->save();
+        }
+        if ($this->groupLesson) {
+            $this->groupLesson->save();
         } 
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -174,6 +183,9 @@ class LessonPayment extends \yii\db\ActiveRecord
         if ($this->lesson->privateLesson) {
             $this->lesson->privateLesson->save();
         }
+        if ($this->groupLesson) {
+            $this->groupLesson->save();
+        } 
         return true;
     }
 }

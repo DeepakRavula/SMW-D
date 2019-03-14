@@ -936,6 +936,9 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
+        if ($this->privateLesson) {
+            $this->privateLesson->save();
+        }
         if (!$insert) {
             if ($this->isCanceled()) {
                 $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
@@ -945,25 +948,21 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
                 }
             }
-            if ($this->isPrivate()) {
+            if ($this->isPrivate() && $this->privateLesson) {
                 $amount = $this->getCreditAppliedAmount($this->enrolment->id);
-                if ($amount > $this->netPrice) {
+                if ($this->privateLesson->balance < 0) {
                     foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
                         $balance = $this->privateLesson->balance;
                         if ($lessonPayment->amount <= $balance) {
-                            $balance = $balance - $lessonPayment->amount;
                             $lessonPayment->delete();
                         } else {
-                            $lessonPayment->amount = $lessonPayment->amount - $balance;
+                            $lessonPayment->amount -= abs($balance);
                             $lessonPayment->save();
                         }
                     }
                 }
             }
             $this->course->updateDates();
-        }
-        if ($this->privateLesson) {
-            $this->privateLesson->save();
         }
         return parent::afterSave($insert, $changedAttributes);
     }

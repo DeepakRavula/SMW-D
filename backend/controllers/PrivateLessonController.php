@@ -167,6 +167,7 @@ class PrivateLessonController extends BaseController
         Lesson::triggerPusher();
         return $response;
     }
+    
     public function actionEditDuration()
     {
         $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
