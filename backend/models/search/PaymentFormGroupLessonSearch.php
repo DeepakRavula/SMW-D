@@ -75,9 +75,17 @@ class PaymentFormGroupLessonSearch extends Lesson
             $lessonsQuery->joinWith(['lesson' => function($query) use ($userId, $dueDateRange) {
                 $query->notDeleted()
                     ->isConfirmed()
-                    ->notCanceled()
-                    ->customer($userId)
-                    ->dueLessons();
+                    ->notCanceled();
+                    if ($dueDateRange) {
+                        $query->dueBetween($fromDueDate, $toDueDate);
+                    } else {
+                        $query->dueLessons();
+                    }
+            }]);
+            $lessonsQuery->joinWith(['lesson' => function($query) use ($userId, $dueDateRange) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled();
                     if ($dueDateRange) {
                         $query->dueBetween($fromDueDate, $toDueDate);
                     } else {
