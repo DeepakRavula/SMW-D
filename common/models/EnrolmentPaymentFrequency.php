@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use common\models\PaymentCycle;
 
 class EnrolmentPaymentFrequency extends Model
 { 
