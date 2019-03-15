@@ -191,7 +191,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         if ($this->course->isPrivate()) {
             if (!$this->hasPartialyPaidPaymentCycle()) {
-                $this->addError($attribute, "You can't edit PF & discounts.");
+                $this->addError($attribute, "You can't edit discounts.");
             }
         } else {
             if ($this->hasPaidLesson()) {

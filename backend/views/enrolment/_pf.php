@@ -8,7 +8,7 @@ use common\models\Course;
 <?php
 
 if ($model->course->isPrivate()) {
-	$title = 'PF & Discounts';
+	$title = 'Discounts';
 } else {
 	$title = 'Discounts';
 }
@@ -21,8 +21,6 @@ LteBox::begin([
 ?>
 <dl class="dl-horizontal">
 	<?php if ($model->course->isPrivate()) : ?>
-	<dt>Payment Frequency</dt>
-	<dd><?= $model->getPaymentFrequency(); ?></dd>
 	<dt>PF Discount</dt>
 	<dd><?= $model->getPaymentFrequencyDiscountValue(); ?></dd>
 	<dt>Multiple Enrol. Discount</dt>

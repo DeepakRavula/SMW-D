@@ -324,7 +324,7 @@ class EnrolmentController extends BaseController
             'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
             'previewDataProvider' => $previewDataProvider
         ]);
-        $oldPaymentFrequency = clone $model;
+      
         $oldPaymentFrequencyDiscount = $model->paymentFrequencyDiscount ? clone $model->paymentFrequencyDiscount : null;
         $oldPaymentFrequencyDiscountValue  = $model->getPaymentFrequencyDiscountValue();
         $post = Yii::$app->request->post();
@@ -347,12 +347,7 @@ class EnrolmentController extends BaseController
                     ['loggedUser' => $loggedUser, 'oldDiscount' => $oldPaymentFrequencyDiscountValue,'newDiscount'=>$paymentFrequencyDiscount->discount]
                 );
             }
-            if ($model->save()) {
-                if ((int) $oldPaymentFrequency->paymentFrequencyId !== (int) $model->paymentFrequencyId) {
-                    $model->resetPaymentCycle();
-                    $model->resetPaymentRequest();
-                }
-            }
+            $model->save();
             $response = [
                 'status' => true
             ];
