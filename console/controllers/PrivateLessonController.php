@@ -29,31 +29,6 @@ class PrivateLessonController extends Controller
         );
     }
 
-    public function actionAddTotalBalance()
-    {
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
-        
-        $lessons = Lesson::find()
-            ->notDeleted()
-            ->notCanceled()
-            ->isConfirmed()
-            ->location($this->locationId)
-            ->privateLessons() 
-            ->all();
-        Console::startProgress(0, 'Updating Lessons total and balance...');
-        foreach ($lessons as $lesson) {
-            $lesson->privateLesson->updateAttributes([
-                'total' => $lesson->netPrice,
-                'balance' => $lesson->getOwingAmount($lesson->enrolment->id)
-            ]);
-            Console::output("processing: " . $lesson->id . 'added lesson total and balance', Console::FG_GREEN, Console::BOLD);
-        }
-        Console::endProgress(true);
-        Console::output("done.", Console::FG_GREEN, Console::BOLD);
-        return true;
-    }
-
     public function actionAdd()
     {
         set_time_limit(0);
@@ -87,10 +62,7 @@ class PrivateLessonController extends Controller
                 $privateLesson = $lesson->privateLesson;
             }
             
-            $privateLesson->updateAttributes([
-                'total' => $lesson->netPrice,
-                'balance' => $lesson->getOwingAmount($lesson->enrolment->id)
-            ]);
+            $privateLesson->save();
             Console::output("processing: " . $lesson->id . 'added lesson total and balance', Console::FG_GREEN, Console::BOLD);
         }
         Console::endProgress(true);

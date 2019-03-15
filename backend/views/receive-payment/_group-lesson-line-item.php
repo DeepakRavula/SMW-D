@@ -167,7 +167,7 @@ use yii\bootstrap\ActiveForm;
                         'value' => round($data->balance, 2), 
                         'class' => 'form-control text-right payment-amount',
                         'id' => 'group-lesson-payment-' . $data->lessonId,
-                        'lessonId' => $data->lessonId
+                        'lessonId' => $data->id
                     ])->label(false);
                 },
                 'attribute' => 'new_activity',
