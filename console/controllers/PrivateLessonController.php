@@ -9,7 +9,6 @@ use common\models\User;
 use Yii;
 use yii\console\Controller;
 use yii\helpers\Console;
-use common\models\PrivateLesson;
 
 class PrivateLessonController extends Controller
 {
