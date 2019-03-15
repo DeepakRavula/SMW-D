@@ -812,7 +812,7 @@ class UserController extends BaseController
                 ->notDeleted();
         return new ActiveDataProvider([
             'query' => $outstandingInvoice,
-            'sort' => ['defaultOrder' => ['date' => SORT_DESC]],
+            'sort' => ['defaultOrder' => ['date' => SORT_ASC]],
             'pagination' => false,
         ]);
     }

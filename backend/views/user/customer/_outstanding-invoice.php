@@ -64,7 +64,7 @@ use common\models\User;
             },
         ],
         [
-            'label' => 'Payment',
+            'label' => 'Payments',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
@@ -76,7 +76,7 @@ use common\models\User;
         ],
 		   [
             'attribute' => 'balance',
-            'label' => 'Balance',
+            'label' => 'Balance Due',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
