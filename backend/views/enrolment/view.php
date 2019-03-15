@@ -37,7 +37,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 ]); ?>
 
 <div class='row'>
-    <div class= 'col-md-6'>
+    <div class= 'col-md-12'>
         <?php LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
             'boxTools' => false,
@@ -46,13 +46,13 @@ $this->params['action-button'] = $this->render('_action-button', [
         ]) ?>
 
         <?php if ($model->course->program->isPrivate()) {
-            echo $this->render('_private-lesson', [
+            echo $this->render('_lessons', [
                 'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
                 'lessonCount' => $lessonCount
             ]);
         } else {
-            echo $this->render('_private-lesson', [
+            echo $this->render('_lessons', [
                 'model' => $model,
                 'groupLessonDataProvider' => $groupLessonDataProvider,
                 'lessonCount' => $lessonCount
@@ -65,23 +65,6 @@ $this->params['action-button'] = $this->render('_action-button', [
 
         <?php LteBox::end() ?>
     </div>
-    
-    <?php if ($model->course->program->isPrivate()) : ?>
-        <div class='col-md-6'>
-            <?php LteBox::begin([
-                'type' => LteConst::TYPE_DEFAULT,
-                'boxTools' => false,
-                'title' => 'Payment Cycles',
-                'withBorder' => true,
-            ]) ?>
-
-            <?= $this->render('_payment-cycle', [
-                'model' => $model,
-                'paymentCycleDataProvider' => $paymentCycleDataProvider,
-            ]); ?>
-            <?php LteBox::end() ?>
-        </div>
-    <?php endif; ?>
 </div>
 
 <?php LteBox::begin([
