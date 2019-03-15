@@ -806,10 +806,8 @@ class UserController extends BaseController
     protected function getOutstandingInvoice($id)
     {
         $outstandingInvoice = Invoice::find()
-                ->andWhere([
-                    'invoice.user_id' => $id,
-                    'invoice.type' => Invoice::TYPE_INVOICE,
-                ])
+                ->customer($id)
+                ->invoice()
                 ->andWhere(['>', 'invoice.balance', 0.0])
                 ->notDeleted();
         return new ActiveDataProvider([
