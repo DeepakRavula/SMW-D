@@ -9,6 +9,7 @@ use common\models\Program;
 use common\models\Location;
 use common\models\Student;
 use common\models\UserProfile;
+use common\models\GroupLesson;
 ?>
 
 
@@ -59,7 +60,8 @@ use common\models\UserProfile;
 			if ($data->isPrivate()) {
 				$dueDate = $data->dueDate;
 			} else {
-				$dueDate = $data->groupLesson->dueDate;
+			    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $data->enrolment->id]);
+				$dueDate = $groupLesson->dueDate;
 			}
 			return $dueDate ? Yii::$app->formatter->asDate($dueDate) : null;
 		},
