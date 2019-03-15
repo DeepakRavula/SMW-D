@@ -104,6 +104,16 @@ class GroupLesson extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
     }
 
+    public function getInvoiceItemsEnrolment()
+    {
+        return $this->hasMany(InvoiceItemEnrolment::className(), ['enrolmentId' => 'enrolmentId']);
+    }
+
+    public function getInvoiceItemLessons()
+    {
+        return $this->hasMany(InvoiceItemLesson::className(), ['lessonId' => 'id']);
+    }
+
     public function beforeSave($insert) 
     {
         $this->total = $this->lesson->getGroupNetPrice($this->enrolment);
@@ -116,6 +126,11 @@ class GroupLesson extends \yii\db\ActiveRecord
     public function getOwingStatus() 
     {
         return $this->balance > 0.0 ? 'Unpaid' : 'Paid';
+    }
+
+    public function isOwing()
+    {
+        return $this->balance > 0.0;
     }
 
     public function getStatus() 

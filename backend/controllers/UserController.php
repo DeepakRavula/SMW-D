@@ -771,6 +771,7 @@ class UserController extends BaseController
                 
         return $invoiceOwingAmount;
     }
+
     public function getLessonsDue($id)
     {
         $lessonsOwingAmount = Lesson::find()
@@ -785,7 +786,23 @@ class UserController extends BaseController
             ->customer($id)
             ->sum('private_lesson.balance');
 
-        
+        $invoicedLessonsQuery = GroupLesson::find()
+            ->joinWith(['invoiceItemLessons' => function($query) {
+                $query->joinWith(['invoiceLineItem ili' => function($query) {
+                    $query->notDeleted()
+                    ->joinWith(['invoice in' => function($query) {
+                        $query->notDeleted();
+                    }]);
+                }]);
+            }])
+            ->joinWith(['invoiceItemsEnrolment' => function($query) {
+                $query->joinWith(['lineItem' => function($query) {
+                    $query->notDeleted()
+                    ->joinWith(['invoice' => function($query) {
+                        $query->notDeleted();
+                    }]);
+                }]);
+            }]);
         $groupLessonsOwingAmount = GroupLesson::find()
             ->joinWith(['lesson' => function($query) {
                 $query->notDeleted()
@@ -797,6 +814,8 @@ class UserController extends BaseController
                     ->isConfirmed()
                     ->customer($id);
             }])
+            ->leftJoin(['invoiced_lesson' => $invoicedLessonsQuery], 'group_lesson.id = invoiced_lesson.id')
+            ->andWhere(['invoiced_lesson.id' => null])
             ->dueLessons()
             ->andWhere(['>', 'group_lesson.balance', 0.0])
             ->sum('group_lesson.balance');

@@ -21,6 +21,7 @@ use common\models\Lesson;
 use common\models\InvoicePayment;
 use common\models\LessonPayment;
 use yii\data\ActiveDataProvider;
+use common\models\GroupLesson;
 use backend\models\search\PaymentFormLessonSearch;
 use backend\models\search\PaymentFormGroupLessonSearch;
 use common\models\Receipt;
@@ -128,11 +129,16 @@ class PaymentController extends BaseController
             'pagination' => false
         ]);
 
-        $groupLessonPayment = Lesson::find()
-            ->groupLessons()
-            ->notDeleted()
-		    ->joinWith(['lessonPayments' => function ($query) use ($paymentId) {
-                $query->andWhere(['paymentId' => $paymentId]);
+        $groupLessonPayment = GroupLesson::find()
+            ->joinWith(['lesson' => function ($query) use ($paymentId) {
+                $query->joinWith(['allLessonPayments alp' => function ($query) use ($paymentId) {
+                    $query->andWhere(['alp.paymentId' => $paymentId, 'alp.isDeleted' => false]);
+                }]);
+            }])
+            ->joinWith(['enrolment' => function ($query) use ($paymentId) {
+                $query->joinWith(['lessonPayments lp' => function ($query) use ($paymentId) {
+                    $query->andWhere(['lp.paymentId' => $paymentId, 'lp.isDeleted' => false]);
+                }]);
             }]);
 	    $groupLessonDataProvider = new ActiveDataProvider([
             'query' => $groupLessonPayment,
@@ -190,12 +196,17 @@ class PaymentController extends BaseController
             'query' => $lessonPayment,
             'pagination' => false
         ]);
-
-        $groupLessonPayment = Lesson::find()
-            ->groupLessons()
-            ->notDeleted()
-		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
-                $query->andWhere(['paymentId' => $id]);
+        $paymentId = $id;
+        $groupLessonPayment = GroupLesson::find()
+            ->joinWith(['lesson' => function ($query) use ($paymentId) {
+                $query->joinWith(['allLessonPayments alp' => function ($query) use ($paymentId) {
+                    $query->andWhere(['alp.paymentId' => $paymentId, 'alp.isDeleted' => false]);
+                }]);
+            }])
+            ->joinWith(['enrolment' => function ($query) use ($paymentId) {
+                $query->joinWith(['lessonPayments lp' => function ($query) use ($paymentId) {
+                    $query->andWhere(['lp.paymentId' => $paymentId, 'lp.isDeleted' => false]);
+                }]);
             }]);
 	    $groupLessonDataProvider = new ActiveDataProvider([
             'query' => $groupLessonPayment,

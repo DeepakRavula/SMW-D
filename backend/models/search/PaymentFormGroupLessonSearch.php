@@ -66,27 +66,51 @@ class PaymentFormGroupLessonSearch extends Lesson
             $fromDueDate = new \DateTime($this->fromDueDate);
             $toDueDate = new \DateTime($this->toDueDate);
         }
-        $lessonsQuery = GroupLesson::find()
-            ->joinWith(['lesson' => function($query) {
-                $query->notDeleted()
-                    ->isConfirmed()
-                    ->notCanceled();
-            }])
-            ->joinWith(['enrolment' => function($query) use ($userId, $student) {
-                $query->notDeleted()
-                    ->isConfirmed()
-                    ->customer($userId);
-                if ($student) {
-                    $query->student($student);
-                }
-            }])
-            ->andWhere(['>', 'group_lesson.balance', 0.0]);
+        $lessonsQuery = GroupLesson::find();
+        
         if (isset($this->lessonIds)) {
             $lessonsQuery->andWhere(['group_lesson.lessonId' => $this->lessonIds]);
-        } else if ($this->dueDateRange) {
-            $lessonsQuery->dueBetween($fromDueDate, $toDueDate);
         } else {
-            $lessonsQuery->dueLessons();
+            $invoicedLessonsQuery = GroupLesson::find()
+                ->joinWith(['invoiceItemLessons' => function($query) {
+                    $query->joinWith(['invoiceLineItem ili' => function($query) {
+                        $query->notDeleted()
+                        ->joinWith(['invoice in' => function($query) {
+                            $query->notDeleted();
+                        }]);
+                    }]);
+                }])
+                ->joinWith(['invoiceItemsEnrolment' => function($query) {
+                    $query->joinWith(['lineItem' => function($query) {
+                        $query->notDeleted()
+                        ->joinWith(['invoice' => function($query) {
+                            $query->notDeleted();
+                        }]);
+                    }]);
+                }]);
+
+
+                $lessonsQuery->joinWith(['lesson' => function($query) {
+                    $query->notDeleted()
+                        ->isConfirmed()
+                        ->notCanceled();
+                }])
+                ->joinWith(['enrolment' => function($query) use ($userId, $student) {
+                    $query->notDeleted()
+                        ->isConfirmed()
+                        ->customer($userId);
+                    if ($student) {
+                        $query->student($student);
+                    }
+                }])
+                ->leftJoin(['invoiced_lesson' => $invoicedLessonsQuery], 'group_lesson.id = invoiced_lesson.id')
+                ->andWhere(['invoiced_lesson.id' => null])
+                ->andWhere(['>', 'group_lesson.balance', 0.09]);
+            if ($this->dueDateRange) {
+                $lessonsQuery->dueBetween($fromDueDate, $toDueDate);
+            } else {
+                $lessonsQuery->dueLessons();
+            }
         }
        
         return $lessonsQuery;
