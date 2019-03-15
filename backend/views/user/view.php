@@ -120,16 +120,16 @@ foreach ($roleNames as $name => $description) {
         <?php endif;?>
 
         <?php if ($searchModel->role_name == 'customer'):?>
-            <?= $this->render('customer/_outstanding-invoice', [
-                'outstandingInvoiceDataProvider' => $outstandingInvoice,
+            <?= $this->render('customer/_invoice', [
+                'invoiceDataProvider' => $invoiceDataProvider,
+                'count' => $invoiceCount,
                 'userModel' => $model,
             ]); ?>
         <?php endif;?>
 
         <?php if ($searchModel->role_name == 'customer'):?>
-            <?= $this->render('customer/_invoice', [
-                'invoiceDataProvider' => $invoiceDataProvider,
-                'count' => $invoiceCount,
+            <?= $this->render('customer/_outstanding-invoice', [
+                'outstandingInvoiceDataProvider' => $outstandingInvoice,
                 'userModel' => $model,
             ]); ?>
         <?php endif;?>
