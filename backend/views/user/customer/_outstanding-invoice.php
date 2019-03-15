@@ -15,14 +15,10 @@ use common\models\User;
 
 ?>
 <?php
-$boxTools = $this->render('_invoice-buttons', [
-    'userModel' => $userModel,
-    ]);	
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
         'title' => 'Outstanding Invoices',
         'withBorder' => true,
-        'boxTools' => $boxTools,
     ])
     ?>
 
