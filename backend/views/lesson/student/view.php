@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use common\models\Enrolment;
 use common\models\LessonPayment;
+use common\models\GroupLesson;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
@@ -42,6 +43,18 @@ use common\models\LessonPayment;
                 },
             ],
             [
+                'label' => 'Due Date',
+                'value' => function ($data) use ($lessonModel) {
+                    $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->andWhere(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['studentId' => $data->id])->one();
+                    $groupLesson = GroupLesson::find()
+                            ->andWhere(['lessonId' => $lessonModel->id])
+                            ->andWhere(['enrolmentId' => $enrolment->id])->one();
+                    return Yii::$app->formatter->asDate($groupLesson->dueDate);
+                },
+            ],
+            [
                 'label' => 'Gross Price',
                 'contentOptions' => ['class' => 'text-right'],
                 'headerOptions' => ['class' => 'text-right'],
@@ -68,7 +81,10 @@ use common\models\LessonPayment;
                     $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
                             ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $data->id])->one();
-                    return Yii::$app->formatter->asCurrency(round($lessonModel->getGroupNetPrice($enrolment), 2));
+                    $groupLesson = GroupLesson::find()
+                            ->andWhere(['lessonId' => $lessonModel->id])
+                            ->andWhere(['enrolmentId' => $enrolment->id])->one();
+                    return Yii::$app->formatter->asCurrency(round($groupLesson->total, 2));
                 },
             ],
             [
@@ -80,7 +96,10 @@ use common\models\LessonPayment;
                     $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
                             ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $data->id])->one();
-                    return Yii::$app->formatter->asCurrency($lessonModel->getOwingAmount($enrolment->id));
+                    $groupLesson = GroupLesson::find()
+                            ->andWhere(['lessonId' => $lessonModel->id])
+                            ->andWhere(['enrolmentId' => $enrolment->id])->one();
+                    return Yii::$app->formatter->asCurrency($groupLesson->balance);
                 },
             ],
             ['class' => 'yii\grid\ActionColumn',

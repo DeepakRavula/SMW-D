@@ -132,4 +132,9 @@ class PaymentQuery extends ActiveQuery
     {
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED]);
     }
+
+    public function credit()
+    {
+        return $this->andWhere(['>', 'payment.balance', 0.0]);
+    }
 }

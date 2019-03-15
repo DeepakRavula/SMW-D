@@ -39,6 +39,7 @@ use yii\filters\AccessControl;
 use common\models\Payment;
 use common\models\Transaction;
 use common\models\CustomerReferralSource;
+use common\models\GroupLesson;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -533,6 +534,9 @@ class UserController extends BaseController
             'invoiceCount' => $this->getInvoiceCount($model, $locationId),
             'paymentsDataProvider' => $this->getPaymentsDataProvider($id),
             'paymentCount' => $this->getPaymentCount($id),
+            'credits' => $this->getTotalCredits($id),
+            'invoiceOwingAmountTotal' => $this->getInvoiceOwingAmountTotal($id),
+            'lessonsDue' => $this->getLessonsDue($id),
         ]);
     }
 
@@ -733,5 +737,71 @@ class UserController extends BaseController
                 ->exceptAutoPayments()
 		        ->count();
 	    return $paymentCount;
+    }
+
+    public function getTotalCredits($id) 
+    {
+        $invoiceCredits = Invoice::find()
+            ->notDeleted()
+            ->invoiceCredit($id)
+            ->sum('invoice.balance'); 
+
+        $paymentCredits = Payment::find()
+            ->notDeleted()
+            ->exceptAutoPayments()
+            ->customer($id)
+            ->credit()
+            ->orderBy(['payment.id' => SORT_ASC])
+            ->sum('payment.balance'); 
+
+        $totalCredits = abs($invoiceCredits) + abs($paymentCredits);
+        return $totalCredits;
+    }
+
+    protected function getInvoiceOwingAmountTotal($id)
+    {
+        $invoiceOwingAmount = Invoice::find()
+                ->andWhere([
+                    'invoice.user_id' => $id,
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                ])
+                ->andWhere(['>', 'invoice.balance', 0.0])
+                ->notDeleted()
+                ->sum('invoice.balance');
+                
+        return $invoiceOwingAmount;
+    }
+    public function getLessonsDue($id)
+    {
+        $lessonsOwingAmount = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->dueLessons()
+            ->privateLessons()
+            ->joinWith(['privateLesson' => function ($query) use ($id) {
+                $query->andWhere(['>', 'private_lesson.balance', 0.0]);
+            }])
+            ->customer($id)
+            ->sum('private_lesson.balance');
+
+        
+        $groupLessonsOwingAmount = GroupLesson::find()
+            ->joinWith(['lesson' => function($query) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled();
+            }])
+            ->joinWith(['enrolment' => function($query) use ($id) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->customer($id);
+            }])
+            ->dueLessons()
+            ->andWhere(['>', 'group_lesson.balance', 0.0])
+            ->sum('group_lesson.balance');
+
+        $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
+        return $lessonsDue;
     }
 }

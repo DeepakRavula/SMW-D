@@ -3,6 +3,7 @@
 namespace console\controllers;
 
 use common\models\Lesson;
+use common\models\PrivateLesson;
 use common\models\LessonOwing;
 use common\models\User;
 use Yii;
@@ -24,9 +25,8 @@ class PrivateLessonController extends Controller
 
     public function options($actionID)
     {
-        return array_merge(
-            parent::options($actionID),
-            $actionID == 'add-total-balance' ? ['locationId'] : []
+        return array_merge(parent::options($actionID),
+            $actionID == 'add-total-balance' || 'add' ? ['locationId'] : []
         );
     }
 
@@ -67,6 +67,50 @@ class PrivateLessonController extends Controller
                 $privateLessonModel->save();
                 Console::output("processing: " . $lesson->id . 'added new private lesson', Console::FG_GREEN, Console::BOLD);
             }
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
+    }
+
+    public function actionAdd()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->notCanceled()
+            ->isConfirmed()
+            ->location($this->locationId)
+            ->privateLessons() 
+            ->all();
+        Console::startProgress(0, 'Updating Lessons total and balance...');
+        foreach ($lessons as $lesson) {
+            if (!$lesson->privateLesson) {
+                $privateLesson = new PrivateLesson();
+                $privateLesson->lessonId = $lesson->id;
+                if ($lesson->rootLesson) {
+                    $expiryDate = new \DateTime($lesson->rootLesson->privateLesson->expiryDate);
+                    $date       = new \DateTime($lesson->date);
+                    if ($date >= $expiryDate) {
+                        $expiryDate = $date->modify('1 day');
+                    }
+                } else {
+                    $date = new \DateTime($lesson->date);
+                    $expiryDate = $date->modify('90 days');
+                }
+                $privateLesson->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+                $privateLesson->save();
+            } else {
+                $privateLesson = $lesson->privateLesson;
+            }
+            
+            $privateLesson->updateAttributes([
+                'total' => $lesson->netPrice,
+                'balance' => $lesson->getOwingAmount($lesson->enrolment->id)
+            ]);
+            Console::output("processing: " . $lesson->id . 'added lesson total and balance', Console::FG_GREEN, Console::BOLD);
         }
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);

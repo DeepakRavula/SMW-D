@@ -56,7 +56,40 @@ foreach ($roleNames as $name => $description) {
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 
 <?php Pjax::begin(['id' => 'customer-view']) ?>
-    
+<div class="row">
+    <div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=> LteConst::COLOR_AQUA,
+                      'number'=> round($lessonsDue, 2),
+                      'text'=> 'LESSONS DUE',
+                      'icon'=> 'fa fa-dollar',
+                  ])?>
+</div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=> LteConst::COLOR_RED,
+                      'number'=> round($invoiceOwingAmountTotal, 2),
+                      'text'=> 'OUTSTANDING INVOICE',
+                      'icon'=> 'fa fa-dollar',
+                  ])?>
+</div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=> LteConst::COLOR_GREEN,
+                      'number'=> round($credits, 2),
+                      'text'=> 'CREDITS',
+                      'icon'=> 'fa fa-dollar',
+                  ])?>
+</div>
+<div class="col-md-3">  
+<?= LteInfoBox::widget([
+                      'bgIconColor'=> LteConst::COLOR_ORANGE,
+                      'number'=> round(($lessonsDue + $invoiceOwingAmountTotal) - $credits, 2),
+                      'text'=> 'BALANCE',
+                      'icon'=> 'fa fa-dollar',
+                  ])?>
+</div>
+</div>
 <div class="row">
     <div class="col-md-6">
         <?php Pjax::begin(['id' => 'user-profile']); ?>
