@@ -766,7 +766,7 @@ class UserController extends BaseController
                     'invoice.user_id' => $id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
                 ])
-                ->andWhere(['>', 'invoice.balance', 0.0])
+                ->andWhere(['>', 'invoice.balance', 0.09])
                 ->notDeleted()
                 ->sum('invoice.balance');
                 
