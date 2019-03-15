@@ -58,14 +58,7 @@ $boxTools = $this->render('_invoice-buttons', [
             },
         ],
         [
-            'label' => 'Status',
-            'value' => function ($data) {
-                return $data->getStatus();
-            },
-        ],
-        [
-            'attribute' => 'Amount',
-            'label' => 'Total',
+            'label' => 'Amount',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
@@ -75,14 +68,14 @@ $boxTools = $this->render('_invoice-buttons', [
             },
         ],
         [
-            'attribute' => 'Payment',
-            'label' => 'Balance',
+            'label' => 'Payment',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
             'value' => function ($data) {
-                return (round($data->balance, 2) > 0.00 && round($data->balance, 2) <= 0.09) || (round($data->balance, 2) < 0.00 && round($data->balance, 2) >= -0.09) ? 0.00  : round($data->balance, 2) ;
+                $paymentTotal = !empty($data->invoicePaymentTotal) ? $data->invoicePaymentTotal : 0;
+                return (round($paymentTotal, 2) > 0.00 && round($paymentTotal, 2) <= 0.09) || (round($paymentTotal, 2) < 0.00 && round($paymentTotal, 2) >= -0.09) ? 0.00  : round($paymentTotal, 2) ;
             },
         ],
 		   [
