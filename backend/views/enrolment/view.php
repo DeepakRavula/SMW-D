@@ -46,13 +46,13 @@ $this->params['action-button'] = $this->render('_action-button', [
         ]) ?>
 
         <?php if ($model->course->program->isPrivate()) {
-            echo $this->render('_private-lesson', [
+            echo $this->render('_lessons', [
                 'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
                 'lessonCount' => $lessonCount
             ]);
         } else {
-            echo $this->render('_private-lesson', [
+            echo $this->render('_lessons', [
                 'model' => $model,
                 'groupLessonDataProvider' => $groupLessonDataProvider,
                 'lessonCount' => $lessonCount

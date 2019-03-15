@@ -56,11 +56,11 @@ use common\models\GroupLesson;
 	],
 	[
 		'label' => 'Due Date',
-		'value' => function ($data) {
+		'value' => function ($data) use($model) {
 			if ($data->isPrivate()) {
 				$dueDate = $data->dueDate;
 			} else {
-			    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $data->enrolment->id]);
+			    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $model->id]);
 				$dueDate = $groupLesson->dueDate;
 			}
 			return $dueDate ? Yii::$app->formatter->asDate($dueDate) : null;
