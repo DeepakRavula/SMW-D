@@ -537,6 +537,7 @@ class UserController extends BaseController
             'credits' => $this->getTotalCredits($id),
             'invoiceOwingAmountTotal' => $this->getInvoiceOwingAmountTotal($id),
             'lessonsDue' => $this->getLessonsDue($id),
+            'outstandingInvoice' => $this->getOutstandingInvoice($id),
         ]);
     }
 
@@ -784,8 +785,6 @@ class UserController extends BaseController
             }])
             ->customer($id)
             ->sum('private_lesson.balance');
-
-        
         $groupLessonsOwingAmount = GroupLesson::find()
             ->joinWith(['lesson' => function($query) {
                 $query->notDeleted()
@@ -800,8 +799,21 @@ class UserController extends BaseController
             ->dueLessons()
             ->andWhere(['>', 'group_lesson.balance', 0.0])
             ->sum('group_lesson.balance');
-
         $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
         return $lessonsDue;
+    }
+
+    protected function getOutstandingInvoice($id)
+    {
+        $outstandingInvoice = Invoice::find()
+                ->customer($id)
+                ->invoice()
+                ->andWhere(['>', 'invoice.balance', 0.0])
+                ->notDeleted();
+        return new ActiveDataProvider([
+            'query' => $outstandingInvoice,
+            'sort' => ['defaultOrder' => ['date' => SORT_ASC]],
+            'pagination' => false,
+        ]);
     }
 }
