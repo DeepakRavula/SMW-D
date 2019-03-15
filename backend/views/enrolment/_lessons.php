@@ -51,7 +51,13 @@ use common\models\GroupLesson;
 		'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) use ($model) {
-		    return Yii::$app->formatter->asBalance($data->getOwingAmount($model->id));
+			if ($data->isPrivate()) {
+				$owing = $data->privateLesson->balance;
+			} else {
+			    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $model->id]);
+				$owing = $groupLesson->balance;
+			}
+		    return $owing ? Yii::$app->formatter->asBalance($owing) : null;
 	    },
 	],
 	[
