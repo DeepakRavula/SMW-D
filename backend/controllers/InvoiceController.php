@@ -107,27 +107,6 @@ class InvoiceController extends BaseController
                     'dataProvider' => $dataProvider,
         ]);
     }
-    public function actionNewIndex()
-    {
-       $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-       $invoices = Invoice::find()
-                    ->where(['invoice.location_id' => $locationId])
-                    ->notCanceled()
-                    ->notDeleted()
-                    ->invoice()
-                    ->andWhere(['AND',
-                    ['>', 'invoice.balance', 0.00],
-                    ['<=', 'invoice.balance', 1.00]
-                ]);
-
-    $dataProvider = new ActiveDataProvider([
-        'query' => $invoices,
-    ]);
-
-        return $this->render('newindex', [
-                    'dataProvider' => $dataProvider,
-        ]);
-    }
 
     /**
      * Displays a single Invoice model.

@@ -60,7 +60,7 @@ foreach ($roleNames as $name => $description) {
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_AQUA,
-                      'number'=> round($lessonsDue, 2),
+                      'number'=> (round($lessonsDue, 2) > 0.00 && round($lessonsDue, 2) <= 0.09) || (round($lessonsDue, 2) < 0.00 && round($lessonsDue, 2) >= -0.09)  ? round('0.00', 2) : round($lessonsDue, 2),
                       'text'=> 'LESSONS DUE',
                       'icon'=> 'fa fa-dollar',
                   ])?>
