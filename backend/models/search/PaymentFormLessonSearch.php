@@ -89,7 +89,7 @@ class PaymentFormLessonSearch extends Lesson
                 $lessonsQuery->privateLessons()
                 ->customer($this->userId)
                 ->joinWith(['privateLesson' => function($query) {
-                    $query->andWhere(['>', 'private_lesson.balance', 0.00]);
+                    $query->andWhere(['>', 'private_lesson.balance', 0.09]);
                 }])
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                 ->andWhere(['invoiced_lesson.id' => null]);

@@ -789,7 +789,7 @@ class UserController extends BaseController
             ->dueLessons()
             ->privateLessons()
             ->joinWith(['privateLesson' => function ($query) use ($id) {
-                $query->andWhere(['>', 'private_lesson.balance', 0.0]);
+                $query->andWhere(['>', 'private_lesson.balance', 0.09]);
             }])
             ->customer($id)
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
@@ -807,7 +807,7 @@ class UserController extends BaseController
                     ->customer($id);
             }])
             ->dueLessons()
-            ->andWhere(['>', 'group_lesson.balance', 0.0])
+            ->andWhere(['>', 'group_lesson.balance', 0.09])
             ->sum('group_lesson.balance');
         $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
         return $lessonsDue;
