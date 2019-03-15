@@ -126,6 +126,13 @@ foreach ($roleNames as $name => $description) {
                 'userModel' => $model,
             ]); ?>
         <?php endif;?>
+
+        <?php if ($searchModel->role_name == 'customer'):?>
+            <?= $this->render('customer/_outstanding-invoice', [
+                'outstandingInvoiceDataProvider' => $outstandingInvoice,
+                'userModel' => $model,
+            ]); ?>
+        <?php endif;?>
     </div>
     <div class="col-md-6">
         <?php Pjax::begin(['id' => 'user-email']); ?>
