@@ -133,6 +133,7 @@ Modal::begin([
                     $('#modal-content').html(response.data);
                     $('.modal-save').show();
                     $('.modal-save').text('Save');
+                    paymentFrequency.onEditableSuccess();
                 } else {
                     $('#enrolment-edit').html(response.message).fadeIn().delay(3000).fadeOut();
                 }
