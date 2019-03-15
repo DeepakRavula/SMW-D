@@ -22,12 +22,6 @@ use yii\grid\GridView;
     ]); ?>
 
     <div class="row">
-        <div class="col-md-8">
-            <?= $form->field($model, 'paymentFrequencyId')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')]);
-            ?>
-        </div>
-        
         <div class="col-md-6">
             <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput(['class' => 'text-right form-control'])
                 ->label('Payment Frequency Discount'); 
@@ -107,25 +101,16 @@ use yii\grid\GridView;
 
     var enrolment = {
         edit: function() {
-            var paymentFrequency = '<?= $model->paymentFrequencyId; ?>';
             var paymentFrequencyDiscount = '<?= $paymentFrequencyDiscount->discount ?? null; ?>';
             var multiEnrolmentDiscount = '<?= $multipleEnrolmentDiscount->discount ?? null; ?>';
-            var paymentFrequencyChanged = $('#enrolment-paymentfrequencyid').val();
             var paymentFrequencyDiscountChanged = $('#paymentfrequencyenrolmentdiscount-discount').val();
             var multiEnrolmentDiscountChanged = $('#multienrolmentdiscount-discount').val();
-            if (paymentFrequency != paymentFrequencyChanged || paymentFrequencyDiscount != paymentFrequencyDiscountChanged || multiEnrolmentDiscount != multiEnrolmentDiscountChanged) {
+            if (paymentFrequencyDiscount != paymentFrequencyDiscountChanged || multiEnrolmentDiscount != multiEnrolmentDiscountChanged) {
                 $('.preview').show();
                 if (paymentFrequencyDiscount == paymentFrequencyDiscountChanged && multiEnrolmentDiscount == multiEnrolmentDiscountChanged) {
                     $('.lesson-discount').hide();
                 } else {
                     $('.lesson-discount').show();
-                }
-                if (paymentFrequency == paymentFrequencyChanged) {
-                    $('.payment-cycle').hide();
-                    $('.payment-request').hide();
-                } else {
-                    $('.payment-cycle').show();
-                    $('.payment-request').show();
                 }
             } else {
                 $('.preview').hide();
