@@ -9,6 +9,7 @@ use common\models\Program;
 use common\models\Location;
 use common\models\Student;
 use common\models\UserProfile;
+use common\models\GroupLesson;
 ?>
 
 
@@ -50,8 +51,26 @@ use common\models\UserProfile;
 		'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) use ($model) {
-		    return Yii::$app->formatter->asBalance($data->getOwingAmount($model->id));
+			if ($data->isPrivate()) {
+				$owing = $data->privateLesson->balance;
+			} else {
+			    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $model->id]);
+				$owing = $groupLesson->balance;
+			}
+		    return $owing ? Yii::$app->formatter->asBalance($owing) : null;
 	    },
+	],
+	[
+		'label' => 'Due Date',
+		'value' => function ($data) use($model) {
+			if ($data->isPrivate()) {
+				$dueDate = $data->dueDate;
+			} else {
+			    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $model->id]);
+				$dueDate = $groupLesson->dueDate;
+			}
+			return $dueDate ? Yii::$app->formatter->asDate($dueDate) : null;
+		},
 	],
     ];
     ?>

@@ -135,6 +135,6 @@ class PaymentQuery extends ActiveQuery
 
     public function credit()
     {
-        return $this->andWhere(['<', 'payment.balance', 0.0]);
+        return $this->andWhere(['>', 'payment.balance', 0.0]);
     }
 }
