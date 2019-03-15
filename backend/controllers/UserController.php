@@ -772,14 +772,13 @@ class UserController extends BaseController
                 
         return $invoiceOwingAmount;
     }
-    
+
     public function getLessonsDue($id)
     {
         $invoicedLessons = Lesson::find()
             ->notDeleted()
             ->isConfirmed()
             ->notCanceled()
-            ->dueLessons()
             ->privateLessons()
             ->customer($id)
             ->invoiced();
