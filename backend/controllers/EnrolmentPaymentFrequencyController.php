@@ -13,6 +13,7 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
+use common\models\EnrolmentPaymentFrequency;
 
 class EnrolmentPaymentFrequencyController extends BaseController
 {
@@ -56,11 +57,12 @@ class EnrolmentPaymentFrequencyController extends BaseController
             ];
         } else {
               $oldPaymentFrequency = clone $model;
+              $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
+              $enrolmentPaymentFrequency->enrolmentId = $model->id;
               $model->load($post);  
               if ($model->save()) {
                 if ((int) $oldPaymentFrequency->paymentFrequencyId !== (int) $model->paymentFrequencyId) {
-                    $model->resetPaymentCycle();
-                    $model->resetPaymentRequest();
+                    $enrolmentPaymentFrequency->resetPaymentCycle();
                 }
             }
             return [

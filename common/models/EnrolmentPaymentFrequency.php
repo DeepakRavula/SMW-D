@@ -19,20 +19,20 @@ class EnrolmentPaymentFrequency extends Model
 
     public function resetPaymentCycle()
     {
-            
-            $startDate      = new \DateTime($startDate);
-            $enrolmentLastPaymentCycleEndDate = new \DateTime($this->course->endDate);
+            $enrolment = Enrolment::find()->andWhere(['id' => $this->enrolmentId])->one();
+            $startDate      = new \DateTime($enrolment->course->startDate);
+            $enrolmentLastPaymentCycleEndDate = new \DateTime($enrolment->course->endDate);
             $intervalMonths = $this->diffInMonths($startDate, $enrolmentLastPaymentCycleEndDate);
             $this->deletePaymentCycles();
-            $paymentCycleCount = (int) ($intervalMonths / $this->paymentsFrequency->frequencyLength);
+            $paymentCycleCount = (int) ($intervalMonths / $enrolment->paymentsFrequency->frequencyLength);
             for ($i = 0; $i <= $paymentCycleCount; $i++) {
                 if ($i !== 0) {
                     $startDate     = $endDate->modify('First day of next month');
                 }
                 $paymentCycle              = new PaymentCycle();
-                $paymentCycle->enrolmentId = $this->id;
+                $paymentCycle->enrolmentId = $this->enrolmentId;
                 $paymentCycle->startDate   = $startDate->format('Y-m-d');
-                $endDate = $startDate->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
+                $endDate = $startDate->modify('+' . $enrolment->paymentsFrequency->frequencyLength . ' month, -1 day');
             
                 $paymentCycle->id          = null;
                 $paymentCycle->isNewRecord = true;
@@ -48,10 +48,10 @@ class EnrolmentPaymentFrequency extends Model
 
     public function deletePaymentCycles()
     {
+            $enrolment = Enrolment::find()->andWhere(['id' => $this->enrolmentId])->one();
             $paymentCycles = Paymentcycle::find()
                 ->notDeleted()
-                ->andWhere(['enrolmentId' => $this->id])
-                ->andWhere(['>=', 'startDate', $this->startDate])
+                ->andWhere(['enrolmentId' => $enrolment->id])
                 ->all();
             if ($paymentCycles) {       
             foreach ($paymentCycles as $paymentCycle) {
@@ -59,6 +59,15 @@ class EnrolmentPaymentFrequency extends Model
             }
         }
         return true;
+    }
+
+    public function diffInMonths($date1, $date2)
+    {
+        $diff =  $date1->diff($date2);
+
+        $months = $diff->y * 12 + $diff->m + (int) ($diff->d / 30);
+
+        return (int) $months;
     }
 
 }
