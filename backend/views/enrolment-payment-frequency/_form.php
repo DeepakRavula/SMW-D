@@ -7,6 +7,7 @@ use kartik\select2\Select2;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
+use yii\jui\DatePicker;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -26,6 +27,22 @@ use yii\grid\GridView;
             <?= $form->field($model, 'paymentFrequencyId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')]);
             ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+        <?= $form->field($enrolmentPaymentFrequency, 'effectiveDate')->widget(DatePicker::classname(), [
+                'options' => [
+                    'class' => 'form-control',
+                ],
+                'dateFormat' => 'php:M ,Y',
+                'clientOptions' => [
+                    'defaultDate' => (new \DateTime($enrolmentPaymentFrequency->effectiveDate))->format('M ,Y'),
+                    'changeMonth' => true,
+                    'yearRange' => '1500:3000',
+                    'changeYear' => true,
+                ]
+            ])->label('Effective Date') ?>
         </div>
     </div>
 

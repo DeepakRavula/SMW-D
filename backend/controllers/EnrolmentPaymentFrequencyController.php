@@ -45,9 +45,12 @@ class EnrolmentPaymentFrequencyController extends BaseController
     public function actionChangePaymentFrequency($id)
     {
         $model = $this->findModel($id);
-
+        $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
+        $enrolmentPaymentFrequency->enrolmentId = $id;
+        $enrolmentPaymentFrequency->effectiveDate =  (new \DateTime())->format('M d,Y');
         $data = $this->renderAjax('_form', [
             'model' => $model, 
+            'enrolmentPaymentFrequency' => $enrolmentPaymentFrequency,
         ]);
         $post = Yii::$app->request->post();
         if (!$post) {
@@ -57,12 +60,13 @@ class EnrolmentPaymentFrequencyController extends BaseController
             ];
         } else {
               $oldPaymentFrequency = clone $model;
-              $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
-              $enrolmentPaymentFrequency->enrolmentId = $model->id;
               $model->load($post);  
+              $enrolmentPaymentFrequency->load($post);
               if ($model->save()) {
                 if ((int) $oldPaymentFrequency->paymentFrequencyId !== (int) $model->paymentFrequencyId) {
-                    $enrolmentPaymentFrequency->resetPaymentCycle();
+                    $model->resetpaymentCycle();
+                    $model->resetPaymentRequest();
+                    $enrolmentPaymentFrequency->resetDueDates($enrolmentPaymentFrequency->effectiveDate);
                 }
             }
             return [
