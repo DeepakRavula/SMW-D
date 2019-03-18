@@ -64,10 +64,7 @@ class EnrolmentPaymentFrequencyController extends BaseController
               $model->load($post);  
               $enrolmentPaymentFrequency->load($post);
               if ($model->save()) {
-                if ((int) $oldPaymentFrequency->paymentFrequencyId !== (int) $model->paymentFrequencyId) {
                     $enrolmentPaymentFrequency->resetPaymentCycle();
-                    
-                }
             }
             return [
                 'status' => true,
