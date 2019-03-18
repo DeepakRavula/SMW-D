@@ -76,10 +76,6 @@ class ScheduleController extends BaseController
     public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
-        $enrolmentPaymentFrequency->enrolmentId = 1;
-        $enrolmentPaymentFrequency->effectiveDate =  (new \DateTime())->format('M d,Y');
-        $enrolmentPaymentFrequency->resetDueDates();
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
