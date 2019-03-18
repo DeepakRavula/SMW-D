@@ -17,6 +17,7 @@ class EnrolmentPaymentFrequency extends Model
     {
         return [
             [['enrolmentId', 'paymentFrequencyId', 'effectiveDate'], 'safe'],
+            [['effectiveDate'], ],
         ];
     }
 
