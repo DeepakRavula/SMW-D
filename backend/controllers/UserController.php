@@ -745,7 +745,7 @@ class UserController extends BaseController
         $invoiceCredits = Invoice::find()
             ->notDeleted()
             ->invoiceCredit($id)
-            ->sum('ROUND("invoice.balance")'); 
+            ->sum("invoice.balance"); 
 
         $paymentCredits = Payment::find()
             ->notDeleted()
@@ -753,7 +753,7 @@ class UserController extends BaseController
             ->customer($id)
             ->credit()
             ->orderBy(['payment.id' => SORT_ASC])
-            ->sum('ROUND("payment.balance")'); 
+            ->sum("payment.balance"); 
 
         $totalCredits = abs($invoiceCredits) + abs($paymentCredits);
         return $totalCredits;
@@ -768,7 +768,7 @@ class UserController extends BaseController
                 ])
                 ->andWhere(['>', 'invoice.balance', 0.09])
                 ->notDeleted()
-                ->sum('ROUND("invoice.balance")');
+                ->sum("invoice.balance");
                 
         return $invoiceOwingAmount;
     }
@@ -794,7 +794,7 @@ class UserController extends BaseController
             ->customer($id)
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
             ->andWhere(['invoiced_lesson.id' => null])
-            ->sum('ROUND("private_lesson.balance")');
+            ->sum("private_lesson.balance");
 
         $invoicedLessonsQuery = GroupLesson::find()
             ->joinWith(['invoiceItemLessons' => function($query) {
@@ -828,7 +828,7 @@ class UserController extends BaseController
             ->andWhere(['invoiced_lesson.id' => null])
             ->dueLessons()
             ->andWhere(['>', 'group_lesson.balance', 0.09])
-            ->sum('ROUND("group_lesson.balance")');
+            ->sum("group_lesson.balance");
         $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
         return $lessonsDue;
     }
