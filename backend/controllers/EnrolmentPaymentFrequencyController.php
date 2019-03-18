@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
 use common\models\EnrolmentPaymentFrequency;
+use Carbon\Carbon;
 
 class EnrolmentPaymentFrequencyController extends BaseController
 {
@@ -64,9 +65,8 @@ class EnrolmentPaymentFrequencyController extends BaseController
               $enrolmentPaymentFrequency->load($post);
               if ($model->save()) {
                 if ((int) $oldPaymentFrequency->paymentFrequencyId !== (int) $model->paymentFrequencyId) {
-                    $model->resetpaymentCycle();
-                    $model->resetPaymentRequest();
-                    $enrolmentPaymentFrequency->resetDueDates($enrolmentPaymentFrequency->effectiveDate);
+                    $enrolmentPaymentFrequency->resetPaymentCycle();
+                    
                 }
             }
             return [

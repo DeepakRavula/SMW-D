@@ -20,35 +20,56 @@ class EnrolmentPaymentFrequency extends Model
         ];
     }
 
-    public function resetDueDates()
+    public function resetPaymentCycle()
     {
-        $enrolment = Enrolment::find()->andWhere(['id' => $this->enrolmentId])->one();
-        $effectiveDate = Carbon::parse($this->effectiveDate)->format('Y-m-1');
-        $paymentFrequency = $enrolment->paymentFrequencyId;
-        $startDate = Carbon::parse($enrolment->course->startDate);
-        $diffInMonths = $this->diffInMonths(Carbon::parse($effectiveDate), Carbon::parse($enrolment->course->endDate));
-
-        $startDate = carbon::parse($effectiveDate)->format('Y-m-d');
-        for ($i = 0; $i <= $diffInMonths / $paymentFrequency; $i++) {
-            $fromDate = Carbon::parse($startDate)->format('Y-m-1');
-            $paymentFrequencyDays = ($paymentFrequency) * 30;
-            $toDate = Carbon::parse($fromDate)->modify('+' . $paymentFrequencyDays . 'days')->modify('last day of this month')->format('Y-m-d');
-            $lessons = Lesson::find()
-                ->enrolment($enrolment->id)
-                ->notCanceled()
-                ->isConfirmed()
-                ->notDeleted()
-                ->between(carbon::parse($fromDate), carbon::parse($toDate))
-                ->all();
-            $dueDate = Carbon::parse($fromDate)->modify('- 15days')->format('Y-m-d');
-            if ($lessons) {
-                foreach ($lessons as $lesson) {
-                    $lesson->updateAttributes(['dueDate' => $dueDate]);
+            $enrolment = Enrolment::find()->andWhere(['id' => $this->enrolmentId])->one();
+            $startDate = Carbon::parse($this->effectiveDate)->format('Y-m-1');
+            $enrolmentLastPaymentCycleEndDate = new \DateTime($enrolment->course->endDate);
+            $intervalMonths = $this->diffInMonths(Carbon::parse($startDate), $enrolmentLastPaymentCycleEndDate);
+            $this->deletePaymentCycles();
+            $lastPaymentCycle = $enrolment->lastPaymentCycle;
+            if ($lastPaymentCycle) {
+                $lastPaymentCycle->endDate = Carbon::parse($startDate)->modify('Last day of last month');
+                $lastPaymentCycle->save();
+            }
+            $paymentCycleCount = (int) ($intervalMonths / $enrolment->paymentsFrequency->frequencyLength);
+            for ($i = 0; $i <= $paymentCycleCount; $i++) {
+                if ($i !== 0) {
+                    $startDate     = $endDate->modify('First day of next month');
+                }
+                $paymentCycle              = new PaymentCycle();
+                $paymentCycle->enrolmentId = $this->enrolmentId;
+                $paymentCycle->startDate   = $startDate;
+                $endDate = Carbon::parse($startDate)->modify('+' . $enrolment->paymentsFrequency->frequencyLength . ' month, -1 day');
+            
+                $paymentCycle->id          = null;
+                $paymentCycle->isNewRecord = true;
+                $paymentCycle->endDate     = $endDate->format('Y-m-t');
+                if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') < $paymentCycle->endDate) {
+                    $paymentCycle->endDate = $enrolmentLastPaymentCycleEndDate->format('Y-m-t');
+                }
+                if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') > $paymentCycle->startDate) {
+                    $paymentCycle->save();
                 }
             }
-            $startDate = Carbon::parse($toDate)->modify('+1days')->format('Y-m-d');
-        }
     }
+
+    public function deletePaymentCycles()
+    {
+            $enrolment = Enrolment::find()->andWhere(['id' => $this->enrolmentId])->one();
+            $paymentCycles = Paymentcycle::find()
+                ->notDeleted()
+                ->andWhere(['enrolmentId' => $enrolment->id])
+                ->andWhere(['>=', 'payment_cycle.startDate', Carbon::parse($this->effectiveDate)->format('Y-m-1')])
+                ->all();
+            if ($paymentCycles) {       
+            foreach ($paymentCycles as $paymentCycle) {
+                $paymentCycle->delete();
+            }
+        }
+        return true;
+    }
+
 
     public function diffInMonths($date1, $date2)
     {
