@@ -21,8 +21,8 @@ use yii\bootstrap\ActiveForm;
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Date',
             'value' => function ($data) {
-                $date = Yii::$app->formatter->asDate($data->date);
-                $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+                $date = Yii::$app->formatter->asDate($data->lesson->date);
+                $lessonTime = (new \DateTime($data->lesson->date))->format('H:i:s');
 
                 return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
             }
@@ -30,14 +30,8 @@ use yii\bootstrap\ActiveForm;
         [
             'label' => 'Student',
             'attribute' => 'student',
-            'value' => function ($data) use ($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->user_id)
-                    ->one();
-                return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
+            'value' => function ($data) {
+                return $data->enrolment->student->fullName;
             },
         ],
 	    [
@@ -46,32 +40,20 @@ use yii\bootstrap\ActiveForm;
             'attribute' => 'royaltyFree',
             'label' => 'Program',
             'value' => function ($model) {
-                return $model->course->program->name;
+                return $model->lesson->course->program->name;
             }
         ],
 	    [
             'headerOptions' => ['class' => 'text-left'],
             'label' => 'Invoiced ?',
             'value' => function ($data) use ($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->user_id)
-                    ->one();
-                return $enrolment->hasInvoice($data->id) ? 'Yes' : 'No';
+                return $data->enrolment->hasInvoice($data->id) ? 'Yes' : 'No';
             }
         ],
 	    [
             'label' => 'Amount',
             'value' => function ($data) use ($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->user_id)
-                    ->one();
-                return Yii::$app->formatter->asCurrency(round($data->getGroupNetPrice($enrolment), 2));
+                return Yii::$app->formatter->asCurrency(round($data->total, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -79,15 +61,9 @@ use yii\bootstrap\ActiveForm;
 	    [
             'label' => 'Balance',
             'value' => function ($data) use ($model, $canEdit) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->user_id)
-                    ->one();
-                $balance = $data->getOwingAmount($enrolment->id);
+                $balance = $data->balance;
                 if ($canEdit) {
-                    $balance += $data->getPaidAmount($model->id, $enrolment->id);
+                    $balance += $data->lesson->getPaidAmount($model->id, $data->enrolment->id);
                 }
                 return Yii::$app->formatter->asCurrency(round($balance, 2));
             },
@@ -102,17 +78,11 @@ use yii\bootstrap\ActiveForm;
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
             'label' => 'Payment',
             'value' => function ($data) use ($form, $model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->user_id)
-                    ->one();
                 return $form->field($data, 'paymentAmount')->textInput([
-                    'value' => round($data->getPaidAmount($model->id, $enrolment->id), 2), 
+                    'value' => round($data->lesson->getPaidAmount($model->id, $data->enrolment->id), 2), 
                     'class' => 'form-control text-right payment-amount',
                     'id' => 'group-lesson-payment-' . $data->id,
-                    'readOnly' => $data->hasCreditUsed($enrolment->id)
+                    'readOnly' => $data->lesson->hasCreditUsed($data->enrolment->id)
                 ])->label(false);
             },
             'attribute' => 'new_activity',

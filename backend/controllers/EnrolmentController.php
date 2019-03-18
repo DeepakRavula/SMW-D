@@ -260,6 +260,19 @@ class EnrolmentController extends BaseController
             foreach ($course->extraCourses as $extraCourse) {
                 $extraCourse->studentId = $enrolmentModel->studentId;
                 $enrolment = $extraCourse->createExtraLessonEnrolment();
+                $lessons = Lesson::find()
+                    ->isConfirmed()
+                    ->notDeleted()
+                    ->notCanceled()
+                    ->andWhere(['courseId' => $extraCourse->id])
+                    ->all();
+                foreach ($lessons as $lesson) {
+                    $groupLesson = new GroupLesson();
+                    $groupLesson->lessonId = $lesson->id;
+                    $groupLesson->enrolmentId = $enrolment->id;
+                    $groupLesson->dueDate = (new \DateTime())->format('Y-m-d');
+                    $groupLesson->save();
+                }
             }
         }
         if ($enrolmentModel->save()) {
@@ -274,9 +287,7 @@ class EnrolmentController extends BaseController
                 $groupLesson->lessonId = $lesson->id;
                 $groupLesson->enrolmentId = $enrolmentId;
                 $groupLesson->dueDate = (new \DateTime())->format('Y-m-d');
-                if (!$groupLesson->save()) {
-                    print_r($groupLesson->getErrors());die;
-                }
+                $groupLesson->save();
             }
             $enrolmentModel->setStatus();
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);

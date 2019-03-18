@@ -5,6 +5,7 @@ namespace backend\models;
 use Yii;
 use yii\base\Model;
 use common\models\Invoice;
+use common\models\GroupLesson;
 use common\models\Lesson;
 use common\models\Payment;
 use common\models\User;
@@ -81,15 +82,9 @@ class PaymentEditForm extends Model
 
         if ($groupLessonPayments) {
             foreach ($groupLessonPayments as $groupLessonPayment) {
-                $lesson = Lesson::findOne($groupLessonPayment['id']);
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $lesson->courseId])
-                    ->customer($this->userId)
-                    ->one();
+                $groupLesson = GroupLesson::findOne($groupLessonPayment['id']);
                 $amount = $groupLessonPayment['value'];
-                $payments = $lesson->getPaymentsById($this->paymentId, $enrolment->id);
+                $payments = $groupLesson->lesson->getPaymentsById($this->paymentId, $groupLesson->enrolment->id);
                 foreach ($payments as $i => $lessonPayment) {
                     if ($i == 0) {
                         if ($amount == 0) {
