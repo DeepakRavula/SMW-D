@@ -35,9 +35,8 @@ use yii\jui\DatePicker;
                 'options' => [
                     'class' => 'form-control',
                 ],
-                'dateFormat' => 'php:M ,Y',
+                'dateFormat' => 'php:M, Y',
                 'clientOptions' => [
-                    'defaultDate' => (new \DateTime($enrolmentPaymentFrequency->effectiveDate))->format('M ,Y'),
                     'changeMonth' => true,
                     'yearRange' => '1500:3000',
                     'changeYear' => true,
