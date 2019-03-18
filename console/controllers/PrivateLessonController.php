@@ -28,7 +28,7 @@ class PrivateLessonController extends Controller
             $actionID == 'add-total-balance' || 'add' ? ['locationId'] : []
         );
     }
-
+    
     public function actionAddTotalBalance()
     {
         set_time_limit(0);
@@ -71,7 +71,7 @@ class PrivateLessonController extends Controller
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
         return true;
     }
-
+    
     public function actionAdd()
     {
         set_time_limit(0);
@@ -105,10 +105,7 @@ class PrivateLessonController extends Controller
                 $privateLesson = $lesson->privateLesson;
             }
             
-            $privateLesson->updateAttributes([
-                'total' => $lesson->netPrice,
-                'balance' => $lesson->getOwingAmount($lesson->enrolment->id)
-            ]);
+            $privateLesson->save();
             Console::output("processing: " . $lesson->id . 'added lesson total and balance', Console::FG_GREEN, Console::BOLD);
         }
         Console::endProgress(true);

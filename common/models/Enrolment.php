@@ -1116,6 +1116,11 @@ class Enrolment extends \yii\db\ActiveRecord
             ->onCondition(['lesson_payment.isDeleted' => false]);
     }
 
+    public function getLessonPayments()
+    {
+        return $this->hasMany(LessonPayment::className(), ['enrolmentId' => 'id']);
+    }
+
     public function hasPayment()
     {
         return $this->lessonPayment;

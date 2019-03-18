@@ -36,4 +36,9 @@ class GroupLessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andFilterWhere(['<', 'group_lesson.dueDate', (new \DateTime())->format('Y-m-d H:i:s')]);
     }
+
+    public function dueBetween($fromDate, $toDate)
+    {
+        return $this->andFilterWhere(['between', 'group_lesson.dueDate', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
+    }
 }
