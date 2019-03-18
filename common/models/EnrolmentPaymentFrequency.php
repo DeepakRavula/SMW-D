@@ -41,7 +41,6 @@ class EnrolmentPaymentFrequency extends Model
                 $paymentCycle->enrolmentId = $this->enrolmentId;
                 $paymentCycle->startDate   = $startDate;
                 $endDate = Carbon::parse($startDate)->modify('+' . $enrolment->paymentsFrequency->frequencyLength . ' month, -1 day');
-            
                 $paymentCycle->id          = null;
                 $paymentCycle->isNewRecord = true;
                 $paymentCycle->endDate     = $endDate->format('Y-m-t');
