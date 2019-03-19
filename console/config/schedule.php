@@ -17,17 +17,6 @@ $schedule->command('student/set-status-production')->sendOutputTo('/var/log/smw.
 $schedule->command('student/set-status-non-production')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('01:30');
 $schedule->command('customer/set-status')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('02:00');
 $schedule->command('invoice/all-expired-lessons')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('23:30');
-$schedule->command('payment-request/create --locationId=4')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:00');
-$schedule->command('payment-request/create --locationId=9')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:00');
-$schedule->command('payment-request/create --locationId=14')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:00');
-$schedule->command('payment-request/create --locationId=15')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:15');
-$schedule->command('payment-request/create --locationId=16')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:15');
-$schedule->command('payment-request/create --locationId=17')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:15');
-$schedule->command('payment-request/create --locationId=18')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:30');
-$schedule->command('payment-request/create --locationId=19')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:30');
-$schedule->command('payment-request/create --locationId=20')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:30');
-$schedule->command('payment-request/create --locationId=21')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:45');
-$schedule->command('payment-preference/create')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('06:00');
 $schedule->command('tools/backup')->dailyAt('23:59');
 
 
