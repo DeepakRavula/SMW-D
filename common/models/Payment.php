@@ -12,7 +12,7 @@ use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use backend\models\PaymentForm;
-
+use common\models\Payment;
 /**
  * This is the model class for table "payments".
  *
