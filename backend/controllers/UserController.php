@@ -534,8 +534,6 @@ class UserController extends BaseController
             'invoiceCount' => $this->getInvoiceCount($model, $locationId),
             'paymentsDataProvider' => $this->getPaymentsDataProvider($id),
             'paymentCount' => $this->getPaymentCount($id),
-            'credits' => $this->getTotalCredits($id),
-            'invoiceOwingAmountTotal' => $this->getInvoiceOwingAmountTotal($id),
             'outstandingInvoice' => $this->getOutstandingInvoice($id),
         ]);
     }
@@ -737,39 +735,6 @@ class UserController extends BaseController
                 ->exceptAutoPayments()
 		        ->count();
 	    return $paymentCount;
-    }
-
-    public function getTotalCredits($id) 
-    {
-        $invoiceCredits = Invoice::find()
-            ->notDeleted()
-            ->invoiceCredit($id)
-            ->sum("invoice.balance"); 
-
-        $paymentCredits = Payment::find()
-            ->notDeleted()
-            ->exceptAutoPayments()
-            ->customer($id)
-            ->credit()
-            ->orderBy(['payment.id' => SORT_ASC])
-            ->sum("payment.balance"); 
-
-        $totalCredits = abs($invoiceCredits) + abs($paymentCredits);
-        return $totalCredits;
-    }
-
-    protected function getInvoiceOwingAmountTotal($id)
-    {
-        $invoiceOwingAmount = Invoice::find()
-                ->andWhere([
-                    'invoice.user_id' => $id,
-                    'invoice.type' => Invoice::TYPE_INVOICE,
-                ])
-                ->andWhere(['>', 'invoice.balance', 0.09])
-                ->notDeleted()
-                ->sum("invoice.balance");
-                
-        return $invoiceOwingAmount;
     }
 
     protected function getOutstandingInvoice($id)

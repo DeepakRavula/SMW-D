@@ -92,6 +92,52 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
         'id' => 'user-index',
         'timeout' => 6000
     ]); ?>
+        <?php 
+            $columns = [
+            [
+                'attribute' => 'firstname',
+                'label' => 'First Name',
+                'value' => function ($data) {
+                    return !empty($data->userProfile->firstname) ? $data->userProfile->firstname : null;
+                },
+            ],
+            [
+                'attribute' => 'lastname',
+                'label' => 'Last Name',
+                'value' => function ($data) {
+                    return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
+                },
+            ],
+            [
+                'attribute' => 'email',
+                'label' => 'Email',
+                'value' => function ($data) {
+                    return !empty($data->primaryEmail->email) ? $data->primaryEmail->email : null;
+                },
+            ],
+            [
+                'attribute' => 'phone',
+                'label' => 'Phone',
+                'value' => function ($data) {
+                    return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
+                },
+            ], 
+        ];
+            if ($roleName == User::ROLE_CUSTOMER) {
+                array_push($columns, [
+                    'label' => 'Lessons Due',
+                    'value' => function ($data) {
+                        return !empty($data->getLessonsDue($data->id)) ? $data->getLessonsDue($data->id) : 0;
+                },
+                ]);
+                array_push($columns, [
+                    'label' => 'Owing',
+                    'value' => function ($data) {
+                        return round(($data->getLessonsDue($data->id) + $data->getInvoiceOwingAmountTotal($data->id)) - $data->getTotalCredits($data->id), 2);
+                },
+                ]);
+            }
+        ?>
         <?= KartikGridView::widget([
             'dataProvider' => $dataProvider,
             'summary' => "Showing {begin} - {end} of {totalCount} items",
@@ -112,36 +158,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
             'tableOptions' => ['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'filterModel' => $searchModel,
-            'columns' => [
-            [
-                'attribute' => 'firstname',
-                'label' => 'First Name',
-                'value' => function ($data) {
-                    return !empty($data->userProfile->firstname) ? $data->userProfile->firstname : null;
-                },
-            ],
-            [
-                'attribute' => 'lastname',
-                'label' => 'Last Name',
-                'value' => function ($data) {
-                    return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
-                },
-            ],
-            'email',
-            [
-		'attribute' => 'phone',
-                'label' => 'Phone',
-                'value' => function ($data) {
-                    return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
-                },
-            ],
-            [
-                'label' => 'Lessons Due',
-                'value' => function ($data) {
-                    return !empty($data->getLessonsDue($data->id)) ? $data->getLessonsDue($data->id) : 0;
-                },
-            ]
-        ],
+            'columns' => $columns,
         'toolbar' =>  [
             '{export}',
             '{toggleData}'

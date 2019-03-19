@@ -69,7 +69,7 @@ foreach ($roleNames as $name => $description) {
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_RED,
-                      'number'=> round($invoiceOwingAmountTotal, 2),
+                      'number'=> round($model->getInvoiceOwingAmountTotal($model->id), 2),
                       'text'=> 'OUTSTANDING INVOICE',
                       'icon'=> 'fa fa-dollar',
                   ])?>
@@ -77,7 +77,7 @@ foreach ($roleNames as $name => $description) {
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_GREEN,
-                      'number'=> round($credits, 2),
+                      'number'=> round($model->getTotalCredits($model->id), 2),
                       'text'=> 'CREDITS',
                       'icon'=> 'fa fa-dollar',
                   ])?>
@@ -85,7 +85,7 @@ foreach ($roleNames as $name => $description) {
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_ORANGE,
-                      'number'=> round(($model->getLessonsDue($model->id) + $invoiceOwingAmountTotal) - $credits, 2),
+                      'number'=> round(($model->getLessonsDue($model->id) + $model->getInvoiceOwingAmountTotal($model->id)) - $model->getTotalCredits($model->id), 2),
                       'text'=> 'BALANCE',
                       'icon'=> 'fa fa-dollar',
                   ])?>

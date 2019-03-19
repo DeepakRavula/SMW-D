@@ -1082,4 +1082,37 @@ class User extends ActiveRecord implements IdentityInterface
         $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
         return $lessonsDue;
     }
+
+    public function getInvoiceOwingAmountTotal($id)
+    {
+        $invoiceOwingAmount = Invoice::find()
+                ->andWhere([
+                    'invoice.user_id' => $id,
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                ])
+                ->andWhere(['>', 'invoice.balance', 0.09])
+                ->notDeleted()
+                ->sum("invoice.balance");
+                
+        return $invoiceOwingAmount;
+    }
+
+    public function getTotalCredits($id) 
+    {
+        $invoiceCredits = Invoice::find()
+            ->notDeleted()
+            ->invoiceCredit($id)
+            ->sum("invoice.balance"); 
+
+        $paymentCredits = Payment::find()
+            ->notDeleted()
+            ->exceptAutoPayments()
+            ->customer($id)
+            ->credit()
+            ->orderBy(['payment.id' => SORT_ASC])
+            ->sum("payment.balance"); 
+
+        $totalCredits = abs($invoiceCredits) + abs($paymentCredits);
+        return $totalCredits;
+    }
 }
