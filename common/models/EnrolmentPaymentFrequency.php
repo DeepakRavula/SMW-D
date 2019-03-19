@@ -146,7 +146,7 @@ class EnrolmentPaymentFrequency extends \yii\db\ActiveRecord
     {
         $this->enrolmentId = $model->enrolment->id;
         $this->paymentFrequencyId = $model->enrolment->paymentFrequencyId;
-        $this->paymentCycleStartDate = $courseDetail->paymentCycleStartDate;
+        $this->paymentCycleStartDate = (new \DateTime($courseDetail->paymentCycleStartDate))->format('Y-m-d');
         return $this;
     }
 }
