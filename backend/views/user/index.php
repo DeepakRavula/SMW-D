@@ -134,6 +134,12 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                 'value' => function ($data) {
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
+            ],
+            [
+                'label' => 'Lessons Due',
+                'value' => function ($data) {
+                    return !empty($data->getLessonsDue($data->id)) ? $data->getLessonsDue($data->id) : 0;
+                },
             ]
         ],
         'toolbar' =>  [

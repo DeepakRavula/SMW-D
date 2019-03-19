@@ -536,7 +536,6 @@ class UserController extends BaseController
             'paymentCount' => $this->getPaymentCount($id),
             'credits' => $this->getTotalCredits($id),
             'invoiceOwingAmountTotal' => $this->getInvoiceOwingAmountTotal($id),
-            'lessonsDue' => $this->getLessonsDue($id),
             'outstandingInvoice' => $this->getOutstandingInvoice($id),
         ]);
     }
@@ -771,66 +770,6 @@ class UserController extends BaseController
                 ->sum("invoice.balance");
                 
         return $invoiceOwingAmount;
-    }
-
-    public function getLessonsDue($id)
-    {
-        $invoicedLessons = Lesson::find()
-            ->notDeleted()
-            ->isConfirmed()
-            ->notCanceled()
-            ->privateLessons()
-            ->customer($id)
-            ->invoiced();
-        $lessonsOwingAmount = Lesson::find()
-            ->notDeleted()
-            ->isConfirmed()
-            ->notCanceled()
-            ->dueLessons()
-            ->privateLessons()
-            ->joinWith(['privateLesson' => function ($query) use ($id) {
-                $query->andWhere(['>', 'private_lesson.balance', 0.09]);
-            }])
-            ->customer($id)
-            ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
-            ->andWhere(['invoiced_lesson.id' => null])
-            ->sum("private_lesson.balance");
-
-        $invoicedLessonsQuery = GroupLesson::find()
-            ->joinWith(['invoiceItemLessons' => function($query) {
-                $query->joinWith(['invoiceLineItem ili' => function($query) {
-                    $query->notDeleted()
-                    ->joinWith(['invoice in' => function($query) {
-                        $query->notDeleted();
-                    }]);
-                }]);
-            }])
-            ->joinWith(['invoiceItemsEnrolment' => function($query) {
-                $query->joinWith(['lineItem' => function($query) {
-                    $query->notDeleted()
-                    ->joinWith(['invoice' => function($query) {
-                        $query->notDeleted();
-                    }]);
-                }]);
-            }]);
-        $groupLessonsOwingAmount = GroupLesson::find()
-            ->joinWith(['lesson' => function($query) {
-                $query->notDeleted()
-                    ->isConfirmed()
-                    ->notCanceled();
-            }])
-            ->joinWith(['enrolment' => function($query) use ($id) {
-                $query->notDeleted()
-                    ->isConfirmed()
-                    ->customer($id);
-            }])
-            ->leftJoin(['invoiced_lesson' => $invoicedLessonsQuery], 'group_lesson.id = invoiced_lesson.id')
-            ->andWhere(['invoiced_lesson.id' => null])
-            ->dueLessons()
-            ->andWhere(['>', 'group_lesson.balance', 0.09])
-            ->sum("group_lesson.balance");
-        $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
-        return $lessonsDue;
     }
 
     protected function getOutstandingInvoice($id)

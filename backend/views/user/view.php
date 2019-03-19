@@ -61,7 +61,7 @@ foreach ($roleNames as $name => $description) {
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_AQUA,
-                      'number'=> (round($lessonsDue, 2) > 0.00 && round($lessonsDue, 2) <= 0.09) || (round($lessonsDue, 2) < 0.00 && round($lessonsDue, 2) >= -0.09)  ? round('0.00', 2) : round($lessonsDue, 2),
+                      'number'=> $model->getLessonsDue($model->id),
                       'text'=> 'LESSONS DUE',
                       'icon'=> 'fa fa-dollar',
                   ])?>
@@ -85,7 +85,7 @@ foreach ($roleNames as $name => $description) {
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_ORANGE,
-                      'number'=> round(($lessonsDue + $invoiceOwingAmountTotal) - $credits, 2),
+                      'number'=> round(($model->getLessonsDue($model->id) + $invoiceOwingAmountTotal) - $credits, 2),
                       'text'=> 'BALANCE',
                       'icon'=> 'fa fa-dollar',
                   ])?>
