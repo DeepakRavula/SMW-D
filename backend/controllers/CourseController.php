@@ -37,6 +37,7 @@ use common\components\controllers\BaseController;
 use common\models\Payment;
 use common\models\CustomerReferralSource;
 use backend\models\GroupCourseForm;
+use common\models\EnrolmentPaymentFrequency;
 
 /**
  * CourseController implements the CRUD actions for Course model.
@@ -604,7 +605,7 @@ class CourseController extends BaseController
                     'student' => $student,
                     'isReverse' => $isReverse,
                     'teachers' => $teachers,
-                    'customerDiscount' => $customerDiscount
+                    'customerDiscount' => $customerDiscount,
                 ]);
                 $response = [
                     'status' => true,
