@@ -56,6 +56,7 @@ foreach ($roleNames as $name => $description) {
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 
 <?php Pjax::begin(['id' => 'customer-view']) ?>
+<?php if ($searchModel->role_name == 'customer'):?>
 <div class="row">
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
@@ -90,6 +91,7 @@ foreach ($roleNames as $name => $description) {
                   ])?>
 </div>
 </div>
+    <?php endif;?>
 <div class="row">
     <div class="col-md-6">
         <?php Pjax::begin(['id' => 'user-profile']); ?>
