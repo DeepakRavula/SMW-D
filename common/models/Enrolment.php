@@ -577,6 +577,12 @@ class Enrolment extends \yii\db\ActiveRecord
             || (!$insert) || $this->isExtra()) {
             return parent::afterSave($insert, $changedAttributes);
         }
+        // if ($this->course->program->isPrivate() && !$this->isExtra()) {
+        //     $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
+        //     $enrolmentPaymentFrequency->enrolmentId = $this->id;
+        //     $enrolmentPaymentFrequency->paymentFrequencyId = $this->paymentFrequencyId;
+        //     $enrolmentPaymentFrequency->paymentCycleStartDate
+        // }
         $interval = new \DateInterval('P1D');
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);

@@ -20,6 +20,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
 use common\models\Enrolment;
+use common\models\EnrolmentPaymentFrequency;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -196,6 +197,9 @@ class StudentController extends BaseController
                 }
             }
         }
+        $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
+        $enrolmentPaymentFrequency->setModel($courseModel, $courseDetail);
+        $enrolmentPaymentFrequency->save();   
         return $this->redirect(['lesson/review', 'LessonReview[courseId]' => $courseModel->id, 'LessonReview[EnrolmentType]' => $courseDetail->isReverse ? Enrolment::TYPE_REVERSE : null, 
             'LessonSearch[showAllReviewLessons]' => false]);
     }

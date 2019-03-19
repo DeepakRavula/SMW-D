@@ -2,6 +2,8 @@
 
 use yii\db\Migration;
 use common\models\Enrolment;
+use common\models\EnrolmentPaymentFrequency;
+use common\models\User;
 
 /**
  * Class m190319_060311_adding_enrolment_payment_frequency_table_date
@@ -11,16 +13,28 @@ class m190319_060311_adding_enrolment_payment_frequency_table_date extends Migra
     /**
      * {@inheritdoc}
      */
+    public function init()
+    {
+        parent::init();
+        $user = User::findByRole(User::ROLE_BOT);
+        $botUser = end($user);
+        Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+    }
+
     public function safeUp()
     {
         $enrolments = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->isRegular()
-                    ->private()
+                    ->privateProgram()
                     ->all();
         foreach ($enrolments as $enrolment) {
-
+            $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
+            $enrolmentPaymentFrequency->enrolmentId = $enrolment->id;
+            $enrolmentPaymentFrequency->paymentFrequencyId = $enrolment->paymentFrequencyId;
+            $enrolmentPaymentFrequency->paymentCycleStartDate = $enrolment->firstPaymentCycle->startDate;
+            $enrolmentPaymentFrequency->save();
         }
     }
 

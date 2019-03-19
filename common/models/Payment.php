@@ -6,7 +6,6 @@ use Yii;
 use yii\db\ActiveRecord;
 use common\models\query\PaymentQuery;
 use common\models\PaymentMethod;
-use common\models\Payment;
 use Carbon\Carbon;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\BlameableBehavior;
