@@ -779,6 +779,17 @@ class Enrolment extends \yii\db\ActiveRecord
     public function setPaymentCycle($startDate)
     {
         if (!$this->hasPaymentCycles()) {
+        if ((new \DateTime($startDate))->format('Y-m-1') >= (new \DateTime($this->course->startDate))->format('Y-m-1')) {
+                $paymentCycle              = new PaymentCycle();
+                $paymentCycle->enrolmentId = $this->id;
+                $paymentCycle->startDate   = (new \DateTime($this->course->startDate))->format('Y-m-1');
+                $paymentCycle->id          = null;
+                $paymentCycle->isNewRecord = true;
+                $endDate = (new \DateTime($startDate))->format('Y-m-1');
+                $paymentCycle->endDate     =  (new \DateTime($endDate))->modify('Last day of last month')->format('Y-m-d');
+                $paymentCycle->save();
+        }
+       
             $enrolmentStartDate      = new \DateTime($startDate);
             $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
             for ($i = 0; $i <= (int) 24 / $this->paymentsFrequency->frequencyLength; $i++) {
@@ -893,6 +904,12 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         return $amount;
     }
+
+    public function getEnrolmentPaymentFrequency()
+    {
+        return $this->hasOne(EnrolmentPaymentFrequency::className(), ['enrolmentId' => 'id']);
+    }
+
 
     public function getLastRootLesson()
     {
