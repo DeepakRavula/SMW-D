@@ -1082,5 +1082,4 @@ class User extends ActiveRecord implements IdentityInterface
         $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
         return $lessonsDue;
     }
-
 }
