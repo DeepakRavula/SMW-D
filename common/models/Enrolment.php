@@ -936,7 +936,8 @@ class Enrolment extends \yii\db\ActiveRecord
             $extendedLesson->makeAsRoot();
         }
         $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
-        $enrolmentPaymentFrequency->effectiveDate = $start;
+        $enrolmentPaymentFrequency->effectiveDate = $start->format('Y-m-d');
+        $enrolmentPaymentFrequency->enrolmentId = $this->id;
         $enrolmentPaymentFrequency->resetPaymentCycle();
         return true;
     }
