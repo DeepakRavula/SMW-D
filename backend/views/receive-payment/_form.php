@@ -291,6 +291,11 @@ use yii\bootstrap\Html;
         $('#modal-back').removeClass('btn-info');
         $('#modal-back').addClass('btn-default');
         $('.modal-back').show();
+        $('.modal-delete').text('Email Statement');
+        $('.modal-delete').removeClass('btn-danger');
+        $('.modal-delete').addClass('btn-default email-statement');
+        $('.modal-delete').removeClass('modal-delete');
+        $('.email-statement').show();
         $('#modal-save').show();
         $('#modal-save').removeClass('modal-save');
         $('#modal-save').addClass('recive-payment-modal-save');
@@ -429,6 +434,13 @@ use yii\bootstrap\Html;
                 }
             });
         }
+        return false;
+    });
+
+    $(document).off('click', '.email-statement').on('click', '.email-statement', function() {
+        $('#popup-modal').modal('hide');
+        var url = '<?= Url::to(['print/customer-statement']) ?>';
+        window.open(url, '_blank');
         return false;
     });
 </script>

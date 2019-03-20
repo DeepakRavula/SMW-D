@@ -31,6 +31,8 @@ use common\models\PaymentReceipt;
 use backend\models\PaymentForm;
 use yii\data\ArrayDataProvider;
 use common\models\InvoicePayment;
+use backend\models\search\PaymentFormLessonSearch;
+
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -49,7 +51,7 @@ class PrintController extends BaseController
                             'time-voucher', 'customer-invoice', 'account-view', 
                             'royalty', 'royalty-free', 'tax-collected', 'user', 
                             'customer-items-print', 'proforma-invoice','payment',
-                            'receipt', 'sales-and-payment'
+                            'receipt', 'sales-and-payment', 'customer-statement'
                         ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
@@ -622,6 +624,31 @@ class PrintController extends BaseController
             'searchModel' => $searchModel,
             'salesDataProvider' => $salesDataProvider,
             'paymentsDataProvider' => $paymentsDataProvider,
+        ]);
+    }
+
+    public function actionCustomerStatement()
+    {
+        $request = Yii::$app->request;
+        $searchModel = new PaymentFormLessonSearch();
+        $searchModel->showCheckBox = false;
+        $currentDate = new \DateTime();
+        if (!$request->post()) {
+            $searchModel->fromDate = $currentDate->format('M 1, Y');
+            $searchModel->toDate = $currentDate->format('M t, Y'); 
+            $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        }
+        $searchModel->load(Yii::$app->request->get());
+        $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
+        $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
+        $lessonLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $lessonsQuery,
+            'pagination' => false
+        ]);
+        $this->layout = '/print';
+        return $this->render('/receive-payment/customer-statement/view', [
+            'lessonLineItemsDataProvider' =>  $lessonLineItemsDataProvider,
+            'searchModel'                  =>  $searchModel,
         ]);
     }
 }
