@@ -328,5 +328,25 @@ class EmailController extends BaseController
                 'data' => $data,
             ];
         }
-    }   
+    } 
+    
+    public function actionCustomerStatement($id) {
+      
+            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_CUSTOMER_STATEMENT]);
+            $user = User::findOne($id);
+        $data = $this->renderAjax('/mail/customer-statement', [
+            'model' => new EmailForm(),
+            'emails' => !empty($user->email) ?$user->email : null,
+            'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
+            'emailTemplate' => $emailTemplate,
+            'userModel' => $user,
+        ]);
+        $post = Yii::$app->request->post();
+        if (!$post) {
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }
 }
