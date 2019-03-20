@@ -121,7 +121,7 @@ class LessonConfirm extends Model
         $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
         $enrolmentModel->isConfirmed = true;
         $enrolmentModel->save();
-        $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
+        $enrolmentModel->setPaymentCycle($enrolmentModel->enrolmentPaymentFrequency->paymentCycleStartDate);
         if ($enrolmentModel->course->isPrivate()) {
             $enrolmentModel->course->updateDates();
         }

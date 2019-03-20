@@ -17,7 +17,7 @@ use yii\jui\DatePicker;
 ?>
 <div class="user-create-form">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
         <?= $form->field($model, 'startDate')->widget(DatePicker::classname(), [
             'options' => [
                 'class' => 'form-control',
@@ -30,6 +30,23 @@ use yii\jui\DatePicker;
                 'changeYear' => true,
             ]
             ])->label('Start Date');
+        ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+        <?= $form->field($model, 'paymentCycleStartDate')->widget(DatePicker::classname(), [
+            'options' => [
+                'class' => 'form-control',
+            ],
+            'dateFormat' => 'php:M d, Y',
+            'clientOptions' => [
+                'defaultDate' => (new \DateTime())->format('M d, Y'),
+                'changeMonth' => true,
+                'yearRange' => '1500:3000',
+                'changeYear' => true,
+            ]
+            ])->label('Payment Cycle Effective Date');
         ?>
         </div>
     </div>
