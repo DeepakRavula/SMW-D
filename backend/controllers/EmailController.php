@@ -28,6 +28,8 @@ use common\models\User;
 use yii\data\ArrayDataProvider;
 use backend\models\search\PaymentSearch;
 use common\models\InvoicePayment;
+use backend\models\search\PaymentFormLessonSearch;
+use backend\models\search\PaymentFormGroupLessonSearch;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -38,7 +40,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment'],
+                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment','customer-statement'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -49,7 +51,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment'],
+                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -331,15 +333,62 @@ class EmailController extends BaseController
     } 
     
     public function actionCustomerStatement($id) {
-      
+            $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
+            $groupLessonSearchModel->showCheckBox = true;
+            $groupLessonSearchModel->userId = $id;
+            $currentDate = new \DateTime();
+            $searchModel = new PaymentFormLessonSearch();
+            $searchModel->showCheckBox = true;
+            $searchModel->userId = $id;
+            $groupLessonSearchModel->fromDate = $currentDate->format('M 1, Y');
+            $groupLessonSearchModel->toDate = $currentDate->format('M t, Y'); 
+            $groupLessonSearchModel->dateRange = $groupLessonSearchModel->fromDate . ' - ' . $groupLessonSearchModel->toDate;
+            $searchModel->fromDate = $currentDate->format('M 1, Y');
+            $searchModel->toDate = $currentDate->format('M t, Y'); 
+            $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+            $groupLessonsQuery = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
+            $groupLessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
+            $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
+            $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
+            $lessonLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $lessonsQuery,
+                'pagination' => false
+            ]);
+            $groupLessonLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $groupLessonsQuery,
+                'pagination' => false
+            ]);
+            $invoicesQuery = Invoice::find();
+            if (!$searchModel->userId) {
+                $searchModel->userId = null;
+            }
+            $invoicesQuery->notDeleted()
+                ->invoice()
+                ->customer($searchModel->userId)
+                ->unpaid()
+                ->andWhere(['>','invoice.balance' , 0.09]);
+            $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
+            $invoiceLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $invoicesQuery,
+                'pagination' => false 
+            ]);
+            $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
+
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_CUSTOMER_STATEMENT]);
             $user = User::findOne($id);
-        $data = $this->renderAjax('/mail/customer-statement', [
+            $data = $this->renderAjax('/mail/_customer-statement', [
             'model' => new EmailForm(),
             'emails' => !empty($user->email) ?$user->email : null,
             'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
             'emailTemplate' => $emailTemplate,
-            'userModel' => $user,
+            'user' => $user,
+            'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+            'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+            'creditDataProvider' => $creditDataProvider,
+            'searchModel' => $searchModel,
+            'groupLessonSearchModel' => $groupLessonSearchModel
+
         ]);
         $post = Yii::$app->request->post();
         if (!$post) {
@@ -348,5 +397,64 @@ class EmailController extends BaseController
                 'data' => $data,
             ];
         }
+    }
+
+    public function getCustomerCreditInvoices($customerId)
+    {
+        return Invoice::find()
+            ->notDeleted()
+            ->invoiceCredit($customerId)
+            ->all();
+    }
+
+    public function getAvailableCredit($customerId = null)
+    {
+        $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
+        $results = [];
+        $amount = 0;
+        $paymentCredits = $this->getCustomerPayments($customerId);
+        
+        if ($invoiceCredits) {
+            foreach ($invoiceCredits as $invoiceCredit) {
+                $results[] = [
+                    'id' => $invoiceCredit->id,
+                    'type' => 'Invoice Credit',
+                    'reference' => $invoiceCredit->getInvoiceNumber(),
+                    'amount' => round(abs($invoiceCredit->balance), 2)
+                ];
+            }
+        }
+
+        if ($paymentCredits) {
+            foreach ($paymentCredits as $paymentCredit) {
+                if ($paymentCredit->hasCredit()) {
+                    $results[] = [
+                        'id' => $paymentCredit->id,
+                        'type' => 'Payment Credit',
+                        'reference' => $paymentCredit->reference,
+                        'amount' => round($paymentCredit->creditAmount, 2)
+                    ];
+                }
+            }
+        }
+        
+        $creditDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['id', 'type', 'reference', 'amount']
+            ],
+            'pagination' => false
+        ]);
+        return $creditDataProvider;
+    }
+    
+    public function getCustomerPayments($customerId)
+    {
+        return Payment::find()
+            ->notDeleted()
+            ->exceptAutoPayments()
+            ->customer($customerId)
+            ->orderBy(['payment.id' => SORT_ASC])
+            ->all();
     }
 }
