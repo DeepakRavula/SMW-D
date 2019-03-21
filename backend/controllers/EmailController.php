@@ -40,7 +40,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment','customer-statement'],
+                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -332,7 +332,8 @@ class EmailController extends BaseController
         }
     } 
     
-    public function actionCustomerStatement($id) {
+    public function actionCustomerStatement($id) 
+    {
             $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
             $groupLessonSearchModel->showCheckBox = true;
             $groupLessonSearchModel->userId = $id;
