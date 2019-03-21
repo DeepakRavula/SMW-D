@@ -335,65 +335,6 @@ class PaymentController extends BaseController
         ]);
     }
 
-    public function getCustomerCreditInvoices($customerId)
-    {
-        return Invoice::find()
-            ->notDeleted()
-            ->invoiceCredit($customerId)
-            ->all();
-    }
-
-    public function getAvailableCredit($customerId = null)
-    {
-        $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
-        $results = [];
-        $amount = 0;
-        $paymentCredits = $this->getCustomerPayments($customerId);
-        
-        if ($invoiceCredits) {
-            foreach ($invoiceCredits as $invoiceCredit) {
-                $results[] = [
-                    'id' => $invoiceCredit->id,
-                    'type' => 'Invoice Credit',
-                    'reference' => $invoiceCredit->getInvoiceNumber(),
-                    'amount' => round(abs($invoiceCredit->balance), 2)
-                ];
-            }
-        }
-
-        if ($paymentCredits) {
-            foreach ($paymentCredits as $paymentCredit) {
-                if ($paymentCredit->hasCredit()) {
-                    $results[] = [
-                        'id' => $paymentCredit->id,
-                        'type' => 'Payment Credit',
-                        'reference' => $paymentCredit->reference,
-                        'amount' => round($paymentCredit->creditAmount, 2)
-                    ];
-                }
-            }
-        }
-        
-        $creditDataProvider = new ArrayDataProvider([
-            'allModels' => $results,
-            'sort' => [
-                'attributes' => ['id', 'type', 'reference', 'amount']
-            ],
-            'pagination' => false
-        ]);
-        return $creditDataProvider;
-    }
-    
-    public function getCustomerPayments($customerId)
-    {
-        return Payment::find()
-            ->notDeleted()
-            ->exceptAutoPayments()
-            ->customer($customerId)
-            ->orderBy(['payment.id' => SORT_ASC])
-            ->all();
-    }
-
     public function actionReceive()
     {
         $request = Yii::$app->request;
@@ -445,7 +386,7 @@ class PaymentController extends BaseController
             'query' => $invoicesQuery,
             'pagination' => false 
         ]);
-        $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
+        $creditDataProvider = $payment->getAvailableCredit($searchModel->userId);
         if ($request->post()) {
             $model->load($request->post());
             $payment->load(Yii::$app->request->get());
