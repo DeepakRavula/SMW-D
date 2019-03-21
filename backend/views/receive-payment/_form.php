@@ -287,9 +287,9 @@ use yii\bootstrap\Html;
         $('#popup-modal').find('.modal-header').html(header);
         $('#modal-save').text('Save');
         $('.modal-cancel').text('Close');
-        $('.modal-back').text('Create Payment Request');
-        $('#modal-back').removeClass('btn-info');
-        $('#modal-back').addClass('btn-default');
+        $('.modal-back').text('Email Statement');
+        $('.modal-back').addClass('btn-info');
+        $('.modal-back').attr('href', '#');
         $('.modal-back').show();
         $('#modal-save').show();
         $('#modal-save').removeClass('modal-save');
@@ -403,32 +403,27 @@ use yii\bootstrap\Html;
     $(document).off('click', '.modal-back').on('click', '.modal-back', function() {
         var invoiceIds = null;
         $('#modal-spinner').show();
-        var userId = $('#customer-payment').val();
-        var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
-        if ($('#invoice-line-item-grid').length > 0) {
-            var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-        }
-        var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
-        if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds) && $.isEmptyObject(groupLessonIds)) {
-            $('#modal-spinner').hide();
-            $('#index-error-notification').html("Choose any lessons or invoices to create PFI").fadeIn().delay(5000).fadeOut();
-        } else {
-            
+        var userId = $('#customer-payment').val();   
+        var params = $.param({ 'id' : userId});     
             $('.modal-back').attr('disabled', true);
             $('.modal-save-replaced').attr('disabled', true);
-            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'PaymentFormLessonSearch[userId]': userId, 
-                'ProformaInvoice[invoiceIds]': invoiceIds, 'PaymentFormGroupLessonSearch[lessonIds]': groupLessonIds });
             $.ajax({
-                url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
+                url    : '<?= Url::to(['email/customer-statement']) ?>?' + params,
                 type   : 'get',
                 success: function(response)
                 {
                     if (response.status) {
-                        window.location.href = response.url;
+                        $('#modal-spinner').hide();
+                        $('#popup-modal').modal('hide'); 
+                        $('#modal-content').html("");
+                        $('#modal-content').html(response.data);
+                        $('.modal-save').text('Send');
+                        $('#popup-modal').modal('show'); 
+                       
+                        
                     }
                 }
             });
-        }
         return false;
     });
 </script>
