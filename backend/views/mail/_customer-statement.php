@@ -6,7 +6,7 @@ use common\models\Payment;
 
 $content = $this->renderAjax('/receive-payment/mail/view', [
     'model' => new Payment(),
-    'userModel' => $user,
+    'userModel' => $userModel,
     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
     'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -30,5 +30,6 @@ if (!empty($userModel)) {
     'content' => $content,
     'model' => $model,
     'subject' => $subject,
-    'emailTemplate' => $emailTemplate
+    'emailTemplate' => $emailTemplate,
+    'data' => $data
 ]);

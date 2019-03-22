@@ -406,7 +406,6 @@ use yii\bootstrap\Html;
         var userId = $('#customer-payment').val();   
         var params = $.param({ 'id' : userId});     
             $('.modal-back').attr('disabled', true);
-            $('.modal-save-replaced').attr('disabled', true);
             $.ajax({
                 url    : '<?= Url::to(['email/customer-statement']) ?>?' + params,
                 type   : 'get',
@@ -414,13 +413,8 @@ use yii\bootstrap\Html;
                 {
                     if (response.status) {
                         $('#modal-spinner').hide();
-                        $('#popup-modal').modal('hide'); 
-                        $('#modal-content').html("");
-                        $('#modal-content').html(response.data);
-                        $('.modal-save').text('Send');
-                        $('#popup-modal').modal('show'); 
-                       
-                        
+                        $('#modal-content').html(response.data);                       
+                          
                     }
                 }
             });

@@ -382,7 +382,7 @@ class EmailController extends BaseController
             'emails' => !empty($user->email) ?$user->email : null,
             'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
             'emailTemplate' => $emailTemplate,
-            'user' => $user,
+            'userModel' => $user,
             'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
             'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
