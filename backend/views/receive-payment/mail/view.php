@@ -50,6 +50,7 @@ use yii\bootstrap\Html;
 ]);
 ?>
 </div>
+<?php endif; ?> 
 <table style = "width:100%;">
 <table style = "width:50%">
 <table class = "table table-condensed">
@@ -59,4 +60,3 @@ use yii\bootstrap\Html;
 </tr>
 </div>
 </div>
-<?php endif; ?> 
