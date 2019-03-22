@@ -33,8 +33,6 @@ use yii\data\ArrayDataProvider;
 use common\models\InvoicePayment;
 use backend\models\search\PaymentFormLessonSearch;
 use backend\models\search\PaymentFormGroupLessonSearch;
-use yii\filters\ContentNegotiator;
-use yii\web\Response;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
