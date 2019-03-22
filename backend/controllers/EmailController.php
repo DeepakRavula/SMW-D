@@ -375,6 +375,15 @@ class EmailController extends BaseController
             ]);
             $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
 
+            $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
+            $invoicesDue = $invoicesQuery->sum('invoice.balance');
+            $groupLessonsDue = $groupLessonsQuery->sum('group_lesson.balance');
+            $credits = 0.00;
+            $creditResults = $creditDataProvider->getModels();   
+            foreach ($creditResults as $creditResult) {
+                $credits+= $creditResult['amount'];
+            }    
+            $total = ($lessonsDue+$invoicesDue+$groupLessonsDue) - $credits;
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_CUSTOMER_STATEMENT]);
             $user = User::findOne($id);
             $data = $this->renderAjax('/mail/_customer-statement', [
@@ -388,7 +397,8 @@ class EmailController extends BaseController
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
             'creditDataProvider' => $creditDataProvider,
             'searchModel' => $searchModel,
-            'groupLessonSearchModel' => $groupLessonSearchModel
+            'groupLessonSearchModel' => $groupLessonSearchModel,
+            'total' =>$total
 
         ]);
         $post = Yii::$app->request->post();

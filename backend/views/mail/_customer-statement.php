@@ -13,7 +13,8 @@ $content = $this->renderAjax('/receive-payment/mail/view', [
     'creditDataProvider' => $creditDataProvider,
     'emailTemplate' => $emailTemplate,
     'searchModel' => $searchModel,
-    'groupLessonSearchModel' => $groupLessonSearchModel
+    'groupLessonSearchModel' => $groupLessonSearchModel,
+    'total' => $total
 ]);
 $model->to = $emails;
 $data = [];
