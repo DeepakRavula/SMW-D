@@ -100,6 +100,7 @@ in the amount of <?= $model->amount; ?> via <?= $paymentModel->paymentMethod->na
         $('.modal-save-all').text('Print');
         $('.modal-save-all').show();
         $('#modal-back').hide();
+        $('.print-statement').hide();
     });
 
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
