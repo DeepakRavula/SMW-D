@@ -12,6 +12,7 @@ use common\models\Lesson;
         padding: 0px;  
 }
 </style>
+<div class="clearfix"></div>
 <?php
 if (!$searchModel->summariseReport) {
 $columns = [
