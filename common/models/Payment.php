@@ -6,13 +6,16 @@ use Yii;
 use yii\db\ActiveRecord;
 use common\models\query\PaymentQuery;
 use common\models\PaymentMethod;
-use common\models\Payment;
 use Carbon\Carbon;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use backend\models\PaymentForm;
+use common\models\Invoice;
+use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
+use common\models\Payment;
 
 /**
  * This is the model class for table "payments".
@@ -501,5 +504,64 @@ class Payment extends ActiveRecord
                             ->andWhere(['paymentId' => $paymentId])
                             ->sum('amount');                  
         return $getAmountUsed;                    
+    }
+
+    public function getCustomerCreditInvoices($customerId)
+    {
+        return Invoice::find()
+            ->notDeleted()
+            ->invoiceCredit($customerId)
+            ->all();
+    }
+
+    public function getAvailableCredit($customerId = null)
+    {
+        $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
+        $results = [];
+        $amount = 0;
+        $paymentCredits = $this->getCustomerPayments($customerId);
+        
+        if ($invoiceCredits) {
+            foreach ($invoiceCredits as $invoiceCredit) {
+                $results[] = [
+                    'id' => $invoiceCredit->id,
+                    'type' => 'Invoice Credit',
+                    'reference' => $invoiceCredit->getInvoiceNumber(),
+                    'amount' => round(abs($invoiceCredit->balance), 2)
+                ];
+            }
+        }
+
+        if ($paymentCredits) {
+            foreach ($paymentCredits as $paymentCredit) {
+                if ($paymentCredit->hasCredit()) {
+                    $results[] = [
+                        'id' => $paymentCredit->id,
+                        'type' => 'Payment Credit',
+                        'reference' => $paymentCredit->reference,
+                        'amount' => round($paymentCredit->creditAmount, 2)
+                    ];
+                }
+            }
+        }
+        
+        $creditDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['id', 'type', 'reference', 'amount']
+            ],
+            'pagination' => false
+        ]);
+        return $creditDataProvider;
+    }
+    
+    public function getCustomerPayments($customerId)
+    {
+        return Payment::find()
+            ->notDeleted()
+            ->exceptAutoPayments()
+            ->customer($customerId)
+            ->orderBy(['payment.id' => SORT_ASC])
+            ->all();
     }
 }

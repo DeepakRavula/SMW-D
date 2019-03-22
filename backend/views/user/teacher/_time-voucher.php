@@ -47,6 +47,7 @@ use common\models\InvoiceLineItem;
 
     <?php ActiveForm::end(); ?>
 </div>
+<div class="clearfix"></div>
 
 <?= $this->render('_cost-time-voucher-content', [
     'model' => $model,

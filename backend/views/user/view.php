@@ -61,7 +61,7 @@ foreach ($roleNames as $name => $description) {
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_AQUA,
-                      'number'=> $model->getLessonsDue($model->id),
+                      'number'=> round($model->getLessonsDue($model->id), 2),
                       'text'=> 'LESSONS DUE',
                       'icon'=> 'fa fa-dollar',
                   ])?>

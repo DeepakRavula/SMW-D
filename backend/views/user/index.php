@@ -129,12 +129,17 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                     'value' => function ($data) {
                         return !empty($data->getLessonsDue($data->id)) ? $data->getLessonsDue($data->id) : 0;
                 },
+                'contentOptions' => ['class' => 'text-right dollar'],
                 ]);
                 array_push($columns, [
-                    'label' => 'Owing',
+                    'label' => 'Balance',
                     'value' => function ($data) {
                         return round(($data->getLessonsDue($data->id) + $data->getInvoiceOwingAmountTotal($data->id)) - $data->getTotalCredits($data->id), 2);
                 },
+                    'contentOptions' => ['class' => 'text-right dollar'],
+                    'hAlign' => 'right',
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_SUM
                 ]);
             }
         ?>
@@ -158,6 +163,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
             'tableOptions' => ['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'filterModel' => $searchModel,
+            'showPageSummary' => true,
             'columns' => $columns,
         'toolbar' =>  [
             '{export}',

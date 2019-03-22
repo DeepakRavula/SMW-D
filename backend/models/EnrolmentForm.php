@@ -61,6 +61,7 @@ class EnrolmentForm extends Model
     public $referralSourceId;
     public $description;
 
+    public $paymentCycleStartDate;
     /**
      * {@inheritdoc}
      */
@@ -73,7 +74,8 @@ class EnrolmentForm extends Model
             [['programId', 'paymentFrequency', 'duration', 'programRate','lessonsCount'],
                 'required', 'on' => self::SCENARIO_BASIC],
             [['enrolmentDiscount', 'pfDiscount'], 'safe'],
-            [['startDate'], 'required', 'on' => self::SCENARIO_DATE_DETAILED],
+            [['startDate', 'paymentCycleStartDate'], 'required', 'on' => self::SCENARIO_DATE_DETAILED],
+            [['paymentCycleStartDate'], 'safe', 'on' => self::SCENARIO_DEFAULT],
             [['fromTime', 'day', 'teacherId'], 'required', 'on' => self::SCENARIO_DETAILED],
             [['first_name', 'last_name'], 'required', 'on' => self::SCENARIO_STUDENT],
             [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
