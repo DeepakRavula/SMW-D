@@ -6,26 +6,30 @@ use yii\bootstrap\Html;
 /* @var $model common\models\PaymentMethods */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<div class = "row">
 <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
-<?= $this->render('/receive-payment/_lesson-line-item', [
+<?= $this->render('_lesson-line-item', [
     'model' => $model,
     'isCreatePfi' => false,
     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
     'searchModel' => $searchModel
 ]);
 ?>
-
+</div>
+<div class = "row">
 <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
-<?= $this->render('/receive-payment/_group-lesson-line-item', [
+<?= $this->render('_group-lesson-line-item', [
     'model' => $model,
     'isCreatePfi' => false,
     'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
     'searchModel' => $groupLessonSearchModel
 ]);
 ?>
+</div>
+<div class = "row">
 <?php if ($invoiceLineItemsDataProvider->totalCount > 0) : ?>
 <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-<?= $this->render('/receive-payment/_invoice-line-item', [
+<?= $this->render('_invoice-line-item', [
     'model' => $model,
     'isCreatePfi' => false,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -33,10 +37,13 @@ use yii\bootstrap\Html;
 ]);
 ?>
 <?php endif; ?>
+</div>
+<div class = "row">
 <?php if ($creditDataProvider->totalCount > 0) : ?>
 <?= Html::label('Credits', ['class' => 'admin-login']) ?>
-<?= $this->render('/receive-payment/_credits-available', [
+<?= $this->render('_credits-available', [
     'creditDataProvider' => $creditDataProvider,
 ]);
 ?>
+</div>
 <?php endif; ?> 
