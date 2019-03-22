@@ -291,11 +291,11 @@ use yii\bootstrap\Html;
         $('.modal-back').addClass('btn-info');
         $('.modal-back').attr('href', '#');
         $('.modal-back').show();
-        $('.modal-delete').text('Email Statement');
+        $('.modal-delete').text('Print Statement');
         $('.modal-delete').removeClass('btn-danger');
-        $('.modal-delete').addClass('btn-default email-statement');
+        $('.modal-delete').addClass('btn-default print-statement');
         $('.modal-delete').removeClass('modal-delete');
-        $('.email-statement').show();
+        $('.print-statement').show();
         $('#modal-save').show();
         $('#modal-save').removeClass('modal-save');
         $('#modal-save').addClass('recive-payment-modal-save');
@@ -432,9 +432,11 @@ use yii\bootstrap\Html;
         return false;
     });
 
-    $(document).off('click', '.email-statement').on('click', '.email-statement', function() {
+    $(document).off('click', '.print-statement').on('click', '.print-statement', function() {
         $('#popup-modal').modal('hide');
-        var url = '<?= Url::to(['print/customer-statement']) ?>';
+        var userId = $('#customer-payment').val(); 
+        var params = $.param({ 'id' : userId});
+        var url = '<?= Url::to(['print/customer-statement']) ?>?' + params;
         window.open(url, '_blank');
         return false;
     });
