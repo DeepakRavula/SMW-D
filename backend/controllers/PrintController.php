@@ -671,12 +671,14 @@ class PrintController extends BaseController
             'query' => $invoicesQuery,
             'pagination' => false 
         ]);
-        $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
+        $model = new Payment();
+        $creditDataProvider = $model->getAvailableCredit($searchModel->userId);
         $user = User::findOne($id);
+        
         $this->layout = '/print';
         return $this->render('/receive-payment/customer-statement/view', [
         'user' => $user,
-        'model' => new Payment(),
+        'model' => $model,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
         'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -684,63 +686,5 @@ class PrintController extends BaseController
         'searchModel' => $searchModel,
         'groupLessonSearchModel' => $groupLessonSearchModel
         ]);
-    }
-
-    public function getCustomerCreditInvoices($customerId)
-    {
-        return Invoice::find()
-            ->notDeleted()
-            ->invoiceCredit($customerId)
-            ->all();
-    }
-
-    public function getAvailableCredit($customerId = null)
-    {
-        $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
-        $results = [];
-        $amount = 0;
-        $paymentCredits = $this->getCustomerPayments($customerId);
-        
-        if ($invoiceCredits) {
-            foreach ($invoiceCredits as $invoiceCredit) {
-                $results[] = [
-                    'id' => $invoiceCredit->id,
-                    'type' => 'Invoice Credit',
-                    'reference' => $invoiceCredit->getInvoiceNumber(),
-                    'amount' => round(abs($invoiceCredit->balance), 2)
-                ];
-            }
-        }
-        if ($paymentCredits) {
-            foreach ($paymentCredits as $paymentCredit) {
-                if ($paymentCredit->hasCredit()) {
-                    $results[] = [
-                        'id' => $paymentCredit->id,
-                        'type' => 'Payment Credit',
-                        'reference' => $paymentCredit->reference,
-                        'amount' => round($paymentCredit->creditAmount, 2)
-                    ];
-                }
-            }
-        }
-        
-        $creditDataProvider = new ArrayDataProvider([
-            'allModels' => $results,
-            'sort' => [
-                'attributes' => ['id', 'type', 'reference', 'amount']
-            ],
-            'pagination' => false
-        ]);
-        return $creditDataProvider;
-    }
-    
-    public function getCustomerPayments($customerId)
-    {
-        return Payment::find()
-            ->notDeleted()
-            ->exceptAutoPayments()
-            ->customer($customerId)
-            ->orderBy(['payment.id' => SORT_ASC])
-            ->all();
     }
 }
