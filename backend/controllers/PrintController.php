@@ -31,6 +31,9 @@ use common\models\PaymentReceipt;
 use backend\models\PaymentForm;
 use yii\data\ArrayDataProvider;
 use common\models\InvoicePayment;
+use backend\models\search\PaymentFormLessonSearch;
+use backend\models\search\PaymentFormGroupLessonSearch;
+
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -49,7 +52,7 @@ class PrintController extends BaseController
                             'time-voucher', 'customer-invoice', 'account-view', 
                             'royalty', 'royalty-free', 'tax-collected', 'user', 
                             'customer-items-print', 'proforma-invoice','payment',
-                            'receipt', 'sales-and-payment'
+                            'receipt', 'sales-and-payment', 'customer-statement'
                         ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
@@ -622,6 +625,64 @@ class PrintController extends BaseController
             'searchModel' => $searchModel,
             'salesDataProvider' => $salesDataProvider,
             'paymentsDataProvider' => $paymentsDataProvider,
+        ]);
+    }
+
+    public function actionCustomerStatement($id)
+    {
+        $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
+        $groupLessonSearchModel->showCheckBox = true;
+        $groupLessonSearchModel->userId = $id;
+        $currentDate = new \DateTime();
+        $searchModel = new PaymentFormLessonSearch();
+        $searchModel->showCheckBox = true;
+        $searchModel->userId = $id;
+        $groupLessonSearchModel->fromDate = $currentDate->format('M 1, Y');
+        $groupLessonSearchModel->toDate = $currentDate->format('M t, Y'); 
+        $groupLessonSearchModel->dateRange = $groupLessonSearchModel->fromDate . ' - ' . $groupLessonSearchModel->toDate;
+        $searchModel->fromDate = $currentDate->format('M 1, Y');
+        $searchModel->toDate = $currentDate->format('M t, Y'); 
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $groupLessonsQuery = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
+        $groupLessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
+        $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
+        $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
+        $lessonLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $lessonsQuery,
+            'pagination' => false
+        ]);
+        $groupLessonLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonsQuery,
+            'pagination' => false
+        ]);
+        $invoicesQuery = Invoice::find();
+        if (!$searchModel->userId) {
+            $searchModel->userId = null;
+        }
+        $invoicesQuery->notDeleted()
+            ->invoice()
+            ->customer($searchModel->userId)
+            ->unpaid()
+            ->andWhere(['>','invoice.balance' , 0.09]);
+        $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $invoicesQuery,
+            'pagination' => false 
+        ]);
+        $model = new Payment();
+        $creditDataProvider = $model->getAvailableCredit($searchModel->userId);
+        $user = User::findOne($id);
+        
+        $this->layout = '/print';
+        return $this->render('/receive-payment/customer-statement/view', [
+        'user' => $user,
+        'model' => $model,
+        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+        'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'creditDataProvider' => $creditDataProvider,
+        'searchModel' => $searchModel,
+        'groupLessonSearchModel' => $groupLessonSearchModel
         ]);
     }
 }
