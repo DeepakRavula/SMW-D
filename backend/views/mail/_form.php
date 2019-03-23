@@ -62,6 +62,7 @@ use dosamigos\ckeditor\CKEditor;
                 $frame.attr("title", "");
             }
         });
+        $('.print-statement').hide();
     });
 
 
