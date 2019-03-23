@@ -12,6 +12,7 @@ use common\components\gridView\AdminLteGridView;
 use kartik\select2\Select2Asset;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
+use backend\models\search\UserSearch;
 
 Select2Asset::register($this);
 
@@ -132,6 +133,8 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                 'contentOptions' => ['class' => 'text-right dollar'],
                 ]);
                 array_push($columns, [
+                    'attribute' => 'balance',
+                    'filter'=> UserSearch::balanceStatus(),
                     'label' => 'Balance',
                     'value' => function ($data) {
                         return round(($data->getLessonsDue($data->id) + $data->getInvoiceOwingAmountTotal($data->id)) - $data->getTotalCredits($data->id), 2);

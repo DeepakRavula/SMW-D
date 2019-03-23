@@ -45,6 +45,7 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_NOT_ACTIVE = 1;
     const STATUS_ACTIVE = 2;
     const STATUS_DRAFT = 3;
+    const STATUS_OWING = 4;
 
     const DEFAULT_ADMIN_EMAIL1 = 'tonia@arcadiamusicacademy.com';
     const DEFAULT_ADMIN_EMAIL2 = 'kristin@kristingreen.ca';

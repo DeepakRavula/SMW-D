@@ -26,6 +26,7 @@ class UserSearch extends User
     private $email;
     public $phone;
     public $student;
+    public $balance;
     
     public function getAccountView()
     {
@@ -53,7 +54,7 @@ class UserSearch extends User
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query','phone','showAll','accountView', 'student'], 'safe'],
+                'lastname', 'query','phone','showAll','accountView', 'student', 'balance'], 'safe'],
         ];
     }
 
@@ -148,6 +149,14 @@ class UserSearch extends User
             self::STATUS_ALL => 'All',
             Invoice::STATUS_OWING => 'Owing',
             Invoice::STATUS_PAID => 'Paid',
+        ];
+    }
+
+    public static function balanceStatus()
+    {
+        return [
+            self::STATUS_ALL => 'All',
+            User::STATUS_OWING => '> 0',
         ];
     }
 }
