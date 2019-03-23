@@ -6,12 +6,8 @@ use yii\bootstrap\Html;
 /* @var $model common\models\PaymentMethods */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<?= $this->render('/print/_invoice-header', [
-       'userModel' => $user,
-       'locationModel' => $user->location->location,
-]);
-?>
 <div class = "row">
+<?php if ($lessonLineItemsDataProvider->totalCount > 0) : ?>
 <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
 <?= $this->render('_lesson-line-item', [
     'model' => $model,
@@ -21,7 +17,9 @@ use yii\bootstrap\Html;
 ]);
 ?>
 </div>
+<?php endif; ?>
 <div class = "row">
+<?php if ($groupLessonLineItemsDataProvider->totalCount > 0) : ?>
 <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
 <?= $this->render('_group-lesson-line-item', [
     'model' => $model,
@@ -30,6 +28,7 @@ use yii\bootstrap\Html;
     'searchModel' => $groupLessonSearchModel
 ]);
 ?>
+<?php endif; ?>
 </div>
 <div class = "row">
 <?php if ($invoiceLineItemsDataProvider->totalCount > 0) : ?>
@@ -51,10 +50,13 @@ use yii\bootstrap\Html;
 ]);
 ?>
 </div>
-<?php endif; ?>  
-
-<script>
-    $(document).ready(function() {
-        window.print();
-    });
-</script>  
+<?php endif; ?> 
+<table style = "width:100%;">
+<table style = "width:50%">
+<table class = "table table-condensed">
+<tr>
+<td style = "width:600px">Total</td>
+<td style = "width:600px;text-align:right;"><?= $total;?></td>
+</tr>
+</div>
+</div>

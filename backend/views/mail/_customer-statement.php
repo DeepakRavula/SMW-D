@@ -4,7 +4,7 @@ use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
 use common\models\Payment;
 
-$content = $this->renderAjax('/receive-payment/mail/view', [
+$content = $this->renderAjax('/receive-payment/customer-statement/view', [
     'model' => new Payment(),
     'userModel' => $userModel,
     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,

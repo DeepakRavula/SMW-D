@@ -95,6 +95,7 @@ use yii\bootstrap\ActiveForm;
         'dataProvider' => $lessonLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
+        //'rowOptions' => ['class' => 'line-items-value lesson-line-items'],
         'emptyText' => 'No Lessons Available!'
     ]); ?>
 

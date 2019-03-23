@@ -673,6 +673,15 @@ class PrintController extends BaseController
         $creditDataProvider = $model->getAvailableCredit($searchModel->userId);
         $user = User::findOne($id);
         
+        $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
+        $invoicesDue = $invoicesQuery->sum('invoice.balance');
+        $groupLessonsDue = $groupLessonsQuery->sum('group_lesson.balance');
+        $credits = 0.00;
+        $creditResults = $creditDataProvider->getModels();   
+        foreach ($creditResults as $creditResult) {
+            $credits+= $creditResult['amount'];
+        }    
+        $total = ($lessonsDue+$invoicesDue+$groupLessonsDue) - $credits;
         $this->layout = '/print';
         return $this->render('/receive-payment/customer-statement/view', [
         'user' => $user,
@@ -682,7 +691,8 @@ class PrintController extends BaseController
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
         'creditDataProvider' => $creditDataProvider,
         'searchModel' => $searchModel,
-        'groupLessonSearchModel' => $groupLessonSearchModel
+        'groupLessonSearchModel' => $groupLessonSearchModel,
+        'total' => $total,
         ]);
     }
 }
