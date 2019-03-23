@@ -54,8 +54,10 @@ use dosamigos\ckeditor\CKEditor;
         $('.modal-save').text('Send');
         $('.modal-back').hide();
         $('.modal-mail').hide();
+        $('.modal-print').hide();
         $('.modal-button').hide();
         $('.modal-save-all').hide();
+
         CKEDITOR.on("instanceReady", function(e) {
             var $frame = $(e.editor.container.$).find(".cke_wysiwyg_frame");
             if ($frame) {

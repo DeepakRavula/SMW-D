@@ -10,6 +10,7 @@ use common\models\Lesson;
         <div class="pull-left">
             <?= Html::a('Back', '', ['id' => 'modal-back', 'class' => 'btn btn-info modal-back']);?>
             <?= Html::a('Delete', '', ['class' => 'btn btn-danger modal-delete']); ?>
+            <?= Html::a('Print', '', ['class' => 'btn btn-default modal-print']); ?>
         </div>
         <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default modal-cancel']);?>
@@ -41,6 +42,7 @@ use common\models\Lesson;
         $('.modal-button').hide();
         $('.modal-back').hide();
         $('.modal-delete').hide();
+        $('.modal-print').hide();
         $('.modal-mail').hide();
     });
 </script>

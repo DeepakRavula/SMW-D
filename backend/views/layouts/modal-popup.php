@@ -33,6 +33,7 @@ Modal::begin([
             $('.modal-delete').attr('disabled', true);
             $('.modal-cancel').attr('disabled', true);
             $('.modal-mail').attr('disabled', true);
+            $('.modal-print').attr('disabled', true);
         },
         enableButtons: function() {
             $('#modal-save').attr('disabled', false);
@@ -42,6 +43,7 @@ Modal::begin([
             $('.modal-save-all').attr('disabled', false);
             $('.modal-back').attr('disabled', false);
             $('.modal-mail').attr('disabled', false);
+            $('.modal-print').attr('disabled', true);
         },
         restoreButtonSettings: function() {
             $('.modal-delete').hide();
@@ -52,6 +54,7 @@ Modal::begin([
             $('.modal-save-all').hide();
             $('.modal-back').hide();
             $('.modal-mail').hide();
+            $('.modal-print').hide();
             $('#modal-save').attr('message', null);
             $('#modal-popup-warning-notification').fadeOut();
         },
