@@ -398,7 +398,7 @@ class EmailController extends BaseController
             'creditDataProvider' => $creditDataProvider,
             'searchModel' => $searchModel,
             'groupLessonSearchModel' => $groupLessonSearchModel,
-            'total' =>$total
+            'total' =>$total,
 
         ]);
         $post = Yii::$app->request->post();

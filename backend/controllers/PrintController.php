@@ -683,7 +683,7 @@ class PrintController extends BaseController
         }    
         $total = ($lessonsDue+$invoicesDue+$groupLessonsDue) - $credits;
         $this->layout = '/print';
-        return $this->render('/receive-payment/customer-statement/view', [
+        return $this->render('/receive-payment/customer-statement/print-view', [
         'user' => $user,
         'model' => $model,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
@@ -692,7 +692,7 @@ class PrintController extends BaseController
         'creditDataProvider' => $creditDataProvider,
         'searchModel' => $searchModel,
         'groupLessonSearchModel' => $groupLessonSearchModel,
-        'total' => $total,
+        'total' => $total
         ]);
     }
 }
