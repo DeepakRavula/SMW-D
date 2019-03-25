@@ -21,13 +21,13 @@ class CustomerStatementLog extends Log
         $loggedUser = $event->data['loggedUser'];
         $data = User::find(['id' => $customerStatementModel->userId])->asArray()->one();
         $object = LogObject::findOne(['name' => LogObject::TYPE_USER]);
-        $activity = LogActivity::findOne(['name' => $activity]);
+        $logActivity = LogActivity::findOne(['name' => $activity]);
         $userModel = User::find()->andWhere(['id' => $customerStatementModel->userId])->one();
         $userIndex = $userModel->publicIdentity;
         $message = $loggedUser->publicIdentity .$activity. 'ed  customer statement for {{'.$userIndex. '}}';
         $log = new Log();
         $log->logObjectId = $object->id;
-        $log->logActivityId = $activity->id;
+        $log->logActivityId = $logActivity->id;
         $log->message = $message;
         $log->data = Json::encode($data);
         $log->createdUserId = $loggedUser->id;
