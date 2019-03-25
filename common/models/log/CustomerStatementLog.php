@@ -18,11 +18,11 @@ class CustomerStatementLog extends Log
     {
         $customerStatementModel = $event->sender;
         $loggedUser = end($event->data);
-        $data = "";
+        $data = User::find(['id' => $customerStatementModel->userId])->asArray()->one();
         $object = LogObject::findOne(['name' => LogObject::TYPE_USER]);
         $activity = LogActivity::findOne(['name' => LogActivity::TYPE_PRINT]);
         $userModel = User::find()->andWhere(['id' => $customerStatementModel->userId])->one();
-        $userIndex=$userModel->publicIdentity;
+        $userIndex = $userModel->publicIdentity;
         $message = $loggedUser->publicIdentity . ' printed customer statement for {{'.$userIndex. '}}';
         $log = new Log();
         $log->logObjectId = $object->id;
@@ -36,6 +36,7 @@ class CustomerStatementLog extends Log
             $this->addHistory($log, $userModel, $object);
             $this->addLink($log, $userIndex, $userPath);
         }
+        return true;
     }
 
     
@@ -46,7 +47,8 @@ class CustomerStatementLog extends Log
         $logLink->index   = $index;
         $logLink->baseUrl = Yii::$app->request->hostInfo;
         $logLink->path    = $path;
-        $logLink->save();
+        
+        return $logLink->save();
     }
     public function addHistory($log, $model, $object)
     {
@@ -54,6 +56,6 @@ class CustomerStatementLog extends Log
         $logHistory->logId = $log->id;
         $logHistory->instanceId = $model->id;
         $logHistory->instanceType = $object->name;
-        $logHistory->save();
+        return $logHistory->save();
     }
 }
