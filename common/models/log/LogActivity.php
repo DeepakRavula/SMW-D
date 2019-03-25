@@ -17,6 +17,8 @@ class LogActivity extends \yii\db\ActiveRecord
     const TYPE_UPDATE = 'update';
     const TYPE_DELETE = 'delete';
     const TYPE_MERGE = 'merge';
+    const TYPE_PRINT = 'print';
+    const TYPE_MAIL = 'mail';
     /**
      * @inheritdoc
      */

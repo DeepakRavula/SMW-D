@@ -33,6 +33,9 @@ use yii\data\ArrayDataProvider;
 use common\models\InvoicePayment;
 use backend\models\search\PaymentFormLessonSearch;
 use backend\models\search\PaymentFormGroupLessonSearch;
+use common\models\CustomerStatement;
+use common\models\log\CustomerStatementLog;
+use common\models\log\LogActivity;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -683,6 +686,11 @@ class PrintController extends BaseController
         }    
         $total = ($lessonsDue+$invoicesDue+$groupLessonsDue) - $credits;
         $this->layout = '/print';
+        $customerStatement = new CustomerStatement();
+        $customerStatement->userId = $id;
+        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        $customerStatement->on(CustomerStatement::EVENT_PRINT, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_PRINT]);
+        $customerStatement->trigger(CustomerStatement::EVENT_PRINT);
         return $this->render('/receive-payment/customer-statement/print-view', [
         'user' => $user,
         'model' => $model,
