@@ -88,7 +88,7 @@ class EmailController extends BaseController
                 $proformaInvoice->isMailSent = true;
                 $proformaInvoice->save();
             }
-            if ($object === EmailObject::OBJECT_CUSTOMER_STATEMENT && $userId) {
+            if ($objectId === EmailObject::OBJECT_CUSTOMER_STATEMENT && $userId) {
                 $customerStatement = new CustomerStatement();
                 $customerStatement->userId = $userId;
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
