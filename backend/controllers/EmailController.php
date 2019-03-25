@@ -62,6 +62,7 @@ class EmailController extends BaseController
     { 
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $location = Location::findOne(['id' => $locationId]);
+        $object = Yii::$app->request->get('EmailForm')['object'];
         $model = new EmailForm();
         if ($model->load(Yii::$app->request->post())) {
             $content = [];
@@ -82,6 +83,9 @@ class EmailController extends BaseController
                 $proformaInvoice = ProformaInvoice::findOne(['id' => $model->paymentRequestId]);
                 $proformaInvoice->isMailSent = true;
                 $proformaInvoice->save();
+            }
+            if ($object === EmailObject::OBJECT_CUSTOMER_STATEMENT) {
+                
             }
             return [
                 'status' => true,
