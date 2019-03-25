@@ -65,7 +65,7 @@ class EmailController extends BaseController
     { 
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $location = Location::findOne(['id' => $locationId]);
-        $object = Yii::$app->request->get('EmailForm')['object'];
+        $objectId = Yii::$app->request->get('EmailForm')['objectId'];
         $userId = Yii::$app->request->get('EmailForm')['userId'];
         $model = new EmailForm();
         if ($model->load(Yii::$app->request->post())) {
