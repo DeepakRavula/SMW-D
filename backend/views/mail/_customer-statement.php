@@ -32,5 +32,6 @@ if (!empty($userModel)) {
     'model' => $model,
     'subject' => $subject,
     'emailTemplate' => $emailTemplate,
-    'data' => $data
+    'data' => $data,
+    'userModel' => $userModel
 ]);

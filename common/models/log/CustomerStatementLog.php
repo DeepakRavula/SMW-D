@@ -14,16 +14,17 @@ use yii\helpers\Url;
  */
 class CustomerStatementLog extends Log
 {
-    public function printCustomerStatement($event)
+    public function customerStatement($event)
     {
         $customerStatementModel = $event->sender;
-        $loggedUser = end($event->data);
+        $activity = end($event->data);
+        $loggedUser = $event->data['loggedUser'];
         $data = User::find(['id' => $customerStatementModel->userId])->asArray()->one();
         $object = LogObject::findOne(['name' => LogObject::TYPE_USER]);
-        $activity = LogActivity::findOne(['name' => LogActivity::TYPE_PRINT]);
+        $activity = LogActivity::findOne(['name' => $activity]);
         $userModel = User::find()->andWhere(['id' => $customerStatementModel->userId])->one();
         $userIndex = $userModel->publicIdentity;
-        $message = $loggedUser->publicIdentity . ' printed customer statement for {{'.$userIndex. '}}';
+        $message = $loggedUser->publicIdentity .$activity. 'ed  customer statement for {{'.$userIndex. '}}';
         $log = new Log();
         $log->logObjectId = $object->id;
         $log->logActivityId = $activity->id;

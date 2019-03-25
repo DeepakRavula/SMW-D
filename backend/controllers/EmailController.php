@@ -30,6 +30,9 @@ use backend\models\search\PaymentSearch;
 use common\models\InvoicePayment;
 use backend\models\search\PaymentFormLessonSearch;
 use backend\models\search\PaymentFormGroupLessonSearch;
+use common\models\log\CustomerStatementLog;
+use common\models\CustomerStatement;
+use common\models\log\LogActivity;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -63,6 +66,7 @@ class EmailController extends BaseController
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $location = Location::findOne(['id' => $locationId]);
         $object = Yii::$app->request->get('EmailForm')['object'];
+        $userId = Yii::$app->request->get('EmailForm')['userId'];
         $model = new EmailForm();
         if ($model->load(Yii::$app->request->post())) {
             $content = [];
@@ -84,8 +88,12 @@ class EmailController extends BaseController
                 $proformaInvoice->isMailSent = true;
                 $proformaInvoice->save();
             }
-            if ($object === EmailObject::OBJECT_CUSTOMER_STATEMENT) {
-                
+            if ($object === EmailObject::OBJECT_CUSTOMER_STATEMENT && $userId) {
+                $customerStatement = new CustomerStatement();
+                $customerStatement->userId = $userId;
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $customerStatement->on(CustomerStatement::EVENT_MAIL, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_PRINT]);
+                $customerStatement->trigger(CustomerStatement::EVENT_MAIL);
             }
             return [
                 'status' => true,
@@ -390,6 +398,10 @@ class EmailController extends BaseController
             $total = ($lessonsDue+$invoicesDue+$groupLessonsDue) - $credits;
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_CUSTOMER_STATEMENT]);
             $user = User::findOne($id);
+            $customerStatement = new CustomerStatement();
+            $customerStatement->userId = $id;
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+            $customerStatement->on(CustomerStatement::EVENT_PRINT, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_MAIL]);
             $data = $this->renderAjax('/mail/_customer-statement', [
             'model' => new EmailForm(),
             'emails' => !empty($user->email) ?$user->email : null,
@@ -403,7 +415,6 @@ class EmailController extends BaseController
             'searchModel' => $searchModel,
             'groupLessonSearchModel' => $groupLessonSearchModel,
             'total' =>$total,
-
         ]);
         $post = Yii::$app->request->post();
         if (!$post) {
