@@ -92,7 +92,7 @@ class EmailController extends BaseController
                 $customerStatement = new CustomerStatement();
                 $customerStatement->userId = $userId;
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                $customerStatement->on(CustomerStatement::EVENT_MAIL, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_PRINT]);
+                $customerStatement->on(CustomerStatement::EVENT_MAIL, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_MAIL]);
                 $customerStatement->trigger(CustomerStatement::EVENT_MAIL);
             }
             return [
