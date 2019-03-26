@@ -18,6 +18,8 @@ class EmailForm extends Model
     public $id;
     public $bcc;
     public $paymentRequestId;
+    public $objectId;
+    public $userId;
     const ENVIRONMENT_NAME = 'develoment';
     /**
      * {@inheritdoc}
@@ -27,7 +29,7 @@ class EmailForm extends Model
         return [
             [['subject', 'content'], 'required'],
             [['to'], 'required', 'except' => EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER],
-            [['invoiceId', 'paymentRequestId','bcc'], 'safe'],
+            [['invoiceId', 'paymentRequestId', 'bcc', 'objectId', 'userId'], 'safe'],
             [['bcc'], 'required', 'on' => EmailMultiCustomer::SCENARIO_SEND_EMAIL_MULTICUSTOMER],
         ];
     }

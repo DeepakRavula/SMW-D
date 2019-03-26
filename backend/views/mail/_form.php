@@ -11,14 +11,19 @@ use dosamigos\ckeditor\CKEditor;
 
 <div class="student-form">
     <?php $model->content = $content;
+    $url =  Url::to(['email/send']);
+    if (!empty($userModel)) {
+        $url =  Url::to(['email/send','EmailForm[object]' => $emailTemplate->emailTypeId, 'EmailForm[userId]' => $userModel->id]);
+    }
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['email/send'])
+        'action' => $url,
     ]);
     ?>
     <?php if (!empty($invoiceId)) : ?>
     <?= $form->field($model, 'invoiceId')->hiddenInput(['value' => $invoiceId])->label(false) ?>
     <?php endif; ?>
+    
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'to')->widget(Select2::classname(), [
