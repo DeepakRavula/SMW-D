@@ -13,7 +13,7 @@ use dosamigos\ckeditor\CKEditor;
     <?php $model->content = $content;
     $url =  Url::to(['email/send']);
     if (!empty($userModel)) {
-        $url =  Url::to(['email/send','EmailForm[object]' => $emailTemplate->emailTypeId, 'EmailForm[userId]' => $userModel->id]);
+        $url =  Url::to(['email/send','EmailForm[objectId]' => $emailTemplate->emailTypeId, 'EmailForm[userId]' => $userModel->id]);
     }
     $form = ActiveForm::begin([
         'id' => 'modal-form',
