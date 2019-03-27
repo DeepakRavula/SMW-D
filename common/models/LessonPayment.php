@@ -165,6 +165,7 @@ class LessonPayment extends \yii\db\ActiveRecord
             }
         }
         $this->payment->save();
+        $this->lesson->customer->updateCustomerBalance();
         if ($this->lesson->privateLesson) {
             $this->lesson->privateLesson->save();
         }

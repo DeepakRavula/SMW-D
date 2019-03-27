@@ -433,7 +433,16 @@ class User extends ActiveRecord implements IdentityInterface
             $userLocation->location_id = $this->locationId;
             $userLocation->save();
         }
+            $this->setCustomerAccount();
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function setCustomerAccount()
+    {
+        $customerAccount = new CustomerAccount();
+        $customerAccount->customerId = $this->id;
+        $customerAccount->balance = 0.00;
+        $customerAccount->save();
     }
     
     public function beforeDelete() 
@@ -1114,5 +1123,15 @@ class User extends ActiveRecord implements IdentityInterface
 
         $totalCredits = abs($invoiceCredits) + abs($paymentCredits);
         return $totalCredits;
+    }
+
+    public function updateCustomerBalance() {
+        $balance = $this->getLessonsDue($this->id) + $this->getInvoiceOwingAmountTotal($this->id) - $this->getTotalCredits($this->id);
+        $customerAccount = CustomerAccount::find()
+            ->andWhere(['customer_account.customerId' => $this->id])
+            ->one();
+        $customerAccount->updateAttributes([
+            'balance' => $balance,
+        ]);
     }
 }

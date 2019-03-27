@@ -36,26 +36,16 @@ class m190326_070702_add_customer_account_table extends Migration
                 'updatedByUserId' =>  $this->integer()->notNull(),
             ]);
         }
-        // $locations = Location::find()
-        //         ->notDeleted()
-        //         ->cronEnabledLocations()
-        //         ->all();
-        // foreach ($locations as $location) {
-            $customers = User::find()
-                ->notDeleted()
-                ->allCustomers()
-                ->all();
-            foreach ($customers as $customer) {
-                $customerAccount = new CustomerAccount();
-                $customerAccount->customerId = $customer->id;
-                $customerAccount->balance = ($customer->getLessonsDue($customer->id) + $customer->getInvoiceOwingAmountTotal($customer->id)) - $customer->getTotalCredits($customer->id);
-                if ($customerAccount->save()) {
-                    print_r($customerAccount->id);
-                } else {
-                    print_r($customerAccount->getErrors());
-                }
-            }
-        //}  
+        $customers = User::find()
+            ->notDeleted()
+            ->allCustomers()
+            ->all();
+        foreach ($customers as $customer) {
+            $customerAccount = new CustomerAccount();
+            $customerAccount->customerId = $customer->id;
+            $customerAccount->balance = ($customer->getLessonsDue($customer->id) + $customer->getInvoiceOwingAmountTotal($customer->id)) - $customer->getTotalCredits($customer->id);
+            $customerAccount->save();
+        }
     }
 
     /**
