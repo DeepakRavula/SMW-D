@@ -6,6 +6,7 @@ use yii\bootstrap\Html;
 /* @var $model common\models\PaymentMethods */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<?= $emailTemplate->header ?>
 <div class = "row">
 <?php if ($lessonLineItemsDataProvider->totalCount > 0) : ?>
 <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
@@ -58,5 +59,9 @@ use yii\bootstrap\Html;
 <td style = "width:600px">Total</td>
 <td style = "width:600px;text-align:right;"><?= $total;?></td>
 </tr>
+</table>
+</table>
+</table>
 </div>
 </div>
+<?= $emailTemplate->footer ?>
