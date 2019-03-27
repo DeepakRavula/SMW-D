@@ -117,7 +117,6 @@ class LessonDiscount extends \yii\db\ActiveRecord
             $this->groupLesson->save();
         } 
         $this->lesson->save();
-        
         return parent::afterSave($insert, $changedAttributes);
     }
 
