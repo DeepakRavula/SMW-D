@@ -11,6 +11,8 @@ $user = User::findOne($model->id);
         <ul class="dropdown-menu dropdown-menu-right">
         <?php if ($user->isCustomer()) : ?>
             <li><a id="receive-payments" href="#">Receive Payment</a></li>
+            <li><a id="print-customer-statement" href="#">Print Statement</a></li>
+            <li><a id="mail-customer-statement" href="#">Email Statement</a></li>
         <?php endif ; ?>
         <?php if (($loggedUser->isAdmin()) || ($loggedUser->isOwner() && $user->isManagableByOwner()) || ($loggedUser->isStaff() && $user->isManagableByStaff())) : ?>
             <li><a class="user-delete-button" href="<?= Url::to(['delete', 'id' => $model->id]);?>">Delete</a></li>
@@ -33,6 +35,31 @@ $user = User::findOne($model->id);
                 }
             }
         });
+        return false;
+    });
+
+    $(document).off('click', '#mail-customer-statement').on('click', '#mail-customer-statement', function() {
+        var userId = '<?= $model->id ?>';
+        var params = $.param({ 'id' : userId});     
+            $.ajax({
+                url    : '<?= Url::to(['email/customer-statement']) ?>?' + params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#modal-content').html(response.data);    
+                        $('#popup-modal').modal('show');                   
+                    }
+                }
+            });
+        return false;
+    });
+
+    $(document).off('click', '#print-customer-statement').on('click', '#print-customer-statement', function() {
+        var userId = '<?= $model->id ?>';
+        var params = $.param({ 'id' : userId});
+        var url = '<?= Url::to(['print/customer-statement']) ?>?' + params;
+        window.open(url, '_blank');
         return false;
     });
 </script>
