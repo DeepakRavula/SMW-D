@@ -51,12 +51,6 @@ $this->params['action-button'] = $this->render('_action-button', [
                 'lessonDataProvider' => $lessonDataProvider,
                 'lessonCount' => $lessonCount
             ]);
-        } else {
-            echo $this->render('_lessons', [
-                'model' => $model,
-                'groupLessonDataProvider' => $groupLessonDataProvider,
-                'lessonCount' => $lessonCount
-            ]);    
         } ?>
 
         <div class="more-lesson pull-right" id = "admin-login" style = "display:none">

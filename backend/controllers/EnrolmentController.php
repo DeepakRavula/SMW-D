@@ -130,18 +130,27 @@ class EnrolmentController extends BaseController
             ->notDeleted()
             ->scheduledOrRescheduled()
             ->notCompleted()
-			->count();
+            ->count();
+        $query = Lesson::find()
+        ->andWhere(['courseId' => $model->course->id])
+        ->scheduledOrRescheduled()
+        ->isConfirmed()
+        ->limit(12)
+        ->notDeleted()
+        ->notCompleted()
+        ->orderBy(['lesson.date' => SORT_ASC]);
+        if ($model->course->isPrivate) {
+            $query->limit(12);
+        } 
 	    $lessonDataProvider = new ActiveDataProvider([
-            'query' => Lesson::find()
-                ->andWhere(['courseId' => $model->course->id])
-                ->scheduledOrRescheduled()
-                ->isConfirmed()
-		        ->limit(12)
-                ->notDeleted()
-                ->notCompleted()
-                ->orderBy(['lesson.date' => SORT_ASC]),
+            'query' => $query,
             'pagination' => false,
         ]);
+        if ($model->course->isPrivate) {
+            $lessonDataProvider->setPagination(false);
+        } else {
+            $lessonDataProvider->setPagination(10);
+        }
         $groupLessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
                 ->andWhere(['courseId' => $model->course->id])
@@ -149,7 +158,7 @@ class EnrolmentController extends BaseController
                 ->isConfirmed()
                 ->notDeleted()
                 ->notCompleted()
-                ->orderBy(['lesson.date' => SORT_ASC]),
+                ->orderBy(['lesson.duete' => SORT_ASC]),
             'pagination' =>  [ 'pageSize' => 10, ],
         ]);
         $logDataProvider = new ActiveDataProvider([
@@ -167,7 +176,7 @@ class EnrolmentController extends BaseController
         
         return $this->render('view', [
             'model' => $model,
-	        'groupLessonDataProvider' => $groupLessonDataProvider,
+	        //'groupLessonDataProvider' => $groupLessonDataProvider,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
