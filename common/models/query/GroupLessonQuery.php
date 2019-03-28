@@ -41,4 +41,9 @@ class GroupLessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andFilterWhere(['between', 'group_lesson.dueDate', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
     }
+
+    public function enrolment($enrolmentId) 
+    {
+        return $this->andFilterWhere(['enrolmentId' => $enrolmentId]);
+    }
 }

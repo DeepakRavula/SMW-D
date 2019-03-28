@@ -112,4 +112,30 @@ class PrivateLessonController extends Controller
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
         return true;
     }
+
+    public function actionSetDueDate()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->notCanceled()
+            ->isConfirmed()
+            ->location($this->locationId)
+            ->privateLessons()
+            ->all();
+        Console::startProgress(0, 'adding due date in private lessons...');
+        foreach ($lessons as $lesson) {
+            if ($lesson->privateLesson) {
+                $lesson->privateLesson->updateAttributes([
+                    'dueDate' => $lesson->dueDate,
+                ]);
+                Console::output("processing: " . $lesson->id . 'added due date in private lesson table', Console::FG_GREEN, Console::BOLD);
+            } 
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
+    }
 }
