@@ -127,14 +127,14 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                 array_push($columns, [
                     'label' => 'Lessons Due',
                     'value' => function ($data) {
-                        return !empty($data->getLessonsDue($data->id)) ? Yii::$app->formatter->asDecimal($data->getLessonsDue($data->id), 2) : 0;
+                        return !empty($data->getLessonsDue($data->id)) ? round($data->getLessonsDue($data->id), 2) : 0;
                 },
                 'contentOptions' => ['class' => 'text-right dollar'],
                 ]);
                 array_push($columns, [
                     'label' => 'Balance',
                     'value' => function ($data) {
-                        return Yii::$app->formatter->asDecimal(round(($data->getLessonsDue($data->id) + $data->getInvoiceOwingAmountTotal($data->id)) - $data->getTotalCredits($data->id), 2), 2);
+                        return round(($data->getLessonsDue($data->id) + $data->getInvoiceOwingAmountTotal($data->id)) - $data->getTotalCredits($data->id), 2);
                 },
                     'contentOptions' => ['class' => 'text-right dollar'],
                     'hAlign' => 'right',
