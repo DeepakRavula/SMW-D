@@ -212,6 +212,11 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
     }
 
+    public function getCustomerAccount()
+    {
+        return $this->hasOne(CustomerAccount::className(), ['customerId' => 'id']);
+    }
+
     public function validateOnDelete($attribute)
     {
         $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
