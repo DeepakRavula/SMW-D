@@ -127,7 +127,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                 array_push($columns, [
                     'label' => 'Lessons Due',
                     'value' => function ($data) {
-                        return !empty($data->getLessonsDue($data->id)) ? round($data->getLessonsDue($data->id), 2) : 0;
+                        return !empty($data->getLessonsDue($data->id)) ? round($data->getLessonsDue($data->id), 2) : 0.00;
                 },
                 'contentOptions' => ['class' => 'text-right dollar'],
                 ]);
