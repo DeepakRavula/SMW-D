@@ -121,9 +121,9 @@ class UserSearch extends User
         $query->joinWith(['emails' => function ($query) {
             $query->andFilterWhere(['like', 'email', $this->email]);
         }]);
-        if ($this->balance) {
+        if ((int) $this->balance === User::STATUS_OWING) {
             $query->joinWith(['customerAccount' => function ($query) {
-                $query->andFilterWhere(['>', 'balance', 0]);
+                $query->andFilterWhere(['>', 'customer_account.balance', 0]);
             }]);
         }
         $query->andFilterWhere(['like', 'uf.firstname', $this->firstname])
