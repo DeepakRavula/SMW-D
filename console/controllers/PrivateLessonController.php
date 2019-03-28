@@ -132,24 +132,7 @@ class PrivateLessonController extends Controller
                     'dueDate' => $lesson->dueDate,
                 ]);
                 Console::output("processing: " . $lesson->id . 'added due date in private lesson table', Console::FG_GREEN, Console::BOLD);
-            } else {
-                print_r($lesson->id);die('coming');
-               // if ($lesson->rootLesson) {
-                //     $expiryDate = new \DateTime($lesson->rootLesson->privateLesson->expiryDate);
-                //     $date       = new \DateTime($lesson->date);
-                //     if ($date >= $expiryDate) {
-                //         $expiryDate = $date->modify('1 day');
-                //     }
-                // } else {
-                //     $date = new \DateTime($lesson->date);
-                //     $expiryDate = $date->modify('90 days');
-                // }
-                // $privateLessonModel = new PrivateLesson();
-                // $privateLessonModel->lessonId = $lesson->id;
-                // $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-                // $privateLessonModel->save();
-               // Console::output("processing: " . $lesson->id . 'added new private lesson', Console::FG_GREEN, Console::BOLD);
-            }
+            } 
         }
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
