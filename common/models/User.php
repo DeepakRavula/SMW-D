@@ -1125,13 +1125,13 @@ class User extends ActiveRecord implements IdentityInterface
         return $totalCredits;
     }
 
-    public function updateCustomerBalance() {
+    public function updateCustomerBalance() 
+    {
         $balance = $this->getLessonsDue($this->id) + $this->getInvoiceOwingAmountTotal($this->id) - $this->getTotalCredits($this->id);
         $customerAccount = CustomerAccount::find()
             ->andWhere(['customer_account.customerId' => $this->id])
             ->one();
-        $customerAccount->updateAttributes([
-            'balance' => $balance,
-        ]);
+        $customerAccount->balance = $balance;
+        $customerAccount->save();
     }
 }
