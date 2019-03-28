@@ -45,13 +45,13 @@ $this->params['action-button'] = $this->render('_action-button', [
             'withBorder' => true,
         ]) ?>
 
-        <?php if ($model->course->program->isPrivate()) {
-            echo $this->render('_lessons', [
+    
+        <?php echo $this->render('_lessons', [
                 'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
                 'lessonCount' => $lessonCount
             ]);
-        } ?>
+ ?>
 
         <div class="more-lesson pull-right" id = "admin-login" style = "display:none">
             <a class = "see-more" href = "">Show More</a>
