@@ -106,7 +106,7 @@ class ViewAction extends Action
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
                 ->limit(12)
-                ->orderBy(['lesson.date' => SORT_ASC])
+                ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->privateLessons()
                 ->notCompleted();
