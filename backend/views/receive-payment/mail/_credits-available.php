@@ -13,15 +13,20 @@ use yii\bootstrap\ActiveForm;
     $columns = [];
 
     array_push($columns, [
-        'headerOptions' => ['style' => 'width:400px;text-align:left'],
-        'contentOptions' => ['style' => 'width:400px;text-align:left'],
+        'headerOptions' => ['class' => 'text-left'],
+        'contentOptions' => function ($model) {
+            return [
+                'creditId' => $model['id'],
+                'class' => 'text-left credit-type'
+            ];
+        },
         'label' => 'Type',
         'value' => 'type',
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['style' => 'width:300px;text-align:left'],
-        'contentOptions' => ['style' => 'width:300px;text-align:left'],
+        'headerOptions' => ['class' => 'text-left'],
+        'contentOptions' => ['class' => 'text-left'],
         'label' => 'Reference',
         'value' => 'reference',
     ]);
@@ -29,8 +34,8 @@ use yii\bootstrap\ActiveForm;
 
     array_push($columns, [
         'format' => 'currency',
-        'headerOptions' => ['style' => 'width:300px;text-align:right'],
-        'contentOptions' => ['style' => 'width:300px;text-align:right'],
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right credit-value'],
         'label' => 'Amount',
         'value' => 'amount'
     ]);

@@ -33,6 +33,9 @@ use yii\data\ArrayDataProvider;
 use common\models\InvoicePayment;
 use backend\models\search\PaymentFormLessonSearch;
 use backend\models\search\PaymentFormGroupLessonSearch;
+use common\models\CustomerStatement;
+use common\models\log\CustomerStatementLog;
+use common\models\log\LogActivity;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -673,8 +676,22 @@ class PrintController extends BaseController
         $creditDataProvider = $model->getAvailableCredit($searchModel->userId);
         $user = User::findOne($id);
         
+        $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
+        $invoicesDue = $invoicesQuery->sum('invoice.balance');
+        $groupLessonsDue = $groupLessonsQuery->sum('group_lesson.balance');
+        $credits = 0.00;
+        $creditResults = $creditDataProvider->getModels();   
+        foreach ($creditResults as $creditResult) {
+            $credits+= $creditResult['amount'];
+        }    
+        $total = ($lessonsDue+$invoicesDue+$groupLessonsDue) - $credits;
         $this->layout = '/print';
-        return $this->render('/receive-payment/customer-statement/view', [
+        $customerStatement = new CustomerStatement();
+        $customerStatement->userId = $id;
+        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        $customerStatement->on(CustomerStatement::EVENT_PRINT, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_PRINT]);
+        $customerStatement->trigger(CustomerStatement::EVENT_PRINT);
+        return $this->render('/receive-payment/customer-statement/print-view', [
         'user' => $user,
         'model' => $model,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
@@ -682,7 +699,8 @@ class PrintController extends BaseController
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
         'creditDataProvider' => $creditDataProvider,
         'searchModel' => $searchModel,
-        'groupLessonSearchModel' => $groupLessonSearchModel
+        'groupLessonSearchModel' => $groupLessonSearchModel,
+        'total' => $total
         ]);
     }
 }

@@ -26,16 +26,6 @@ use yii\bootstrap\ActiveForm;
             }
         ]);
 
-        array_push($columns, [
-            'headerOptions' => ['style' => 'width:10%;text-align:left'],
-            'contentOptions' => ['style' => 'width:10%;text-align:left'],
-            'label' => 'Due Date',
-            'value' => function ($data) {
-                $date = Yii::$app->formatter->asDate($data->dueDate);
-                $lessonTime = (new \DateTime($data->dueDate))->format('H:i:s');
-                return !empty($date) ? $date : null;
-            }
-        ]);
 
         array_push($columns, [
             'headerOptions' => ['style' => 'width:15%;text-align:left'],

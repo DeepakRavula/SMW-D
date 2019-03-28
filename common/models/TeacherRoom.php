@@ -41,7 +41,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             [['classroomId'], 'validateClassroomAvailability', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
             [['from_time'], function ($attribute, $params) {
                 $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-                $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
+                $locationAvailability = LocationAvailability::find()->location($locationId)->day($this->day)->type(LocationAvailability::TYPE_OPERATION_TIME)->notDeleted()->one();
                 $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
                 if (empty($locationAvailability)) {
                     return $this->addError($attribute, 'Please choose from time within the operating hours ');
@@ -52,7 +52,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             ],
             [['to_time'], function ($attribute, $params) {
                 $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-                $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
+                $locationAvailability = LocationAvailability::find()->location($locationId)->day($this->day)->type(LocationAvailability::TYPE_OPERATION_TIME)->notDeleted()->one();
                 $toTime = (new \DateTime($this->to_time))->format('H:i:s');
                 if (empty($locationAvailability)) {
                     return $this->addError($attribute, 'Please choose from time within the operating hours ');
