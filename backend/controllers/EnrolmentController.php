@@ -132,7 +132,7 @@ class EnrolmentController extends BaseController
             ->notCompleted()
             ->count();
         $query = Lesson::find()
-        ->andWhere(['courseId' => $model->course->id])
+        ->andWhere(['lesson.courseId' => $model->course->id])
         ->scheduledOrRescheduled()
         ->isConfirmed()
         ->notDeleted()
@@ -143,7 +143,10 @@ class EnrolmentController extends BaseController
                 'lesson.date' => SORT_ASC      
                 ])->limit(12);
         } else {
-            $query->joinWith(['groupLesson'])->orderBy([
+            $query->joinWith(['groupLesson' => function ($query) use ($id) {
+                $query->enrolment($id);
+            }])
+                ->orderBy([
                 'group_lesson.dueDate' => SORT_ASC,
                 'lesson.date' => SORT_ASC      
                 ]);
