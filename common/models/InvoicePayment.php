@@ -159,6 +159,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
             $paymentRequest->save();
         }
         $this->payment->save();
+        $this->invoice->user->updateCustomerBalance();
         return true;
     }
 

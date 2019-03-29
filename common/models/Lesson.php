@@ -963,6 +963,7 @@ class Lesson extends \yii\db\ActiveRecord
                 }
             }
             $this->course->updateDates();
+            $this->customer->updateCustomerBalance();
         }
         return parent::afterSave($insert, $changedAttributes);
     }
