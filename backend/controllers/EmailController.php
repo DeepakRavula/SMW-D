@@ -68,7 +68,7 @@ class EmailController extends BaseController
         $objectId = Yii::$app->request->get('EmailForm')['objectId'];
         $userId = Yii::$app->request->get('EmailForm')['userId'];
         $model = new EmailForm();
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post())) {       
             $content = [];
                 $content[] = Yii::$app->mailer->compose('content', [
                     'content' => $model->content,
@@ -88,11 +88,11 @@ class EmailController extends BaseController
                 $proformaInvoice->isMailSent = true;
                 $proformaInvoice->save();
             }
-            if ($objectId === EmailObject::OBJECT_CUSTOMER_STATEMENT && $userId) {
+            if ($objectId == EmailObject::OBJECT_CUSTOMER_STATEMENT && $userId) {
                 $customerStatement = new CustomerStatement();
                 $customerStatement->userId = $userId;
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                $customerStatement->on(CustomerStatement::EVENT_MAIL, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_PRINT]);
+                $customerStatement->on(CustomerStatement::EVENT_MAIL, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_MAIL]);
                 $customerStatement->trigger(CustomerStatement::EVENT_MAIL);
             }
             return [

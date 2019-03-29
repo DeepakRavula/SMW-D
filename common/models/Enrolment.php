@@ -779,7 +779,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function setPaymentCycle($startDate)
     {
         if (!$this->hasPaymentCycles()) {
-        if ((new \DateTime($startDate))->format('Y-m-1') >= (new \DateTime($this->course->startDate))->format('Y-m-1')) {
+        if ((new \DateTime($startDate))->format('Y-m-1') > (new \DateTime($this->course->startDate))->format('Y-m-1')) {
                 $paymentCycle              = new PaymentCycle();
                 $paymentCycle->enrolmentId = $this->id;
                 $paymentCycle->startDate   = (new \DateTime($this->course->startDate))->format('Y-m-1');
@@ -935,8 +935,10 @@ class Enrolment extends \yii\db\ActiveRecord
             $extendedLesson->setDiscount();
             $extendedLesson->makeAsRoot();
         }
+        $paymentCycleStartDate = (new \DateTime($lastLesson->date))->format('Y-m-t');
+        $paymentCycleStartDate = (new \DateTime($paymentCycleStartDate))->modify('+1 day')->format('Y-m-d');
         $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
-        $enrolmentPaymentFrequency->effectiveDate = $start->format('Y-m-d');
+        $enrolmentPaymentFrequency->effectiveDate = $paymentCycleStartDate;
         $enrolmentPaymentFrequency->enrolmentId = $this->id;
         $enrolmentPaymentFrequency->resetPaymentCycle();
         return true;

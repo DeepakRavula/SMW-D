@@ -32,7 +32,7 @@ use common\models\Lesson;
             [
                 'label' => 'Due Date',
                 'value' => function ($data) {
-                    return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
+                    return $data->groupLesson->dueDate ? Yii::$app->formatter->asDate($data->groupLesson->dueDate) : null;
                 },
             ],
             [

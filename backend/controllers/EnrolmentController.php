@@ -130,28 +130,35 @@ class EnrolmentController extends BaseController
             ->notDeleted()
             ->scheduledOrRescheduled()
             ->notCompleted()
-			->count();
+            ->count();
+        $query = Lesson::find()
+        ->andWhere(['lesson.courseId' => $model->course->id])
+        ->scheduledOrRescheduled()
+        ->isConfirmed()
+        ->notDeleted()
+        ->notCompleted();
+        if ($model->course->isPrivate()) {
+            $query->orderBy([
+                'lesson.dueDate' => SORT_ASC,
+                'lesson.date' => SORT_ASC      
+                ])->limit(12);
+        } else {
+            $query->joinWith(['groupLesson' => function ($query) use ($id) {
+                $query->enrolment($id);
+            }])
+                ->orderBy([
+                'group_lesson.dueDate' => SORT_ASC,
+                'lesson.date' => SORT_ASC      
+                ]);
+        }
 	    $lessonDataProvider = new ActiveDataProvider([
-            'query' => Lesson::find()
-                ->andWhere(['courseId' => $model->course->id])
-                ->scheduledOrRescheduled()
-                ->isConfirmed()
-		        ->limit(12)
-                ->notDeleted()
-                ->notCompleted()
-                ->orderBy(['lesson.date' => SORT_ASC]),
-            'pagination' => false,
+            'query' => $query,
         ]);
-        $groupLessonDataProvider = new ActiveDataProvider([
-            'query' => Lesson::find()
-                ->andWhere(['courseId' => $model->course->id])
-                ->scheduledOrRescheduled()
-                ->isConfirmed()
-                ->notDeleted()
-                ->notCompleted()
-                ->orderBy(['lesson.date' => SORT_ASC]),
-            'pagination' =>  [ 'pageSize' => 10, ],
-        ]);
+        if ($model->course->isPrivate()) {
+            $lessonDataProvider->setPagination(false);
+        } else {
+            $lessonDataProvider->setPagination(['pageSize' => 10]);
+        }
         $logDataProvider = new ActiveDataProvider([
             'query' => LogHistory::find()
             ->enrolment($id) ]);
@@ -167,7 +174,6 @@ class EnrolmentController extends BaseController
         
         return $this->render('view', [
             'model' => $model,
-	        'groupLessonDataProvider' => $groupLessonDataProvider,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
