@@ -16,6 +16,7 @@ use common\models\UserProfile;
 class UserSearch extends User
 {
     const STATUS_ALL = 3;
+    const STATUS_OWING = 4;
         
     private $accountView;
     public $role_name;
@@ -121,7 +122,7 @@ class UserSearch extends User
         $query->joinWith(['emails' => function ($query) {
             $query->andFilterWhere(['like', 'email', $this->email]);
         }]);
-        if ((int) $this->balance === User::STATUS_OWING) {
+        if ((int) $this->balance === self::STATUS_OWING) {
             $query->joinWith(['customerAccount' => function ($query) {
                 $query->andFilterWhere(['>', 'customer_account.balance', 0]);
             }]);
@@ -161,7 +162,7 @@ class UserSearch extends User
     {
         return [
             self::STATUS_ALL => 'All',
-            User::STATUS_OWING => 'Owing',
+            self::STATUS_OWING => 'Owing',
         ];
     }
 }
