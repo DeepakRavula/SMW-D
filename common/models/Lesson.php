@@ -963,7 +963,9 @@ class Lesson extends \yii\db\ActiveRecord
                 }
             }
             $this->course->updateDates();
-            $this->customer->updateCustomerBalance();
+            if ($this->isPrivate()) {
+                $this->customer->updateCustomerBalance();
+            }
         }
         return parent::afterSave($insert, $changedAttributes);
     }
