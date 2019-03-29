@@ -171,6 +171,7 @@ class LessonPayment extends \yii\db\ActiveRecord
         if ($this->groupLesson) {
             $this->groupLesson->save();
         } 
+        $this->lesson->customer->updateCustomerBalance();
         return parent::afterSave($insert, $changedAttributes);
     }
 

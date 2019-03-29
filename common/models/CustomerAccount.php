@@ -1,6 +1,9 @@
 <?php
 
 namespace common\models;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 use Yii;
 
@@ -15,15 +18,13 @@ use Yii;
  */
 class CustomerAccount extends \yii\db\ActiveRecord
 {
-    const INVOICE_DESCRIPTION = 'Invoice';
-    const PAYMENT_DESCRIPTION = 'Payment';
 
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'customer_account_info';
+        return 'customer_account';
     }
 
     /**
@@ -32,11 +33,7 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoiceId', 'transactionId'], 'integer'],
-            [['date'], 'safe'],
-            [['description'], 'string', 'max' => 7],
-            [['debit'], 'string', 'max' => 12],
-            [['credit'], 'string', 'max' => 13],
+            [['customerId', 'balance'], 'safe'],
         ];
     }
 
@@ -46,11 +43,25 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'description' => 'Description',
-            'invoiceId' => 'Invoice ID',
-            'date' => 'Date',
-            'debit' => 'Debit',
-            'credit' => 'Credit',
+            'customerId' => 'Customer ID',
+            'balance' => 'Balance',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
         ];
     }
 
@@ -61,36 +72,5 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\CustomerAccountQuery(get_called_class());
-    }
-    
-    public function getInvoice()
-    {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
-    }
-    
-    public function getBalance()
-    {
-        return self::find()
-                ->andWhere(['userId' => $this->userId])
-                ->andWhere(['<=', 'transactionId', $this->transactionId])
-                ->sum('credit+debit');
-    }
-    
-    public function getAccountDescription()
-    {
-        $description = null;
-        switch ($this->description) {
-            case self::INVOICE_DESCRIPTION:
-                $description = $this->description . ' I-' . str_pad($this->invoiceId, 5, 0, STR_PAD_LEFT);
-            break;
-            case self::PAYMENT_DESCRIPTION:
-                if (!$this->invoice->isInvoice()) {
-                    $description = $this->description . ' P-' . str_pad($this->invoiceId, 5, 0, STR_PAD_LEFT);
-                } else {
-                    $description = $this->description . ' I-' . str_pad($this->invoiceId, 5, 0, STR_PAD_LEFT);
-                }
-            break;
-        }
-        return $description;
     }
 }

@@ -244,8 +244,7 @@ class Payment extends ActiveRecord
 
     public function getCustomer()
     {
-        return $this->hasOne(User::className(), ['id' => 'userId'])
-                ->viaTable('customer_payment', ['payment_id' => 'id']);
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     public function getLesson()
@@ -396,6 +395,7 @@ class Payment extends ActiveRecord
             $lessonPayment->enrolmentId = $this->enrolmentId;
             $lessonPayment->save();
         }
+        $this->customer->updateCustomerBalance();
         //$this->trigger(self::EVENT_CREATE);
         
         return parent::afterSave($insert, $changedAttributes);
