@@ -55,7 +55,7 @@ class PrintController extends BaseController
                             'time-voucher', 'customer-invoice', 'account-view', 
                             'royalty', 'royalty-free', 'tax-collected', 'user', 
                             'customer-items-print', 'proforma-invoice','payment',
-                            'receipt', 'sales-and-payment', 'customer-statement'
+                            'receipt', 'sales-and-payment', 'customer-statement', 'all-locations'
                         ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
@@ -701,6 +701,30 @@ class PrintController extends BaseController
         'searchModel' => $searchModel,
         'groupLessonSearchModel' => $groupLessonSearchModel,
         'total' => $total
+        ]);
+    }
+
+    public function actionAllLocations()
+    {
+        $searchModel = new ReportSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $request = Yii::$app->request;
+        $searchModel->load($request->get());
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
+        }
+         $location = Location::find()->notDeleted();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $location,
+        ]);
+        $this->layout = '/print';
+        return $this->render('/report/all-locations/_print', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 }
