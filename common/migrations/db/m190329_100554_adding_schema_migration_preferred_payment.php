@@ -16,10 +16,11 @@ class m190329_100554_adding_schema_migration_preferred_payment extends Migration
         if ($tableSchema == null) {
             $this->createTable('customer_recurring_payment', [
                 'id' => $this->primaryKey(),
-                'userId' => $this->integer()->notNull(),
+                'customerId' => $this->integer()->notNull(),
                 'entryDay' => $this->date()->notNull(),
                 'paymentDay' => $this->date()->notNull(),
                 'paymentMethodId' => $this->integer()->notNull(),
+                'paymentFrequencyId' => $this->integer()->notNull(),
                 'expiryDate' => $this->date()->notNull(),
                 'createdOn' => $this->timeStamp()->defaultValue(null),
                 'updatedOn' => $this->timeStamp()->defaultValue(null),
