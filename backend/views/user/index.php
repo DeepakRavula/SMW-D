@@ -126,14 +126,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
         ];
             if ($roleName == User::ROLE_CUSTOMER) {
                 array_push($columns, [
-                    'label' => 'Lessons Due',
-                    'value' => function ($data) {
-                        return !empty($data->getLessonsDue($data->id)) ? round($data->getLessonsDue($data->id), 2) : 0.00;
-                },
-                'contentOptions' => ['class' => 'text-right dollar'],
-                ]);
-                array_push($columns, [
-                    'attribute' => 'balance',
+                    'attribute' => 'status',
                     'filter'=> UserSearch::balanceStatus(),
                     'label' => 'Balance',
                     'value' => function ($data) {

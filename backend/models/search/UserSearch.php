@@ -28,6 +28,7 @@ class UserSearch extends User
     public $phone;
     public $student;
     public $balance;
+    public $status;
     
     public function getAccountView()
     {
@@ -53,9 +54,8 @@ class UserSearch extends User
     public function rules()
     {
         return [
-            [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query','phone','showAll','accountView', 'student', 'balance'], 'safe'],
+            [['id','accountView', 'status'], 'integer'],
+            [['email', 'role_name', 'firstname', 'lastname', 'query','phone','showAll','accountView', 'student', 'balance'], 'safe'],
         ];
     }
 
@@ -122,7 +122,7 @@ class UserSearch extends User
         $query->joinWith(['emails' => function ($query) {
             $query->andFilterWhere(['like', 'email', $this->email]);
         }]);
-        if ((int) $this->balance === self::STATUS_OWING) {
+        if ((int) $this->status === self::STATUS_OWING) {
             $query->joinWith(['customerAccount' => function ($query) {
                 $query->andFilterWhere(['>', 'customer_account.balance', 0]);
             }]);
