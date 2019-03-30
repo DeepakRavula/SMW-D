@@ -296,6 +296,7 @@ class EnrolmentController extends BaseController
                 $groupLesson->save();
             }
             $enrolmentModel->setStatus();
+            $enrolmentModel->customer->updateCustomerBalance();
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
                 [new StudentLog(), 'addGroupEnrolment'],

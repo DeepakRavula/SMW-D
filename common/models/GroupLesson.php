@@ -146,4 +146,10 @@ class GroupLesson extends \yii\db\ActiveRecord
         
         return $paidStatus;
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        $this->enrolment->customer->updateCustomerBalance();
+        return parent::afterSave($insert, $changedAttributes);
+    }
 }
