@@ -468,6 +468,11 @@ class User extends ActiveRecord implements IdentityInterface
                 ->andWhere(['customer_payment_preference.isDeleted' => false]);
     } 
 
+    public function getCustomerRecurringPayments()
+    {
+        return $this->hasMany(CustomerRecurringPayment::className(), ['customerId' => 'id']);
+    } 
+
     public function getCustomerReferralSource()
     {
         return $this->hasOne(CustomerReferralSource::className(), ['userId' => 'id']);
