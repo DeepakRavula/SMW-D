@@ -516,7 +516,9 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        $this->user->updateCustomerBalance();
+        if ($this->user) {
+            $this->user->updateCustomerBalance();
+        }
         return parent::afterSave($insert, $changedAttributes);
     }
     
