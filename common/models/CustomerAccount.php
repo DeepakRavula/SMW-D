@@ -34,9 +34,17 @@ class CustomerAccount extends \yii\db\ActiveRecord
     {
         return [
             [['customerId', 'balance'], 'safe'],
+            ['customerId', 'validateUser'],
         ];
     }
 
+    public function validateUser($attributes)
+    {
+        $user = User::findOne(['id' => $this->customerId]);
+        if (!$user->isCustomer()) {
+            $this->addError($attributes, 'Unable to add this user on customer account because user is not a customer');
+        }
+    }
     /**
      * @inheritdoc
      */
