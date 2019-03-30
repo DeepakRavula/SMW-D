@@ -474,6 +474,7 @@ class Payment extends ActiveRecord
         if ($this->invoice) {
             $this->invoice->save();
         }
+        $this->customer->updateCustomerBalance();
         return true;
     }
 
