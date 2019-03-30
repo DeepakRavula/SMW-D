@@ -34,7 +34,6 @@ class CustomerAccount extends \yii\db\ActiveRecord
     {
         return [
             [['customerId', 'balance'], 'safe'],
-            ['customerId', 'validateUser'],
         ];
     }
 
