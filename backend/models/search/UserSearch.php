@@ -16,6 +16,7 @@ use common\models\UserProfile;
 class UserSearch extends User
 {
     const STATUS_ALL = 3;
+    const STATUS_OWING = 4;
         
     private $accountView;
     public $role_name;
@@ -26,6 +27,8 @@ class UserSearch extends User
     private $email;
     public $phone;
     public $student;
+    public $balance;
+    public $status;
     
     public function getAccountView()
     {
@@ -51,9 +54,8 @@ class UserSearch extends User
     public function rules()
     {
         return [
-            [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query','phone','showAll','accountView', 'student'], 'safe'],
+            [['id','accountView', 'status'], 'integer'],
+            [['email', 'role_name', 'firstname', 'lastname', 'query','phone','showAll','accountView', 'student', 'balance'], 'safe'],
         ];
     }
 
@@ -120,6 +122,11 @@ class UserSearch extends User
         $query->joinWith(['emails' => function ($query) {
             $query->andFilterWhere(['like', 'email', $this->email]);
         }]);
+        if ((int) $this->status === self::STATUS_OWING) {
+            $query->joinWith(['customerAccount' => function ($query) {
+                $query->andFilterWhere(['>', 'customer_account.balance', 0]);
+            }]);
+        }
         $query->andFilterWhere(['like', 'uf.firstname', $this->firstname])
                 ->andFilterWhere(['like', 'uf.lastname', $this->lastname])
                 ->andFilterWhere(['like', 'student.first_name', $this->student])
@@ -148,6 +155,14 @@ class UserSearch extends User
             self::STATUS_ALL => 'All',
             Invoice::STATUS_OWING => 'Owing',
             Invoice::STATUS_PAID => 'Paid',
+        ];
+    }
+
+    public static function balanceStatus()
+    {
+        return [
+            self::STATUS_ALL => 'All',
+            self::STATUS_OWING => 'Owing',
         ];
     }
 }
