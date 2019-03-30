@@ -22,7 +22,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->name;
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
-        'title' => 'Royalty for' . ' '.$locationId,
+        'title' => 'Royalty for' . ' ' . $locationId,
         'withBorder' => true,
     ])
 
