@@ -22,6 +22,7 @@ class m190329_100554_adding_schema_migration_preferred_payment extends Migration
                 'paymentMethodId' => $this->integer()->notNull(),
                 'paymentFrequencyId' => $this->integer()->notNull(),
                 'expiryDate' => $this->date()->notNull(),
+                'amount' => $this->decimal(10, 4)->notNull()->defaultValue(0.00),
                 'createdOn' => $this->timeStamp()->defaultValue(null),
                 'updatedOn' => $this->timeStamp()->defaultValue(null),
 		        'createdByUserId' =>  $this->integer()->notNull(),

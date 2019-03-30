@@ -62,9 +62,9 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId', 'expiryDate', 'createdByUserId', 'updatedByUserId'], 'required'],
+            [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId', 'expiryDate', 'createdByUserId', 'updatedByUserId', 'amount'], 'required'],
             [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn'], 'safe'],
+            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount'], 'safe'],
         ];
     }
 
@@ -81,6 +81,7 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
             'paymentMethodId' => 'Payment Method ID',
             'paymentFrequencyId' => 'Payment Frequency ID',
             'expiryDate' => 'Expiry Date',
+            'amount' => 'Amount',
             'createdOn' => 'Created On',
             'updatedOn' => 'Updated On',
             'createdByUserId' => 'Created By User ID',
