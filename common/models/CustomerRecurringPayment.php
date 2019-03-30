@@ -27,6 +27,9 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+
+    const CONSOLE_USER_ID  = 727;
+    
     public static function tableName()
     {
         return 'customer_recurring_payment';
