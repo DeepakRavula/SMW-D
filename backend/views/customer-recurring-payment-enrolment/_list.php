@@ -73,22 +73,22 @@ use insolita\wgadminlte\LteConst;
 <?php LteBox::end() ?>
 
 <script>
-        $(document).on('click', '#recurring-payment,#recurring-payment-list  tbody > tr', function () {
-            var customUrl = '<?= Url::to(['customer-recurring-payment-enrolment/create', 'id' => $model->id]); ?>';
-            $.ajax({
-                url    : customUrl,
-                type   : 'get',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
+    $(document).on('click', '#recurring-payment,#recurring-payment-list  tbody > tr', function () {
+        var customUrl = '<?= Url::to(['customer-recurring-payment-enrolment/create', 'id' => $model->id]); ?>';
+        $.ajax({
+            url    : customUrl,
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
                 {
-                    if(response.status)
-                    {
-                        $('#popup-modal').modal('show');
-                        $('#modal-content').html(response.data);
-                    }
+                    $('#popup-modal').modal('show');
+                    $('#modal-content').html(response.data);
                 }
-            });
-            return false;
+            }
         });
+        return false;
+    });
 </script>

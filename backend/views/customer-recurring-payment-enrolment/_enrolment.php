@@ -25,7 +25,7 @@ use common\models\Course;
             'class' => 'yii\grid\CheckboxColumn',
             'contentOptions' => ['style' => 'width:30px;'],
             'checkboxOptions' => function($model, $key, $index, $column) {
-                return ['checked' => true,'class' =>'check-checkbox'];
+                return ['checked' => false,'class' =>'check-checkbox'];
             }
         ]);
 
