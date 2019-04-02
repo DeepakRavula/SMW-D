@@ -28,6 +28,8 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
         return 'customer_recurring_payment_enrolment';
     }
 
+    const CONSOLE_USER_ID  = 727;
+
     public function behaviors()
     {
         return [
@@ -58,8 +60,8 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'required'],
-            [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'integer'],
+            [['enrolmentId', 'customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId', 'expiryDate', 'createdByUserId', 'updatedByUserId', 'amount'], 'safe'],
+            [['enrolmentId', 'customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
             [['createdOn', 'updatedOn'], 'safe'],
         ];
     }
@@ -72,11 +74,17 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'enrolmentId' => 'Enrolment ID',
-            'customerRecurringPaymentId' => 'Customer Recurring Payment ID',
+            'paymentFrequencyId' => 'Frequency',
+            'paymentMethodId' => 'Payment Method',
             'createdOn' => 'Created On',
             'updatedOn' => 'Updated On',
             'createdByUserId' => 'Created By User ID',
             'updatedByUserId' => 'Updated By User ID',
         ];
+    }
+
+    public static function find()
+    {
+        return new \common\models\query\EnrolmentQuery(get_called_class());
     }
 }

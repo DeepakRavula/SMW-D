@@ -172,7 +172,7 @@ foreach ($roleNames as $name => $description) {
             <?php Pjax::end() ?>
             
             <?php Pjax::begin(['id' => 'customer-recurring-payment-list', 'timeout' => 6000]) ?>
-                <?=$this->render('/customer-recurring-payment/_list', [
+                <?=$this->render('/customer-recurring-payment-enrolment/_list', [
                     'model' => $model,
                     'customerRecurringPaymentsDataProvider' => $customerRecurringPaymentsDataProvider,
                 ]); ?>
