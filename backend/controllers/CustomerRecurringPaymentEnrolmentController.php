@@ -12,7 +12,7 @@ use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use yii\helpers\Url;
-
+use common\models\Enrolment;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -97,15 +97,26 @@ class CustomerRecurringPaymentEnrolmentController extends \common\components\con
      */
     public function actionCreate($id)
     {
+        $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->joinWith(['student' => function($query) use($id) {
+                            $query->andWhere(['student.customer_id' => $id]);
+                        }])
+                    ->isConfirmed();
+        $enrolmentDataProvider  = new ActiveDataProvider([
+            'query' => $enrolment,
+            'pagination' => false,
+        ]);
         $model = new CustomerRecurringPaymentEnrolment();
         $data = $this->renderAjax('_form', [
             'model' => $model,
             'id' => $id,
+            'enrolmentDataProvider' => $enrolmentDataProvider
         ]);
-        if (Yii::$app->request->post()) {
+        if ($model->load(Yii::$app->request->post())) {
             $model->customerId = $id;
-            if($model->load(Yii::$app->request->post()) && $model->save()) {
-            print_r($model->expiryDate);die('ssss');
+            $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+            if($model->save()) {
                 return [
                     'status' => true
                 ];

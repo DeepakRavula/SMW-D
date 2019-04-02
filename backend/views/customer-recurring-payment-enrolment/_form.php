@@ -6,6 +6,7 @@ use dosamigos\ckeditor\CKEditor;
 use yii\helpers\ArrayHelper;
 use yii\jui\DatePicker;
 use common\models\PaymentMethod;
+use yii\bootstrap\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -60,16 +61,25 @@ use common\models\PaymentMethod;
     </div>
     </div>
 </div>
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
+<?= Html::label('Enrolment', ['class' => 'admin-login']) ?>
+<?= $this->render('_enrolment', [
+    'enrolmentDataProvider' => $enrolmentDataProvider
+]);
+?>
 <script>
+    $(document).ready(function() {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payment</h4>');
+        $('#popup-modal .modal-dialog').css({'width': '800px'});
+    });
+
     $(document).on('modal-success', function(event, params) {
-        alert('sss');
-        $.pjax.reload({url: url, container: "#recurring-payment-list", replace: false, timeout: 4000});
+        $.pjax.reload({container: "#recurring-payment-list", replace: false, timeout: 4000});
         return false;
     });
     
     $(document).on('modal-delete', function(event, params) {
-        $.pjax.reload({url: url, container: "#recurring-payment-list", replace: false, timeout: 4000});
+        $.pjax.reload({container: "#recurring-payment-list", replace: false, timeout: 4000});
         return false;
     });
 </script>

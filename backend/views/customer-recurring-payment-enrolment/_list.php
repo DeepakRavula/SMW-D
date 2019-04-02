@@ -52,7 +52,7 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Expiry Date',
                 'value' => function ($data) {
-                    return $data->expiryDate;
+                    return (new \DateTime($data->expiryDate))->format('M, d, Y');
                 },
             ],
             [
@@ -85,7 +85,6 @@ use insolita\wgadminlte\LteConst;
                     if(response.status)
                     {
                         $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payment</h4>');
                         $('#modal-content').html(response.data);
                     }
                 }
