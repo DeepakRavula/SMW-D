@@ -100,10 +100,12 @@ class CustomerRecurringPaymentEnrolmentController extends \common\components\con
         $model = new CustomerRecurringPaymentEnrolment();
         $data = $this->renderAjax('_form', [
             'model' => $model,
+            'id' => $id,
         ]);
         if (Yii::$app->request->post()) {
             $model->customerId = $id;
             if($model->load(Yii::$app->request->post()) && $model->save()) {
+            print_r($model->expiryDate);die('ssss');
                 return [
                     'status' => true
                 ];

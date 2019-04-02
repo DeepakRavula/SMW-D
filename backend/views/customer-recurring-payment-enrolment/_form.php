@@ -15,7 +15,7 @@ use common\models\PaymentMethod;
 <?php 
         $url = Url::to(['blog/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
-        $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $model->id]);
+        $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $id]);
     }
         $form = ActiveForm::begin([
         'id' => 'modal-form',
@@ -63,6 +63,7 @@ use common\models\PaymentMethod;
     <?php ActiveForm::end(); ?>
 <script>
     $(document).on('modal-success', function(event, params) {
+        alert('sss');
         $.pjax.reload({url: url, container: "#recurring-payment-list", replace: false, timeout: 4000});
         return false;
     });
