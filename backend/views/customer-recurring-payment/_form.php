@@ -52,7 +52,7 @@ use yii\bootstrap\Html;
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
                 'changeMonth' => true,
-                'yearRange' => '-70:+0',
+                'yearRange' => '-70:+20',
                 'changeYear' => true,
                 ], ])->textInput(['placeholder' => 'Select Expiry Date']);?>    
     </div>
@@ -71,6 +71,8 @@ use yii\bootstrap\Html;
     $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payment</h4>');
         $('#popup-modal .modal-dialog').css({'width': '800px'});
+        $('#modal-save').addClass('customer-recurring-payment-modal-save');
+        $('#modal-save').removeClass('modal-save');
     });
 
     $(document).on('modal-success', function(event, params) {
@@ -82,4 +84,32 @@ use yii\bootstrap\Html;
         $.pjax.reload({container: "#recurring-payment-list", replace: false, timeout: 4000});
         return false;
     });
-</script>
+   
+    $(document).off('click', '.customer-recurring-payment-modal-save').on('click', '.customer-recurring-payment-modal-save', function(){
+        var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
+        var id = <?= $id ?>;
+        var params = $.param({'id' : id,'CustomerRecurringPaymentEnrolment[enrolmentIds]': enrolmentIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['customer-recurring-payment/create' ])?>?' +params,
+                        type   : 'post',
+                        dataType: "json",
+                        data   : $('#modal-form').serialize(),
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                 
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        return false;
+    });
+
+</script> 

@@ -108,6 +108,7 @@ use common\models\Course;
 <?php Pjax::begin(['enablePushState' => false, 'id' => 'enrolment-listing', 'timeout' => 12000,]); ?>
     <?= GridView::widget([
         'dataProvider' => $enrolmentDataProvider,
+        'options' => ['id' => 'enrolment-index'],
         'columns' => $columns,
         'summary' => false,
         'emptyText' => 'No enrolment Available!'

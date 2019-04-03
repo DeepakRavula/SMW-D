@@ -74,7 +74,7 @@ use insolita\wgadminlte\LteConst;
 
 <script>
     $(document).on('click', '#recurring-payment,#recurring-payment-list  tbody > tr', function () {
-        var customUrl = '<?= Url::to(['customer-recurring-payment-enrolment/create', 'id' => $model->id]); ?>';
+        var customUrl = '<?= Url::to(['customer-recurring-payment/create', 'id' => $model->id]); ?>';
         $.ajax({
             url    : customUrl,
             type   : 'get',

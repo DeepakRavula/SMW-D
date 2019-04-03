@@ -13,10 +13,11 @@ use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use yii\helpers\Url;
 use common\models\Enrolment;
+use common\models\CustomerRecurringPayment;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
-class CustomerRecurringPaymentEnrolmentController extends \common\components\controllers\BaseController
+class CustomerRecurringPaymentController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -41,7 +42,9 @@ class CustomerRecurringPaymentEnrolmentController extends \common\components\con
                     [
                         'allow' => true,
                         'actions' => ['index','create', 'update', 'delete'],
-                        'roles' => ['manageBlogs'],
+                        'roles' => [
+                            'managePfi'
+                       ]
                     ],
 					[
                         'allow' => true,
@@ -53,87 +56,62 @@ class CustomerRecurringPaymentEnrolmentController extends \common\components\con
         ];
     }
 
-    /**
-     * Lists all Blog models.
-     *
-     * @return mixed
-     */
-   public function actionIndex()
-    {
-        $blog = Blog::find()
-            ->notDeleted()
-            ->orderBy(['date' => SORT_DESC]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $blog,
-        ]);
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-    /**
-     * Lists all Blog models.
-     *
-     * @return mixed
-     */
-    /**
-     * Displays a single Blog model.
-     *
-     * @param string $id
-     *
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
 
-    /**
-     * Creates a new Blog model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
-     */
     public function actionCreate($id)
     {
-    //     $enrolment = Enrolment::find()
-    //                 ->notDeleted()
-    //                 ->joinWith(['student' => function($query) use($id) {
-    //                         $query->andWhere(['student.customer_id' => $id]);
-    //                     }])
-    //                 ->isConfirmed();
-    //     $enrolmentDataProvider  = new ActiveDataProvider([
-    //         'query' => $enrolment,
-    //         'pagination' => false,
-    //     ]);
-    //     $model = new CustomerRecurringPaymentEnrolment();
-    //     $data = $this->renderAjax('_form', [
-    //         'model' => $model,
-    //         'id' => $id,
-    //         'enrolmentDataProvider' => $enrolmentDataProvider
-    //     ]);
-    //     if ($model->load(Yii::$app->request->post())) {
-    //         $model->customerId = $id;
-    //         $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
-    //         if($model->save()) {
-    //             return [
-    //                 'status' => true
-    //             ];
-    //         }
-    //      else {
-    //         return [
-    //                 'status' => false,
-    //                 'errors' =>$model->getErrors()
-    //             ];
-    //         }
-    //     }
-    //         else {
-    //         return [
-    //             'status' => true,
-    //             'data' => $data
-    //         ];
-    // }
+        $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->joinWith(['student' => function($query) use($id) {
+                            $query->andWhere(['student.customer_id' => $id]);
+                        }])
+                    ->isConfirmed();
+        $enrolmentDataProvider  = new ActiveDataProvider([
+            'query' => $enrolment,
+            'pagination' => false,
+        ]);
+        $post = Yii::$app->request->post();
+        $get =  Yii::$app->request->get();
+        
+        $model = new CustomerRecurringPayment();
+        $customerRecurringPaymentEnrolmentModel =  new CustomerRecurringPaymentEnrolment();
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+            'id' => $id,
+            'enrolmentDataProvider' => $enrolmentDataProvider,
+            'customerRecurringPaymentEnrolment' => $customerRecurringPaymentEnrolmentModel,
+        ]);
+        if ($post) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->customerId = $id;
+            $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+            if($model->save()) {
+                  $customerRecurringPaymentEnrolmentModel->load($get);
+                  foreach ($customerRecurringPaymentEnrolmentModel->enrolmentIds as $enrolmentId) {
+                      $customerRecurringPaymentEnrolment = new CustomerRecurringPaymentEnrolment();
+                      $customerRecurringPaymentEnrolment->enrolmentId = $enrolmentId;
+                      $customerRecurringPaymentEnrolment->customerId = $model->customerId;
+                      $customerRecurringPaymentEnrolment->customerRecurringPaymentId = $model->id;
+                      $customerRecurringPaymentEnrolment->save();
+                  } 
+                  return [
+                    'status' => true
+                ];
+            }
+           
+         else {
+            return [
+                    'status' => false,
+                    'errors' => $model->getErrors()
+                ];
+            }
+        }
+    }
+            else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+    }
     }
 
     /**

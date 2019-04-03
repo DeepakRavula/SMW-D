@@ -29,6 +29,8 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
     }
 
     const CONSOLE_USER_ID  = 727;
+    public $enrolmentIds;
+    public $id;
 
     public function behaviors()
     {
@@ -62,7 +64,7 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
         return [
             [['enrolmentId', 'customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId', 'expiryDate', 'createdByUserId', 'updatedByUserId', 'amount'], 'safe'],
             [['enrolmentId', 'customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['createdOn', 'updatedOn'], 'safe'],
+            [['createdOn', 'updatedOn', 'enrolmentIds', 'userId'], 'safe'],
         ];
     }
 
