@@ -23,11 +23,18 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public $enrolmentIds;
+
+    const CONSOLE_USER_ID  = 727;
+
     public static function tableName()
     {
         return 'customer_recurring_payment_enrolment';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -52,15 +59,12 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
-            [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'required'],
+            [['enrolmentId', 'customerRecurringPaymentId', ], 'required'],
             [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['createdOn', 'updatedOn'], 'safe'],
+            [['createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId', 'enrolmentIds'], 'safe'],
         ];
     }
 

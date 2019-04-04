@@ -22,7 +22,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
             $toDate = $currentDate;
         }
         return $this->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
-                $query->joinWith(['lessons' => function ($query) {
+            $query->joinWith(['lessons' => function ($query) {
                 $query->andWhere(['NOT', ['lesson.id' => null]]);
             }])
                 ->overlap($fromDate, $toDate)
@@ -71,15 +71,15 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['course' => function ($query) {
             $query->andWhere(['course.type' => Enrolment::TYPE_REGULAR])
-            ->notDeleted();
+                ->notDeleted();
         }]);
     }
-    
+
     public function extra()
     {
         return $this->joinWith(['course' => function ($query) {
             $query->andWhere(['course.type' => Enrolment::TYPE_EXTRA])
-            ->notDeleted();
+                ->notDeleted();
         }]);
     }
 
@@ -90,13 +90,22 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         }]);
     }
 
+    public function recurringPaymentExcluded()
+    {
+        return $this->joinWith(['customerRecurringPaymentEnrolment' => function ($query) {
+            $query->andWhere(['customer_recurring_payment_enrolment.enrolmentId' => null]);
+        }]);
+    }
+
     public function notPaymentPrefered()
     {
         return $this->joinWith(['student' => function ($query) {
             $query->joinWith(['customerPaymentPreference' => function ($query) {
-                $query->andWhere(['OR', ['customer_payment_preference.id' => null],
-                    ['<', 'DATE(customer_payment_preference.expiryDate)', (new \DateTime())->format('Y-m-d')], ['customer_payment_preference.isPreferredPaymentEnabled' => false]]);
-                }]);
+                $query->andWhere([
+                    'OR', ['customer_payment_preference.id' => null],
+                    ['<', 'DATE(customer_payment_preference.expiryDate)', (new \DateTime())->format('Y-m-d')], ['customer_payment_preference.isPreferredPaymentEnabled' => false]
+                ]);
+            }]);
         }]);
     }
 
@@ -104,8 +113,10 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['student' => function ($query) {
             $query->joinWith(['customerPaymentPreference' => function ($query) {
-                $query->andWhere(['AND', ['NOT', ['customer_payment_preference.id' => null]], 
-                    ['OR', ['customer_payment_preference.expiryDate' => null], ['>=', 'DATE(customer_payment_preference.expiryDate)', (new \DateTime())->format('Y-m-d')]]])
+                $query->andWhere([
+                    'AND', ['NOT', ['customer_payment_preference.id' => null]],
+                    ['OR', ['customer_payment_preference.expiryDate' => null], ['>=', 'DATE(customer_payment_preference.expiryDate)', (new \DateTime())->format('Y-m-d')]]
+                ])
                     ->andWhere(['customer_payment_preference.isPreferredPaymentEnabled' => true]);
             }]);
         }]);
@@ -114,27 +125,26 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     public function programs()
     {
         $this->joinWith(['course' => function ($query) {
-            $query->joinWith(['program' => function ($query) {
-            }])
-            ->notDeleted();
+            $query->joinWith(['program' => function ($query) { }])
+                ->notDeleted();
         }]);
 
         return $this;
     }
-    
+
     public function privateProgram()
     {
         return $this->joinWith(['course' => function ($query) {
             $query->andWhere(['course.type' => Program::TYPE_PRIVATE_PROGRAM])
-            ->notDeleted();
+                ->notDeleted();
         }]);
     }
-    
+
     public function location($locationId)
     {
         $this->joinWith(['course' => function ($query) use ($locationId) {
             $query->andWhere(['locationId' => $locationId])
-            ->notDeleted();
+                ->notDeleted();
         }]);
 
         return $this;
@@ -150,7 +160,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-    public function student($studentId) 
+    public function student($studentId)
     {
         return $this->andWhere(['enrolment.studentId' => $studentId]);
     }
