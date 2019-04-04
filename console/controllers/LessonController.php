@@ -127,7 +127,7 @@ class LessonController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-
+        Yii::$app->db->createCommand()->truncateTable('lesson_owing')->execute();
         Console::startProgress(0, 'Rounding lessons to two decimal places...');
         $lessons = Lesson::find()
         ->notDeleted()
