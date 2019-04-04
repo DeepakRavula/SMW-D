@@ -97,7 +97,8 @@ use yii\bootstrap\Html;
                         success: function(response)
                         {
                             if (response.status) {
-                                 
+                                $('#popup-modal').modal('hide');
+                                $.pjax.reload({container: "#recurring-payment-list", replace: false, timeout: 4000});
                                 }
                             else {
                                 if (response.message) {
