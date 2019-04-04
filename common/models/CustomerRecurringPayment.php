@@ -65,9 +65,9 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId', 'expiryDate', 'createdByUserId', 'updatedByUserId', 'amount'], 'required'],
+            [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId', 'expiryDate',  'amount'], 'required'],
             [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount'], 'safe'],
+            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId',], 'safe'],
         ];
     }
 
@@ -90,5 +90,13 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
             'createdByUserId' => 'Created By User ID',
             'updatedByUserId' => 'Updated By User ID',
         ];
+    }
+
+    public static function getDaysList()
+    {
+        foreach (range(1, 28) as $number) {
+            $dayList [] = $number;
+        }
+        return $dayList;
     }
 }

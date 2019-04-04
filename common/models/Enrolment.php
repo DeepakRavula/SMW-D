@@ -910,6 +910,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(EnrolmentPaymentFrequency::className(), ['enrolmentId' => 'id']);
     }
 
+    public function getCustomerRecurringPaymentEnrolment()
+    {
+        return $this->hasOne(CustomerRecurringPaymentEnrolment::className(), ['enrolmentId' => 'id']);
+    }
+
 
     public function getLastRootLesson()
     {

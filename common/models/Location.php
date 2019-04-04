@@ -239,12 +239,11 @@ class Location extends \yii\db\ActiveRecord
             ->sum('tax');
 
         $payments = Payment::find()
-            ->joinWith(['invoice i' => function ($query) {
-                $query->andWhere(['i.location_id' => $this->id]);
-            }])
-            ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+            ->exceptAutoPayments()
+            ->exceptGiftCard()
+            ->location($this->id)
             ->notDeleted()
-            ->andWhere(['between', 'payment.date', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
+            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
             ->sum('payment.amount');
 
         $royaltyPayment = InvoiceLineItem::find()
