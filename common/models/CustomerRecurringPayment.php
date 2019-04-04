@@ -91,4 +91,17 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
             'updatedByUserId' => 'Updated By User ID',
         ];
     }
+
+    public static function getDaysList()
+    {
+        foreach (range(1, 28) as $number) {
+            $dayList [] = $number;
+        }
+        return $dayList;
+    }
+
+    public static function find()
+    {
+        return new \common\models\query\EnrolmentPaymentFrequencyQuery(get_called_class());
+    }
 }

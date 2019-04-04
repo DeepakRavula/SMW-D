@@ -64,7 +64,11 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                     ->joinWith(['student' => function($query) use($id) {
                             $query->andWhere(['student.customer_id' => $id]);
                         }])
+                    ->joinWith(['customerRecurringPaymentEnrolment' => function($query) use($id) {
+                        $query->andWhere(['customer_recurring_payment_enrolment.enrolmentId' => null]);
+                    }])  
                     ->isConfirmed();
+                
         $enrolmentDataProvider  = new ActiveDataProvider([
             'query' => $enrolment,
             'pagination' => false,
@@ -90,9 +94,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                       $customerRecurringPaymentEnrolment = new CustomerRecurringPaymentEnrolment();
                       $customerRecurringPaymentEnrolment->enrolmentId = $enrolmentId;
                       $customerRecurringPaymentEnrolment->customerRecurringPaymentId = $model->id;
-                      if (!$customerRecurringPaymentEnrolment->save()) {
-                        print_r($customerRecurringPaymentEnrolment->getErrors());die('coming');
-                      }
+                      $customerRecurringPaymentEnrolment->save();
                   } 
                   return [
                     'status' => true
