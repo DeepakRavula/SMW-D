@@ -14,9 +14,8 @@ use common\models\CustomerRecurringPayment;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="blog-form">
+<div class="customer-recurring-payment-form">
 <?php 
-        $url = Url::to(['blog/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
         $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $id]);
     }
