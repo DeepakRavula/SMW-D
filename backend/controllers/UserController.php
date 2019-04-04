@@ -40,7 +40,7 @@ use common\models\Payment;
 use common\models\Transaction;
 use common\models\CustomerReferralSource;
 use common\models\GroupLesson;
-use common\models\CustomerRecurringPaymentEnrolment;
+use common\models\CustomerRecurringPayment;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -732,7 +732,7 @@ class UserController extends BaseController
     protected function getCustomerRecurringPaymentsDataProvider($id)
     {
         return new ActiveDataProvider([
-            'query' => CustomerRecurringPaymentEnrolment::find()
+            'query' => CustomerRecurringPayment::find()
                 ->andWhere(['customerId' => $id]),
             'pagination' => false,
         ]);

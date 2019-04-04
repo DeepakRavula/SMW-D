@@ -89,9 +89,10 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                   foreach ($customerRecurringPaymentEnrolmentModel->enrolmentIds as $enrolmentId) {
                       $customerRecurringPaymentEnrolment = new CustomerRecurringPaymentEnrolment();
                       $customerRecurringPaymentEnrolment->enrolmentId = $enrolmentId;
-                      $customerRecurringPaymentEnrolment->customerId = $model->customerId;
                       $customerRecurringPaymentEnrolment->customerRecurringPaymentId = $model->id;
-                      $customerRecurringPaymentEnrolment->save();
+                      if (!$customerRecurringPaymentEnrolment->save()) {
+                        print_r($customerRecurringPaymentEnrolment->getErrors());die('coming');
+                      }
                   } 
                   return [
                     'status' => true

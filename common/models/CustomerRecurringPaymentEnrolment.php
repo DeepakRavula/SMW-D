@@ -3,9 +3,6 @@
 namespace common\models;
 
 use Yii;
-use yii\behaviors\BlameableBehavior;
-use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
-use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "customer_recurring_payment_enrolment".
@@ -23,37 +20,10 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public $enrolmentIds;
     public static function tableName()
     {
         return 'customer_recurring_payment_enrolment';
-    }
-
-    const CONSOLE_USER_ID  = 727;
-    public $enrolmentIds;
-    public $id;
-
-    public function behaviors()
-    {
-        return [
-            [
-                'class' => TimestampBehavior::className(),
-                'createdAtAttribute' => 'createdOn',
-                'updatedAtAttribute' => 'updatedOn',
-                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
-            ],
-            [
-                'class' => BlameableBehavior::className(),
-                'createdByAttribute' => 'createdByUserId',
-                'updatedByAttribute' => 'updatedByUserId'
-            ],
-            'audittrail' => [
-                'class' => AuditTrailBehavior::className(), 
-                'consoleUserId' => self::CONSOLE_USER_ID, 
-                'attributeOutput' => [
-                    'last_checked' => 'datetime',
-                ],
-            ],
-        ];
     }
 
     /**
@@ -62,9 +32,9 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['enrolmentId', 'customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId', 'expiryDate', 'createdByUserId', 'updatedByUserId', 'amount'], 'safe'],
-            [['enrolmentId', 'customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['createdOn', 'updatedOn', 'enrolmentIds', 'userId'], 'safe'],
+            [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'required'],
+            [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'integer'],
+            [['createdOn', 'updatedOn', 'enrolmentIds'], 'safe'],
         ];
     }
 
@@ -76,17 +46,11 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'enrolmentId' => 'Enrolment ID',
-            'paymentFrequencyId' => 'Frequency',
-            'paymentMethodId' => 'Payment Method',
+            'customerRecurringPaymentId' => 'Customer Recurring Payment ID',
             'createdOn' => 'Created On',
             'updatedOn' => 'Updated On',
             'createdByUserId' => 'Created By User ID',
             'updatedByUserId' => 'Updated By User ID',
         ];
-    }
-
-    public static function find()
-    {
-        return new \common\models\query\EnrolmentQuery(get_called_class());
     }
 }
