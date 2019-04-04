@@ -3,6 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "customer_recurring_payment_enrolment".
@@ -21,6 +24,9 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
      * @inheritdoc
      */
     public $enrolmentIds;
+
+    const CONSOLE_USER_ID  = 727;
+
     public static function tableName()
     {
         return 'customer_recurring_payment_enrolment';
@@ -29,12 +35,36 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
+            ],
+        ];
+    }
+
     public function rules()
     {
         return [
-            [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'required'],
+            [['enrolmentId', 'customerRecurringPaymentId', ], 'required'],
             [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['createdOn', 'updatedOn', 'enrolmentIds'], 'safe'],
+            [['createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId', 'enrolmentIds'], 'safe'],
         ];
     }
 
