@@ -957,15 +957,18 @@ class User extends ActiveRecord implements IdentityInterface
             ->via('students');
     }
 
-    public function getEnrolments()
-    {
-        return $this->hasMany(Enrolment::className(), ['studentId' => 'id'])
-            ->via('students');
-    }
-
     public function getEnrolmentsCount()
     {
-        return $this->getEnrolments()->notDeleted()->count();
+        $enrolmentsCount = Enrolment::find()
+                ->joinWith(['course' => function ($query) {
+                        $query->isConfirmed()
+                            ->notDeleted();
+                    }])
+                ->notDeleted()
+                ->isConfirmed()
+                ->customer($this->id)
+                ->count();
+        return $enrolmentsCount;
     }
     
     public function hasInvoice()
