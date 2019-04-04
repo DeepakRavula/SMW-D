@@ -14,9 +14,8 @@ use yii\web\Response;
 use yii\helpers\Url;
 use common\models\Enrolment;
 use common\models\CustomerRecurringPayment;
-/**
- * BlogController implements the CRUD actions for Blog model.
- */
+
+
 class CustomerRecurringPaymentController extends \common\components\controllers\BaseController
 {
     public function behaviors()
@@ -30,7 +29,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create','update','delete'],
+                'only' => ['create'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -41,15 +40,10 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index','create', 'update', 'delete'],
+                        'actions' => ['create'],
                         'roles' => [
                             'managePfi'
                        ]
-                    ],
-					[
-                        'allow' => true,
-                        'actions' => ['list'],
-                        'roles' => ['viewBlogList'],
                     ],
                 ],
             ],
@@ -115,91 +109,5 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 'data' => $data
             ];
     }
-    }
-
-    /**
-     * Updates an existing Blog model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param string $id
-     *
-     * @return mixed
-     */
-   public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-        $data = $this->renderAjax('_form', [
-            'model' => $model,
-        ]);
-        if (Yii::$app->request->post()) {
-            if($model->load(Yii::$app->request->post()) && $model->save()) {
-                return [
-                    'status' => true
-                ];
-            } 
-        else {
-            return [
-                    'status' => false,
-                    'errors' =>$model->getErrors()
-                ];
-            }
-        }
-            else {
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        }
-    }
-    /**
-     * Deletes an existing Blog model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param string $id
-     *
-     * @return mixed
-     */
-   public function actionDelete($id)
-    {
-        $model = $this->findModel($id);
-        $model->delete();
-            $response = [
-                'status' => true,
-                'url' => Url::to(['blog/index']),
-            ];
-        return $response;
-    }
-	public function actionList()
-    {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Blog::find()->notDeleted(),
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ],
-            ]
-        ]);
-
-        return $this->render('list', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-    /**
-     * Finds the Blog model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param string $id
-     *
-     * @return Blog the loaded model
-     *
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Blog::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
     }
 }
