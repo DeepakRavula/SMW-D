@@ -130,16 +130,16 @@ class LessonController extends Controller
 
         Console::startProgress(0, 'Rounding lessons to two decimal places...');
         $lessons = Lesson::find()
-            ->isConfirmed()
-            ->location($this->locationId)
-            ->privateLessons()
-            ->notCanceled()
-            ->notDeleted()
-            ->all();
-
+        ->notDeleted()
+        ->notCanceled()
+        ->isConfirmed()
+        ->location(18)
+        ->privateLessons()
+        ->andWhere(['>', 'DATE(lesson.date)', '2019-05-31'])
+        ->all();
         foreach ($lessons as $lesson) {
             Console::output("processing: " . $lesson->id, Console::FG_GREEN, Console::BOLD);
-            if ($lesson->getOwingAmount($lesson->enrolment->id) >= -0.09 && $lesson->getOwingAmount($lesson->enrolment->id) <= 0.09  ) {
+            if ($lesson->lessonPayments  ) {
               $lessonOwing =  new LessonOwing();
               $lessonOwing->lessonId = $lesson->id;
               $lessonOwing->save();
