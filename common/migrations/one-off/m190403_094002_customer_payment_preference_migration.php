@@ -32,9 +32,9 @@ class m190403_094002_customer_payment_preference_migration extends Migration
             $customerRecurringPayment->entryDay = 10;
             $customerRecurringPayment->paymentDay = $customerPaymentPreference->dayOfMonth;
             $customerRecurringPayment->paymentMethodId = $customerPaymentPreference->paymentMethodId;
-            $enrolmentsCount = $customerPaymentPreference->customer->enrolment->course->getEnrolmentsCount();
+            $enrolmentsCount = $customerPaymentPreference->customer->getEnrolmentsCount();
             if ($enrolmentsCount == 1) {
-                $customerRecurringPayment->paymentFrequencyId = 
+                $customerRecurringPayment->paymentFrequencyId = $customerPaymentPreference->customer->enrolment->paymentFrequencyId;
             } else {
                 $customerRecurringPayment->paymentFrequencyId = 1;
             }
