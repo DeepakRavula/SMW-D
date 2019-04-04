@@ -55,12 +55,8 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
     {
         $enrolment = Enrolment::find()
                     ->notDeleted()
-                    ->joinWith(['student' => function($query) use($id) {
-                            $query->andWhere(['student.customer_id' => $id]);
-                        }])
-                    ->joinWith(['customerRecurringPaymentEnrolment' => function($query) use($id) {
-                        $query->andWhere(['customer_recurring_payment_enrolment.enrolmentId' => null]);
-                    }])  
+                    ->customer($id)
+                    ->recurringPaymentExcluded() 
                     ->isConfirmed();
                 
         $enrolmentDataProvider  = new ActiveDataProvider([

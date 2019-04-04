@@ -43,7 +43,7 @@ use common\models\Course;
             'label' => 'Student',
             'attribute' => 'student',
             'value' => function ($data) {
-                return !empty($data->student->fullName) ? $data->student->fullName : null;
+                return $data->student->fullName;
             },
         ]);
 
@@ -68,7 +68,7 @@ use common\models\Course;
         array_push($columns, [
             'label' => 'From Time',
             'value' => function ($data) {
-                return !empty($data->courseSchedule->fromTime) ? Yii::$app->formatter->asTime($data->courseSchedule->fromTime) : null;
+                return  Yii::$app->formatter->asTime($data->courseSchedule->fromTime);
             }
         ]);
 
@@ -85,21 +85,21 @@ use common\models\Course;
             'label' => 'Duration',
             'value' => function ($data) {
                 $duration = \DateTime::createFromFormat('h:i:s', $data->courseSchedule->duration);
-                return !empty($duration) ? $duration->format('H:i') : null;
+                return  $duration->format('H:i');
             }
         ]);
 
         array_push($columns, [
             'label' => 'Start Date',
             'value' => function ($data) {
-                return !empty($data->course->startDate) ? Yii::$app->formatter->asDate($data->course->startDate) : null;
+                return  Yii::$app->formatter->asDate($data->course->startDate);
             }
         ]);
 
         array_push($columns, [
             'label' => 'End Date',
             'value' => function ($data) {
-                return !empty($data->course->endDate) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
+                return  Yii::$app->formatter->asDate($data->course->endDate);
             }
         ]);
     ?>
