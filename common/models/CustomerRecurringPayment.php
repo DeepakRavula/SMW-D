@@ -99,9 +99,4 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         }
         return $dayList;
     }
-
-    public static function find()
-    {
-        return new \common\models\query\EnrolmentPaymentFrequencyQuery(get_called_class());
-    }
 }
