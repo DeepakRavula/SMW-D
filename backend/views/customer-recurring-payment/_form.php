@@ -16,6 +16,7 @@ use common\models\CustomerRecurringPayment;
 
 <div class="customer-recurring-payment-form">
 <?php 
+    $url = Url::to(['customer-recurring-payment/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
         $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $id]);
     }
@@ -68,8 +69,11 @@ use common\models\CustomerRecurringPayment;
     $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payment</h4>');
         $('#popup-modal .modal-dialog').css({'width': '800px'});
-        $('#modal-save').addClass('customer-recurring-payment-modal-save');
-        $('#modal-save').removeClass('modal-save');
+        var isNewRecord = '<?= $model->isNewRecord; ?>';
+        if (isNewRecord) {
+            $('#modal-save').addClass('customer-recurring-payment-modal-save');
+            $('#modal-save').removeClass('modal-save');
+        }
     });
 
     $(document).on('modal-success', function(event, params) {

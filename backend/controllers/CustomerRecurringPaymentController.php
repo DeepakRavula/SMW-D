@@ -29,7 +29,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create'],
+                'only' => ['create', 'update'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -40,7 +40,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create'],
+                        'actions' => ['create', 'update'],
                         'roles' => [
                             'managePfi'
                        ]
@@ -105,5 +105,56 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 'data' => $data
             ];
     }
+    }
+
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->customer($model->customerId)
+                    ->joinWith(['customerRecurringPaymentEnrolment' => function ($query) use ($id) {
+                        $query->andWhere(['customerRecurringPaymentId' => $id]);
+                    }]) 
+                    ->isConfirmed();
+                
+        $enrolmentDataProvider  = new ActiveDataProvider([
+            'query' => $enrolment,
+            'pagination' => false,
+        ]);
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+            'id' => $model->customerId,
+            'enrolmentDataProvider' => $enrolmentDataProvider,
+        ]);
+        if (Yii::$app->request->post()) {
+            if($model->load(Yii::$app->request->post())) {
+            $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+                if ($model->save()) {
+                    return [
+                        'status' => true
+                    ];
+                } else {
+                    return [
+                            'status' => false,
+                            'errors' =>$model->getErrors()
+                        ];
+                }
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = CustomerRecurringPayment::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }
