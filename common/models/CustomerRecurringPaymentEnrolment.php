@@ -83,4 +83,14 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
             'updatedByUserId' => 'Updated By User ID',
         ];
     }
+
+    public function getCustomerRecurringPayment()
+    {
+        return $this->hasOne(CustomerRecurringPayment::className(), ['id' => 'customerRecurringPaymentId']);
+    }
+
+    public function getEnrolments()
+    {
+        return $this->hasMany(Enrolment::className(), ['id' => 'enrolmentId']);
+    }
 }

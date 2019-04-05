@@ -99,4 +99,9 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         }
         return $dayList;
     }
+
+    public function getCustomerRecurringPaymentEnrolment()
+    {
+        return $this->hasOne(CustomerRecurringPaymentEnrolment::className(), ['id' => 'customerRecurringPaymentId']);
+    }
 }
