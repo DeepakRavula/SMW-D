@@ -111,12 +111,12 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
     {
         $model = $this->findModel($id);
         $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->customer($model->customerId)
-                    ->joinWith(['customerRecurringPaymentEnrolment' => function ($query) use ($id) {
-                        $query->andWhere(['customerRecurringPaymentId' => $id]);
-                    }]) 
-                    ->isConfirmed();
+                ->notDeleted()
+                ->customer($model->customerId)
+                ->joinWith(['customerRecurringPaymentEnrolment' => function ($query) use ($id) {
+                    $query->andWhere(['customerRecurringPaymentId' => $id]);
+                }]) 
+                ->isConfirmed();
                 
         $enrolmentDataProvider  = new ActiveDataProvider([
             'query' => $enrolment,
@@ -128,8 +128,8 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             'enrolmentDataProvider' => $enrolmentDataProvider,
         ]);
         if (Yii::$app->request->post()) {
-            if($model->load(Yii::$app->request->post())) {
-            $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+            if ($model->load(Yii::$app->request->post())) {
+                $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
                 if ($model->save()) {
                     return [
                         'status' => true
