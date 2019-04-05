@@ -17,81 +17,88 @@ use kartik\grid\GridView;
 <div class="grid-row-open p-10">
     <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
     <?php $columns = [
-        [
-            'label' => 'id',
-            'attribute' => 'id',
+         [
+            'label' => 'Student',
+            'attribute' => 'student',
             'value' => function ($data) {
-                return $data->id;
+                return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
             },
         ],
-            [
-                'label' => 'Student',
-                'attribute' => 'student',
-                'value' => function ($data) {
-                    return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
-                },
-            ],
-            [
-                'label' => 'due date',
-                'attribute' => 'dueDate',
-                'value' => function ($data) {
-                    $dueDate = Yii::$app->formatter->asDate($data->dueDate);
-                    $lessonTime = (new \DateTime($data->dueDate))->format('M d,Y');
-                    return !empty($dueDate) ? $dueDate : null;
+        [
+            'label' => 'Program',
+            'attribute' => 'program',
+            'value' => function ($data) {
+                return !empty($data->course->program->name) ? $data->course->program->name : null;
+            },
+        ],
+        [
+            'label' => 'Teacher',
+            'attribute' => 'teacher',
+            'value' => function ($data) {
+                return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+            },
+        ],
+        [
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+            'label' => 'Due Date',
+            'value' => function ($data) {
+                return !empty($data->dueDate) ? (new \DateTime($data->dueDate))->format('M d, Y') : null;
+            },
+        ],
+        [
+            'label' => 'Date',
+            'value' => function ($data) {
+                $date = Yii::$app->formatter->asDate($data->date);
+                $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+    
+                return !empty($date) ? $date . ' @ ' . Yii::$app->formatter->asTime($lessonTime) : null;
+            },
+        ],
+        [
+            'label' => 'Duration',
+            'attribute' => 'duration',
+            'value' => function ($data) {
+                $lessonDuration = (new \DateTime($data->duration))->format('H:i');
+                return $lessonDuration;
+            },
+        ],
+    ];
+    array_push($columns,
+        [
+            'label' => 'Price',
+            'attribute' => 'price',
+            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions' => ['class' => 'text-right'],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency(round($data->privateLesson->total, 2));
+            },
+        ],
+        [
+            'label' => 'Owing',
+            'attribute' => 'owing',
+            'contentOptions' => function ($data) {
+                $highLightClass = 'text-right';
+                if ($data->hasInvoice()) {
+                    if ($data->invoice->isOwing()) {
+                        $highLightClass .= ' danger';
+                    }
+                } else if ($data->privateLesson->balance > 0) {
+                    $highLightClass .= ' danger';
                 }
-            ],
-            [
-                'label' => 'isExploded',
-                'value' => function ($data) {
-                    return $data->isExploded;
-                },
-            ],
-            [
-                'label' => 'Date',
-                'value' => function ($data) {
-                    $date = Yii::$app->formatter->asDate($data->date);
-                    $lessonTime = (new \DateTime($data->date))->format('H:i:s');
-                    return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+                return ['class' => $highLightClass];
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'value' => function ($data) {
+                if ($data->hasInvoice()) {
+                    $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
+                } else {
+                    $owingAmount = $data->privateLesson->balance > 0.09 ? $data->privateLesson->balance : 0.00;
                 }
-            ],
-            [
-                'label' => 'Root    lesson',
-                'value' => function ($data) {
-                    $lessonId =  null;
-                   if ($data->rootLesson) {
-                     $lessonId = $data->rootLesson->id;
-                   }
-                   return $lessonId;
-                }
-            ],
-            [
-                'label' => 'Original Date',
-                'value' => function ($data) {
-                   
-                    $lessonId =  null;
-                   if ($data->rootLesson) {
-                    $date = Yii::$app->formatter->asDate($data->getOriginalDate());
-                   }
-                   return !empty($date) ? $date:null;
-                }
-            ],
-
-	       
-        ];       
-        array_push($columns, 
-            [
-                'label' => 'course',
-                'value' => function ($data) {
-                    return $data->course->id;
-                }
-            ],
-            [
-                'label' => 'Enrolment',
-                'value' => function ($data) {
-                    return $data->enrolment->id;
-                }
-            ]
-        );
+                return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
+            },
+        ]
+    );     
+        
      ?>   
     <div class="box">
     <?= KartikGridView::widget([

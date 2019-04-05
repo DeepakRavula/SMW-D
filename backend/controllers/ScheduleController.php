@@ -76,6 +76,7 @@ class ScheduleController extends BaseController
     public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+      
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
