@@ -18,8 +18,9 @@ use common\models\CustomerRecurringPayment;
     
 <div id="index-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <?php 
+    $url = Url::to(['customer-recurring-payment/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
-        $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $id]);
+        $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $model->customerId]);
     }
         $form = ActiveForm::begin([
         'id' => 'modal-form',
@@ -70,8 +71,11 @@ use common\models\CustomerRecurringPayment;
     $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payment</h4>');
         $('#popup-modal .modal-dialog').css({'width': '800px'});
-        $('#modal-save').addClass('customer-recurring-payment-modal-save');
-        $('#modal-save').removeClass('modal-save');
+        var isNewRecord = '<?= $model->isNewRecord; ?>';
+        if (isNewRecord) {
+            $('#modal-save').addClass('customer-recurring-payment-modal-save');
+            $('#modal-save').removeClass('modal-save');
+        }
     });
 
     $(document).on('modal-success', function(event, params) {
@@ -86,7 +90,7 @@ use common\models\CustomerRecurringPayment;
    
     $(document).off('click', '.customer-recurring-payment-modal-save').on('click', '.customer-recurring-payment-modal-save', function(){
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
-        var id = <?= $id ?>;
+        var id = <?= $model->customerId ?>;
         if ($.isEmptyObject(enrolmentIds)) {
             $('#index-error-notification').html("Choose any enrolments to add recurring payment").fadeIn().delay(5000).fadeOut();
         } else {
