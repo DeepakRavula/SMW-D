@@ -34,8 +34,7 @@ class RecurringPaymentController extends Controller
             $locationIds[] = $location->id;
         }
         $currentDate = new \DateTime();
-        $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
-        $recurringPayments = CustomerRecurringPayment::find()->all();
+        $recurringPayments = CustomerRecurringPayment::find()->andWhere(['entryDay' => $currentDate->format('d')])->all();
         foreach ($recurringPayments as $recurringPayment) {
             $payment = new Payment();
             $payment->amount = $recurringPayment->amount;
@@ -50,7 +49,7 @@ class RecurringPaymentController extends Controller
             $payment->save();
             $recurringPaymentModel = new RecurringPayment();
             $recurringPaymentModel->paymentId = $payment->id;
-            $recurringPayment->save();
+            $recurringPaymentModel->save();
             $recurringPaymentEnrolments = $recurringPayment->enrolments;
             $paymentAmount = $payment->amount;
             foreach ($recurringPaymentEnrolments as $enrolment) {
