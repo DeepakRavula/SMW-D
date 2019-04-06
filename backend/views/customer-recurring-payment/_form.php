@@ -15,6 +15,8 @@ use common\models\CustomerRecurringPayment;
 ?>
 
 <div class="customer-recurring-payment-form">
+    
+<div id="index-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <?php 
     $url = Url::to(['customer-recurring-payment/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
@@ -89,6 +91,9 @@ use common\models\CustomerRecurringPayment;
     $(document).off('click', '.customer-recurring-payment-modal-save').on('click', '.customer-recurring-payment-modal-save', function(){
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
         var id = <?= $model->customerId ?>;
+        if ($.isEmptyObject(enrolmentIds)) {
+            $('#index-error-notification').html("Choose any enrolments to add recurring payment").fadeIn().delay(5000).fadeOut();
+        } else {
         var params = $.param({'id' : id,'CustomerRecurringPaymentEnrolment[enrolmentIds]': enrolmentIds});
                     $.ajax({
                         url    : '<?=Url::to(['customer-recurring-payment/create' ])?>?' +params,
@@ -111,6 +116,7 @@ use common\models\CustomerRecurringPayment;
                             }
                         }
                     });
+        }
         return false;
     });
 

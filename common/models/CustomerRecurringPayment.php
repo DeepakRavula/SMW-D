@@ -94,9 +94,22 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
 
     public static function getDaysList()
     {
-        foreach (range(1, 28) as $number) {
-            $dayList [] = $number;
+        foreach (range(1, 28) as  $number) {
+            $dayList [$number] = $number;
         }
         return $dayList;
     }
+
+    public function getCustomerRecurringPaymentEnrolment()
+    {
+        return $this->hasOne(CustomerRecurringPaymentEnrolment::className(), ['id' => 'customerRecurringPaymentId']);
+    }
+
+    public function getEnrolments()
+    {
+        return $this->hasMany(Enrolment::className(), ['id' => 'enrolmentId'])
+        ->viaTable('customer_recurring_payment_enrolment', ['customerRecurringPaymentId' => 'id']);
+    }
+
+   
 }

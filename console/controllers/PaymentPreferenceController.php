@@ -69,6 +69,7 @@ class PaymentPreferenceController extends Controller
                 ->andWhere(['invoiced_lesson.id' => null])
                 ->orderBy(['lesson.date' => SORT_ASC]);
             $unInvoicedLessons = $query->all();
+            
             $owingLessonIds = [];
             $amount = 0;
             foreach ($unInvoicedLessons as $lesson) {
