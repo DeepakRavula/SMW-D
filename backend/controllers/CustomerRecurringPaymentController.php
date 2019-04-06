@@ -110,7 +110,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $enrolment = Enrolment::find()
+        $enrolments = Enrolment::find()
                 ->notDeleted()
                 ->customer($model->customerId)
                 ->joinWith(['customerRecurringPaymentEnrolment' => function ($query) use ($id) {
@@ -119,34 +119,34 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 ->isConfirmed();
                 
         $enrolmentDataProvider  = new ActiveDataProvider([
-            'query' => $enrolment,
+            'query' => $enrolments,
             'pagination' => false,
         ]);
         $data = $this->renderAjax('_form', [
             'model' => $model,
-            'id' => $model->customerId,
             'enrolmentDataProvider' => $enrolmentDataProvider,
         ]);
         if (Yii::$app->request->post()) {
             if ($model->load(Yii::$app->request->post())) {
                 $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
                 if ($model->save()) {
-                    return [
+                    $response = [
                         'status' => true
                     ];
                 } else {
-                    return [
+                    $response = [
                             'status' => false,
-                            'errors' =>$model->getErrors()
+                            'errors' => ActiveForm::validate($model)
                         ];
                 }
             }
         } else {
-            return [
+            $response = [
                 'status' => true,
                 'data' => $data
             ];
         }
+        return $response;
     }
 
     protected function findModel($id)
@@ -157,4 +157,4 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-}
+}   
