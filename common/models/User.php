@@ -966,6 +966,8 @@ class User extends ActiveRecord implements IdentityInterface
                     }])
                 ->notDeleted()
                 ->isConfirmed()
+                ->privateProgram()
+                ->isRegular()
                 ->customer($this->id)
                 ->count();
         return $enrolmentsCount;
