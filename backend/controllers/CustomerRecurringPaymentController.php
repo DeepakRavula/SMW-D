@@ -57,6 +57,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                     ->notDeleted()
                     ->customer($id)
                     ->recurringPaymentExcluded() 
+                    ->privateProgram()
                     ->isConfirmed();
                 
         $enrolmentDataProvider  = new ActiveDataProvider([
