@@ -18,7 +18,7 @@ use common\models\CustomerRecurringPayment;
 <?php 
     $url = Url::to(['customer-recurring-payment/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
-        $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $id]);
+        $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $model->customerId]);
     }
         $form = ActiveForm::begin([
         'id' => 'modal-form',

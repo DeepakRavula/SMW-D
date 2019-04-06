@@ -67,16 +67,15 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         $get =  Yii::$app->request->get();
         
         $model = new CustomerRecurringPayment();
+        $model->customerId = $id;
         $customerRecurringPaymentEnrolmentModel =  new CustomerRecurringPaymentEnrolment();
         $data = $this->renderAjax('_form', [
             'model' => $model,
-            'id' => $id,
             'enrolmentDataProvider' => $enrolmentDataProvider,
             'customerRecurringPaymentEnrolment' => $customerRecurringPaymentEnrolmentModel,
         ]);
         if ($post) {
         if ($model->load(Yii::$app->request->post())) {
-            $model->customerId = $id;
             $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
             if($model->save()) {
                   $customerRecurringPaymentEnrolmentModel->load($get);
