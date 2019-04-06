@@ -77,11 +77,10 @@ class RecurringPaymentController extends Controller
                     $lessonPayment->lessonId = $lesson->id;
                     if ($paymentAmount < round($lesson->getOwingAmount($enrolment->id), 2) ) {
                         $lessonPayment->amount = $paymentAmount;
-                        $paymentAmount = $paymentAmount - $paymentAmount;
                     } else {
                         $lessonPayment->amount = round($lesson->getOwingAmount($enrolment->id), 2);
-                        $paymentAmount = $paymentAmount - $lessonPayment->amount;
                     }
+                    $paymentAmount = $paymentAmount - $lessonPayment->amount;
                     $lessonPayment->save();
                   
                 }
