@@ -6,35 +6,41 @@ use Yii;
 use yii\behaviors\BlameableBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\behaviors\TimestampBehavior;
-
 /**
- * This is the model class for table "customer_recurring_payment_enrolment".
+ * This is the model class for table "recurring_payment".
  *
  * @property int $id
- * @property int $enrolmentId
- * @property int $customerRecurringPaymentId
+ * @property int $paymentId
  * @property string $createdOn
  * @property string $updatedOn
  * @property int $createdByUserId
  * @property int $updatedByUserId
  */
-class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
+class RecurringPayment extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
-    public $enrolmentIds;
 
     const CONSOLE_USER_ID  = 727;
 
     public static function tableName()
     {
-        return 'customer_recurring_payment_enrolment';
+        return 'recurring_payment';
     }
 
     /**
      * @inheritdoc
      */
+    public function rules()
+    {
+        return [
+            [['paymentId'], 'required'],
+            [['paymentId', 'createdByUserId', 'updatedByUserId'], 'integer'],
+            [['createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId'], 'safe'],
+        ];
+    }
+
     public function behaviors()
     {
         return [
@@ -58,16 +64,7 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
             ],
         ];
     }
-
-    public function rules()
-    {
-        return [
-            [['enrolmentId', 'customerRecurringPaymentId', ], 'required'],
-            [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId', 'enrolmentIds'], 'safe'],
-        ];
-    }
-
+    
     /**
      * @inheritdoc
      */
@@ -75,22 +72,11 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'enrolmentId' => 'Enrolment ID',
-            'customerRecurringPaymentId' => 'Customer Recurring Payment ID',
+            'paymentId' => 'Payment ID',
             'createdOn' => 'Created On',
             'updatedOn' => 'Updated On',
             'createdByUserId' => 'Created By User ID',
             'updatedByUserId' => 'Updated By User ID',
         ];
-    }
-
-    public function getCustomerRecurringPayment()
-    {
-        return $this->hasOne(CustomerRecurringPayment::className(), ['id' => 'customerRecurringPaymentId']);
-    }
-
-    public function getEnrolment()
-    {
-        return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
     }
 }
