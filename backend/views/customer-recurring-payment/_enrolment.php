@@ -21,13 +21,15 @@ use common\models\Course;
 
     <?php  
         $columns = [];
-        array_push($columns, [
-            'class' => 'yii\grid\CheckboxColumn',
-            'contentOptions' => ['style' => 'width:30px;'],
-            'checkboxOptions' => function($model, $key, $index, $column) {
-                return ['checked' => false,'class' =>'check-checkbox'];
-            }
-        ]);
+        if ($model->isNewRecord) {
+            array_push($columns, [
+                'class' => 'yii\grid\CheckboxColumn',
+                'contentOptions' => ['style' => 'width:30px;'],
+                'checkboxOptions' => function($model, $key, $index, $column) {
+                    return ['checked' => false,'class' =>'check-checkbox'];
+                }
+            ]);
+        }
 
         array_push($columns, [
             'headerOptions' => ['class' => 'text-left'],

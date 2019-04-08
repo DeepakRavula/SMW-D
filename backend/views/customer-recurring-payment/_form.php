@@ -48,13 +48,16 @@ use common\models\CustomerRecurringPayment;
                 ->label('Payment Method'); ?>    
     </div>
     <div class="col-md-4 ">
+    <?php if (!$model->isNewRecord) {
+            $model->expiryDate = (new \DateTime($model->expiryDate))->format('M d, Y'); 
+        }?>
     <?= $form->field($model, 'expiryDate')->widget(DatePicker::className(), [
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
-                'changeMonth' => true,
-                'yearRange' => '-70:+20',
-                'changeYear' => true,
-                ], ])->textInput(['placeholder' => 'Select Expiry Date']);?>    
+                        'changeMonth' => true,
+                        'yearRange' => '-70:+20',
+                        'changeYear' => true,
+                        ], ])->textInput(['placeholder' => 'Select Expiry Date']);?>    
     </div>
     <div class="col-md-4 ">
     <?= $form->field($model, 'amount')->textInput(); ?>    
@@ -64,7 +67,8 @@ use common\models\CustomerRecurringPayment;
 <?php ActiveForm::end(); ?>
 <?= Html::label('Enrolment', ['class' => 'admin-login']) ?>
 <?= $this->render('_enrolment', [
-    'enrolmentDataProvider' => $enrolmentDataProvider
+    'enrolmentDataProvider' => $enrolmentDataProvider,
+    'model' =>  $model,
 ]);
 ?>
 <script>
