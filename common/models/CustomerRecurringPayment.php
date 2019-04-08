@@ -110,6 +110,4 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         return $this->hasMany(Enrolment::className(), ['id' => 'enrolmentId'])
         ->viaTable('customer_recurring_payment_enrolment', ['customerRecurringPaymentId' => 'id']);
     }
-
-   
 }

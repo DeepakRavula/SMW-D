@@ -34,18 +34,14 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Entry Day',
                 'value' => function ($data) {
-                    return $data->entryDay;
+                    return $data->entryDay . 'of the month';
                 },
-                'contentOptions' => ['style' => 'text-align:right'],
-                'headerOptions' => ['style' => 'text-align:right'],
             ],
             [
                 'label' => 'Payment Day',
                 'value' => function ($data) {
-                    return  $data->paymentDay;
+                    return  $data->paymentDay . 'of the month';
                 },
-                'contentOptions' => ['style' => 'text-align:right'],
-                'headerOptions' => ['style' => 'text-align:right'],
             ],
             [
                 'label' => 'Frequency',
@@ -64,8 +60,6 @@ use insolita\wgadminlte\LteConst;
                 'value' => function ($data) {
                     return $data->paymentMethodId;
                 },
-                'contentOptions' => ['style' => 'text-align:right'],
-                'headerOptions' => ['style' => 'text-align:right'],
             ],
             [
                 'label' => 'amount',
