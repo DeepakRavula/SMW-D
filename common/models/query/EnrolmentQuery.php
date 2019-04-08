@@ -136,8 +136,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['course' => function ($query) {
             $query->joinWith(['program' => function ($query) {
-                $query->privateProgram()
-                ->notDeleted();
+                $query->privateProgram();
             }]);
         }]);
     }
