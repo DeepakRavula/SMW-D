@@ -38,8 +38,8 @@ class RecurringPaymentController extends Controller
         $recurringPayments = CustomerRecurringPayment::find()->andWhere(['entryDay' => Carbon::parse($currentDate)->format('d')])->all();
         foreach ($recurringPayments as $recurringPayment) {
             $frequencyDays = $recurringPayment->paymentFrequencyId * 30;
-            $endDate = Carbon::parse($currentDate)->modify('-'.$frequencyDays.'days')->format('Y-m-d');
-            $startDate = Carbon::parse($currentDate)->format('Y-m-d');
+            $startDate = Carbon::parse($currentDate)->modify('-'.$frequencyDays.'days')->format('Y-m-d');
+            $endDate = Carbon::parse($currentDate)->format('Y-m-d');
             $previousRecordedPayment = RecurringPayment::find()->andWhere(['customerRecurringPaymentId' => $recurringPayment->id])->between($startDate,$endDate)->all();
             if (!$previousRecordedPayment) {
             $payment = new Payment();
@@ -56,7 +56,7 @@ class RecurringPaymentController extends Controller
             $recurringPaymentModel = new RecurringPayment();
             $recurringPaymentModel->paymentId = $payment->id;
             $recurringPaymentModel->customerRecurringPaymentId = $recurringPayment->id;
-            $recurringPaymentModel->date = carbon::parse($date)->format('Y-m-d');
+            $recurringPaymentModel->date = carbon::parse($currentDate)->format('Y-m-d');
             $recurringPaymentModel->save();
             $recurringPaymentEnrolments = $recurringPayment->enrolments;
             $paymentAmount = $payment->amount;
