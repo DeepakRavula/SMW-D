@@ -122,6 +122,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                 'value' => function ($data) {
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
+                'contentOptions' => ['style' => 'width:15%'],
             ], 
         ];
             if ($roleName == User::ROLE_CUSTOMER) {
@@ -132,7 +133,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                     'value' => function ($data) {
                         return round(($data->getLessonsDue($data->id) + $data->getInvoiceOwingAmountTotal($data->id)) - $data->getTotalCredits($data->id), 2);
                 },
-                    'contentOptions' => ['class' => 'text-right dollar'],
+                    'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width:20%'],
                     'hAlign' => 'right',
                     'pageSummary' => true,
                     'pageSummaryFunc' => GridView::F_SUM
