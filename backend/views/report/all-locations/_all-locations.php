@@ -2,9 +2,10 @@
 
 use yii\helpers\Url;
 use yii\widgets\Pjax;
-use yii\grid\GridView;
 use common\models\LocationDebt;
 use yii\helpers\Html;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 ?>
 <style>
 <style>
@@ -21,8 +22,7 @@ use yii\helpers\Html;
 </style>
 <div class="clearfix"></div>
     <?php Pjax::begin(['id' => 'locations-listing']); ?>
-    <?php
-    echo GridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['student/view', 'id' => $model->id]);
@@ -33,6 +33,7 @@ use yii\helpers\Html;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'emptyText' => false,
+        'showPageSummary' => true,
         'columns' => [
             [
                 'label' => 'Name',
@@ -45,6 +46,11 @@ use yii\helpers\Html;
             'value' => function ($data) use ($searchModel) {
                 return !empty($data->getActiveStudentsCount($searchModel->fromDate, $searchModel->toDate)) ? $data->getActiveStudentsCount($searchModel->fromDate, $searchModel->toDate) : 0;
             },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
             [
             'label' => 'Revenue',
@@ -54,6 +60,9 @@ use yii\helpers\Html;
             'value' => function ($data) use ($searchModel) {
                 return !empty($data->getRevenue($searchModel->fromDate, $searchModel->toDate)) ? round($data->getRevenue($searchModel->fromDate, $searchModel->toDate), 2) : 0;
             },
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
             [
             'label' => 'Royalty',
@@ -64,6 +73,9 @@ use yii\helpers\Html;
                 $royaltyValue = $data->getLocationDebt(LocationDebt::TYPE_ROYALTY, $searchModel->fromDate, $searchModel->toDate);
                 return round($royaltyValue, 2);
             },
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
             [
             'label' => 'Advertisement',
@@ -74,6 +86,9 @@ use yii\helpers\Html;
                 $advertisementValue = $data->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT, $searchModel->fromDate, $searchModel->toDate);
                 return round($advertisementValue, 2);
             },
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
             [
             'label' => 'HST',
@@ -84,6 +99,9 @@ use yii\helpers\Html;
                 $taxAmount = $data->getTaxAmount($searchModel->fromDate, $searchModel->toDate);
                 return round($taxAmount, 2);
             },
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
             [
             'label' => 'Total',
@@ -96,8 +114,20 @@ use yii\helpers\Html;
                 $total = $subTotal + $taxAmount;
                 return round($total, 2);
             },
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
     ],
+        'toolbar' =>  [
+            '{export}',
+        ],  
+        'export' => [
+            'fontAwesome' => true,
+        ], 
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT
+        ],
 ]);
 
     ?>
