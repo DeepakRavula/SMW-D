@@ -35,7 +35,7 @@ class RecurringPayment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['paymentId'], 'required'],
+            [['paymentId', 'customerRecurringPaymentId'], 'required'],
             [['paymentId', 'createdByUserId', 'updatedByUserId'], 'integer'],
             [['createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId'], 'safe'],
         ];
@@ -78,5 +78,10 @@ class RecurringPayment extends \yii\db\ActiveRecord
             'createdByUserId' => 'Created By User ID',
             'updatedByUserId' => 'Updated By User ID',
         ];
+    }
+
+    public static function find()
+    {
+        return new \common\models\query\RecurringPaymentQuery(get_called_class());
     }
 }

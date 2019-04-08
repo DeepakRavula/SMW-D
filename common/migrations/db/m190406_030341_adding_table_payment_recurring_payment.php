@@ -17,6 +17,8 @@ class m190406_030341_adding_table_payment_recurring_payment extends Migration
             $this->createTable('recurring_payment', [
                 'id' => $this->primaryKey(),
                 'paymentId' => $this->integer()->notNull(),
+                'customerRecurringPaymentId' => $this->integer()->notNull(),
+                'date' => $this->date()->notNull(),
                 'createdOn' => $this->timeStamp()->defaultValue(null),
                 'updatedOn' => $this->timeStamp()->defaultValue(null),
                 'createdByUserId' =>  $this->integer()->notNull(),
