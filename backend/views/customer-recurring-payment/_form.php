@@ -41,7 +41,7 @@ use common\models\CustomerRecurringPayment;
     </div>
     <div class="col-md-4 ">
     <?php $frequency= ArrayHelper::getColumn(PaymentFrequency::find()->all(), 'id'); ?>
-    <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['prompt'=>'Choose a Frequency'])?>    
+    <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['prompt'=>'Choose a Frequency'])->label('Payment Frequency');?>    
     </div>
     <div class="col-md-4 ">
     <?= $form->field($model, 'paymentMethodId')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))

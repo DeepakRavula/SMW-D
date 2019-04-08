@@ -34,13 +34,17 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Entry Day',
                 'value' => function ($data) {
-                    return $data->entryDay . ' of the month';
+                    $locale = 'en_US';
+                    $nf = new NumberFormatter($locale, NumberFormatter::ORDINAL);
+                    return $nf->format($data->entryDay) . ' of the month';
                 },
             ],
             [
                 'label' => 'Payment Day',
                 'value' => function ($data) {
-                    return  $data->paymentDay . ' of the month';
+                    $locale = 'en_US';
+                    $nf = new NumberFormatter($locale, NumberFormatter::ORDINAL);
+                    return  $nf->format($data->paymentDay) . ' of the month';
                 },
             ],
             [
@@ -62,7 +66,7 @@ use insolita\wgadminlte\LteConst;
                 },
             ],
             [
-                'label' => 'amount',
+                'label' => 'Amount',
                 'value' => function ($data) {
                     return Yii::$app->formatter->asCurrency(round($data->amount, 2));
                 },
