@@ -416,12 +416,9 @@ class ReportController extends BaseController
         $currentDate = new \DateTime();
         $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
         $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
-        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $searchModel->dateRange = (new \DateTime('first day of previous month'))->format('M d,Y') . ' - ' . (new \DateTime('last day of previous month'))->format('M d,Y');
         $request = Yii::$app->request;
-        if ($searchModel->load($request->get())) {
-            $royaltyRequest = $request->get('ReportSearch');
-            $searchModel->dateRange = $royaltyRequest['dateRange'];
-        }
+        $searchModel->load($request->get());
         $toDate = $searchModel->toDate;
         if ($toDate > $currentDate) {
             $toDate = $currentDate;

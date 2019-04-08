@@ -29,7 +29,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create'],
+                'only' => ['create', 'update'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -40,7 +40,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create'],
+                        'actions' => ['create', 'update'],
                         'roles' => [
                             'managePfi'
                        ]
@@ -57,6 +57,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                     ->notDeleted()
                     ->customer($id)
                     ->recurringPaymentExcluded() 
+                    ->privateProgram()
                     ->isConfirmed();
                 
         $enrolmentDataProvider  = new ActiveDataProvider([
@@ -67,16 +68,15 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         $get =  Yii::$app->request->get();
         
         $model = new CustomerRecurringPayment();
+        $model->customerId = $id;
         $customerRecurringPaymentEnrolmentModel =  new CustomerRecurringPaymentEnrolment();
         $data = $this->renderAjax('_form', [
             'model' => $model,
-            'id' => $id,
             'enrolmentDataProvider' => $enrolmentDataProvider,
             'customerRecurringPaymentEnrolment' => $customerRecurringPaymentEnrolmentModel,
         ]);
         if ($post) {
         if ($model->load(Yii::$app->request->post())) {
-            $model->customerId = $id;
             $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
             if($model->save()) {
                   $customerRecurringPaymentEnrolmentModel->load($get);
@@ -106,4 +106,55 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             ];
     }
     }
-}
+
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $enrolments = Enrolment::find()
+                ->notDeleted()
+                ->customer($model->customerId)
+                ->joinWith(['customerRecurringPaymentEnrolment' => function ($query) use ($id) {
+                    $query->andWhere(['customerRecurringPaymentId' => $id]);
+                }]) 
+                ->isConfirmed();
+                
+        $enrolmentDataProvider  = new ActiveDataProvider([
+            'query' => $enrolments,
+            'pagination' => false,
+        ]);
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+            'enrolmentDataProvider' => $enrolmentDataProvider,
+        ]);
+        if (Yii::$app->request->post()) {
+            if ($model->load(Yii::$app->request->post())) {
+                $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+                if ($model->save()) {
+                    $response = [
+                        'status' => true
+                    ];
+                } else {
+                    $response = [
+                            'status' => false,
+                            'errors' => ActiveForm::validate($model)
+                        ];
+                }
+            }
+        } else {
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = CustomerRecurringPayment::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+}   

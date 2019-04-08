@@ -13,7 +13,7 @@ use common\models\Location;
    ?>
 <div class = "print-report">
 <div>
-    <h3><strong>Royalty Report </strong></h3>
+    <h3><strong>Royalty for <?= $model->name ?> </strong></h3>
     <?php if ($searchModel->fromDate === $searchModel->toDate): ?>
     <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS, Y'); ?></h3>
     <?php else: ?>
