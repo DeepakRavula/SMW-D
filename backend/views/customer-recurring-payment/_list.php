@@ -35,13 +35,17 @@ use insolita\wgadminlte\LteConst;
                 'label' => 'Entry Day',
                 'value' => function ($data) {
                     return $data->entryDay;
-                }
+                },
+                'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
             ],
             [
                 'label' => 'Payment Day',
                 'value' => function ($data) {
                     return  $data->paymentDay;
-                }
+                },
+                'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
             ],
             [
                 'label' => 'Frequency',
@@ -60,12 +64,16 @@ use insolita\wgadminlte\LteConst;
                 'value' => function ($data) {
                     return $data->paymentMethodId;
                 },
+                'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
             ],
             [
                 'label' => 'amount',
                 'value' => function ($data) {
-                    return $data->amount;
+                    return Yii::$app->formatter->asCurrency(round($data->amount, 2));
                 },
+                'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
             ],
         ]
     ]); ?>

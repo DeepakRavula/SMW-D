@@ -60,7 +60,8 @@ use common\models\CustomerRecurringPayment;
                         ], ])->textInput(['placeholder' => 'Select Expiry Date']);?>    
     </div>
     <div class="col-md-4 ">
-    <?= $form->field($model, 'amount')->textInput(); ?>    
+    <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),
+            'class' => 'text-right form-control']); ?>    
     </div>
     </div>
 </div>
