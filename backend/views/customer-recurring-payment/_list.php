@@ -34,13 +34,13 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Entry Day',
                 'value' => function ($data) {
-                    return $data->entryDay . 'of the month';
+                    return $data->entryDay . ' of the month';
                 },
             ],
             [
                 'label' => 'Payment Day',
                 'value' => function ($data) {
-                    return  $data->paymentDay . 'of the month';
+                    return  $data->paymentDay . ' of the month';
                 },
             ],
             [
