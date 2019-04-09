@@ -50,19 +50,19 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Frequency',
                 'value' => function ($data) {
-                    return $data->paymentFrequencyId;
+                    return $data->paymentFrequency->name;
                 },
             ],
             [
                 'label' => 'Expiry Date',
                 'value' => function ($data) {
-                    return (new \DateTime($data->expiryDate))->format('M, d, Y');
+                    return (new \DateTime($data->expiryDate))->format('M d, Y');
                 },
             ],
             [
                 'label' => 'Method',
                 'value' => function ($data) {
-                    return $data->paymentMethodId;
+                    return $data->paymentMethod->name;
                 },
             ],
             [

@@ -73,35 +73,11 @@ use common\models\Course;
                 return  Yii::$app->formatter->asTime($data->courseSchedule->fromTime);
             }
         ]);
-
-        array_push($columns, [
-            'attribute' => 'teacher',
-            'headerOptions' => ['class' => 'text-left'],
-            'label' => 'Teacher',
-            'value' => function ($data) {
-                return $data->course->teacher->publicIdentity;
-            }
-        ]);
-
         array_push($columns, [
             'label' => 'Duration',
             'value' => function ($data) {
                 $duration = \DateTime::createFromFormat('h:i:s', $data->courseSchedule->duration);
                 return  $duration->format('H:i');
-            }
-        ]);
-
-        array_push($columns, [
-            'label' => 'Start Date',
-            'value' => function ($data) {
-                return  Yii::$app->formatter->asDate($data->course->startDate);
-            }
-        ]);
-
-        array_push($columns, [
-            'label' => 'End Date',
-            'value' => function ($data) {
-                return  Yii::$app->formatter->asDate($data->course->endDate);
             }
         ]);
     ?>

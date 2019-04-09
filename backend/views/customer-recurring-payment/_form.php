@@ -17,6 +17,7 @@ use common\models\CustomerRecurringPayment;
 <div class="customer-recurring-payment-form">
     
 <div id="index-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
+<div id="warning-notification-recurring-payment" style="display:none;" class="alert-warning alert fade in"></div>
 <?php 
     $url = Url::to(['customer-recurring-payment/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
@@ -40,7 +41,7 @@ use common\models\CustomerRecurringPayment;
     	<?= $form->field($model, 'paymentDay')->dropDownList($day, ['prompt'=>'Choose a Day'])?>
     </div>
     <div class="col-md-4 ">
-    <?php $frequency= ArrayHelper::getColumn(PaymentFrequency::find()->all(), 'id'); ?>
+    <?php $frequency= ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'); ?>
     <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['prompt'=>'Choose a Frequency'])->label('Payment Frequency');?>    
     </div>
     <div class="col-md-4 ">
@@ -81,6 +82,13 @@ use common\models\CustomerRecurringPayment;
             $('#modal-save').addClass('customer-recurring-payment-modal-save');
             $('#modal-save').removeClass('modal-save');
         }
+        $('#warning-notification-recurring-payment').html('SMW will automatically record a payment\n\
+                                for this customer at the frequency set below.\n\
+                                It will enter the payment on the Entry Day\n\
+                                and post-date it for the Payment Day\n\
+                                . It will do this for the Amount indicated via the Payment Method\n\
+                                    indicated until the Expiry Date is reached.\n\
+                                    This recurring payment will begin as of the next ocurrence of the Entry Day.').fadeIn();
     });
 
     $(document).on('modal-success', function(event, params) {
