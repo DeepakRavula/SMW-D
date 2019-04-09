@@ -50,7 +50,7 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Frequency',
                 'value' => function ($data) {
-                    return $data->paymentFrequencyId;
+                    return $data->paymentFrequency->name;
                 },
             ],
             [
@@ -62,7 +62,7 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Method',
                 'value' => function ($data) {
-                    return $data->paymentMethodId;
+                    return $data->paymentMethod->name;
                 },
             ],
             [

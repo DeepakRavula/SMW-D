@@ -171,10 +171,11 @@ foreach ($roleNames as $name => $description) {
                 ?>
             <?php Pjax::end() ?>
             
-            <?php Pjax::begin(['id' => 'payment-preference-listing', 'timeout' => 6000]) ?>	            
-                <?=$this->render('customer/_payment-preference', [
-                    'model' => $model,	                   
-                ]); ?>	              
+            <?php Pjax::begin(['id' => 'customer-recurring-payment-list', 'timeout' => 6000]) ?>
+                <?=$this->render('/customer-recurring-payment/_list', [
+                    'model' => $model,
+                    'customerRecurringPaymentsDataProvider' => $customerRecurringPaymentsDataProvider,
+                ]); ?>
             <?php Pjax::end(); ?>
         <?php endif;?>
     </div> 

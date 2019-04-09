@@ -6,7 +6,7 @@ use Yii;
 use yii\behaviors\BlameableBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\behaviors\TimestampBehavior;
-
+use common\models\PaymentFrequency;
 /**
  * This is the model class for table "customer_recurring_payment".
  *
@@ -109,5 +109,15 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Enrolment::className(), ['id' => 'enrolmentId'])
         ->viaTable('customer_recurring_payment_enrolment', ['customerRecurringPaymentId' => 'id']);
+    }
+
+    public function getPaymentFrequency()
+    {
+        return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
+    }
+
+    public function getPaymentMethod()
+    {
+        return $this->hasOne(PaymentMethod::className(), ['id' => 'paymentMethodId']);
     }
 }
