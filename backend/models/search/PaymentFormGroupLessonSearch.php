@@ -73,6 +73,7 @@ class PaymentFormGroupLessonSearch extends Lesson
         } else {
             $invoicedLessonsQuery = GroupLesson::find()
                 ->joinWith(['invoiceItemLessons' => function($query) {
+                    $query->andWhere(['NOT',['invoice_item_lesson.id' => null]]);
                     $query->joinWith(['invoiceLineItem ili' => function($query) {
                         $query->notDeleted()
                         ->joinWith(['invoice in' => function($query) {
