@@ -10,6 +10,8 @@ use common\models\Student;
 use yii\bootstrap\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Course;
+use common\models\CustomerRecurringPaymentEnrolment;
+
 ?>
 
 <?php 
@@ -21,15 +23,20 @@ use common\models\Course;
 
     <?php  
         $columns = [];
-        if ($model->isNewRecord) {
             array_push($columns, [
                 'class' => 'yii\grid\CheckboxColumn',
                 'contentOptions' => ['style' => 'width:30px;'],
-                'checkboxOptions' => function($model, $key, $index, $column) {
-                    return ['checked' => false,'class' =>'check-checkbox'];
+                'checkboxOptions' => function($model, $key, $index, $column) use($customerRecurringPaymentModel){
+                   $enrolments = $customerRecurringPaymentModel->enrolments;
+                   $checked = false;
+                   foreach ($enrolments as $enrolment) {
+                        if ($model->id === $enrolment->id){
+                            $checked = true;
+                        }
+                   }
+                    return ['checked' => $checked,'class' =>'check-checkbox'];
                 }
             ]);
-        }
 
         array_push($columns, [
             'headerOptions' => ['class' => 'text-left'],
@@ -92,3 +99,7 @@ use common\models\Course;
         'emptyText' => 'No enrolment Available!'
     ]); ?>
 <?php Pjax::end(); ?>
+<script>
+
+
+ </script>

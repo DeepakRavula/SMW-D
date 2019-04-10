@@ -113,9 +113,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         $enrolments = Enrolment::find()
                 ->notDeleted()
                 ->customer($model->customerId)
-                ->joinWith(['customerRecurringPaymentEnrolment' => function ($query) use ($id) {
-                    $query->andWhere(['customerRecurringPaymentId' => $id]);
-                }]) 
+                ->anotherRecurringPaymentExcluded($model->id)
                 ->isConfirmed();
                 
         $enrolmentDataProvider  = new ActiveDataProvider([
@@ -130,6 +128,20 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             if ($model->load(Yii::$app->request->post())) {
                 $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
                 if ($model->save()) {
+                    $customerRecurringPaymentEnrolments = CustomerRecurringPaymentEnrolment::find()
+                                                          ->andWhere(['customerRecurringPaymentId' => $model->id])  
+                                                           ->all();
+                    foreach ($customerRecurringPaymentEnrolments as $customerRecurringPaymentEnrolment) {
+                        $customerRecurringPaymentEnrolment->delete();
+                    }
+                    $customerRecurringPaymentEnrolmentModel = new CustomerRecurringPaymentEnrolment();
+                    $customerRecurringPaymentEnrolmentModel->load(Yii::$app->request->get());
+                  foreach ($customerRecurringPaymentEnrolmentModel->enrolmentIds as $enrolmentId) {
+                      $customerRecurringPaymentEnrolment = new CustomerRecurringPaymentEnrolment();
+                      $customerRecurringPaymentEnrolment->enrolmentId = $enrolmentId;
+                      $customerRecurringPaymentEnrolment->customerRecurringPaymentId = $model->id;
+                      $customerRecurringPaymentEnrolment->save();
+                  } 
                     $response = [
                         'status' => true
                     ];

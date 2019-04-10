@@ -21,7 +21,7 @@ use common\models\CustomerRecurringPayment;
 <?php 
     $url = Url::to(['customer-recurring-payment/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
-        $url = Url::to(['customer-recurring-payment-enrolment/create', 'id' => $model->customerId]);
+        $url = Url::to(['customer-recurring-payment-enrolment/update', 'id' => $model->customerId]);
     }
         $form = ActiveForm::begin([
         'id' => 'modal-form',
@@ -79,7 +79,7 @@ use common\models\CustomerRecurringPayment;
         $('#popup-modal .modal-dialog').css({'width': '800px'});
         var isNewRecord = '<?= $model->isNewRecord; ?>';
         if (isNewRecord) {
-            $('#modal-save').addClass('customer-recurring-payment-modal-save');
+            $('#modal-save').addClass('customer-recurring-payment-modal-update');
             $('#modal-save').removeClass('modal-save');
         }
         $('#warning-notification-recurring-payment').html('SMW will automatically record a payment\n\
@@ -101,7 +101,7 @@ use common\models\CustomerRecurringPayment;
         return false;
     });
    
-    $(document).off('click', '.customer-recurring-payment-modal-save').on('click', '.customer-recurring-payment-modal-save', function(){
+    $(document).off('click', '.customer-recurring-payment-modal-update').on('click', '.customer-recurring-payment-modal-update', function(){
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
         var id = <?= $model->customerId ?>;
         if ($.isEmptyObject(enrolmentIds)) {
@@ -109,7 +109,7 @@ use common\models\CustomerRecurringPayment;
         } else {
         var params = $.param({'id' : id,'CustomerRecurringPaymentEnrolment[enrolmentIds]': enrolmentIds});
                     $.ajax({
-                        url    : '<?=Url::to(['customer-recurring-payment/create' ])?>?' +params,
+                        url    : '<?=Url::to(['customer-recurring-payment/update' ])?>?' +params,
                         type   : 'post',
                         dataType: "json",
                         data   : $('#modal-form').serialize(),

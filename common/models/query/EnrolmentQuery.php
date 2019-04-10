@@ -97,6 +97,15 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         }]);
     }
 
+    public function anotherRecurringPaymentExcluded($recurringPaymentId)
+    {
+        return $this->joinWith(['customerRecurringPaymentEnrolment' => function ($query) use($recurringPaymentId) {
+            $query->andWhere([ 
+                'OR', ['customer_recurring_payment_enrolment.enrolmentId' => null],
+            ['customer_recurring_payment_enrolment.customerRecurringPaymentId' => $recurringPaymentId]]);
+        }]);
+    }
+
     public function notPaymentPrefered()
     {
         return $this->joinWith(['student' => function ($query) {
