@@ -40,7 +40,7 @@ class m190410_052103_customer_payment_preference_migration extends Migration
                 $customerRecurringPayment->paymentFrequencyId = 1;
             }
             $customerRecurringPayment->expiryDate = $customerPaymentPreference->expiryDate;
-            $customerRecurringPayment->amount = $customerPaymentPreference->customer->getPrivateLessonsDue($customerPaymentPreference->customer->id);
+            $customerRecurringPayment->amount = 0.00;
             $customerRecurringPayment->isRecurringPaymentEnabled = $customerPaymentPreference->isPreferredPaymentEnabled;
             if ($customerRecurringPayment->save()) {
                 foreach ($enrolments as $enrolment) {
