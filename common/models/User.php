@@ -1165,6 +1165,6 @@ class User extends ActiveRecord implements IdentityInterface
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
             ->andWhere(['invoiced_lesson.id' => null])
             ->sum("private_lesson.balance");
-        return $privateLessonsOwingAmount;
+        return $privateLessonsOwingAmount ? $privateLessonsOwingAmount : 0.00;
     }
 }
