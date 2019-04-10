@@ -25,12 +25,14 @@ class m190410_052103_customer_payment_preference_migration extends Migration
 
     public function safeUp()
     {
+        Yii::$app->db->createCommand()->truncateTable('customer_recurring_payment')->execute();
+        Yii::$app->db->createCommand()->truncateTable('customer_recurring_payment_enrolment')->execute();
         $customerPaymentPreferences = CustomerPaymentPreference::find()->notDeleted()->all();
         foreach ($customerPaymentPreferences as $customerPaymentPreference) {
             $enrolments = Enrolment::find()->privateProgram()->isRegular()->customer($customerPaymentPreference->userId)->all();
             $customerRecurringPayment = new CustomerRecurringPayment();
             $customerRecurringPayment->customerId = $customerPaymentPreference->userId;
-            $customerRecurringPayment->entryDay = 12;
+            $customerRecurringPayment->entryDay = 11;
             $customerRecurringPayment->paymentDay = $customerPaymentPreference->dayOfMonth;
             $customerRecurringPayment->paymentMethodId = $customerPaymentPreference->paymentMethodId;
             $enrolmentsCount = $customerPaymentPreference->customer->getEnrolmentsCount();
