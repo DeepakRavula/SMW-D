@@ -43,7 +43,8 @@ class RecurringPaymentController extends Controller
             $previousRecordedPayment = RecurringPayment::find()
                                         ->andWhere(['>', DATE('recurring_payment.expiryDate'), $currentDate])
                                         ->andWhere(['customerRecurringPaymentId' => $recurringPayment->id])
-                                        ->between($startDate,$endDate)->all();
+                                        ->between($startDate,$endDate)
+                                        ->all();
             if (!$previousRecordedPayment) {
             $payment = new Payment();
             $payment->amount = $recurringPayment->amount;
