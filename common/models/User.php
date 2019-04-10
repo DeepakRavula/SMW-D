@@ -1162,4 +1162,29 @@ class User extends ActiveRecord implements IdentityInterface
         $customerAccount->balance = $balance;
         $customerAccount->save();
     }
+
+    public function getPrivateLessonsDue($id)
+    {
+        $invoicedLessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->privateLessons()
+            ->customer($id)
+            ->invoiced();
+        $privateLessonsOwingAmount = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->dueLessons()
+            ->privateLessons()
+            ->joinWith(['privateLesson' => function ($query) use ($id) {
+                $query->andWhere(['>', 'private_lesson.balance', 0.09]);
+            }])
+            ->customer($id)
+            ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+            ->andWhere(['invoiced_lesson.id' => null])
+            ->sum("private_lesson.balance");
+        return $privateLessonsOwingAmount;
+    }
 }
