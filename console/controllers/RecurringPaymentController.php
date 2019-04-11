@@ -35,13 +35,17 @@ class RecurringPaymentController extends Controller
             $locationIds[] = $location->id;
         }
         $currentDate = (new \DateTime())->format('Y-m-d');
-        $recurringPayments = CustomerRecurringPayment::find()->andWhere(['entryDay' => Carbon::parse($currentDate)->format('d')])->all();
+        $recurringPayments = CustomerRecurringPayment::find()
+                                ->andWhere(['entryDay' => Carbon::parse($currentDate)->format('d')])
+                                ->andWhere(['>', 'DATE(customer_recurring_payment.expiryDate)', $currentDate])
+                                ->isRecurringPaymentEnabled()
+                                ->andWhere(['>', 'amount' ,0.00])
+                                ->all();
         foreach ($recurringPayments as $recurringPayment) {
             $frequencyDays = $recurringPayment->paymentFrequencyId * 30;
             $startDate = Carbon::parse($currentDate)->modify('-'.$frequencyDays.'days')->format('Y-m-d');
             $endDate = Carbon::parse($currentDate)->format('Y-m-d');
             $previousRecordedPayment = RecurringPayment::find()
-                                        ->andWhere(['>', DATE('recurring_payment.expiryDate'), $currentDate])
                                         ->andWhere(['customerRecurringPaymentId' => $recurringPayment->id])
                                         ->between($startDate,$endDate)
                                         ->all();

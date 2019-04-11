@@ -65,7 +65,7 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId', 'expiryDate',  'amount'], 'required'],
+            [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId',  'amount'], 'required'],
             [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
             [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId',], 'safe'],
         ];
@@ -119,5 +119,10 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     public function getPaymentMethod()
     {
         return $this->hasOne(PaymentMethod::className(), ['id' => 'paymentMethodId']);
+    }
+
+    public static function find()
+    {
+        return new \common\models\query\CustomerRecurringPaymentQuery(get_called_class());
     }
 }

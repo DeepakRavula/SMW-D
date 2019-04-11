@@ -1062,27 +1062,6 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getLessonsDue($id)
     {
-        $invoicedLessons = Lesson::find()
-            ->notDeleted()
-            ->isConfirmed()
-            ->notCanceled()
-            ->privateLessons()
-            ->customer($id)
-            ->invoiced();
-        $lessonsOwingAmount = Lesson::find()
-            ->notDeleted()
-            ->isConfirmed()
-            ->notCanceled()
-            ->dueLessons()
-            ->privateLessons()
-            ->joinWith(['privateLesson' => function ($query) use ($id) {
-                $query->andWhere(['>', 'private_lesson.balance', 0.09]);
-            }])
-            ->customer($id)
-            ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
-            ->andWhere(['invoiced_lesson.id' => null])
-            ->sum("private_lesson.balance");
-
         $invoicedLessonsQuery = GroupLesson::find()
             ->joinWith(['invoiceItemLessons' => function($query) {
                 $query->andWhere(['NOT',['invoice_item_lesson.id' => null]]);
@@ -1117,7 +1096,7 @@ class User extends ActiveRecord implements IdentityInterface
             ->dueLessons()
             ->andWhere(['>', 'group_lesson.balance', 0.09])
             ->sum("group_lesson.balance");
-        $lessonsDue = $lessonsOwingAmount + $groupLessonsOwingAmount;
+        $lessonsDue = $this->getPrivateLessonsDue($id) + $groupLessonsOwingAmount;
         return $lessonsDue;
     }
 
@@ -1186,6 +1165,6 @@ class User extends ActiveRecord implements IdentityInterface
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
             ->andWhere(['invoiced_lesson.id' => null])
             ->sum("private_lesson.balance");
-        return $privateLessonsOwingAmount;
+        return $privateLessonsOwingAmount ? $privateLessonsOwingAmount : 0.00;
     }
 }
