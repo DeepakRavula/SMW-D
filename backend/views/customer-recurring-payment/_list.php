@@ -56,7 +56,7 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Expiry Date',
                 'value' => function ($data) {
-                    return (new \DateTime($data->expiryDate))->format('M d, Y');
+                    return $data->expiryDate ? (new \DateTime($data->expiryDate))->format('M d, Y') : null;
                 },
             ],
             [
