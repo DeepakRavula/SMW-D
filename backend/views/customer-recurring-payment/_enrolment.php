@@ -27,12 +27,11 @@ use common\models\CustomerRecurringPaymentEnrolment;
                 'class' => 'yii\grid\CheckboxColumn',
                 'contentOptions' => ['style' => 'width:30px;'],
                 'checkboxOptions' => function($model, $key, $index, $column) use($customerRecurringPaymentModel){
-                   $enrolments = $customerRecurringPaymentModel->enrolments;
-                   $checked = false;
-                   foreach ($enrolments as $enrolment) {
-                        if ($model->id === $enrolment->id){
-                            $checked = true;
-                        }
+                   $enrolments = ArrayHelper::getColumn($customerRecurringPaymentModel->enrolments, 'id');
+                   if (array_search($model->id, $enrolments) === false) {
+                        $checked = false;
+                   } else {
+                       $checked = true;
                    }
                     return ['checked' => $checked,'class' =>'check-checkbox'];
                 }
