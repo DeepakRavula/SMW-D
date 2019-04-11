@@ -102,7 +102,6 @@ use common\models\CustomerRecurringPayment;
     });
    
     $(document).off('click', '.customer-recurring-payment-modal-save').on('click', '.customer-recurring-payment-modal-save', function(){
-        debugger;
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
         var id = <?= $model->customerId ?>;
         if ($.isEmptyObject(enrolmentIds)) {
