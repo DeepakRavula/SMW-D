@@ -19,13 +19,8 @@ use common\models\CustomerRecurringPayment;
 <div id="index-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="warning-notification-recurring-payment" style="display:none;" class="alert-warning alert fade in"></div>
 <?php 
-    $url = Url::to(['customer-recurring-payment/update', 'id' => $model->id]);
-    if ($model->isNewRecord) {
-        $url = Url::to(['customer-recurring-payment-enrolment/update', 'id' => $model->customerId]);
-    }
         $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => $url,
     ]); ?>
     <?php $paymentMethods = PaymentMethod::find()
         ->andWhere(['active'=> PaymentMethod::STATUS_ACTIVE])
@@ -77,11 +72,8 @@ use common\models\CustomerRecurringPayment;
     $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payment</h4>');
         $('#popup-modal .modal-dialog').css({'width': '800px'});
-        var isNewRecord = '<?= $model->isNewRecord; ?>';
-        if (isNewRecord) {
             $('#modal-save').addClass('customer-recurring-payment-modal-update');
             $('#modal-save').removeClass('modal-save');
-        }
         $('#warning-notification-recurring-payment').html('SMW will automatically record a payment\n\
                                 for this customer at the frequency set below.\n\
                                 It will enter the payment on the Entry Day\n\
@@ -103,7 +95,7 @@ use common\models\CustomerRecurringPayment;
    
     $(document).off('click', '.customer-recurring-payment-modal-update').on('click', '.customer-recurring-payment-modal-update', function(){
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
-        var id = <?= $model->customerId ?>;
+        var id = <?= $model->id ?>;
         if ($.isEmptyObject(enrolmentIds)) {
             $('#index-error-notification').html("Choose any enrolments to add recurring payment").fadeIn().delay(5000).fadeOut();
         } else {

@@ -120,7 +120,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             'query' => $enrolments,
             'pagination' => false,
         ]);
-        $data = $this->renderAjax('_form', [
+        $data = $this->renderAjax('_form-update', [
             'model' => $model,
             'enrolmentDataProvider' => $enrolmentDataProvider,
         ]);
@@ -141,7 +141,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                       $customerRecurringPaymentEnrolment->enrolmentId = $enrolmentId;
                       $customerRecurringPaymentEnrolment->customerRecurringPaymentId = $model->id;
                       $customerRecurringPaymentEnrolment->save();
-                  } 
+                } 
                     $response = [
                         'status' => true
                     ];
