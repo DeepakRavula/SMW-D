@@ -1,6 +1,7 @@
 <?php
 
 use yii\db\Migration;
+use common\models\CustomerRecurringPayment;
 
 /**
  * Class m190411_093002_change_customer_recurring_payment_paymentfrequency
