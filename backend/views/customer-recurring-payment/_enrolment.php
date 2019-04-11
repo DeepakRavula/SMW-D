@@ -28,12 +28,7 @@ use common\models\CustomerRecurringPaymentEnrolment;
                 'contentOptions' => ['style' => 'width:30px;'],
                 'checkboxOptions' => function($model, $key, $index, $column) use($customerRecurringPaymentModel){
                    $enrolments = ArrayHelper::getColumn($customerRecurringPaymentModel->enrolments, 'id');
-                   if (array_search($model->id, $enrolments) === false) {
-                        $checked = false;
-                   } else {
-                       $checked = true;
-                   }
-                    return ['checked' => $checked,'class' =>'check-checkbox'];
+                    return ['checked' => in_array($model->id, $enrolments),'class' =>'check-checkbox'];
                 }
             ]);
 
@@ -64,28 +59,7 @@ use common\models\CustomerRecurringPaymentEnrolment;
             }
         ]);
 
-        array_push($columns, [
-            'label' => 'Day',
-            'value' => function ($data) {
-                $dayList = Course::getWeekdaysList();
-                $day = $dayList[$data->courseSchedule->day];
-                return !empty($day) ? $day : null;
-            }
-        ]);
-
-        array_push($columns, [
-            'label' => 'From Time',
-            'value' => function ($data) {
-                return  Yii::$app->formatter->asTime($data->courseSchedule->fromTime);
-            }
-        ]);
-        array_push($columns, [
-            'label' => 'Duration',
-            'value' => function ($data) {
-                $duration = \DateTime::createFromFormat('h:i:s', $data->courseSchedule->duration);
-                return  $duration->format('H:i');
-            }
-        ]);
+      
     ?>
 <?php ActiveForm::end(); ?>
 
