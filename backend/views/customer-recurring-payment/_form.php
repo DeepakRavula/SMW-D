@@ -17,7 +17,7 @@ use common\models\CustomerRecurringPayment;
 <div class="customer-recurring-payment-form">
     
 <div id="index-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
-<div id="warning-notification-recurring-payment" style="display:none;" class="alert-warning alert fade in"></div>
+<div id="warning-notification-recurring-payment" style="display:none;" class="alert-info alert fade in"></div>
 <?php 
     $url = Url::to(['customer-recurring-payment/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
