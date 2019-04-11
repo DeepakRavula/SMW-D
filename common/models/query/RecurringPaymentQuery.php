@@ -36,8 +36,4 @@ class RecurringPaymentQuery extends \yii\db\ActiveQuery
         return $this->andFilterWhere(['between', 'recurring_payment.date', Carbon::parse($fromDate)->format('Y-m-d'),  Carbon::parse($toDate)->format('Y-m-d')]);
     }
 
-    public function excludeAnotherRecurringEnrolments() 
-    {
-        return $this->andWhere(['customer_payment_preference.isDeleted' => false]);
-    }
 }
