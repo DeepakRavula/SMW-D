@@ -111,7 +111,7 @@ class GroupLesson extends \yii\db\ActiveRecord
 
     public function getInvoiceItemLessons()
     {
-        return $this->hasMany(InvoiceItemLesson::className(), ['lessonId' => 'id']);
+        return $this->hasMany(InvoiceItemLesson::className(), ['lessonId' => 'lessonId']);
     }
 
     public function beforeSave($insert) 
