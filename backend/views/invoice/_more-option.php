@@ -8,7 +8,7 @@ use yii\widgets\Pjax;
     <div class="dropdown">
         <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li><a id="receive-payments" href='#' data-url='<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->user_id]); ?>'>Receive Payment</a></li>
+            <li><a id="receive-payments" href='#'>Receive Payment</a></li>
             <?php if ($model->isInvoice()) : ?>
                 <?php if (!$model->isVoid && !$model->isPaymentCreditInvoice()) : ?>
                     <li><a id="void" href="#">Void</a></li>
@@ -24,7 +24,8 @@ use yii\widgets\Pjax;
 <script>
 	$(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
         $.ajax({
-            url    : $(this).attr('data-url'),
+            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->user->id,
+                'PaymentFormGroupLessonSearch[userId]' => $model->user->id ]); ?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)
