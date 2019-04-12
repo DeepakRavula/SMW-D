@@ -14,6 +14,7 @@ use yii\web\Response;
 use yii\helpers\Url;
 use common\models\Enrolment;
 use common\models\CustomerRecurringPayment;
+use Carbon\Carbon;
 
 
 class CustomerRecurringPaymentController extends \common\components\controllers\BaseController
@@ -79,6 +80,9 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         if ($post) {
         if ($model->load(Yii::$app->request->post())) {
             $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+            $startDate = Carbon::parse($model->startDate);
+            $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
+            $model->entryDay = Carbon::parse($startDate)->format('d');
             if($model->save()) {
                   $customerRecurringPaymentEnrolmentModel->load($get);
                   foreach ($customerRecurringPaymentEnrolmentModel->enrolmentIds as $enrolmentId) {

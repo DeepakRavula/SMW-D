@@ -66,8 +66,8 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     {
         return [
             [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId',  'amount'], 'required'],
-            [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId',], 'safe'],
+            [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId', ], 'integer'],
+            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'startDate'], 'safe'],
         ];
     }
 

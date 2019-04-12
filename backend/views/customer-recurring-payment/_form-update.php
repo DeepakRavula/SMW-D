@@ -30,18 +30,24 @@ use common\models\CustomerRecurringPayment;
     <div class="row">
 	<div class="col-md-4 ">
             <?php $day = CustomerRecurringPayment::getDaysList();?>
-    	<?= $form->field($model, 'entryDay')->dropDownList($day, ['prompt'=>'Choose a Day'])?>
+    	<?= $form->field($model, 'startDate')->widget(DatePicker::className(), [
+                'dateFormat' => 'php:M d, Y',
+                'clientOptions' => [
+                        'changeMonth' => true,
+                        'yearRange' => '-70:+20',
+                        'changeYear' => true,
+                        ], ])->textInput(['placeholder' => 'Select Start Date'])->label('As Of');?>
     </div>
     <div class="col-md-4 ">
-    	<?= $form->field($model, 'paymentDay')->dropDownList($day, ['prompt'=>'Choose a Day'])?>
+    	<?= $form->field($model, 'paymentDay')->dropDownList($day, ['prompt'=>'Choose a Day'])->label('On The')?>
     </div>
     <div class="col-md-4 ">
     <?php $frequency= ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'); ?>
-    <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['prompt'=>'Choose a Frequency'])->label('Payment Frequency');?>    
+    <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['prompt'=>'Choose a Frequency'])->label('Every');?>    
     </div>
     <div class="col-md-4 ">
     <?= $form->field($model, 'paymentMethodId')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
-                ->label('Payment Method'); ?>    
+                ->label('Via'); ?>    
     </div>
     <div class="col-md-4 ">
     <?php if (!$model->isNewRecord) {
@@ -53,16 +59,16 @@ use common\models\CustomerRecurringPayment;
                         'changeMonth' => true,
                         'yearRange' => '-70:+20',
                         'changeYear' => true,
-                        ], ])->textInput(['placeholder' => 'Select Expiry Date']);?>    
+                        ], ])->textInput(['placeholder' => 'Select Expiry Date'])->label('Until');?>    
     </div>
     <div class="col-md-4 ">
     <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),
-            'class' => 'text-right form-control']); ?>    
+            'class' => 'text-right form-control'])->label('In The Amount Of'); ?>    
     </div>
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-<?= Html::label('Enrolment', ['class' => 'admin-login']) ?>
+<?= Html::label('To Be Applied Towards The Following Enrolments', ['class' => 'admin-login']) ?>
 <?= $this->render('_enrolment', [
     'enrolmentDataProvider' => $enrolmentDataProvider,
     'customerRecurringPaymentModel' =>  $model,
