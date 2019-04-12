@@ -120,6 +120,10 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PaymentMethod::className(), ['id' => 'paymentMethodId']);
     }
+    public function getCustomer()
+    {
+        return $this->hasOne(User::className(), ['id' => 'customerId']);
+    }
 
     public static function find()
     {

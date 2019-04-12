@@ -14,6 +14,7 @@ use common\models\CustomerRecurringPayment;
 use common\models\CustomerRecurringPaymentEnrolment;
 use common\models\RecurringPayment;
 use Carbon\Carbon;
+use yii\helpers\Console;
 
 class RecurringPaymentController extends Controller
 {
@@ -40,11 +41,17 @@ class RecurringPaymentController extends Controller
                                 ->andWhere(['>', 'DATE(customer_recurring_payment.expiryDate)', $currentDate])
                                 ->isRecurringPaymentEnabled()
                                 ->andWhere(['>', 'amount' ,0.00])
+                                ->joinWith(['customer' =>function ($query) { 
+                                    $query->notDeleted();
+                                }])
                                 ->all();
+        $count = count($recurringPayments);                        
+        Console::startProgress(0, $count, 'Processing Recurring Payments.....');                        
         foreach ($recurringPayments as $recurringPayment) {
             $frequencyDays = $recurringPayment->paymentFrequencyId * 30;
             $startDate = Carbon::parse($currentDate)->modify('-'.$frequencyDays.'days')->format('Y-m-d');
             $endDate = Carbon::parse($currentDate)->format('Y-m-d');
+            Console::output("processing for " . $recurringPayment->customer->publicIdentity, Console::FG_GREEN, Console::BOLD);
             $previousRecordedPayment = RecurringPayment::find()
                                         ->andWhere(['customerRecurringPaymentId' => $recurringPayment->id])
                                         ->between($startDate,$endDate)
