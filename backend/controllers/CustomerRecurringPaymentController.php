@@ -29,7 +29,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create', 'update'],
+                'only' => ['create', 'update', 'customer-recurring-payment-status'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -40,7 +40,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'update'],
+                        'actions' => ['create', 'update', 'customer-recurring-payment-status'],
                         'roles' => [
                             'managePfi'
                        ]
@@ -171,5 +171,28 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionCustomerRecurringPaymentStatus($state, $id)
+    {
+        print_r($id);die('ss');
+        $model = CustomerRecurringPayment::find()
+                ->andWhere([
+                    'id' => $id,
+                ])
+                ->notDeleted()
+                ->one();
+        $model->isRecurringPaymentEnabled = $state;
+        if ($model->save()) {
+            $response = [
+                'status' => true,
+            ]; 
+        } else {
+            $response = [
+                'status' => false,
+                'errors' =>$model->getErrors()
+            ];
+        }
+        return $response;
     }
 }   
