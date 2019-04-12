@@ -9,6 +9,7 @@ use Carbon\Carbon;
  */
 class m190412_082746_adding_startdate_for_recurring_payment extends Migration
 {
+    
     /**
      * {@inheritdoc}
      */

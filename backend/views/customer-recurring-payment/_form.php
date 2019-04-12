@@ -137,9 +137,5 @@ use common\models\CustomerRecurringPayment;
         }
         return false;
     });
-    $(document).off('change', '#customerrecurringpayment-entryday').on('change', '#customerrecurringpayment-entryday', function(){
-       
-        return false;
-    });
     
 </script> 
