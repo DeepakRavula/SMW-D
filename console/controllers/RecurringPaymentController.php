@@ -51,7 +51,7 @@ class RecurringPaymentController extends Controller
             $frequencyDays = $recurringPayment->paymentFrequencyId * 30;
             $startDate = Carbon::parse($currentDate)->modify('-'.$frequencyDays.'days')->format('Y-m-d');
             $endDate = Carbon::parse($currentDate)->format('Y-m-d');
-            Console::output("processing for" . $recurringPayment->customer->publicIdentity, Console::FG_GREEN, Console::BOLD);
+            Console::output("processing for " . $recurringPayment->customer->publicIdentity, Console::FG_GREEN, Console::BOLD);
             $previousRecordedPayment = RecurringPayment::find()
                                         ->andWhere(['customerRecurringPaymentId' => $recurringPayment->id])
                                         ->between($startDate,$endDate)
