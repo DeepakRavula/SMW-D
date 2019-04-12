@@ -9,6 +9,7 @@ use common\models\PaymentMethod;
 use yii\bootstrap\Html;
 use common\models\PaymentFrequency;
 use common\models\CustomerRecurringPayment;
+use kartik\switchinput\SwitchInput;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -58,6 +59,9 @@ use common\models\CustomerRecurringPayment;
     <div class="col-md-4 ">
     <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),
             'class' => 'text-right form-control']); ?>    
+    </div>
+    <div class="col-md-4">
+            <?php echo $form->field($model, 'isRecurringPaymentEnabled')->widget(SwitchInput::classname(), [])->label('Automatic Payments');?>
     </div>
     </div>
 </div>

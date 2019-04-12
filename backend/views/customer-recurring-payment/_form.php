@@ -136,16 +136,4 @@ use kartik\switchinput\SwitchInput;
         }
         return false;
     });
-
-    $('#customerrecurringpayment-isrecurringpaymentenabled').on('switchChange.bootstrapSwitch', function(event, state) {
-        var customerRecurringPaymentId = <?= $model->id; ?>;
-        var params = $.param({'state' : state | 0, 'id' : customerRecurringPaymentId});
-	    $.ajax({
-            url    : '<?= Url::to(['customer-recurring-payment/customer-recurring-payment-status']) ?>?' + params,
-            type   : 'POST',
-            dataType: "json",
-            data   : $(this).serialize()
-        });
-        return false;
-    });
 </script> 
