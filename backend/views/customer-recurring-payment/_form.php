@@ -9,7 +9,6 @@ use common\models\PaymentMethod;
 use yii\bootstrap\Html;
 use common\models\PaymentFrequency;
 use common\models\CustomerRecurringPayment;
-use kartik\switchinput\SwitchInput;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -66,7 +65,7 @@ use kartik\switchinput\SwitchInput;
             'class' => 'text-right form-control']); ?>    
     </div>
     <div class="col-md-4">
-            <?php echo $form->field($model, 'isRecurringPaymentEnabled')->widget(SwitchInput::classname(), [])->label('Automatic Payments');?>
+    <?= $form->field($model, 'isRecurringPaymentEnabled')->checkbox()->label('Automatic Payments'); ?>
     </div>
     </div>
 </div>
