@@ -134,6 +134,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         if (Yii::$app->request->post()) {
             if ($model->load(Yii::$app->request->post())) {
                 $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+                $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
                 if ($model->save()) {
                     $customerRecurringPaymentEnrolments = CustomerRecurringPaymentEnrolment::find()
                                                           ->andWhere(['customerRecurringPaymentId' => $model->id])  
