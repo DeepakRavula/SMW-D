@@ -32,11 +32,9 @@ use insolita\wgadminlte\LteConst;
         'tableOptions' => ['class' => 'table table-condensed'],
         'columns' => [
             [
-                'label' => 'Entry Day',
+                'label' => 'To Be Entered On',
                 'value' => function ($data) {
-                    $locale = 'en_US';
-                    $nf = new NumberFormatter($locale, NumberFormatter::ORDINAL);
-                    return $nf->format($data->entryDay) . ' of the month';
+                    return Yii::$app->formatter->asDate($data->startDate);
                 },
             ],
             [
