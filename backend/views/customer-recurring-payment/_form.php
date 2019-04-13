@@ -74,7 +74,10 @@ use common\models\CustomerRecurringPayment;
     </div>
     <div class="row">
     <div class="col-md-4">
-    <?= $form->field($model, 'isRecurringPaymentEnabled')->checkbox()->label('Automatic Payments'); ?>
+    <?php if ($model->isNewRecord) {
+            $model->isRecurringPaymentEnabled = true;
+        } ?>
+    <?= $form->field($model, 'isRecurringPaymentEnabled')->checkbox()->label('Enabled'); ?>
     </div>
     </div>
 </div>
