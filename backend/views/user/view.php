@@ -170,14 +170,7 @@ foreach ($roleNames as $name => $description) {
                 ]);
                 ?>
             <?php Pjax::end() ?>
-            
-            <?php Pjax::begin(['id' => 'customer-recurring-payment-list', 'timeout' => 6000]) ?>
-                <?=$this->render('/customer-recurring-payment/_list', [
-                    'model' => $model,
-                    'customerRecurringPaymentsDataProvider' => $customerRecurringPaymentsDataProvider,
-                ]); ?>
-            <?php Pjax::end(); ?>
-
+                        
             <?php Pjax::begin(['id' => 'payment-preference-listing', 'timeout' => 6000]) ?>	
                 <?=$this->render('customer/_payment-preference', [
                     'model' => $model,
@@ -189,7 +182,14 @@ foreach ($roleNames as $name => $description) {
 <?php if ($searchModel->role_name == 'customer'):?>
 <div class="row">
 	<div class="col-md-12">
-        <?= $this->render('customer/_payment', [
+    <?php Pjax::begin(['id' => 'customer-recurring-payment-list', 'timeout' => 6000]) ?>
+                <?=$this->render('/customer-recurring-payment/_list', [
+                    'model' => $model,
+                    'customerRecurringPaymentsDataProvider' => $customerRecurringPaymentsDataProvider,
+                ]); ?>
+            <?php Pjax::end(); ?>
+
+            <?= $this->render('customer/_payment', [
             'paymentsDataProvider' => $paymentsDataProvider,
             'count' => $paymentCount,
             'userModel' => $model,
