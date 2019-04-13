@@ -9,6 +9,7 @@ use common\models\PaymentMethod;
 use yii\bootstrap\Html;
 use common\models\PaymentFrequency;
 use common\models\CustomerRecurringPayment;
+use Carbon\Carbon;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -29,11 +30,13 @@ use common\models\CustomerRecurringPayment;
         ->all(); ?>
     <div class="row">
 	<div class="col-md-4 ">
-            <?php $day = CustomerRecurringPayment::getDaysList();?>
+            <?php $day = CustomerRecurringPayment::getDaysList();?> 
+        <?php $model->startDate = Carbon::parse($model->startDate)->format('M d, Y');   ?>
     	<?= $form->field($model, 'startDate')->widget(DatePicker::className(), [
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
                         'changeMonth' => true,
+                        'defaultDate' => (new \DateTime($model->startDate))->format('M d, Y'),
                         'yearRange' => '-70:+20',
                         'changeYear' => true,
                         ], ])->textInput(['placeholder' => 'Select Start Date'])->label('As Of');?>
