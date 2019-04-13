@@ -44,6 +44,8 @@ use common\models\CustomerRecurringPayment;
     <?php $frequency= ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'); ?>
     <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['prompt'=>'Choose a Frequency'])->label('Payment Frequency');?>    
     </div>
+    </div>
+    <div class="row">
     <div class="col-md-4 ">
     <?= $form->field($model, 'paymentMethodId')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>    
@@ -64,6 +66,8 @@ use common\models\CustomerRecurringPayment;
     <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),
             'class' => 'text-right form-control']); ?>    
     </div>
+    </div>
+    <div class="row">
     <div class="col-md-4">
     <?= $form->field($model, 'isRecurringPaymentEnabled')->checkbox()->label('Automatic Payments'); ?>
     </div>
