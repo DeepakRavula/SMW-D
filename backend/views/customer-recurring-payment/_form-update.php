@@ -9,7 +9,6 @@ use common\models\PaymentMethod;
 use yii\bootstrap\Html;
 use common\models\PaymentFrequency;
 use common\models\CustomerRecurringPayment;
-use kartik\switchinput\SwitchInput;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -46,6 +45,8 @@ use kartik\switchinput\SwitchInput;
     <?php $frequency= ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'); ?>
     <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['prompt'=>'Choose a Frequency'])->label('Every');?>    
     </div>
+    </div>
+    <div class="row">
     <div class="col-md-4 ">
     <?= $form->field($model, 'paymentMethodId')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Via'); ?>    
@@ -66,8 +67,10 @@ use kartik\switchinput\SwitchInput;
     <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),
             'class' => 'text-right form-control'])->label('In The Amount Of'); ?>    
     </div>
+    </div>
+    <div class="row">
     <div class="col-md-4">
-            <?php echo $form->field($model, 'isRecurringPaymentEnabled')->widget(SwitchInput::classname(), [])->label('Automatic Payments');?>
+    <?= $form->field($model, 'isRecurringPaymentEnabled')->checkbox()->label('Automatic Payments'); ?>
     </div>
     </div>
 </div>
