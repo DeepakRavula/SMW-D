@@ -43,6 +43,13 @@ use common\models\CustomerRecurringPaymentEnrolment;
         ]);
 
         array_push($columns, [
+            'label' => 'Payment Frequency',
+            'value' => function ($model) {
+                return $model->paymentsFrequency->name;
+            }
+        ]);
+
+        array_push($columns, [
             'label' => 'Student',
             'attribute' => 'student',
             'value' => function ($data) {
