@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Recurring Payment';
+$this->title = 'Recurring Payments';
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
 <div class="recurring-payment-index">  
