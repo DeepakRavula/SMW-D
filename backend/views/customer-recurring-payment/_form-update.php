@@ -137,7 +137,6 @@ use Carbon\Carbon;
                             }
                         }
                     });
-        }
         return false;
     });
 
