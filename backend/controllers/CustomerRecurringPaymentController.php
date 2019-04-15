@@ -85,12 +85,14 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             $model->entryDay = Carbon::parse($startDate)->format('d');
             if($model->save()) {
                   $customerRecurringPaymentEnrolmentModel->load($get);
+                  if ($customerRecurringPaymentEnrolmentModel->enrolmentIds) {
                   foreach ($customerRecurringPaymentEnrolmentModel->enrolmentIds as $enrolmentId) {
                       $customerRecurringPaymentEnrolment = new CustomerRecurringPaymentEnrolment();
                       $customerRecurringPaymentEnrolment->enrolmentId = $enrolmentId;
                       $customerRecurringPaymentEnrolment->customerRecurringPaymentId = $model->id;
                       $customerRecurringPaymentEnrolment->save();
                   } 
+                }
                   return [
                     'status' => true
                 ];
@@ -144,12 +146,14 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                     }
                     $customerRecurringPaymentEnrolmentModel = new CustomerRecurringPaymentEnrolment();
                     $customerRecurringPaymentEnrolmentModel->load(Yii::$app->request->get());
+                    if ($customerRecurringPaymentEnrolmentModel->enrolmentIds) {
                   foreach ($customerRecurringPaymentEnrolmentModel->enrolmentIds as $enrolmentId) {
                       $customerRecurringPaymentEnrolment = new CustomerRecurringPaymentEnrolment();
                       $customerRecurringPaymentEnrolment->enrolmentId = $enrolmentId;
                       $customerRecurringPaymentEnrolment->customerRecurringPaymentId = $model->id;
                       $customerRecurringPaymentEnrolment->save();
                 } 
+            }
                     $response = [
                         'status' => true
                     ];
