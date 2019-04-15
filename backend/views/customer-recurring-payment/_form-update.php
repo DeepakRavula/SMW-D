@@ -114,7 +114,7 @@ use Carbon\Carbon;
         var id = <?= $model->id ?>;
         var params = $.param({'id' : id});
         if (!$.isEmptyObject(enrolmentIds)) {
-            params = $.param({'CustomerRecurringPaymentEnrolment[enrolmentIds]': enrolmentIds});
+            params = $.param({'id' : id, 'CustomerRecurringPaymentEnrolment[enrolmentIds]': enrolmentIds});
         } 
                     $.ajax({
                         url    : '<?=Url::to(['customer-recurring-payment/update' ])?>?' +params,
