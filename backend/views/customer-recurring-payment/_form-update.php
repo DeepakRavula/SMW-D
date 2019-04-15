@@ -111,11 +111,11 @@ use Carbon\Carbon;
    
     $(document).off('click', '.customer-recurring-payment-modal-update').on('click', '.customer-recurring-payment-modal-update', function(){
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
-        var id = <?= $model->id ?>;
-        if ($.isEmptyObject(enrolmentIds)) {
-            $('#index-error-notification').html("Choose any enrolments to add recurring payment").fadeIn().delay(5000).fadeOut();
-        } else {
-        var params = $.param({'id' : id,'CustomerRecurringPaymentEnrolment[enrolmentIds]': enrolmentIds});
+        var id = <?= $model->customerId ?>;
+        var params = $.param({'id' : id});
+        if (!$.isEmptyObject(enrolmentIds)) {
+            params = $.param({'CustomerRecurringPaymentEnrolment[enrolmentIds]': enrolmentIds});
+        } 
                     $.ajax({
                         url    : '<?=Url::to(['customer-recurring-payment/update' ])?>?' +params,
                         type   : 'post',
@@ -137,7 +137,6 @@ use Carbon\Carbon;
                             }
                         }
                     });
-        }
         return false;
     });
 
