@@ -15,7 +15,7 @@ use yii\helpers\Url;
 use common\models\Enrolment;
 use common\models\CustomerRecurringPayment;
 use Carbon\Carbon;
-
+use yii\bootstrap\ActiveForm;
 
 class CustomerRecurringPaymentController extends \common\components\controllers\BaseController
 {
