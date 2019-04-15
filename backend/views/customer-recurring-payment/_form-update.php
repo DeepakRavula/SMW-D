@@ -111,7 +111,7 @@ use Carbon\Carbon;
    
     $(document).off('click', '.customer-recurring-payment-modal-update').on('click', '.customer-recurring-payment-modal-update', function(){
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
-        var id = <?= $model->customerId ?>;
+        var id = <?= $model->id ?>;
         var params = $.param({'id' : id});
         if (!$.isEmptyObject(enrolmentIds)) {
             params = $.param({'CustomerRecurringPaymentEnrolment[enrolmentIds]': enrolmentIds});
@@ -137,6 +137,7 @@ use Carbon\Carbon;
                             }
                         }
                     });
+        }
         return false;
     });
 
