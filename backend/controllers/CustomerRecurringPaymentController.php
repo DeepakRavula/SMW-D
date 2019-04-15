@@ -41,7 +41,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'update'],
+                        'actions' => ['create', 'update', 'index'],
                         'roles' => [
                             'managePfi'
                        ]
@@ -51,6 +51,17 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         ];
     }
 
+
+    public function actionIndex()
+    {
+        $recurringPayments = CustomerRecurringPayment::find();
+        $recurringPaymentDataProvider  = new ActiveDataProvider([
+            'query' =>  $recurringPayments,
+        ]);
+        return $this->render('index', [
+                'dataProvider' => $recurringPaymentDataProvider
+            ]);
+    }
 
     public function actionCreate($id)
     {
