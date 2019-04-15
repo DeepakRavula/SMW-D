@@ -27,28 +27,28 @@ echo Menu::widget([
             'icon' => '<i class="fa fa-tachometer"></i>',
             'url' => ['/dashboard/index'],
             'visible' => Yii::$app->user->can('manageDashboard'),
-            'active' => (Yii::$app->controller->id === 'dashboard') ? true : false,
+            'active' => (Yii::$app->controller->id === 'dashboard')
         ],
             [
             'label' => Yii::t('backend', 'Schedule'),
             'icon' => '<i class="fa  fa-calendar"></i>',
             'url' => ['/schedule/index'],
             'visible' => Yii::$app->user->can('manageSchedule'),
-            'active' => (Yii::$app->controller->id === 'schedule') ? true : false,
+            'active' => (Yii::$app->controller->id === 'schedule')
         ],
             [
             'label' => Yii::t('backend', 'Enrolments'),
             'icon' => '<i class="fa  fa-book"></i>',
             'url' => ['/enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false],
             'visible' => Yii::$app->user->can('manageEnrolments'),
-            'active' => (Yii::$app->controller->id === 'enrolment') ? true : false,
+            'active' => (Yii::$app->controller->id === 'enrolment')
         ],
             [
             'label' => Yii::t('backend', 'Students'),
             'icon' => '<i class="fa fa-lg fa-fw fa-child"></i>',
             'url' => ['/student/index', 'StudentSearch[showAllStudents]' => false],
             'visible' => Yii::$app->user->can('manageStudents'),
-            'active' => (Yii::$app->controller->id === 'student') ? true : false,
+            'active' => (Yii::$app->controller->id === 'student')
         ],
             [
             'label' => Yii::t('backend', 'Customers'),
@@ -69,20 +69,20 @@ echo Menu::widget([
             'url' => ['/lesson/index', 'LessonSearch[dateRange]' => $dateRange],
             'icon' => '<i class="fa fa-music"></i>',
             'visible' => Yii::$app->user->can('managePrivateLessons'),
-            'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
+            'active' => (Yii::$app->controller->id === 'lesson')
         ],
         [
             'label' => Yii::t('backend', 'Group Courses'),
             'url' => ['/course/index', 'CourseSearch[type]' => Lesson::TYPE_GROUP_LESSON],
             'icon' => '<i class="fa fa-music"></i>',
             'visible' => Yii::$app->user->can('manageGroupLessons'),
-            'active' => (Yii::$app->controller->id === 'course') ? true : false,
+            'active' => (Yii::$app->controller->id === 'course')
         ],
 	[
             'label' => Yii::t('backend', 'Unscheduled Lessons'),
             'url' => ['unscheduled-lesson/index'],
             'icon' => '<i class="fa fa-music"></i>',
-	        'active' => (Yii::$app->controller->id === 'unscheduled-lesson') ? true : false,
+	        'active' => (Yii::$app->controller->id === 'unscheduled-lesson')
         ],
         //     [
         //     'label' => Yii::t('backend', 'Proforma Invoices'),
@@ -107,7 +107,7 @@ echo Menu::widget([
         'icon' => '<i class="fa  fa-dollar"></i>',
         'url' => ['/customer-recurring-payment/index'],
         'visible' => Yii::$app->user->can('manageAdmin'),
-        'active' => (Yii::$app->controller->id === 'customer-recurring-payment') ? true : false,
+        'active' => (Yii::$app->controller->id === 'customer-recurring-payment')
         ],
 
 	[
@@ -115,7 +115,7 @@ echo Menu::widget([
             'icon' => '<i class="fa  fa-dollar"></i>',
             'url' => ['/customer-payment-preference/index'],
             'visible' => Yii::$app->user->can('manageAdmin'),
-            'active' => (Yii::$app->controller->id === 'customer-payment-preference') ? true : false,
+            'active' => (Yii::$app->controller->id === 'customer-payment-preference')
         ],
           
         [
@@ -123,7 +123,7 @@ echo Menu::widget([
             'icon' => '<i class="fa  fa-dollar"></i>',
             'url' => ['/proforma-invoice/index'],
             'visible' => Yii::$app->user->can('managePfi'),
-            'active' => (Yii::$app->controller->id === 'proforma-invoice') ? true : false,
+            'active' => (Yii::$app->controller->id === 'proforma-invoice')
         ],
             [
             'label' => Yii::t('backend', 'Invoices'),
@@ -137,7 +137,7 @@ echo Menu::widget([
             'icon' => '<i class="fa  fa-dollar"></i>',
             'url' => ['/payment/index', 'PaymentSearch[isDefault]' => true],
             'visible' => Yii::$app->user->can('manageInvoices'),
-            'active' => (Yii::$app->controller->id === 'payment') ? true : false,
+            'active' => (Yii::$app->controller->id === 'payment')
         ],
             [
             'label' => Yii::t('backend', 'Reports'),
