@@ -24,8 +24,8 @@ use yii\widgets\Pjax;
 <script>
 	$(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
         $.ajax({
-            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->user->id,
-                'PaymentFormGroupLessonSearch[userId]' => $model->user->id ]); ?>',
+            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->user_id,
+                'PaymentFormGroupLessonSearch[userId]' => $model->user_id ]); ?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)
