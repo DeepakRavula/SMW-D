@@ -29,14 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'label' => 'Next Payment Date',
-                'value' => function ($data) {
-                    $locale = 'en_US';
-                    $nf = new NumberFormatter($locale, NumberFormatter::ORDINAL);
-                    return  $nf->format($data->paymentDay) . ' of the month';
-                },
-            ],
-            [
                 'label' => 'To Be Entered On',
                 'value' => function ($data) {
                     return Yii::$app->formatter->asDate($data->startDate);
