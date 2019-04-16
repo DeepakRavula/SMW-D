@@ -144,6 +144,9 @@ use Carbon\Carbon;
                                 if (response.error) {
                                     $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
                                 }
+                                if (response.errors) {
+                                $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                                }
                             }
                         }
                     });
