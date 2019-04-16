@@ -129,4 +129,5 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     {
         return new \common\models\query\CustomerRecurringPaymentQuery(get_called_class());
     }
+    
 }

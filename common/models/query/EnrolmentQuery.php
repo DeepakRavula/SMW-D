@@ -32,6 +32,22 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         }]);
     }
 
+    public function notCompleted()
+    {
+        $fromDate = null;
+        $toDate = null;
+        $currentDate = (new \DateTime())->format('Y-m-d');
+        return $this->joinWith(['course' => function ($query) use ($currentDate) {
+            $query->joinWith(['lessons' => function ($query) {
+                $query->andWhere(['NOT', ['lesson.id' => null]]);
+            }])
+                ->andWhere(['>', 'DATE(course.endDate)', $currentDate])
+                ->regular()
+                ->confirmed()
+                ->notDeleted();
+        }]);
+    }
+
     /**
      * {@inheritdoc}
      *
