@@ -102,8 +102,14 @@ echo Menu::widget([
             'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_PRO_FORMA_INVOICE) ? true : false,
         ],
    
-
-	[
+        [
+            'label' => Yii::t('backend', 'Recurring Payments'),
+            'icon' => '<i class="fa  fa-dollar"></i>',
+            'url' => ['/customer-recurring-payment/index'],
+            'visible' => Yii::$app->user->can('manageAdmin'),
+            'active' => (Yii::$app->controller->id === 'customer-recurring-payment')
+        ],
+	    [
 	            'label' => Yii::t('backend', 'Payment Preferences'),
             'icon' => '<i class="fa  fa-dollar"></i>',
             'url' => ['/customer-payment-preference/index'],
