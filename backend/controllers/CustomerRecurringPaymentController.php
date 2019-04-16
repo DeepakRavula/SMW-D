@@ -112,7 +112,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
          else {
             return [
                     'status' => false,
-                    'errors' => $model->getErrors()
+                    'errors' => ActiveForm::validate($model)
                 ];
             }
         }
