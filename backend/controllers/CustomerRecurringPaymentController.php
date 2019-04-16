@@ -14,6 +14,7 @@ use yii\web\Response;
 use yii\helpers\Url;
 use common\models\Enrolment;
 use common\models\CustomerRecurringPayment;
+use common\models\Location;
 use Carbon\Carbon;
 use yii\bootstrap\ActiveForm;
 
@@ -54,7 +55,9 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
 
     public function actionIndex()
     {
-        $recurringPayments = CustomerRecurringPayment::find();
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $recurringPayments = CustomerRecurringPayment::find()
+                ->location($locationId);
         $recurringPaymentDataProvider  = new ActiveDataProvider([
             'query' =>  $recurringPayments,
         ]);

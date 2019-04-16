@@ -32,5 +32,15 @@ class CustomerRecurringPaymentQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['customer_recurring_payment.isRecurringPaymentEnabled' =>  true]);
     }
 
-   
+    public function location($locationId)
+    {
+        $this->joinWith(['enrolments' => function ($query) use ($locationId) {
+            $query->joinWith(['course' => function ($query) use ($locationId) {
+                $query->andWhere(['locationId' => $locationId])
+                    ->notDeleted();
+            }]);
+        }]);
+
+        return $this;
+    }
 }
