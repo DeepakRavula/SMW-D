@@ -7,6 +7,7 @@ use yii\behaviors\BlameableBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\PaymentFrequency;
+use Carbon\Carbon;
 /**
  * This is the model class for table "customer_recurring_payment".
  *
@@ -129,4 +130,17 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     {
         return new \common\models\query\CustomerRecurringPaymentQuery(get_called_class());
     }
+
+    public function nextPaymentDate()
+    {
+       $currentDate = Carbon::now()->format('Y-m-d');
+       $day = $this->paymentDay;
+       $month = Carbon::parse($currentDate)->format('m');
+       $year = Carbon::parse($currentDate)->format('Y');
+       $formatedDate = $day . '-' . $month . '-' . $year;
+       $paymentDate = (new \DateTime($formatedDate))->format('Y-m-d');
+       return $paymentDate;
+        
+    }
+
 }

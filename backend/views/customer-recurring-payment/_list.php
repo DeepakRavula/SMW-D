@@ -38,11 +38,9 @@ use insolita\wgadminlte\LteConst;
                 },
             ],
             [
-                'label' => 'Payment Day',
+                'label' => 'Next Payment Date',
                 'value' => function ($data) {
-                    $locale = 'en_US';
-                    $nf = new NumberFormatter($locale, NumberFormatter::ORDINAL);
-                    return  $nf->format($data->paymentDay) . ' of the month';
+                    return Yii::$app->formatter->asDate($data->nextPaymentDate());
                 },
             ],
             [
