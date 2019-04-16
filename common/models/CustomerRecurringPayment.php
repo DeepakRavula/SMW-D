@@ -139,8 +139,10 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
        $year = Carbon::parse($currentDate)->format('Y');
        $formatedDate = $day . '-' . $month . '-' . $year;
        $paymentDate = (new \DateTime($formatedDate))->format('Y-m-d');
+
+       $recurringPayments = RecurringPayment::find()->all();
        return $paymentDate;
-        
+    
     }
 
 }
