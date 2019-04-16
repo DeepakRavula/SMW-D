@@ -34,10 +34,9 @@ class CustomerRecurringPaymentQuery extends \yii\db\ActiveQuery
 
     public function location($locationId)
     {
-        $this->joinWith(['enrolments' => function ($query) use ($locationId) {
-            $query->joinWith(['course' => function ($query) use ($locationId) {
-                $query->andWhere(['locationId' => $locationId])
-                    ->notDeleted();
+        $this->joinWith(['customer' => function ($query) use ($locationId) {
+            $query->joinWith(['location' => function ($query) use ($locationId) {
+                $query->andWhere(['location_id' => $locationId]);
             }]);
         }]);
 
