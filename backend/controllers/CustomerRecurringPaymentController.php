@@ -70,7 +70,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                     ->customer($id)
                     ->recurringPaymentExcluded() 
                     ->privateProgram()
-                    ->activeOrFutureEnrolments()
+                    ->notCompleted()
                     ->isConfirmed();
                 
         $enrolmentDataProvider  = new ActiveDataProvider([
@@ -133,7 +133,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 ->customer($model->customerId)
                 ->anotherRecurringPaymentExcluded($model->id)
                 ->privateProgram()
-                ->activeOrFutureEnrolments()
+                ->notCompleted()
                 ->isConfirmed();
                 
         $enrolmentDataProvider  = new ActiveDataProvider([

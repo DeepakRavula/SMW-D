@@ -32,7 +32,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         }]);
     }
 
-    public function activeOrFutureEnrolments()
+    public function notCompleted()
     {
         $fromDate = null;
         $toDate = null;
