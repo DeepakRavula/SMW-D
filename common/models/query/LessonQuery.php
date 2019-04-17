@@ -7,7 +7,7 @@ use common\models\Program;
 use common\models\Invoice;
 use common\behaviors\ClosureTableQuery;
 use common\models\InvoiceItemPaymentCycleLesson;
-
+use Carbon\Carbon;
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
  *
