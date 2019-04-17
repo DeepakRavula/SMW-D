@@ -314,6 +314,11 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->andFilterWhere(['<', 'lesson.dueDate', (new \DateTime())->format('Y-m-d H:i:s')]);
     }
 
+    public function dueUntil($date)
+    {
+        return $this->andFilterWhere(['<', 'lesson.dueDate', Carbon::parse($date)->format('Y-m-d')]);
+    }
+
     public function studentLessons($locationId, $studentId)
     {
         $this->studentEnrolment($locationId, $studentId)
