@@ -32,6 +32,5 @@ class CustomerRecurringPaymentQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['customer_recurring_payment.isRecurringPaymentEnabled' =>  true]);
     }
 
-    
    
 }
