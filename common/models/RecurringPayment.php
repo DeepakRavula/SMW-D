@@ -84,4 +84,9 @@ class RecurringPayment extends \yii\db\ActiveRecord
     {
         return new \common\models\query\RecurringPaymentQuery(get_called_class());
     }
+
+    public function getPayment()
+    {
+        return $this->hasOne(Payment::className(), ['id' => 'paymentId']);
+    }
 }
