@@ -139,9 +139,14 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
        $year = Carbon::parse($currentDate)->format('Y');
        $formatedDate = $day . '-' . $month . '-' . $year;
        $paymentDate = (new \DateTime($formatedDate))->format('Y-m-d');
-
-       $recurringPayments = RecurringPayment::find()->all();
-       return $paymentDate;
+       $recurringPayment = RecurringPayment::find()->customerRecurringPayment($this->id)->orderBy(['recurring_payment.date' => SORT_DESC])->one();
+       if (!$recurringPayment) {
+           $nextPaymentDate = $paymentDate;
+       } else {
+            $nextPaymentDate = Carbon::parse($recurringPayment->payment->date)->modify('+'.$this->paymentFrequencyId.'month')->format('M d, Y');
+       }
+        
+       return $nextPaymentDate;
     
     }
 
