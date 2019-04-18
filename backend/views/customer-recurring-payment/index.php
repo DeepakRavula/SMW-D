@@ -36,6 +36,12 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
                 },
             ],
             [
+                'label' => 'Next Payment Date',
+                'value' => function ($data) {
+                    return Yii::$app->formatter->asDate($data->nextPaymentDate());
+                },
+            ],
+            [
                 'label' => 'Frequency',
                 'value' => function ($data) {
                     return $data->paymentFrequency->name;
