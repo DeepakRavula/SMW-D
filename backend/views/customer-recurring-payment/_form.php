@@ -10,6 +10,9 @@ use yii\bootstrap\Html;
 use common\models\PaymentFrequency;
 use common\models\CustomerRecurringPayment;
 use Carbon\Carbon;
+use common\models\User;
+use common\models\Location;
+use kartik\select2\Select2;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -32,11 +35,22 @@ use Carbon\Carbon;
         ->andWhere(['active'=> PaymentMethod::STATUS_ACTIVE])
         ->andWhere(['displayed' => 1])
         ->orderBy(['sortOrder' => SORT_ASC])
-        ->all(); ?>
+        ->all(); 
+        $customers = ArrayHelper::map(User::find()
+            ->notDeleted()
+            ->customersAndGuests(Location::findOne(['slug' => \Yii::$app->location])->id)
+            ->all(), 'id', 'publicIdentity');?>
     <div class="row">
 	<div class="col-md-4 ">
             <?php $day = CustomerRecurringPayment::getDaysList();?>
             <?php $model->startDate = Carbon::now()->format('M d, Y');   ?>
+        <?= $form->field($model, 'customerId')->widget(Select2::classname(), [
+            'data' => $customers,
+            'options' => [
+                'placeholder' => 'customer',
+                'id' => 'customer-payment'
+            ]
+        ])->label('Customer'); ?>
     	<?= $form->field($model, 'startDate')->widget(DatePicker::className(), [
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
