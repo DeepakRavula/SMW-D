@@ -87,7 +87,7 @@ class RecurringPaymentController extends Controller
                     ->notDeleted()
                     ->isConfirmed()
                     ->notCanceled()
-                    ->dueLessons()
+                    ->dueUntil($date)
                     ->enrolment($enrolment->id)
                     ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                     ->andWhere(['invoiced_lesson.id' => null])

@@ -7,7 +7,7 @@ use common\models\Program;
 use common\models\Invoice;
 use common\behaviors\ClosureTableQuery;
 use common\models\InvoiceItemPaymentCycleLesson;
-
+use Carbon\Carbon;
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
  *
@@ -312,6 +312,11 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function dueLessons()
     {
         return $this->andFilterWhere(['<', 'lesson.dueDate', (new \DateTime())->format('Y-m-d H:i:s')]);
+    }
+
+    public function dueUntil($date)
+    {
+        return $this->andFilterWhere(['<', 'lesson.dueDate', Carbon::parse($date)->format('Y-m-d')]);
     }
 
     public function studentLessons($locationId, $studentId)
