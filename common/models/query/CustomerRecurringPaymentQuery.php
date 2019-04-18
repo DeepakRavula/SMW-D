@@ -42,4 +42,9 @@ class CustomerRecurringPaymentQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+
+    public function notDeleted()  
+    {
+        return $this->andwhere(['customer_recurring_payment.isDeleted' => false]);
+    }
 }
