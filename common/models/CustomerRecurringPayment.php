@@ -8,6 +8,7 @@ use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\PaymentFrequency;
 use Carbon\Carbon;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "customer_recurring_payment".
  *
@@ -57,6 +58,13 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
                     'last_checked' => 'datetime',
                 ],
             ],
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
     
@@ -68,7 +76,7 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         return [
             [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId',  'amount'], 'required'],
             [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'isRecurringPaymentEnabled', 'startDate'], 'safe'],
+            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'isRecurringPaymentEnabled', 'startDate', 'isDeleted'], 'safe'],
         ];
     }
 
