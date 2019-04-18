@@ -88,6 +88,7 @@ use Carbon\Carbon;
     $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payment</h4>');
         $('#popup-modal .modal-dialog').css({'width': '800px'});
+        $('#modal-save').show();
             $('#modal-save').addClass('customer-recurring-payment-modal-update');
             $('#modal-save').removeClass('modal-save');
         $('#warning-notification-recurring-payment').html('SMW will automatically record a payment\n\

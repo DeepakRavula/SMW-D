@@ -95,6 +95,7 @@ use Carbon\Carbon;
     $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payment</h4>');
         $('#popup-modal .modal-dialog').css({'width': '800px'});
+        $('#modal-save').show();
         var isNewRecord = '<?= $model->isNewRecord; ?>';
         if (isNewRecord) {
             $('#modal-save').addClass('customer-recurring-payment-modal-save');
