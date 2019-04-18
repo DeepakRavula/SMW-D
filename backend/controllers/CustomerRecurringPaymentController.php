@@ -17,6 +17,7 @@ use common\models\CustomerRecurringPayment;
 use common\models\Location;
 use Carbon\Carbon;
 use yii\bootstrap\ActiveForm;
+use phpDocumentor\Reflection\Types\Null_;
 
 class CustomerRecurringPaymentController extends \common\components\controllers\BaseController
 {
@@ -66,25 +67,25 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             ]);
     }
 
-    public function actionCreate($id)
+    public function actionCreate($id = null)
     {
-        $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->customer($id)
-                    ->recurringPaymentExcluded() 
-                    ->privateProgram()
-                    ->notCompleted()
-                    ->isConfirmed();
-                
-        $enrolmentDataProvider  = new ActiveDataProvider([
-            'query' => $enrolment,
-            'pagination' => false,
-        ]);
         $post = Yii::$app->request->post();
         $get =  Yii::$app->request->get();
         
         $model = new CustomerRecurringPayment();
-        $model->customerId = $id;
+        $model->load($get);
+        $enrolment = Enrolment::find()
+        ->notDeleted()
+        ->customer($model->customerId)
+        ->recurringPaymentExcluded() 
+        ->privateProgram()
+        ->notCompleted()
+        ->isConfirmed();
+    
+$enrolmentDataProvider  = new ActiveDataProvider([
+'query' => $enrolment,
+'pagination' => false,
+]);
         $customerRecurringPaymentEnrolmentModel =  new CustomerRecurringPaymentEnrolment();
         $data = $this->renderAjax('_form', [
             'model' => $model,

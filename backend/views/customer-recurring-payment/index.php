@@ -70,7 +70,7 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
         $(document).on('click', '#recurring-payment, #recurring-payment-listing  tbody > tr', function () {
             var recurringPaymentId = $(this).data('key');
             if (!recurringPaymentId) {
-            var customUrl = '<?= Url::to(['customer-recurring-payment/recurring-payment-create']); ?>';
+            var customUrl = '<?= Url::to(['customer-recurring-payment/create']); ?>';
             } else {
                 var customUrl = '<?= Url::to(['customer-recurring-payment/update']); ?>?id=' + recurringPaymentId;
             }

@@ -13,7 +13,12 @@ use common\models\Course;
 use common\models\CustomerRecurringPaymentEnrolment;
 
 ?>
-
+<?php  $class = ""; 
+if (!$customerRecurringPaymentModel->customerId) {
+    $class = "multiselect-disable";
+}
+?>
+<?= '<div class = '.$class.'>'; ?>
 <?php 
     $form = ActiveForm::begin([
         'id' => 'modal-form-enrolment',
@@ -79,6 +84,7 @@ use common\models\CustomerRecurringPaymentEnrolment;
         'emptyText' => 'No enrolment Available!'
     ]); ?>
 <?php Pjax::end(); ?>
+    </div>
 <script>
 
 
