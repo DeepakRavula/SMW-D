@@ -94,7 +94,8 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
 
     public function getCustomerRecurringPayment()
     {
-        return $this->hasOne(CustomerRecurringPayment::className(), ['id' => 'customerRecurringPaymentId']);
+        return $this->hasOne(CustomerRecurringPayment::className(), ['id' => 'customerRecurringPaymentId'])
+                ->onCondition(['customer_recurring_payment_enrolment.isDeleted' => false]);
     }
 
     public function getEnrolment()
