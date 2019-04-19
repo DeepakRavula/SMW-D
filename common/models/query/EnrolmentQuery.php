@@ -109,7 +109,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     public function recurringPaymentExcluded()
     {
         return $this->joinWith(['customerRecurringPaymentEnrolment' => function ($query) {
-            $query->andWhere(['customer_recurring_payment_enrolment.enrolmentId' => null]);
+            $query->andWhere(['OR', ['customer_recurring_payment_enrolment.enrolmentId' => null], ['customer_recurring_payment_enrolment.isDeleted' => true]]);
         }]);
     }
 

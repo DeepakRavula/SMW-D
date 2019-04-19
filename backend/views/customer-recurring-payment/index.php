@@ -69,6 +69,9 @@ $this->params['breadcrumbs'][] = $this->title;
         $(document).on('click', '#recurring-payment-listing  tbody > tr', function () {
             var recurringPaymentId = $(this).data('key');
             var customUrl = '<?= Url::to(['customer-recurring-payment/update']); ?>?id=' + recurringPaymentId;
+            var url = '<?= Url::to(['customer-recurring-payment/delete']); ?>?id=' + recurringPaymentId;
+            $('.modal-delete').show();
+            $(".modal-delete").attr("action", url);
             $.ajax({
                 url    : customUrl,
                 type   : 'get',

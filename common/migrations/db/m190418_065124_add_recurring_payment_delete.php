@@ -17,6 +17,11 @@ class m190418_065124_add_recurring_payment_delete extends Migration
             'isDeleted',
             $this->integer()->notNull()->after('amount')
         );
+        $this->addColumn(
+            'customer_recurring_payment_enrolment',
+            'isDeleted',
+            $this->integer()->notNull()->after('customerRecurringPaymentId')
+        );
     }
 
     /**

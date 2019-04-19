@@ -154,8 +154,9 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
                 if ($model->save()) {
                     $customerRecurringPaymentEnrolments = CustomerRecurringPaymentEnrolment::find()
-                                                          ->andWhere(['customerRecurringPaymentId' => $model->id])  
-                                                           ->all();
+                                                        ->notDeleted()
+                                                        ->andWhere(['customerRecurringPaymentId' => $model->id])  
+                                                        ->all();
                     foreach ($customerRecurringPaymentEnrolments as $customerRecurringPaymentEnrolment) {
                         $customerRecurringPaymentEnrolment->delete();
                     }
@@ -191,6 +192,13 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+        $customerRecurringPaymentEnrolments = CustomerRecurringPaymentEnrolment::find()
+                ->notDeleted()
+                ->andWhere(['customerRecurringPaymentId' => $id])
+                ->all();
+        foreach ($customerRecurringPaymentEnrolments as $customerRecurringPaymentEnrolment) {
+            $customerRecurringPaymentEnrolment->delete();
+        }
         $model->delete();
             $response = [
                 'status' => true,

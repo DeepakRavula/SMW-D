@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\BlameableBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "customer_recurring_payment_enrolment".
@@ -56,6 +57,13 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
                     'last_checked' => 'datetime',
                 ],
             ],
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
 
@@ -64,7 +72,7 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
         return [
             [['enrolmentId', 'customerRecurringPaymentId', ], 'required'],
             [['enrolmentId', 'customerRecurringPaymentId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId', 'enrolmentIds'], 'safe'],
+            [['createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId', 'enrolmentIds', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -92,5 +100,10 @@ class CustomerRecurringPaymentEnrolment extends \yii\db\ActiveRecord
     public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
+    }
+
+    public static function find()
+    {
+        return new \common\models\query\CustomerRecurringPaymentEnrolmentQuery(get_called_class());
     }
 }
