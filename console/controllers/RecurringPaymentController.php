@@ -37,6 +37,7 @@ class RecurringPaymentController extends Controller
         }
         $currentDate = (new \DateTime())->format('Y-m-d');
         $recurringPayments = CustomerRecurringPayment::find()
+                                ->notDeleted()
                                 ->andWhere(['entryDay' => Carbon::parse($currentDate)->format('d')])
                                 ->andWhere(['>=', 'DATE(customer_recurring_payment.expiryDate)', $currentDate])
                                 ->isRecurringPaymentEnabled()

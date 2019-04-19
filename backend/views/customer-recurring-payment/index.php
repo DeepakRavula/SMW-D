@@ -80,6 +80,10 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
             } else {
                 var customUrl = '<?= Url::to(['customer-recurring-payment/update']); ?>?id=' + recurringPaymentId;
             }
+            var customUrl = '<?= Url::to(['customer-recurring-payment/update']); ?>?id=' + recurringPaymentId;
+            var url = '<?= Url::to(['customer-recurring-payment/delete']); ?>?id=' + recurringPaymentId;
+            $('.modal-delete').show();
+            $(".modal-delete").attr("action", url);
             $.ajax({
                 url    : customUrl,
                 type   : 'get',

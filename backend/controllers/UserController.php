@@ -733,6 +733,7 @@ class UserController extends BaseController
     {
         return new ActiveDataProvider([
             'query' => CustomerRecurringPayment::find()
+                ->notDeleted()
                 ->andWhere(['customerId' => $id]),
             'pagination' => false,
         ]);
