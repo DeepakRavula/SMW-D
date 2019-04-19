@@ -12,6 +12,7 @@ use yii\widgets\Pjax;
 
 $this->title = 'Recurring Payments';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['id' => 'recurring-payment']);
 ?> 
 <div class="recurring-payment-index">  
 <?php Pjax::begin(['id' => 'recurring-payment-listing']); ?>
@@ -32,6 +33,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'To Be Entered On',
                 'value' => function ($data) {
                     return Yii::$app->formatter->asDate($data->startDate);
+                },
+            ],
+            [
+                'label' => 'Next Payment Date',
+                'value' => function ($data) {
+                    return Yii::$app->formatter->asDate($data->nextPaymentDate());
                 },
             ],
             [
@@ -66,9 +73,13 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <script>
-        $(document).on('click', '#recurring-payment-listing  tbody > tr', function () {
+        $(document).on('click', '#recurring-payment, #recurring-payment-listing  tbody > tr', function () {
             var recurringPaymentId = $(this).data('key');
-            var customUrl = '<?= Url::to(['customer-recurring-payment/update']); ?>?id=' + recurringPaymentId;
+            if (!recurringPaymentId) {
+            var customUrl = '<?= Url::to(['customer-recurring-payment/create']); ?>';
+            } else {
+                var customUrl = '<?= Url::to(['customer-recurring-payment/update']); ?>?id=' + recurringPaymentId;
+            }
             $.ajax({
                 url    : customUrl,
                 type   : 'get',

@@ -17,6 +17,7 @@ use common\models\CustomerRecurringPayment;
 use common\models\Location;
 use Carbon\Carbon;
 use yii\bootstrap\ActiveForm;
+use phpDocumentor\Reflection\Types\Null_;
 
 class CustomerRecurringPaymentController extends \common\components\controllers\BaseController
 {
@@ -66,25 +67,25 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             ]);
     }
 
-    public function actionCreate($id)
+    public function actionCreate($id = null)
     {
-        $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->customer($id)
-                    ->recurringPaymentExcluded() 
-                    ->privateProgram()
-                    ->notCompleted()
-                    ->isConfirmed();
-                
-        $enrolmentDataProvider  = new ActiveDataProvider([
-            'query' => $enrolment,
-            'pagination' => false,
-        ]);
         $post = Yii::$app->request->post();
         $get =  Yii::$app->request->get();
         
         $model = new CustomerRecurringPayment();
-        $model->customerId = $id;
+        $model->load($get);
+        $enrolment = Enrolment::find()
+        ->notDeleted()
+        ->customer($model->customerId)
+        ->recurringPaymentExcluded() 
+        ->privateProgram()
+        ->notCompleted()
+        ->isConfirmed();
+    
+$enrolmentDataProvider  = new ActiveDataProvider([
+'query' => $enrolment,
+'pagination' => false,
+]);
         $customerRecurringPaymentEnrolmentModel =  new CustomerRecurringPaymentEnrolment();
         $data = $this->renderAjax('_form', [
             'model' => $model,
@@ -194,5 +195,67 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionRecurringPaymentCreate()
+    {
+        $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->customer($id)
+                    ->recurringPaymentExcluded() 
+                    ->privateProgram()
+                    ->notCompleted()
+                    ->isConfirmed();
+                
+        $enrolmentDataProvider  = new ActiveDataProvider([
+            'query' => $enrolment,
+            'pagination' => false,
+        ]);
+        $post = Yii::$app->request->post();
+        $get =  Yii::$app->request->get();
+        
+        $model = new CustomerRecurringPayment();
+        $model->customerId = $id;
+        $customerRecurringPaymentEnrolmentModel =  new CustomerRecurringPaymentEnrolment();
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+            'enrolmentDataProvider' => $enrolmentDataProvider,
+            'customerRecurringPaymentEnrolment' => $customerRecurringPaymentEnrolmentModel,
+        ]);
+        if ($post) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+            $startDate = Carbon::parse($model->startDate);
+            $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
+            $model->entryDay = Carbon::parse($startDate)->format('d');
+            if($model->save()) {
+                  $customerRecurringPaymentEnrolmentModel->load($get);
+                  if ($customerRecurringPaymentEnrolmentModel->enrolmentIds) {
+                  foreach ($customerRecurringPaymentEnrolmentModel->enrolmentIds as $enrolmentId) {
+                      $customerRecurringPaymentEnrolment = new CustomerRecurringPaymentEnrolment();
+                      $customerRecurringPaymentEnrolment->enrolmentId = $enrolmentId;
+                      $customerRecurringPaymentEnrolment->customerRecurringPaymentId = $model->id;
+                      $customerRecurringPaymentEnrolment->save();
+                  } 
+                }
+                  return [
+                    'status' => true
+                ];
+            }
+           
+         else {
+            return [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
+            }
+        }
+    }
+            else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+    }
     }
 }   
