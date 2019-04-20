@@ -519,8 +519,8 @@ foreach ($roleNames as $name => $description) {
     };
 
     $(document).on('modal-delete', function(event, params) {
-        if ($('#payment-preference-listing').length) {
-            $.pjax.reload({container: '#payment-preference-listing', replace:false, async: false, timeout: 6000});
+        if  ($('#customer-recurring-payment-list').length) {
+            $.pjax.reload({container: "#customer-recurring-payment-list", replace: false, async: false, timeout: 4000});
         }
         if ($('#unavailability-list').length) {
             $.pjax.reload({container: '#unavailability-list', replace:false, async: false, timeout: 6000});

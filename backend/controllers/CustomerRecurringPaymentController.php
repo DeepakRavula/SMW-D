@@ -32,7 +32,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create', 'update'],
+                'only' => ['create', 'update', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -43,7 +43,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'update', 'index'],
+                        'actions' => ['create', 'update', 'index', 'delete'],
                         'roles' => [
                             'managePfi'
                        ]
@@ -58,6 +58,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $recurringPayments = CustomerRecurringPayment::find()
+                ->notDeleted()
                 ->location($locationId);
         $recurringPaymentDataProvider  = new ActiveDataProvider([
             'query' =>  $recurringPayments,
@@ -167,8 +168,9 @@ $enrolmentDataProvider  = new ActiveDataProvider([
                 }
                 if ($model->save()) {
                     $customerRecurringPaymentEnrolments = CustomerRecurringPaymentEnrolment::find()
-                                                          ->andWhere(['customerRecurringPaymentId' => $model->id])  
-                                                           ->all();
+                                                        ->notDeleted()
+                                                        ->andWhere(['customerRecurringPaymentId' => $model->id])  
+                                                        ->all();
                     foreach ($customerRecurringPaymentEnrolments as $customerRecurringPaymentEnrolment) {
                         $customerRecurringPaymentEnrolment->delete();
                     }
@@ -198,6 +200,23 @@ $enrolmentDataProvider  = new ActiveDataProvider([
                 'data' => $data
             ];
         }
+        return $response;
+    }
+
+    public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+        $customerRecurringPaymentEnrolments = CustomerRecurringPaymentEnrolment::find()
+                ->notDeleted()
+                ->andWhere(['customerRecurringPaymentId' => $id])
+                ->all();
+        foreach ($customerRecurringPaymentEnrolments as $customerRecurringPaymentEnrolment) {
+            $customerRecurringPaymentEnrolment->delete();
+        }
+        $model->delete();
+            $response = [
+                'status' => true,
+            ];
         return $response;
     }
 

@@ -470,7 +470,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getCustomerRecurringPayments()
     {
-        return $this->hasMany(CustomerRecurringPayment::className(), ['customerId' => 'id']);
+        return $this->hasMany(CustomerRecurringPayment::className(), ['customerId' => 'id'])
+                ->onCondition(['customer_recurring_payment.isDeleted' => false]);
     } 
 
     public function getCustomerReferralSource()

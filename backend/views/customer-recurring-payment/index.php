@@ -79,6 +79,9 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
             var customUrl = '<?= Url::to(['customer-recurring-payment/create']); ?>';
             } else {
                 var customUrl = '<?= Url::to(['customer-recurring-payment/update']); ?>?id=' + recurringPaymentId;
+                var url = '<?= Url::to(['customer-recurring-payment/delete']); ?>?id=' + recurringPaymentId;
+                $('.modal-delete').show();
+                $(".modal-delete").attr("action", url);
             }
             $.ajax({
                 url    : customUrl,
@@ -97,4 +100,9 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
             });
             return false;
         });
+
+    $(document).on('modal-delete', function(event, params) {
+        $.pjax.reload({container: "#recurring-payment-listing", replace: false, timeout: 4000});
+        return false;
+    });
 </script>

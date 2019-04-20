@@ -83,6 +83,9 @@ use insolita\wgadminlte\LteConst;
             var customUrl = '<?=Url::to(['customer-recurring-payment/create' ])?>?' +params;
         } else {
             var customUrl = '<?= Url::to(['customer-recurring-payment/update']); ?>?id=' + recurringPaymentId;
+            var url = '<?= Url::to(['customer-recurring-payment/delete']); ?>?id=' + recurringPaymentId;
+                $('.modal-delete').show();
+                $(".modal-delete").attr("action", url);
         }
         $.ajax({
             url    : customUrl,

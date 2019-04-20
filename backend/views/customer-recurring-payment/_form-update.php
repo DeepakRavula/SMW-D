@@ -104,11 +104,6 @@ use Carbon\Carbon;
         $.pjax.reload({container: "#recurring-payment-list", replace: false, timeout: 4000});
         return false;
     });
-    
-    $(document).on('modal-delete', function(event, params) {
-        $.pjax.reload({container: "#recurring-payment-list", replace: false, timeout: 4000});
-        return false;
-    });
    
     $(document).off('click', '.customer-recurring-payment-modal-update').on('click', '.customer-recurring-payment-modal-update', function(){
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
