@@ -72,6 +72,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         $post = Yii::$app->request->post();
         $get =  Yii::$app->request->get();
         
+        $currentDate = Carbon::now();
         $model = new CustomerRecurringPayment();
         $model->load($get);
         $enrolment = Enrolment::find()
@@ -96,8 +97,14 @@ $enrolmentDataProvider  = new ActiveDataProvider([
         if ($model->load(Yii::$app->request->post())) {
             $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
             $startDate = Carbon::parse($model->startDate);
+            $currentDate = Carbon::now()->format('Y-m-d');
             $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
             $model->entryDay = Carbon::parse($startDate)->format('d');
+            if (Carbon::parse($model->startDate)->format('Y-m-d') > $currentDate ) {
+                $model->nextEntryDay = Carbon::parse($model->startDate)->format('Y-m-d');
+            } else {
+                $model->nextEntryDay = Carbon::parse($model->startDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
+            }
             if($model->save()) {
                   $customerRecurringPaymentEnrolmentModel->load($get);
                   if ($customerRecurringPaymentEnrolmentModel->enrolmentIds) {
@@ -152,6 +159,12 @@ $enrolmentDataProvider  = new ActiveDataProvider([
             if ($model->load(Yii::$app->request->post())) {
                 $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
                 $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
+                $currentDate = Carbon::now()->format('Y-m-d');
+                if (Carbon::parse($model->startDate)->format('Y-m-d') > $currentDate ) {
+                    $model->nextEntryDay = Carbon::parse($model->startDate)->format('Y-m-d');
+                } else {
+                    $model->nextEntryDay = Carbon::parse($model->startDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
+                }
                 if ($model->save()) {
                     $customerRecurringPaymentEnrolments = CustomerRecurringPaymentEnrolment::find()
                                                           ->andWhere(['customerRecurringPaymentId' => $model->id])  
@@ -228,6 +241,12 @@ $enrolmentDataProvider  = new ActiveDataProvider([
             $startDate = Carbon::parse($model->startDate);
             $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
             $model->entryDay = Carbon::parse($startDate)->format('d');
+            $currentDate = Carbon::now()->format('Y-m-d');
+            if (Carbon::parse($model->startDate)->format('Y-m-d') > $currentDate ) {
+                $model->nextEntryDay = Carbon::parse($model->startDate)->format('Y-m-d');
+            } else {
+                $model->nextEntryDay = Carbon::parse($model->startDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
+            }
             if($model->save()) {
                   $customerRecurringPaymentEnrolmentModel->load($get);
                   if ($customerRecurringPaymentEnrolmentModel->enrolmentIds) {

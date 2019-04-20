@@ -68,7 +68,7 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         return [
             [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId',  'amount'], 'required'],
             [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'isRecurringPaymentEnabled', 'startDate'], 'safe'],
+            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'isRecurringPaymentEnabled', 'startDate', 'nextEntryDay'], 'safe'],
         ];
     }
 
@@ -79,17 +79,18 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'customerId' => 'User ID',
+            'customerId' => 'Customer',
             'entryDay' => 'Entry Day',
             'paymentDay' => 'Payment Day',
-            'paymentMethodId' => 'Payment Method ID',
-            'paymentFrequencyId' => 'Payment Frequency ID',
+            'paymentMethodId' => 'Payment Method',
+            'paymentFrequencyId' => 'Payment Frequency',
             'expiryDate' => 'Expiry Date',
             'amount' => 'Amount',
             'createdOn' => 'Created On',
             'updatedOn' => 'Updated On',
             'createdByUserId' => 'Created By User ID',
             'updatedByUserId' => 'Updated By User ID',
+            'nextEntryDay' => 'Next Entry Day',
         ];
     }
 
@@ -133,19 +134,18 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
 
     public function nextPaymentDate()
     {
-       $currentDate = Carbon::now()->format('Y-m-d');
-       $day = $this->paymentDay;
-       $month = Carbon::parse($currentDate)->format('m');
-       $year = Carbon::parse($currentDate)->format('Y');
-       $formatedDate = $day . '-' . $month . '-' . $year;
-       $paymentDate = (new \DateTime($formatedDate))->format('Y-m-d');
-       $recurringPayment = RecurringPayment::find()->customerRecurringPayment($this->id)->orderBy(['recurring_payment.date' => SORT_DESC])->one();
-       if (!$recurringPayment || Carbon::parse($paymentDate)->format('Y-m-d') >= Carbon::parse($this->startDate)->format('Y-m-d')) {
-           $nextPaymentDate = $paymentDate;
-       } else {
-            $nextPaymentDate = Carbon::parse($recurringPayment->payment->date)->modify('+'.$this->paymentFrequencyId.'month')->format('M d, Y');
-       }
-        
+       
+      if ($this->paymentDay < Carbon::parse($this->nextEntryDay)->format('d')) {
+        $nextPaymentDate = Carbon::parse($this->nextEntryDay)->addMonthsNoOverflow(1);
+      }
+      else {
+        $nextPaymentDate = Carbon::parse($this->nextEntryDay);
+      }
+        $day = $this->paymentDay;
+        $month = $nextPaymentDate->format('m');
+        $year = $nextPaymentDate->format('Y');
+        $formatedDate = $day . '-' . $month . '-' . $year;
+        $nextPaymentDate = (new \DateTime($formatedDate))->format('Y-m-d');
        return $nextPaymentDate;
     
     }
