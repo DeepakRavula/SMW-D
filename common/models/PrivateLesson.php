@@ -93,6 +93,8 @@ class PrivateLesson extends \yii\db\ActiveRecord
                     $lesson->lineItemDiscount->updateAttributes(['value' => $lesson->lineItemDiscount->value / $splitCount]);
                 }
             }
+            $newLesson = Lesson::findOne($lesson->id);
+            $newLesson->privateLesson->save();
             if ($i == 0) {
                 $firstSplitId = $lesson->id;
             } else {
