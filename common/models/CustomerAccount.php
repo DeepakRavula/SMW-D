@@ -33,7 +33,7 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customerId', 'balance'], 'safe'],
+            [['customerId', 'balance', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
         ];
     }
 
