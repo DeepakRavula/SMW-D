@@ -73,8 +73,11 @@ class RecurringPaymentController extends Controller
             $recurringPaymentModel = new RecurringPayment();
             $recurringPaymentModel->paymentId = $payment->id;
             $recurringPaymentModel->customerRecurringPaymentId = $recurringPayment->id;
-            $recurringPaymentModel->date = carbon::parse($currentDate)->format('Y-m-d');
+            $recurringPaymentModel->date = Carbon::parse($currentDate)->format('Y-m-d');
             $recurringPaymentModel->save();
+            $customerRecurringPaymentModel = CustomerRecurringPayment::findOne($recurringPayment->id);
+            $customerRecurringPaymentModel->nextEntryDay = Carbon::parse($customerRecurringPaymentModel->nextEntryDay)->addMonthsNoOverflow($customerRecurringPaymentModel->paymentFrequencyId)->format('Y-m-d');
+            $customerRecurringPaymentModel->save();
             $recurringPaymentEnrolments = $recurringPayment->enrolments;
             $paymentAmount = $payment->amount;
             foreach ($recurringPaymentEnrolments as $enrolment) {
