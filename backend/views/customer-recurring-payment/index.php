@@ -32,7 +32,7 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
             [
                 'label' => 'To Be Entered On',
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asDate($data->startDate);
+                    return Yii::$app->formatter->asDate($data->nextEntryDay);
                 },
             ],
             [

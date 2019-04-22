@@ -34,7 +34,7 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'To Be Entered On',
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asDate($data->startDate);
+                    return Yii::$app->formatter->asDate($data->nextEntryDay);
                 },
             ],
             [
