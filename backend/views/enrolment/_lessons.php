@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Location;
@@ -28,6 +28,7 @@ use common\models\GroupLesson;
 			}
 			return $dueDate ? Yii::$app->formatter->asDate($dueDate) : null;
 		},
+		'group' => true,
 	],
 	
 	[
@@ -77,8 +78,7 @@ use common\models\GroupLesson;
     ?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-lesson-index', 'timeout' => 6000,]); ?>
-<?php
-	echo GridView::widget([
+<?= GridView::widget([
 	    'dataProvider' => $lessonDataProvider,
 	    'options' => ['id' => 'student-lesson-grid'],
 	    'rowOptions' => function ($model, $key, $index, $grid) {
