@@ -61,6 +61,8 @@ use yii\bootstrap\ActiveForm;
 	$(document).ready(function () {
 		var header = '<?= $this->render('payment-summary', ['model' => $model]); ?>';
         var url = '<?= Url::to(['payment/delete','id' => $model->id]); ?>';
+        var printUrl = '<?= Url::to(['print/payment','id' => $model->id]); ?>';
+        var emailUrl = '<?= Url::to(['email/payment', 'id' => $model->id]); ?>';
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-delete').show();
         $('.modal-save-all').show();
@@ -71,17 +73,19 @@ use yii\bootstrap\ActiveForm;
         $('.modal-button').text('Edit');
         $('.modal-mail').text('EMail');
         $(".modal-delete").attr("action", url);
+        $(".modal-save-all").attr("action", printUrl);
+        $(".modal-mail").attr("action", emailUrl);
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
 	});
 
     $(document).on("click", ".modal-save-all", function () {
-        var url = '<?= Url::to(['print/payment','id' => $model->id]); ?>';
+        var url = $(this).attr('action');
         window.open(url, '_blank');
     });
 
    $(document).on('click', '.modal-mail', function (e) {
             $.ajax({
-                url    : '<?= Url::to(['email/payment', 'id' => $model->id]); ?>',
+                url    : $(this).attr('action'),
                 type   : 'get',
                 dataType: 'json',
                 success: function(response)
