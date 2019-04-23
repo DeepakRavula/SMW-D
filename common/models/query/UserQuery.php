@@ -38,6 +38,29 @@ class UserQuery extends ActiveQuery
         return $this->andWhere(['user.status' => User::STATUS_ACTIVE]);
     }
 
+    public function owingCustomers()
+    {
+        $this->joinWith(['customerAccount' => function ($query) {
+
+        }]);
+        return $this->andWhere(['OR',
+        [
+            'user.status' => User::STATUS_ACTIVE
+        ],
+        [
+            'AND',
+                [
+                    'user.status' => User::STATUS_NOT_ACTIVE
+                ],
+                [
+                    '>', 'customer_account.balance', 0.00
+                ]
+
+        ]
+]);
+            
+    }
+
     public function teachers($programId, $locationId)
     {
         $this->joinWith(['userLocation ul' => function ($query) use ($locationId) {

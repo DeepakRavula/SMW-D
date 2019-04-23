@@ -143,7 +143,7 @@ class UserSearch extends User
         }
 
         if (!$this->showAll) {
-            $query->active();
+            $query->owingCustomers();
         }
 	    $query->groupBy('user.id');
         return $dataProvider;
