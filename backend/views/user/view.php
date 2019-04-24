@@ -189,6 +189,10 @@ foreach ($roleNames as $name => $description) {
                 ]); ?>
             <?php Pjax::end(); ?>
 
+            <?= $this->render('customer/_private-lesson-due', [
+            'model' => $model,
+            'lessonDueDataProvider' => $privateLessonDueDataProvider,
+        ]); ?>
             <?= $this->render('customer/_payment', [
             'paymentsDataProvider' => $paymentsDataProvider,
             'count' => $paymentCount,
