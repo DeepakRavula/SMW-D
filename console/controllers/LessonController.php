@@ -27,7 +27,7 @@ class LessonController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'copy-total-and-status' || 'trigger-save' || 'fix-lessons-without-paymentcycle' || 'set-due-date' || 'get-owing-lessons' ? ['locationId'] : []
+            $actionID == 'copy-total-and-status' || 'trigger-save' || 'fix-lessons-without-paymentcycle' || 'set-due-date' || 'get-owing-lessons' || 'trigger-split-lesson-save' ? ['locationId'] : []
         );
     }
 
@@ -144,6 +144,28 @@ class LessonController extends Controller
               $lessonOwing->lessonId = $lesson->id;
               $lessonOwing->save();
             }
+        }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
+        return true;
+    }
+
+    public function actionTriggerSplitLessonSave()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->privateLessons()
+            ->location($this->locationId)
+            ->split()
+            ->all();
+        foreach ($lessons as $lesson) {
+            Console::output("Lessons save " . $lesson->id, Console::FG_GREEN, Console::BOLD);
+            $lesson->save();
         }
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
