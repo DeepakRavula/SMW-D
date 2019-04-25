@@ -538,6 +538,7 @@ class UserController extends BaseController
             'outstandingInvoice' => $this->getOutstandingInvoice($id),
             'customerRecurringPaymentsDataProvider' => $this->getCustomerRecurringPaymentsDataProvider($id),
             'privateLessonDueDataProvider' => $this->getPrivateLessonDueDataProvider($id, $locationId),
+            'groupLessonDueDataProvider' => $this->getGroupLessonDueDataProvider($id, $locationId),
         ]);
     }
 
@@ -771,6 +772,22 @@ class UserController extends BaseController
                 ->customer($id)
                 ->privatelessons()
                 ->duelessons()
+                ->isConfirmed()
+		        ->orderBy(['lesson.date' => SORT_ASC])
+                ->notDeleted()
+                ->notCompleted();
+        return new ActiveDataProvider([
+            'query' => $lessonQuery,
+        ]);
+    }
+
+    protected function getGroupLessonDueDataProvider($id, $locationId)
+    {
+        $lessonQuery = Lesson::find()
+                ->location($locationId)
+                ->customer($id)
+                ->duelessons()
+                ->groupLessons()
                 ->isConfirmed()
 		        ->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted()

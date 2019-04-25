@@ -193,6 +193,10 @@ foreach ($roleNames as $name => $description) {
             'model' => $model,
             'lessonDueDataProvider' => $privateLessonDueDataProvider,
         ]); ?>
+        <?= $this->render('customer/_group-lesson-due', [
+            'model' => $model,
+            'lessonDueDataProvider' => $groupLessonDueDataProvider,
+        ]); ?>
             <?= $this->render('customer/_payment', [
             'paymentsDataProvider' => $paymentsDataProvider,
             'count' => $paymentCount,
