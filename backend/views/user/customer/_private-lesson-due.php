@@ -1,7 +1,7 @@
 <?php
 use common\models\Lesson;
 use yii\helpers\Url;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use common\models\Enrolment;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
@@ -33,17 +33,18 @@ echo GridView::widget([
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [
+        [
+            'label' => 'Due Date',
+            'value' => function ($data) {
+                return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
+            },
+            'group' => true,
+        ],
         
         [
             'label' => 'Lesson Date',
             'value' => function ($data) {
                 return $data->dueDate ? Yii::$app->formatter->asDate($data->date) : null;
-            },
-        ],
-        [
-            'label' => 'Due Date',
-            'value' => function ($data) {
-                return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
             },
         ],
         [
@@ -69,13 +70,7 @@ echo GridView::widget([
             'attribute' => 'owing',
             'contentOptions' => ['class' => 'text-right'],
             'headerOptions' => ['class' => 'text-right'],
-            'value' => function ($data) use ($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->id)
-                    ->one();
+            'value' => function ($data) {
                 if ($data->isPrivate()) {
                     $enrolment = $data->enrolment;
                 }

@@ -773,7 +773,6 @@ class UserController extends BaseController
                 ->privatelessons()
                 ->duelessons()
                 ->isConfirmed()
-		        ->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->notCompleted();
         return new ActiveDataProvider([

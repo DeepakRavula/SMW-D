@@ -1,7 +1,7 @@
 <?php
 use common\models\Lesson;
 use yii\helpers\Url;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use common\models\Enrolment;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
@@ -26,6 +26,7 @@ echo GridView::widget([
     'options' => ['class' => 'col-md-12', 'id' => 'lesson-listing-customer-view'],
     'summary' => false,
     'emptyText' => false,
+    'showPageSummary' => true,
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
         return ['data-url' => $url];
@@ -33,17 +34,18 @@ echo GridView::widget([
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [
+        [
+            'label' => 'Due Date',
+            'value' => function ($data) {
+                return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
+            },
+            'group' => true,
+        ],
         
         [
             'label' => 'Lesson Date',
             'value' => function ($data) {
                 return $data->dueDate ? Yii::$app->formatter->asDate($data->date) : null;
-            },
-        ],
-        [
-            'label' => 'Due Date',
-            'value' => function ($data) {
-                return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
             },
         ],
         [
@@ -78,6 +80,9 @@ echo GridView::widget([
                     ->one();
                 return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
             },
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
     ],
 ]);
