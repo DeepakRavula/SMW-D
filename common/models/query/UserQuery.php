@@ -41,21 +41,21 @@ class UserQuery extends ActiveQuery
     public function owingCustomers()
     {
         return $this->joinWith(['customerAccount' => function ($query) {
-            $this->andWhere(['OR',
-        [
-            'user.status' => User::STATUS_ACTIVE
-        ],
-        [
-            'AND',
+            $this->andWhere([
+                'OR',
                 [
-                    'user.status' => User::STATUS_NOT_ACTIVE
+                    'user.status' => User::STATUS_ACTIVE
                 ],
-                ['NOT', ['customer_account.balance' => 0]]
+                [
+                    'AND',
+                    [
+                        'user.status' => User::STATUS_NOT_ACTIVE
+                    ],
+                    ['NOT', ['customer_account.balance' => 0]]
 
-        ]
-]);
+                ]
+            ]);
         }]);
-       
     }
 
     public function teachers($programId, $locationId)
