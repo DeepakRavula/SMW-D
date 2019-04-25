@@ -72,10 +72,7 @@ echo GridView::widget([
             'contentOptions' => ['class' => 'text-right dollar'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
-                if ($data->isPrivate()) {
-                    $enrolment = $data->enrolment;
-                }
-                return Yii::$app->formatter->asDecimal($data->getOwingAmount($enrolment->id));
+                return Yii::$app->formatter->asDecimal(round($data->privateLesson->balance, 2));
             },
             'hAlign' => 'right',
             'pageSummary' => true,

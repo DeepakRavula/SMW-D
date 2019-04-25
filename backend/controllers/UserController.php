@@ -773,6 +773,7 @@ class UserController extends BaseController
                 ->privatelessons()
                 ->duelessons()
                 ->isConfirmed()
+                ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->notCompleted();
         return new ActiveDataProvider([
@@ -785,7 +786,6 @@ class UserController extends BaseController
         $lessonQuery = Lesson::find()
                 ->location($locationId)
                 ->customer($id)
-                ->duelessons()
                 ->groupLessons()
                 ->isConfirmed()
 		        ->orderBy(['lesson.date' => SORT_ASC])
