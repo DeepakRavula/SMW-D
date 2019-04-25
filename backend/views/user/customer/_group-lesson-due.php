@@ -17,7 +17,7 @@ use common\models\Invoice;
     ?>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
-    'id' => 'customer-lesson-listing',
+    'id' => 'customer-group-lesson-listing',
     'timeout' => 6000,
 ]) ?>
 <?php
@@ -45,7 +45,7 @@ echo GridView::widget([
         [
             'label' => 'Lesson Date',
             'value' => function ($data) {
-                return $data->dueDate ? Yii::$app->formatter->asDate($data->date) : null;
+                return $data->lesson->date ? Yii::$app->formatter->asDate($data->lesson->date) : null;
             },
         ],
         [
@@ -63,7 +63,7 @@ echo GridView::widget([
         [
             'label' => 'Teacher',
             'value' => function ($data) {
-                return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+                return $data->lesson->teacher->publicIdentity;
             },
         ],
         [
@@ -75,10 +75,10 @@ echo GridView::widget([
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
+                    ->andWhere(['courseId' => $data->lesson->courseId])
                     ->customer($model->id)
                     ->one();
-                return Yii::$app->formatter->asDecimal($data->getOwingAmount($enrolment->id));
+                return Yii::$app->formatter->asDecimal($data->lesson->getOwingAmount($enrolment->id));
             },
             'hAlign' => 'right',
             'pageSummary' => true,
