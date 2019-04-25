@@ -69,7 +69,7 @@ echo GridView::widget([
         [
             'label' => 'Amount',
             'attribute' => 'owing',
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($model) {
                 $enrolment = Enrolment::find()
@@ -78,7 +78,7 @@ echo GridView::widget([
                     ->andWhere(['courseId' => $data->courseId])
                     ->customer($model->id)
                     ->one();
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
+                return Yii::$app->formatter->asDecimal($data->getOwingAmount($enrolment->id));
             },
             'hAlign' => 'right',
             'pageSummary' => true,

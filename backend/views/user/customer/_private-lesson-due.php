@@ -26,6 +26,7 @@ echo GridView::widget([
     'options' => ['class' => 'col-md-12', 'id' => 'lesson-listing-customer-view'],
     'summary' => false,
     'emptyText' => false,
+    'showPageSummary' => true,
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
         return ['data-url' => $url];
@@ -68,14 +69,17 @@ echo GridView::widget([
         [
             'label' => 'Amount',
             'attribute' => 'owing',
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
                 if ($data->isPrivate()) {
                     $enrolment = $data->enrolment;
                 }
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
+                return Yii::$app->formatter->asDecimal($data->getOwingAmount($enrolment->id));
             },
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
     ],
 ]);
