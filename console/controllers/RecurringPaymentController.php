@@ -61,15 +61,7 @@ class RecurringPaymentController extends Controller
             if (!$previousRecordedPayment) {
             $payment = new Payment();
             $payment->amount = $recurringPayment->amount;
-            $day = $recurringPayment->paymentDay;
-            if ($day > $recurringPayment->entryDay) {
-                $month = Carbon::parse($recurringPayment->nextEntryDay)->addMonths(1)->format('m');
-            } else {
-                $month = Carbon::parse($recurringPayment->nextEntryDay)->format('m');  
-            }
-            $year = Carbon::parse($currentDate)->format('Y');
-            $formatedDate = $day . '-' . $month . '-' . $year;
-            $date = (new \DateTime($formatedDate))->format('Y-m-d H:i:s');
+            $date = Carbon::parse($recurringPayment->nextPaymentDate())->format('Y-m-d');
             $payment->date = $date;
             $payment->user_id = $recurringPayment->customerId;
             $payment->payment_method_id = $recurringPayment->paymentMethodId;
@@ -99,7 +91,7 @@ class RecurringPaymentController extends Controller
                     ->enrolment($enrolment->id)
                     ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                     ->andWhere(['invoiced_lesson.id' => null])
-                    ->orderBy(['lesson.date' => SORT_ASC]);
+                    ->orderBy(['lesson.dueDate' => SORT_ASC]);
                 $lessonsToPay = $query->all();
                 foreach ($lessonsToPay as $lesson) {
                     if ($paymentAmount > 0) {
