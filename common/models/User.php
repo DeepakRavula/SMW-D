@@ -438,7 +438,9 @@ class User extends ActiveRecord implements IdentityInterface
             $userLocation->location_id = $this->locationId;
             $userLocation->save();
         }
+        if ($insert) {
             $this->setCustomerAccount();
+        }
         parent::afterSave($insert, $changedAttributes);
     }
 

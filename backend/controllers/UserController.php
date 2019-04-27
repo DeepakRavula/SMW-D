@@ -783,14 +783,20 @@ class UserController extends BaseController
 
     protected function getGroupLessonDueDataProvider($id, $locationId)
     {
-        $lessonQuery = Lesson::find()
-                ->location($locationId)
-                ->customer($id)
-                ->groupLessons()
-                ->isConfirmed()
-		        ->orderBy(['lesson.date' => SORT_ASC])
-                ->notDeleted()
-                ->notCompleted();
+        $lessonQuery = GroupLesson::find()
+                ->joinWith(['lesson' => function($query) use ($locationId) {
+                    $query->location($locationId)
+                        ->isConfirmed()
+                        ->notDeleted()
+                        ->notCompleted();
+                }])
+                ->joinWith(['enrolment' => function($query) use ($id) {
+                    $query->notDeleted()
+                        ->isConfirmed()
+                        ->customer($id);
+                }])
+                ->orderBy(['group_lesson.dueDate' => SORT_ASC])
+                ->dueLessons();
         return new ActiveDataProvider([
             'query' => $lessonQuery,
         ]);
