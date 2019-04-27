@@ -62,7 +62,11 @@ class RecurringPaymentController extends Controller
             $payment = new Payment();
             $payment->amount = $recurringPayment->amount;
             $day = $recurringPayment->paymentDay;
-            $month = Carbon::parse($currentDate)->format('m');
+            if ($day > $recurringPayment->entryDay) {
+                $month = Carbon::parse($recurringPayment->nextEntryDay)->addMonths(1)->format('m');
+            } else {
+                $month = Carbon::parse($recurringPayment->nextEntryDay)->format('m');  
+            }
             $year = Carbon::parse($currentDate)->format('Y');
             $formatedDate = $day . '-' . $month . '-' . $year;
             $date = (new \DateTime($formatedDate))->format('Y-m-d H:i:s');
