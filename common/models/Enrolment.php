@@ -971,7 +971,8 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->isConfirmed()
                 ->notCanceled()
                 ->joinWith(['lessonPayment' => function($query) {
-                    $query->andWhere(['lesson_payment.id' => null]);
+                    $query->andWhere(['lesson_payment.id' => null])
+                    ->notDeleted();
                 }])
                 ->all();
             foreach ($lessons as $lesson) {
