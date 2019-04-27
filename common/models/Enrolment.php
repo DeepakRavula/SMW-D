@@ -970,9 +970,8 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->between($fromDate, $toDate)
                 ->isConfirmed()
                 ->notCanceled()
-                ->joinWith(['lessonPayment' => function($query) {
-                    $query->andWhere(['lesson_payment.id' => null])
-                    ->notDeleted();
+                ->joinWith(['privateLesson' => function($query) {
+                    $query->andWhere(['NOT', ['private_lesson.balance' => 0]]);
                 }])
                 ->all();
             foreach ($lessons as $lesson) {
