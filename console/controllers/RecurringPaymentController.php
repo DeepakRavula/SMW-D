@@ -99,7 +99,7 @@ class RecurringPaymentController extends Controller
                     ->enrolment($enrolment->id)
                     ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                     ->andWhere(['invoiced_lesson.id' => null])
-                    ->orderBy(['lesson.date' => SORT_ASC]);
+                    ->orderBy(['lesson.dueDate' => SORT_ASC]);
                 $lessonsToPay = $query->all();
                 foreach ($lessonsToPay as $lesson) {
                     if ($paymentAmount > 0) {
