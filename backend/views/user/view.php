@@ -180,7 +180,6 @@ foreach ($roleNames as $name => $description) {
 </div>
 
 <?php if ($searchModel->role_name == 'customer'):?>
-<div class="row">
 	<div class="col-md-12">
     <?php Pjax::begin(['id' => 'customer-recurring-payment-list', 'timeout' => 6000]) ?>
                 <?=$this->render('/customer-recurring-payment/_list', [
@@ -188,7 +187,8 @@ foreach ($roleNames as $name => $description) {
                     'customerRecurringPaymentsDataProvider' => $customerRecurringPaymentsDataProvider,
                 ]); ?>
             <?php Pjax::end(); ?>
-
+    </div>
+    <div class="col-md-12">
             <?= $this->render('customer/_private-lesson-due', [
             'model' => $model,
             'lessonDueDataProvider' => $privateLessonDueDataProvider,
