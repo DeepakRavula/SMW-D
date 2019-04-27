@@ -970,6 +970,9 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->between($fromDate, $toDate)
                 ->isConfirmed()
                 ->notCanceled()
+                ->joinWith(['privateLesson' => function($query) {
+                    $query->andWhere(['>', 'private_lesson.balance', 0]);
+                }])
                 ->all();
             foreach ($lessons as $lesson) {
                 $lessonDiscount = LessonDiscount::find()
