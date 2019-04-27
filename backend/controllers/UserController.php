@@ -774,10 +774,10 @@ class UserController extends BaseController
                 ->duelessons()
                 ->isConfirmed()
                 ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
-                ->notDeleted()
-                ->notCompleted();
+                ->notDeleted();
         return new ActiveDataProvider([
             'query' => $lessonQuery,
+            'pagination' => false,
         ]);
     }
 
@@ -787,8 +787,7 @@ class UserController extends BaseController
                 ->joinWith(['lesson' => function($query) use ($locationId) {
                     $query->location($locationId)
                         ->isConfirmed()
-                        ->notDeleted()
-                        ->notCompleted();
+                        ->notDeleted();
                 }])
                 ->joinWith(['enrolment' => function($query) use ($id) {
                     $query->notDeleted()
@@ -799,6 +798,7 @@ class UserController extends BaseController
                 ->dueLessons();
         return new ActiveDataProvider([
             'query' => $lessonQuery,
+            'pagination' => false,
         ]);
     }
 }

@@ -28,7 +28,7 @@ echo GridView::widget([
     'emptyText' => false,
     'showPageSummary' => true,
     'rowOptions' => function ($model, $key, $index, $grid) {
-        $url = Url::to(['lesson/view', 'id' => $model->id]);
+        $url = Url::to(['lesson/view', 'id' => $model->lessonId]);
         return ['data-url' => $url];
     },
     'tableOptions' => ['class' => 'table table-bordered'],
