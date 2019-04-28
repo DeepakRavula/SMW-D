@@ -20,8 +20,11 @@ LEFT JOIN classroom_unavailability cu ON cu.`classroomId`= cl.`id`
 LEFT JOIN teacher_room tr ON tr.`classroomId`= cl.`id`
 where cl.locationId = :locationToWipe;
 
-DELETE   ul, u, up, ut, uc, uph, ue, ua, cd, py, n1, n2, cu3, cu4, t3, cpp, rbacaa, s, er, q, tu, tad,crs  FROM user_location ul
+DELETE   ul, u, up, ut, uc, uph, ue, ua, cd, py, n1, n2, cu3, cu4, t3, cpp, rbacaa, s, er, q, tu, tad, crs, cua, crp, crpe  FROM user_location ul
 LEFT JOIN user u ON u.`id`= ul.`user_id`
+LEFT JOIN customer_account cua on cua.`customerId` = ul.`user_id`
+LEFT JOIN customer_recurring_payment crp on crp.`customerId` = ul.`user_id`
+LEFT JOIN customer_recurring_payment_enrolment crpe on crpe.`customerRecurringPaymentId` = crp.`id`
 LEFT JOIN note n2 ON n2.`instanceId`= u.`id` AND n2.`instanceType` = 2
 LEFT JOIN customer_referral_sources crs ON crs.`userId` = u.`id`
 LEFT JOIN payment py ON py.`user_id`= ul.`user_id`
