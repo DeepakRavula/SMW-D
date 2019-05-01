@@ -69,21 +69,21 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         'label' => 'Student',
         'attribute' => 'student',
         'value' => function ($data) {
-            return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+            return $data->course->enrolment->student->fullName;
         },
     ],
     [
         'label' => 'Program',
         'attribute' => 'program',
         'value' => function ($data) {
-            return !empty($data->course->program->name) ? $data->course->program->name : null;
+            return $data->course->program->name;
         },
     ],
     [
         'label' => 'Teacher',
         'attribute' => 'teacher',
         'value' => function ($data) {
-            return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+            return $data->teacher->publicIdentity;
         },
     ],
     [
