@@ -773,6 +773,9 @@ class UserController extends BaseController
                 ->privatelessons()
                 ->duelessons()
                 ->isConfirmed()
+                ->joinWith(['privateLesson' => function($query) {
+                    $query->andWhere(['>', 'private_lesson.balance', 0]);
+                }])
                 ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
                 ->notDeleted();
         return new ActiveDataProvider([
