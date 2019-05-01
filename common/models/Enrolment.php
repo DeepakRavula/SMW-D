@@ -1156,12 +1156,4 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->lessonPayment;
     }
-
-    public function afterSoftDelete()
-    {
-        if ($this->course->isPrivate()) {
-            $this->customer->updateCustomerBalance();
-        }
-        return true;
-    }
 }
