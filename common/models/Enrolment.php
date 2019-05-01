@@ -958,16 +958,10 @@ class Enrolment extends \yii\db\ActiveRecord
             $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
         }
         if ($this->course->isPrivate() && $this->partialyPaidPaymentCycle) {
-            if ($this->course->isPrivate()) {
-                $fromDate = new \DateTime($this->partialyPaidPaymentCycle->startDate);
-            } else {
-                $fromDate = new \DateTime($this->firstUnpaidLesson->date);
-            }
-            $toDate = new \DateTime($this->lastLesson->date);
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->andWhere(['courseId' => $this->courseId])
-                ->between($fromDate, $toDate)
+                ->notCompleted()
                 ->isConfirmed()
                 ->notCanceled()
                 ->joinWith(['privateLesson' => function($query) {
