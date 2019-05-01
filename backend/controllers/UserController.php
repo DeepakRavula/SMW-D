@@ -790,6 +790,7 @@ class UserController extends BaseController
                 ->joinWith(['lesson' => function($query) use ($locationId) {
                     $query->location($locationId)
                         ->isConfirmed()
+                        ->orderBy(['lesson.date' => SORT_ASC])
                         ->notDeleted();
                 }])
                 ->joinWith(['enrolment' => function($query) use ($id) {
