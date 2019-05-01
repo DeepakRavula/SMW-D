@@ -101,7 +101,7 @@ $enrolmentDataProvider  = new ActiveDataProvider([
             $currentDate = Carbon::now()->format('Y-m-d');
             $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
             $model->entryDay = Carbon::parse($startDate)->format('d');
-            if (Carbon::parse($model->startDate)->format('Y-m-d') > $currentDate ) {
+            if (Carbon::parse($model->startDate)->format('Y-m-d') >= $currentDate ) {
                 $model->nextEntryDay = Carbon::parse($model->startDate)->format('Y-m-d');
             } else {
                 $model->nextEntryDay = Carbon::parse($model->startDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
@@ -161,7 +161,7 @@ $enrolmentDataProvider  = new ActiveDataProvider([
                 $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
                 $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
                 $currentDate = Carbon::now()->format('Y-m-d');
-                if (Carbon::parse($model->startDate)->format('Y-m-d') > $currentDate ) {
+                if (Carbon::parse($model->startDate)->format('Y-m-d') >= $currentDate ) {
                     $model->nextEntryDay = Carbon::parse($model->startDate)->format('Y-m-d');
                 } else {
                     $model->nextEntryDay = Carbon::parse($model->startDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
