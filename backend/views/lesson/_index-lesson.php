@@ -34,27 +34,6 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         'mergeHeader' => false,
     ],
     [
-        'label' => 'Student',
-        'attribute' => 'student',
-        'value' => function ($data) {
-            return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
-        },
-    ],
-    [
-        'label' => 'Program',
-        'attribute' => 'program',
-        'value' => function ($data) {
-            return !empty($data->course->program->name) ? $data->course->program->name : null;
-        },
-    ],
-    [
-        'label' => 'Teacher',
-        'attribute' => 'teacher',
-        'value' => function ($data) {
-            return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
-        },
-    ],
-    [
         'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
         'label' => 'Due Date',
         'attribute' => 'dueDate',
@@ -83,6 +62,28 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         ]),
         'value' => function ($data) {
             return !empty($data->dueDate) ? (new \DateTime($data->dueDate))->format('M d, Y') : null;
+        },
+        'group' => true,
+    ],
+    [
+        'label' => 'Student',
+        'attribute' => 'student',
+        'value' => function ($data) {
+            return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+        },
+    ],
+    [
+        'label' => 'Program',
+        'attribute' => 'program',
+        'value' => function ($data) {
+            return !empty($data->course->program->name) ? $data->course->program->name : null;
+        },
+    ],
+    [
+        'label' => 'Teacher',
+        'attribute' => 'teacher',
+        'value' => function ($data) {
+            return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
         },
     ],
     [

@@ -75,6 +75,7 @@ class LessonSearch extends Lesson
             ->notDeleted()
             ->location($locationId)
             ->activePrivateLessons()
+            ->orderBy(['lesson.dueDate' => SORT_ASC])
             ->scheduledOrRescheduled();
 
         $dataProvider = new ActiveDataProvider([
