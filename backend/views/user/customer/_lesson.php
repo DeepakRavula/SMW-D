@@ -28,7 +28,7 @@ echo GridView::widget([
         [
             'label' => 'Due Date',
             'value' => function ($data) {
-                return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
+                return Yii::$app->formatter->asDate($data->dueDate);
             },
             'group' => true,
         ],
