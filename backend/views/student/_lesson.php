@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use common\models\Lesson;
 
 ?>
@@ -15,6 +15,13 @@ use common\models\Lesson;
     	<a href="#"  title="Add" id="new-lesson" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
     </div>
     <?php $columns = [
+            [
+                'label' => 'Due Date',
+                'value' => function ($data) {
+                    return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
+                },
+                'group' => true,
+            ],
             [
                 'label' => 'Program Name',
                 'value' => function ($data) {
@@ -32,12 +39,6 @@ use common\models\Lesson;
                 'value' => function ($data) {
                     $lessonDuration = (new \DateTime($data->duration))->format('H:i');
                     return $lessonDuration;
-                },
-            ],
-            [
-                'label' => 'Due Date',
-                'value' => function ($data) {
-                    return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
                 },
             ],
             [

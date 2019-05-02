@@ -2,7 +2,7 @@
 
 use common\models\Lesson;
 use yii\helpers\Url;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use common\models\Enrolment;
 
 ?>
@@ -26,6 +26,13 @@ echo GridView::widget([
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [
         [
+            'label' => 'Due Date',
+            'value' => function ($data) {
+                return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
+            },
+            'group' => true,
+        ],
+        [
             'label' => 'Student Name',
             'value' => function ($data) {
                 return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
@@ -48,12 +55,6 @@ echo GridView::widget([
             'value' => function ($data) {
                 $lessonDuration = (new \DateTime($data->duration))->format('H:i');
                 return $lessonDuration;
-            },
-        ],
-        [
-            'label' => 'Due Date',
-            'value' => function ($data) {
-                return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
             },
         ],
         [

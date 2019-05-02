@@ -35,14 +35,6 @@ echo GridView::widget([
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [
         [
-            'label' => 'Due Date',
-            'value' => function ($data) {
-                return $data->dueDate ? Yii::$app->formatter->asDate($data->dueDate) : null;
-            },
-            'group' => true,
-        ],
-        
-        [
             'label' => 'Lesson Date',
             'value' => function ($data) {
                 return $data->lesson->date ? Yii::$app->formatter->asDate($data->lesson->date) : null;

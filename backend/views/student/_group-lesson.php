@@ -3,13 +3,20 @@
 use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use common\models\Lesson;
 
 ?>
 
 <div class="group-lesson-index">
     <?php $columns = [
+            [
+                'label' => 'Due Date',
+                'value' => function ($data) {
+                    return $data->groupLesson->dueDate ? Yii::$app->formatter->asDate($data->groupLesson->dueDate) : null;
+                },
+                'group' => true,
+            ],
             [
                 'label' => 'Program Name',
                 'value' => function ($data) {
