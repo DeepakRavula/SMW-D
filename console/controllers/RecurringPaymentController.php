@@ -38,14 +38,14 @@ class RecurringPaymentController extends Controller
         $currentDate = (new \DateTime())->format('Y-m-d');
         $recurringPayments = CustomerRecurringPayment::find()
                                 ->notDeleted()
-                                ->andWhere(['nextEntryDay' => Carbon::parse($currentDate)->format('Y-m-d')])
+                                ->andWhere(['or', ['nextEntryDay' => Carbon::parse($currentDate)->format('Y-m-d')],['nextEntryDay' => Carbon::parse($currentDate)->modify('-1days')->format('Y-m-d')]])
                                 ->andWhere(['>=', 'DATE(customer_recurring_payment.expiryDate)', $currentDate])
                                 ->isRecurringPaymentEnabled()
                                 ->andWhere(['>', 'amount' ,0.00])
                                 ->joinWith(['customer' =>function ($query) { 
                                     $query->notDeleted();
                                 }])
-                                ->andWhere(['>=', 'DATE(customer_recurring_payment.startDate)', $currentDate])
+                                ->andWhere(['<=', 'DATE(customer_recurring_payment.startDate)', $currentDate])
                                 ->all();
         $count = count($recurringPayments);                        
         Console::startProgress(0, $count, 'Processing Recurring Payments.....');                        
