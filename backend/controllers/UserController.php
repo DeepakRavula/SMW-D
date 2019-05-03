@@ -777,6 +777,8 @@ class UserController extends BaseController
                     $query->andWhere(['>', 'private_lesson.balance', 0]);
                 }])
                 ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
+                ->notCanceled()
+                ->unInvoiced()
                 ->notDeleted();
         return new ActiveDataProvider([
             'query' => $lessonQuery,
