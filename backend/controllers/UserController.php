@@ -796,6 +796,24 @@ class UserController extends BaseController
 
     protected function getGroupLessonDueDataProvider($id, $locationId)
     {
+        $invoicedLessonsQuery = GroupLesson::find()
+            ->joinWith(['invoiceItemLessons' => function($query) {
+                $query->andWhere(['NOT',['invoice_item_lesson.id' => null]]);
+                $query->joinWith(['invoiceLineItem ili' => function($query) {
+                    $query->notDeleted()
+                    ->joinWith(['invoice in' => function($query) {
+                        $query->notDeleted();
+                    }]);
+                }]);
+            }])
+            ->joinWith(['invoiceItemsEnrolment' => function($query) {
+                $query->joinWith(['lineItem' => function($query) {
+                    $query->notDeleted()
+                    ->joinWith(['invoice' => function($query) {
+                        $query->notDeleted();
+                    }]);
+                }]);
+            }]);
         $lessonQuery = GroupLesson::find()
                 ->joinWith(['lesson' => function($query) use ($locationId) {
                     $query->location($locationId)
@@ -809,6 +827,8 @@ class UserController extends BaseController
                         ->isConfirmed()
                         ->customer($id);
                 }])
+                ->leftJoin(['invoiced_lesson' => $invoicedLessonsQuery], 'group_lesson.id = invoiced_lesson.id')
+                ->andWhere(['invoiced_lesson.id' => null])
                 ->andWhere(['>', 'group_lesson.balance', 0.00])
                 ->orderBy(['group_lesson.dueDate' => SORT_ASC])
                 ->dueLessons();
