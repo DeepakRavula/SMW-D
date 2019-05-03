@@ -767,6 +767,13 @@ class UserController extends BaseController
 
     protected function getPrivateLessonDueDataProvider($id, $locationId)
     {
+        $invoicedLessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->privateLessons()
+            ->customer($id)
+            ->invoiced();
         $lessonQuery = Lesson::find()
                 ->location($locationId)
                 ->customer($id)
@@ -777,8 +784,9 @@ class UserController extends BaseController
                     $query->andWhere(['>', 'private_lesson.balance', 0.00]);
                 }])
                 ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
+                ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+                ->andWhere(['invoiced_lesson.id' => null])
                 ->notCanceled()
-                ->unInvoiced()
                 ->notDeleted();
         return new ActiveDataProvider([
             'query' => $lessonQuery,
