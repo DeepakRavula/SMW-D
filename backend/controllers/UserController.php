@@ -774,7 +774,7 @@ class UserController extends BaseController
                 ->duelessons()
                 ->isConfirmed()
                 ->joinWith(['privateLesson' => function($query) {
-                    $query->andWhere(['>', 'private_lesson.balance', 0]);
+                    $query->andWhere(['>', 'private_lesson.balance', 0.00]);
                 }])
                 ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
                 ->notCanceled()
@@ -793,6 +793,7 @@ class UserController extends BaseController
                     $query->location($locationId)
                         ->isConfirmed()
                         ->orderBy(['lesson.date' => SORT_ASC])
+                        ->notCanceled()
                         ->notDeleted();
                 }])
                 ->joinWith(['enrolment' => function($query) use ($id) {
@@ -800,6 +801,7 @@ class UserController extends BaseController
                         ->isConfirmed()
                         ->customer($id);
                 }])
+                ->andWhere(['>', 'group_lesson.balance', 0.00])
                 ->orderBy(['group_lesson.dueDate' => SORT_ASC])
                 ->dueLessons();
         return new ActiveDataProvider([
