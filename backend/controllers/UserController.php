@@ -176,7 +176,7 @@ class UserController extends BaseController
                 ->customer($id)
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
-		        ->orderBy(['lesson.date' => SORT_ASC])
+		        ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->notCompleted();
 
