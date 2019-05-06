@@ -733,7 +733,9 @@ class Lesson extends \yii\db\ActiveRecord
             $class = 'group-lesson';
         }
         if ($this->rootLesson && empty($this->colorCode)) {
-            if ($this->isRescheduled()) {
+            if (!$this->isPresent) {
+                $class = 'absent-lesson';
+            } elseif ($this->isRescheduled()) {
                 $class = 'lesson-rescheduled';
             } elseif ($this->rootLesson->teacherId !== $this->teacherId && !$this->bulkRescheduleLesson) {
                 $class = 'teacher-substituted';
