@@ -16,7 +16,8 @@ $schedule->command('invoice/all-completed-lessons')->sendOutputTo('/var/log/smw.
 $schedule->command('student/set-status-production')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('01:00');
 $schedule->command('student/set-status-non-production')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('01:30');
 $schedule->command('customer/set-status')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('02:00');
-$schedule->command('invoice/all-expired-lessons')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('23:30');
+$schedule->command('invoice/all-expired-lessons')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('23:20');
+$schedule->command('recurring-payment/create')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('23:40');
 $schedule->command('tools/backup')->dailyAt('23:59');
 
 
