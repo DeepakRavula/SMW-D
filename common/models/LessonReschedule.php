@@ -73,6 +73,23 @@ class LessonReschedule extends Model
                 }
             }
         }
+        if ($oldLesson->isGroup()) {
+            $enrolments =  Enrolment::find()
+                ->joinWith(['course' => function ($query) {
+                    $query->isConfirmed()
+                        ->notDeleted();
+                }])
+                ->andWhere(['courseId' => $oldLesson->course->id])
+                ->notDeleted()
+                ->isConfirmed()
+                ->all();
+            foreach ($enrolments as $enrolment) {
+                $groupLessonModel = new GroupLesson();
+                $groupLessonModel = clone $oldLesson->groupLesson;
+                $groupLessonModel->lessonId = $rescheduledLesson->id;
+                $groupLessonModel->save();
+            }
+        }
         foreach ($oldLesson->lessonPayments as $lessonPayment) {
             $lessonPayment->updateAttributes(['lessonId' => $rescheduledLesson->id]);
             $lessonPayment->save();
