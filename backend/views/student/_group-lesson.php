@@ -37,12 +37,6 @@ use common\models\Lesson;
                 },
             ],
             [
-                'label' => 'Due Date',
-                'value' => function ($data) {
-                    return $data->groupLesson->dueDate ? Yii::$app->formatter->asDate($data->groupLesson->dueDate) : null;
-                },
-            ],
-            [
                 'label' => 'Status',
                 'value' => function ($data) {
                     return $data->getStatus();
