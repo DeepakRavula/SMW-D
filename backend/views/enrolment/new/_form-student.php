@@ -34,6 +34,10 @@ use kartik\select2\Select2;
     <div class="col-xs-7">
        <?= $form->field($courseDetail, 'birth_date')->widget(DatePicker::className(), [
             'dateFormat' => 'php:M d, Y',
+            'options' => [
+                'class' => 'form-control',
+                'readOnly' => true
+            ],
             'clientOptions' => [
                 'changeMonth' => true,
 		'changeYear' => true,
