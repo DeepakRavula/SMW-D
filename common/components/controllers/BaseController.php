@@ -20,7 +20,7 @@ class BaseController extends Controller
                 $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id])->location;
             }
             if (!Yii::$app->session->get('lock') && !$this->isLogoutkRoute() && !$this->isLoginkRoute()) {
-                if (!$userLogged->isAdmin() && $userLocation->slug !== Yii::$app->location) {
+                if (!$userLogged->isAdmin() && ($userLocation->slug !== Yii::$app->location && Yii::$app->location !== 'arcadia-corporate')) {
                     Yii::$app->location = $userLocation->slug;
                     throw new ForbiddenHttpException();
                 }

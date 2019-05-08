@@ -43,8 +43,11 @@ class LocationDropdown extends Dropdown
                 $locationIds[] = $user->userLocation->location_id;
             }
             $locations = ArrayHelper::map(Location::find()->notDeleted()->andWhere(['id' => $locationIds])->all(), 'slug', 'slug');
-        } else {
+        } elseif ($role->name == User::ROLE_ADMINISTRATOR) {
             $locations = Yii::$app->urlManager->locations;
+        } else {
+            $user = User::findOne($userId);
+            $locations = ArrayHelper::map(Location::find()->notDeleted()->andWhere(['or', ['location.id' => 1],['location.id' => $user->userLocation->location_id]])->all(), 'slug', 'slug');
         }
         sort($locations);
         foreach ($locations as $location) {
