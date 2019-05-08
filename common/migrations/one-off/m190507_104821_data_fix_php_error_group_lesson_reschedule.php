@@ -59,8 +59,7 @@ class m190507_104821_data_fix_php_error_group_lesson_reschedule extends Migratio
                 
             
            }
-        }  
-        die;            
+        }            
     }
 
     /**
