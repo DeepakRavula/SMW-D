@@ -75,6 +75,7 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         
         $currentDate = Carbon::now();
         $model = new CustomerRecurringPayment();
+        $model->paymentMethodId = 8;
         $model->load($get);
         $enrolment = Enrolment::find()
         ->notDeleted()
@@ -96,7 +97,7 @@ $enrolmentDataProvider  = new ActiveDataProvider([
         ]);
         if ($post) {
         if ($model->load(Yii::$app->request->post())) {
-            $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+            $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-t');
             $startDate = Carbon::parse($model->startDate);
             $currentDate = Carbon::now()->format('Y-m-d');
             $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
@@ -158,7 +159,7 @@ $enrolmentDataProvider  = new ActiveDataProvider([
         ]);
         if (Yii::$app->request->post()) {
             if ($model->load(Yii::$app->request->post())) {
-                $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-d');
+                $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-t');
                 $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
                 $currentDate = Carbon::now()->format('Y-m-d');
                 if (Carbon::parse($model->startDate)->format('Y-m-d') >= $currentDate ) {
