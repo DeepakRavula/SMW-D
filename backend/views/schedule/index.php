@@ -439,6 +439,9 @@ var schedule = {
     }, 
 
     modifyEventRender : function (event, element) {
+        if (event.isOwing) {
+          element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-dollar"></i></div>');
+        }
         element.poshytip({
             className: 'tip-yellowsimple',
             alignTo: 'cursor',

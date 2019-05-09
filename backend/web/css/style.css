@@ -62,7 +62,8 @@ a.desc:after {
 	font-size: 20px;
 }
 .content-header {
-	margin-bottom: 5px;
+    margin-bottom: 5px;
+    margin-top: 50px;
 }
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
 .alert {

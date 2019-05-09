@@ -379,6 +379,7 @@ class ScheduleController extends BaseController
 
             $events[] = [
                 'lessonId' => $lesson->id,
+                'isOwing' => $lesson->student->customer->customerAccount->balance > 0,
                 'resourceId' => $lesson->teacherId,
                 'title' => $title,
                 'start' => $lesson->date,
