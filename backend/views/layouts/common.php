@@ -9,7 +9,9 @@ $bundle = BackendAsset::register($this);
 ?>
 <?php $this->beginContent('@backend/views/layouts/base.php'); ?>
     <div class="wrapper">
-      <?= $this->render('_header'); ?>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+       <?= $this->render('_header'); ?>
+   </nav>
         <!-- Left side column. contains the logo and sidebar -->
         <aside class="main-sidebar">
             <!-- sidebar: style can be found in sidebar.less -->
