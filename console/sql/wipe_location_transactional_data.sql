@@ -100,7 +100,7 @@ DELETE co, le  FROM course co
 LEFT JOIN lesson le ON le.`courseId`= co.`id`
 where co.locationId = :locationToWipe;
 
-DELETE loc, locav, locdebt, locapp, locwalk from location loc
+DELETE loc, locav, locdebt, locpp, locwalk from location loc
 LEFT JOIN location_availability locav ON loc.`id` = locav.`locationId`
 LEFT JOIN location_debt locdebt ON loc.`id` = locdebt.`locationId`
 LEFT JOIN location_payment_preference locpp ON loc.`id` = locpp.`locationId`
