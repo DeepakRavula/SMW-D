@@ -37,7 +37,6 @@ $bundle = BackendAsset::register($this);
                     );
                 $role = end($roles);
                 ?>
-                    <?php if ($role === User::ROLE_ADMINISTRATOR):?>
                         <div class="m-t-10 pull-left">
                             <?php $form = Html::beginForm(); ?>    
                             <div class="btn-group">
@@ -46,9 +45,6 @@ $bundle = BackendAsset::register($this);
                             </div>
                             <?php Html::endForm() ?>
                         </div>
-                    <?php else:?>
-                        <?= $this->render('location-header-menu'); ?>
-                    <?php endif; ?>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
 						 <li class="notifications-menu" data-toggle="tooltip" data-original-title="Blog" data-placement="bottom">
