@@ -36,7 +36,7 @@ use kartik\select2\Select2;
             ->notDeleted()
             ->customersAndGuests(Location::findOne(['slug' => \Yii::$app->location])->id)
             ->all(), 'id', 'publicIdentity');?>
-            
+    <?php $model->amount = CustomerRecurringPayment::DEFAULT_RATE;?>       
     <?php  $disabled = false;
     if (!$model->customerId) {
             $disabled = true;
@@ -63,11 +63,11 @@ use kartik\select2\Select2;
                         ], ])->textInput(['placeholder' => 'Select Start Date'])->label('As Of');?>
     </div>
     <div class="col-md-4 ">
-    	<?= $form->field($model, 'paymentDay')->dropDownList($day, ['prompt'=>'Choose a Day', 'disabled' => $disabled,])->label('On The');?>
+    	<?= $form->field($model, 'paymentDay')->dropDownList($day, ['disabled' => $disabled,])->label('On The');?>
     </div>
     <div class="col-md-4 ">
     <?php $frequency= ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'); ?>
-    <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['prompt'=>'Choose a Frequency', 'disabled' => $disabled,])->label('Every');?>    
+    <?= $form->field($model, 'paymentFrequencyId')->dropDownList($frequency, ['disabled' => $disabled,])->label('Every');?>    
     </div>
     </div>
     <div class="row">
@@ -76,13 +76,13 @@ use kartik\select2\Select2;
     </div>
     <div class="col-md-4 ">
     <?php if (!$model->isNewRecord) {
-            $model->expiryDate = (new \DateTime($model->expiryDate))->format('M d, Y'); 
+            $model->expiryDate = (new \DateTime($model->expiryDate))->format('M, Y'); 
         }?>
     <?= $form->field($model, 'expiryDate')->widget(DatePicker::className(), [
-                'dateFormat' => 'php:M d, Y',
+                'dateFormat' => 'php:M, Y',
                 'clientOptions' => [
                         'changeMonth' => true,
-                        'yearRange' => '-70:+20',
+                        'yearRange' => '+0:+10',
                         'changeYear' => true,
                         'disabled' => $disabled,
                         ], ])->textInput(['placeholder' => 'Select Expiry Date'])->label('Until');?>    

@@ -31,7 +31,8 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
      */
 
     const CONSOLE_USER_ID  = 727;
-    
+    const DEFAULT_RATE = 115;
+
     public static function tableName()
     {
         return 'customer_recurring_payment';

@@ -56,10 +56,10 @@ use Carbon\Carbon;
     </div>
     <div class="col-md-4 ">
     <?php if (!$model->isNewRecord) {
-            $model->expiryDate = (new \DateTime($model->expiryDate))->format('M d, Y'); 
+            $model->expiryDate = (new \DateTime($model->expiryDate))->format('M, Y'); 
         }?>
     <?= $form->field($model, 'expiryDate')->widget(DatePicker::className(), [
-                'dateFormat' => 'php:M d, Y',
+                'dateFormat' => 'php:M, Y',
                 'clientOptions' => [
                         'changeMonth' => true,
                         'yearRange' => '-70:+20',
