@@ -423,8 +423,8 @@ class ReportController extends BaseController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-
-        $location = Location::find()->notDeleted();
+        $defaultLocation = Location::findOne(1);
+        $location = Location::find()->notDeleted()->andWhere(['NOT', ['id' => $defaultLocation->id]]);
         $dataProvider = new ActiveDataProvider([
             'query' => $location,
         ]);
