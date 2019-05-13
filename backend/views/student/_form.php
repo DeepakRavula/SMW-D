@@ -36,7 +36,7 @@ use kartik\select2\Select2;
                 'yearRange' => '-70:+0',
                 'changeYear' => true,
             ],
-            ])->textInput(['placeholder' => 'Select Date']);
+            ]);
         ?>
         <?php $list = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
         <?php $model->isNewRecord ? $model->gender = 0: $model->gender = $model->gender ;  ?>
