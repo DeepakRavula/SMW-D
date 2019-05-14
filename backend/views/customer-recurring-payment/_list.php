@@ -68,7 +68,7 @@ use insolita\wgadminlte\LteConst;
                 },
                 'contentOptions' => ['style' => 'text-align:right'],
                 'headerOptions' => ['style' => 'text-align:right'],
-            ],
+            ],            
         ]
     ]); ?>
 <?php Pjax::end(); ?>
