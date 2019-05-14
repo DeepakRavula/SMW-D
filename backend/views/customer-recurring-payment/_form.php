@@ -152,7 +152,11 @@ use kartik\select2\Select2;
         });
         return false;
     });
-   
+
+    $(document).off('change', '.select-on-check-all, input[name="selection[]"]').on('change', '.select-on-check-all, input[name="selection[]"]', function () {
+        recurringPayment.calcDueAmount();
+    });
+
     $(document).off('click', '.customer-recurring-payment-modal-save').on('click', '.customer-recurring-payment-modal-save', function(){
         var enrolmentIds = $('#enrolment-index').yiiGridView('getSelectedRows');
         var id = '<?= $model->customerId ?>';
@@ -187,6 +191,17 @@ use kartik\select2\Select2;
         return false;
     });
 
- 
-
-</script> 
+    var recurringPayment = {      
+        calcDueAmount : function() {
+            var dueAmount = parseFloat('0.00');
+            var totalAmount = 0.00;
+            $('.enrolment-items').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                dueAmount = $(this).find('.check-checkbox').attr('dueAmount');
+                totalAmount += parseFloat(dueAmount);
+                }
+            });
+            $('#customerrecurringpayment-amount').val((totalAmount).toFixed(2));
+        }
+    };
+ </script> 

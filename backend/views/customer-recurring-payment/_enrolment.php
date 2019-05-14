@@ -11,6 +11,7 @@ use yii\bootstrap\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Course;
 use common\models\CustomerRecurringPaymentEnrolment;
+use Carbon\Carbon;
 
 ?>
 <?php  $class = ""; 
@@ -33,7 +34,7 @@ if (!$customerRecurringPaymentModel->customerId) {
                 'contentOptions' => ['style' => 'width:30px;'],
                 'checkboxOptions' => function($model, $key, $index, $column) use($customerRecurringPaymentModel){
                    $enrolments = ArrayHelper::getColumn($customerRecurringPaymentModel->enrolments, 'id');
-                    return ['checked' => in_array($model->id, $enrolments),'class' =>'check-checkbox'];
+                    return ['checked' => in_array($model->id, $enrolments),'class' =>'check-checkbox', 'dueAmount' => $model->dueLessonsInEnrolment(Carbon::now()->format('Y-m-d'))];
                 }
             ]);
 
@@ -69,9 +70,7 @@ if (!$customerRecurringPaymentModel->customerId) {
             'value' => function ($data) {
                 return $data->course->teacher->publicIdentity;
             }
-        ]);
-
-      
+        ]);     
     ?>
 <?php ActiveForm::end(); ?>
 
@@ -81,6 +80,7 @@ if (!$customerRecurringPaymentModel->customerId) {
         'options' => ['id' => 'enrolment-index'],
         'columns' => $columns,
         'summary' => false,
+        'rowOptions' => ['class' => 'enrolment-items'],
         'emptyText' => 'No enrolment Available!'
     ]); ?>
 <?php Pjax::end(); ?>
