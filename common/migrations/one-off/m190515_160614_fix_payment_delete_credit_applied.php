@@ -37,8 +37,6 @@ class m190515_160614_fix_payment_delete_credit_applied extends Migration
         $newLessonPayment->paymentId = $applyingPayment->id;
         $newLessonPayment->save();
 
-      
-
     }
 
     /**
