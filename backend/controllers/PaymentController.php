@@ -346,7 +346,8 @@ class PaymentController extends BaseController
         $payment = new Payment();
         $currentDate = new \DateTime();
         $payment->date = $currentDate->format('M d, Y');
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationModel = Location::findOne(['slug' => \Yii::$app->location]);
+        $locationId = $locationModel->id;
         if (!$request->post()) {
             $groupLessonSearchModel->fromDate = $currentDate->format('M 1, Y');
             $groupLessonSearchModel->toDate = $currentDate->format('M t, Y'); 
@@ -381,6 +382,11 @@ class PaymentController extends BaseController
             ->customer($searchModel->userId)
             ->unpaid()
             ->andWhere(['>','invoice.balance' , 0.09]);
+        if ($searchModel->invoiceId) {
+            if ($searchModel->userId && $searchModel->userId == $locationModel->walkinCustomer->customerId) {
+                $invoicesQuery->andWhere(['id' => $searchModel->invoiceId]);
+            }
+        }
         $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoicesQuery,

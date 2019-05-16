@@ -24,6 +24,7 @@ class PaymentFormLessonSearch extends Lesson
     public $lessonIds;
     public $showCheckBox;
     public $userId;
+    public $invoiceId;
     /**
      * {@inheritdoc}
      */
@@ -31,7 +32,7 @@ class PaymentFormLessonSearch extends Lesson
     {
         return [
             [['showCheckBox', 'dateRange', 'dueDateRange',  'lessonId', 'fromDate', 'toDate', 'fromDueDate', 'toDueDate',
-                'lessonIds', 'student','userId'], 'safe'],
+                'lessonIds', 'student','userId', 'invoiceId'], 'safe'],
         ];
     }
 
