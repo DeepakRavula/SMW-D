@@ -189,6 +189,15 @@ class Course extends \yii\db\ActiveRecord
             ->one();
     }
     
+    public function getDuration()
+    {
+        $duration		 = \DateTime::createFromFormat('H:i:s', $this->recentCourseSchedule->duration);
+        $hours			 = $duration->format('H');
+        $minutes		 = $duration->format('i');
+        $courseDuration	 = $hours + ($minutes / 60);
+        return $courseDuration;
+    }
+
     public function getCourseProgramRate()
     {
         return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'id']);

@@ -34,7 +34,7 @@ if (!$customerRecurringPaymentModel->customerId) {
                 'contentOptions' => ['style' => 'width:30px;'],
                 'checkboxOptions' => function($model, $key, $index, $column) use($customerRecurringPaymentModel){
                    $enrolments = ArrayHelper::getColumn($customerRecurringPaymentModel->enrolments, 'id');
-                    return ['checked' => in_array($model->id, $enrolments),'class' =>'check-checkbox', 'dueAmount' => $model->dueLessonsInEnrolment(Carbon::now()->format('Y-m-d'))];
+                    return ['checked' => in_array($model->id, $enrolments),'class' =>'check-checkbox', 'dueAmount' => $model->getEnrolmentAmount()];
                 }
             ]);
 
