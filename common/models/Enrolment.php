@@ -834,25 +834,9 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function dueLessonsInEnrolment($date)
     {
-        $invoicedLessons = Lesson::find()
-        ->notDeleted()
-        ->isConfirmed()
-        ->notCanceled()
-        ->enrolment($this->id)
-        ->invoiced();
-    $query = Lesson::find()
-        ->notDeleted()
-        ->isConfirmed()
-        ->notCanceled()
-        ->dueUntil($date)
-        ->enrolment($this->id)
-        ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
-        ->andWhere(['invoiced_lesson.id' => null])
-        ->orderBy(['lesson.dueDate' => SORT_ASC]);
-    $lessonsToPay = $query->all();
-    foreach ($lessonsToPay as $lesson) {
-            $totalAmount = round($lesson->getOwingAmount($this->id), 2);
-    }
+       $programRate = $this->course->courseProgramRate->programRate;
+       $duration = $this->course->getDuration();
+       $totalAmount = $programRate*$duration*$this->paymentFrequencyId*4;
     return $totalAmount;
 }
 
