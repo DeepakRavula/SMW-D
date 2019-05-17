@@ -24,6 +24,7 @@ class PaymentFormLessonSearch extends Lesson
     public $lessonIds;
     public $showCheckBox;
     public $userId;
+    public $invoiceId;
     /**
      * {@inheritdoc}
      */
@@ -31,7 +32,7 @@ class PaymentFormLessonSearch extends Lesson
     {
         return [
             [['showCheckBox', 'dateRange', 'dueDateRange',  'lessonId', 'fromDate', 'toDate', 'fromDueDate', 'toDueDate',
-                'lessonIds', 'student','userId'], 'safe'],
+                'lessonIds', 'student','userId', 'invoiceId'], 'safe'],
         ];
     }
 
@@ -99,5 +100,15 @@ class PaymentFormLessonSearch extends Lesson
         }
        
         return $lessonsQuery;
+    }
+
+    public function isWalkin()
+    {
+        $status = false;
+        $locationModel = Location::findOne(['slug' => \Yii::$app->location]);
+        if ($this->userId && $this->userId == $locationModel->walkinCustomer->customerId) {
+            $status = true;
+        }
+        return $status;
     }
 }

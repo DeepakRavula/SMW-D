@@ -406,7 +406,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getLocationWalkin()
     {
-        return $this->hasMany(LocationWalkinCustomer::className(), ['customerId' => 'id']);
+        return $this->hasOne(LocationWalkinCustomer::className(), ['customerId' => 'id']);
     }
 
     public function isLocationWalkin()
