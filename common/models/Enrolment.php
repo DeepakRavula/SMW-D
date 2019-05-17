@@ -832,11 +832,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->course->type === self::TYPE_EXTRA;
     }
 
-    public function dueLessonsInEnrolment($date)
+    public function getEnrolmentAmount()
     {
        $programRate = $this->course->courseProgramRate->programRate;
        $duration = $this->course->getDuration();
-       $totalAmount = $programRate*$duration*$this->paymentFrequencyId*4;
+       $totalAmount = $programRate * $duration * $this->paymentFrequencyId * 4;
     return $totalAmount;
 }
 
