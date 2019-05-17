@@ -101,4 +101,14 @@ class PaymentFormLessonSearch extends Lesson
        
         return $lessonsQuery;
     }
+
+    public function isWalkin()
+    {
+        $status = false;
+        $locationModel = Location::findOne(['slug' => \Yii::$app->location]);
+        if ($this->userId && $this->userId == $locationModel->walkinCustomer->customerId) {
+            $status = true;
+        }
+        return $status;
+    }
 }

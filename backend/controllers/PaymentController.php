@@ -382,10 +382,8 @@ class PaymentController extends BaseController
             ->customer($searchModel->userId)
             ->unpaid()
             ->andWhere(['>','invoice.balance' , 0.09]);
-        if ($searchModel->invoiceId) {
-            if ($searchModel->userId && $searchModel->userId == $locationModel->walkinCustomer->customerId) {
-                $invoicesQuery->andWhere(['id' => $searchModel->invoiceId]);
-            }
+        if ($searchModel->isWalkin()) {
+            $invoicesQuery->andWhere(['id' => $searchModel->invoiceId]);
         }
         $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
