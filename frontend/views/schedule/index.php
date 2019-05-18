@@ -203,3 +203,19 @@ $this->title = 'Schedule ';
         return false;
     });
 </script>
+<script src="https://js.pusher.com/4.2/pusher.min.js"></script>
+<script type="text/javascript">
+
+	var pusher = new Pusher('<?= env('PUSHER_KEY')?>', {
+		cluster: '<?= env('PUSHER_CLUSTER')?>',
+		encrypted: true
+   });
+
+    var channel = pusher.subscribe('lesson');
+    channel.bind('lesson-edit', function(data) {
+        var date = $('#schedule-go-to-datepicker').val();
+        schedule.fetchHolidayName(moment(date));
+        schedule.loadCalendar(date);
+       return false;
+   });
+  </script>
