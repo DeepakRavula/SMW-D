@@ -17,6 +17,7 @@ class m190518_085910_adding_permission_for_recurring_payments extends Migration
         $auth = Yii::$app->authManager;
         $admin = $auth->getRole(User::ROLE_ADMINISTRATOR);
         $owner = $auth->getRole(User::ROLE_OWNER);
+        $staffMember = $auth->getRole(User::ROLE_STAFFMEMBER);
         $newPermissions = [
             [
                 'permission' => 'manageRecurringPayment',
@@ -36,11 +37,15 @@ class m190518_085910_adding_permission_for_recurring_payments extends Migration
                 $locationId = $location->id;
                 $adminItem = $auth->getChildrenWithLocation(User::ROLE_ADMINISTRATOR, $locationId);
                 $ownerItem = $auth->getChildrenWithLocation(User::ROLE_OWNER, $locationId);
+                $staffMemberItem = $auth->getChildrenWithLocation(User::ROLE_STAFFMEMBER, $locationId);
                 if (empty($adminItem[$newPermission['permission']])) {
                     $auth->addChildWithLocation($admin, $loginToBackend, $locationId);
                 }
                 if (empty($ownerItem[$newPermission['permission']])) {
                     $auth->addChildWithLocation($owner, $loginToBackend, $locationId);
+                }
+                if (empty($staffMemberItem[$newPermission['permission']])) {
+                    $auth->addChildWithLocation($staffMember, $loginToBackend, $locationId);
                 }
             }
         }
