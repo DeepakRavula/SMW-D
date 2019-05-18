@@ -84,29 +84,12 @@ echo Menu::widget([
             'icon' => '<i class="fa fa-music"></i>',
 	        'active' => (Yii::$app->controller->id === 'unscheduled-lesson')
         ],
-        //     [
-        //     'label' => Yii::t('backend', 'Proforma Invoices'),
-        //     'icon' => '<i class="fa  fa-dollar"></i>',
-        //     'url' => ['/invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE],
-        //     'visible' => Yii::$app->user->can('managePfi'),
-        //     'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_PRO_FORMA_INVOICE) ? true : false,
-        //     'badge' => Invoice::pfiCount(),
-        //     'badgeBgClass' => 'label-default'
-        // ],
-        
-                    [
-            'label' => Yii::t('backend', 'Proforma Invoices'),
-            'icon' => '<i class="fa  fa-dollar"></i>',
-            'url' => ['/invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE],
-            'visible' => Yii::$app->user->can('managePfi'),
-            'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_PRO_FORMA_INVOICE) ? true : false,
-        ],
    
         [
             'label' => Yii::t('backend', 'Recurring Payments'),
             'icon' => '<i class="fa  fa-dollar"></i>',
             'url' => ['/customer-recurring-payment/index'],
-            'visible' => Yii::$app->user->can('manageAdmin'),
+            'visible' => Yii::$app->user->can('manageRecurringPayment'),
             'active' => (Yii::$app->controller->id === 'customer-recurring-payment')
         ],
 	    [
@@ -117,13 +100,6 @@ echo Menu::widget([
             'active' => (Yii::$app->controller->id === 'customer-payment-preference')
         ],
           
-        [
-            'label' => Yii::t('backend', 'Payment Requests'),
-            'icon' => '<i class="fa  fa-dollar"></i>',
-            'url' => ['/proforma-invoice/index'],
-            'visible' => Yii::$app->user->can('managePfi'),
-            'active' => (Yii::$app->controller->id === 'proforma-invoice')
-        ],
             [
             'label' => Yii::t('backend', 'Invoices'),
             'icon' => '<i class="fa  fa-dollar"></i>',
