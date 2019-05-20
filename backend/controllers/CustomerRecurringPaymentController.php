@@ -97,7 +97,10 @@ $enrolmentDataProvider  = new ActiveDataProvider([
         ]);
         if ($post) {
         if ($model->load(Yii::$app->request->post())) {
-            $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-t');
+            $expiryDate = (new \DateTime())->format('d') . '-' . $model->expiryMonth . '-' . $model->expiryYear;
+            $lastDate = (new \DateTime($expiryDate))->format('t');
+            $expiryDate = $lastDate . '-' . $model->expiryMonth . '-' . $model->expiryYear;
+            $model->expiryDate = (new \DateTime($expiryDate))->format('Y-m-d');
             $startDate = Carbon::parse($model->startDate);
             $currentDate = Carbon::now()->format('Y-m-d');
             $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
@@ -159,7 +162,10 @@ $enrolmentDataProvider  = new ActiveDataProvider([
         ]);
         if (Yii::$app->request->post()) {
             if ($model->load(Yii::$app->request->post())) {
-                $model->expiryDate = (new \DateTime($model->expiryDate))->format('Y-m-t');
+                $expiryDate = (new \DateTime())->format('d') . '-' . $model->expiryMonth . '-' . $model->expiryYear;
+                $lastDate = (new \DateTime($expiryDate))->format('t');
+                $expiryDate = $lastDate . '-' . $model->expiryMonth . '-' . $model->expiryYear;
+                $model->expiryDate = (new \DateTime($expiryDate))->format('Y-m-d');
                 $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
                 $currentDate = Carbon::now()->format('Y-m-d');
                 if (Carbon::parse($model->startDate)->format('Y-m-d') >= $currentDate ) {
