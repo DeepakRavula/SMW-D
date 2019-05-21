@@ -57,6 +57,6 @@ class ItemQuery extends \yii\db\ActiveQuery
 
     public function notDeleted()
     {
-        return $this->andFilterWhere(['isDeleted' => false]);
+        return $this->andFilterWhere(['item.isDeleted' => false]);
     }
 }
