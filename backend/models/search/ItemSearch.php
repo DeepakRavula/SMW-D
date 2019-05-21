@@ -15,6 +15,7 @@ class ItemSearch extends Item
 {
     public $showAllItems;
     public $avoidDefaultItems;
+    public $itemCategory;
 
     /**
      * {@inheritdoc}
@@ -22,8 +23,7 @@ class ItemSearch extends Item
     public function rules()
     {
         return [
-            [['avoidDefaultItems', 'code', 'description', 'price', 'showAllItems'],
-                'safe'],
+            [['avoidDefaultItems', 'code', 'description', 'price', 'showAllItems', 'itemCategory'], 'safe'],
         ];
     }
 
@@ -64,13 +64,15 @@ class ItemSearch extends Item
         if (!$this->showAllItems) {
             $query->active();
         }
-        if (empty($this->code) && empty($this->description) && empty($this->price)) {
-            return $dataProvider;
-        } else {
-            $query->andFilterWhere(['like', 'code', $this->code])
-                ->andFilterWhere(['like', 'description', $this->description])
-                ->location($locationId)
-                ->active();
+        if ($this->itemCategory) {
+            $query->joinWith('itemCategory')
+            ->andFilterWhere(['like', 'item_category.name', $this->itemCategory]);
+        }
+        if ($this->code) {
+            $query->andFilterWhere(['like', 'code', $this->code]);
+        }
+        if ($this->description) {
+            $query->andFilterWhere(['like', 'description', $this->description]);
         }
         return $dataProvider;
     }
