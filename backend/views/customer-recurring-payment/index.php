@@ -105,4 +105,8 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
         $.pjax.reload({container: "#recurring-payment-listing", replace: false, timeout: 4000});
         return false;
     });
+    $(document).on('modal-success', function(event, params) {
+        $.pjax.reload({container: "#recurring-payment-listing", replace: false, timeout: 4000});
+        return false;
+    });
 </script>

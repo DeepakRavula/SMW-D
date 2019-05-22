@@ -76,11 +76,11 @@ use kartik\select2\Select2;
     <div class="col-md-4 ">
     <?= $form->field($model, 'paymentMethodId')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'), ['disabled' => $disabled,])->label('Via'); ?>    
     </div>
-   <div class="col-md-1 ">
+   <div class="col-md-2 ">
     <?= $form->field($model, 'expiryMonth')->dropDownList($month,  ['style' => 'width:70px !important','prompt' => 'MM'])->label('Untill');?>
     </div>
     <div class="col-md-2 ">
-    <?= $form->field($model, 'expiryYear')->dropDownList($year,  ['style' => 'width:80px !important; margin-left:20px; margin-top:5px','prompt' => 'YEAR'])->label(' ');?>
+    <?= $form->field($model, 'expiryYear')->dropDownList($year,  ['style' => 'width:80px !important; margin-left:-40px; margin-top:5px','prompt' => 'YEAR'])->label(' ');?>
     </div>
     <div class="col-md-4 ">
     <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),
@@ -168,7 +168,7 @@ use kartik\select2\Select2;
                         {
                             if (response.status) {
                                 $('#popup-modal').modal('hide');
-                                $.pjax.reload({container: "#recurring-payment-list", replace: false, timeout: 4000});
+                                $.pjax.reload({container: "#recurring-payment-listing", replace: false, timeout: 4000});
                                 }
                             else {
                                 if (response.message) {

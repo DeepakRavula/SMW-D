@@ -60,11 +60,11 @@ use Carbon\Carbon;
             $model->expiryMonth = (new \DateTime($model->expiryDate))->format('n');
             $model->expiryYear = (new \DateTime($model->expiryDate))->format('Y'); 
         }?>     
-    <div class="col-md-1 ">
+    <div class="col-md-2 ">
     <?= $form->field($model, 'expiryMonth')->dropDownList($month,  ['style' => 'width:70px !important'])->label('Untill');?>
     </div>
     <div class="col-md-2 ">
-    <?= $form->field($model, 'expiryYear')->dropDownList($year,  ['style' => 'width:80px !important; margin-left:20px; margin-top:5px'])->label(' ');?>
+    <?= $form->field($model, 'expiryYear')->dropDownList($year,  ['style' => 'width:80px !important; margin-left: -40px; margin-top:5px'])->label(' ');?>
     </div>
     <div class="col-md-4 ">
     <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),
