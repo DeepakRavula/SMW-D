@@ -44,6 +44,8 @@ use kartik\select2\Select2;
     <div class="row">
 	<div class="col-md-4 ">
             <?php $day = CustomerRecurringPayment::getDaysList();?>
+            <?php $month = CustomerRecurringPayment::getMonthsList();?>
+            <?php $year = CustomerRecurringPayment::getYearsList();?>
             <?php $model->startDate = Carbon::now()->format('M d, Y');   ?>
         <?= $form->field($model, 'customerId')->widget(Select2::classname(), [
             'data' => $customers,
@@ -74,18 +76,11 @@ use kartik\select2\Select2;
     <div class="col-md-4 ">
     <?= $form->field($model, 'paymentMethodId')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'), ['disabled' => $disabled,])->label('Via'); ?>    
     </div>
-    <div class="col-md-4 ">
-    <?php if (!$model->isNewRecord) {
-            $model->expiryDate = (new \DateTime($model->expiryDate))->format('M d, Y'); 
-        }?>
-    <?= $form->field($model, 'expiryDate')->widget(DatePicker::className(), [
-                'dateFormat' => 'php:M d, Y',
-                'clientOptions' => [
-                        'changeMonth' => true,
-                        'yearRange' => '+0:+10',
-                        'changeYear' => true,
-                        'disabled' => $disabled,
-                        ], ])->textInput(['placeholder' => 'Select Expiry Date'])->label('Until');?>    
+   <div class="col-md-1 ">
+    <?= $form->field($model, 'expiryMonth')->dropDownList($month,  ['style' => 'width:70px !important','prompt' => 'MM'])->label('Untill');?>
+    </div>
+    <div class="col-md-2 ">
+    <?= $form->field($model, 'expiryYear')->dropDownList($year,  ['style' => 'width:80px !important; margin-left:20px; margin-top:5px','prompt' => 'YEAR'])->label(' ');?>
     </div>
     <div class="col-md-4 ">
     <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),

@@ -30,6 +30,8 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
      * @inheritdoc
      */
 
+    public $expiryMonth;
+    public $expiryYear;
     const CONSOLE_USER_ID  = 727;
     const DEFAULT_RATE = 115;
 
@@ -77,7 +79,7 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         return [
             [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId',  'amount'], 'required'],
             [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
-            [['entryDay', 'paymentDay', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'isRecurringPaymentEnabled', 'startDate', 'isDeleted', 'nextEntryDay'], 'safe'],
+            [['entryDay', 'paymentDay', 'expiryMonth', 'expiryYear', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'isRecurringPaymentEnabled', 'startDate', 'isDeleted', 'nextEntryDay'], 'safe'],
         ];
     }
 
@@ -157,6 +159,25 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         $nextPaymentDate = (new \DateTime($formatedDate))->format('Y-m-d');
        return $nextPaymentDate;
     
+    }
+
+    public static function getMonthsList()
+    {
+        foreach (range(1, 12) as  $number) {
+            if ($number < 10) {
+               $dayList [$number] = $number; 
+            } else {
+               $dayList [$number] = $number;
+            }
+        }
+        return $dayList;
+    }
+    public static function getYearsList()
+    {
+        foreach (range(2019, 2029) as  $number) {
+            $dayList [$number] = $number;
+        }
+        return $dayList;
     }
 
 }

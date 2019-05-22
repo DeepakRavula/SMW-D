@@ -54,17 +54,17 @@ use Carbon\Carbon;
     <?= $form->field($model, 'paymentMethodId')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Via'); ?>    
     </div>
-    <div class="col-md-4 ">
+    <?php $month = CustomerRecurringPayment::getMonthsList();?>
+    <?php $year = CustomerRecurringPayment::getYearsList();?>
     <?php if (!$model->isNewRecord) {
-            $model->expiryDate = (new \DateTime($model->expiryDate))->format('M d, Y'); 
-        }?>
-    <?= $form->field($model, 'expiryDate')->widget(DatePicker::className(), [
-                'dateFormat' => 'php:M d, Y',
-                'clientOptions' => [
-                        'changeMonth' => true,
-                        'yearRange' => '-70:+20',
-                        'changeYear' => true,
-                        ], ])->textInput(['placeholder' => 'Select Expiry Date'])->label('Until');?>    
+            $model->expiryMonth = (new \DateTime($model->expiryDate))->format('n');
+            $model->expiryYear = (new \DateTime($model->expiryDate))->format('Y'); 
+        }?>     
+    <div class="col-md-1 ">
+    <?= $form->field($model, 'expiryMonth')->dropDownList($month,  ['style' => 'width:70px !important'])->label('Untill');?>
+    </div>
+    <div class="col-md-2 ">
+    <?= $form->field($model, 'expiryYear')->dropDownList($year,  ['style' => 'width:80px !important; margin-left:20px; margin-top:5px'])->label(' ');?>
     </div>
     <div class="col-md-4 ">
     <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),

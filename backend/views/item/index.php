@@ -2,7 +2,8 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
@@ -14,7 +15,6 @@ Select2Asset::register($this);
 /* @var $model common\models\ItemCategory */
 
 $this->title = 'Items';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), ['#'], ['id' => 'create-item']);
 $this->params['show-all'] = $this->render('_button', [
     'searchModel' => $searchModel
 ]);
@@ -25,17 +25,29 @@ $this->params['show-all'] = $this->render('_button', [
         'id' => 'item-listing',
         'timeout' => 6000,
     ]) ?>
-    <?php echo AdminLteGridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'summary' => false,
         'emptyText' => false,
+        'toolbar' =>  [
+            ['content' =>  Html::a(Yii::t('backend', '<i class="fa fa-plus fa-2x" aria-hidden="true"></i>'), '#',
+                ['class' => 'create-item'])
+            ],
+            '{export}',
+            '{toggleData}'
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT
+        ],
         'columns' => [
             'code',
             [
+                'attribute' => 'itemCategory',
                 'label' => 'Item Category',
-        'value' => function ($data) {
-            return $data->itemCategory->name;
-        },
+                'value' => function ($data) {
+                    return $data->itemCategory->name;
+                },
             ],
             'description',
             [
@@ -79,31 +91,6 @@ $this->params['show-all'] = $this->render('_button', [
 
 <script>
     $(document).ready(function() {
-        $(document).on('click', '#create-item, #item-listing  tbody > tr', function () {
-            var itemId = $(this).data('key');
-            if (itemId === undefined) {
-                var customUrl = '<?= Url::to(['item/create']); ?>';
-            } else {
-                var customUrl = '<?= Url::to(['item/update']); ?>?id=' + itemId;
-            }
-            $.ajax({
-                url    : customUrl,
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        $('#popup-modal').modal('show');
-                        $('#modal-content').html(response.data);
-                    } else {
-                        $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
-                    }
-                }
-            });
-            return false;
-        });
         $(document).on('beforeSubmit', '#update-item-form', function () {
             $.ajax({
                 url    : $(this).attr('action'),
@@ -129,5 +116,31 @@ $this->params['show-all'] = $this->render('_button', [
             var url = "<?php echo Url::to(['item/index']); ?>?ItemSearch[showAllItems]=" + (showAllItems | 0);
             $.pjax.reload({url:url,container:"#item-listing",replace:false,  timeout: 4000});  //Reload GridView
         });
+    });
+
+    $(document).on('click', '.create-item, #item-listing  tbody > tr', function () {
+        var itemId = $(this).data('key');
+        if (itemId === undefined) {
+            var customUrl = '<?= Url::to(['item/create']); ?>';
+        } else {
+            var customUrl = '<?= Url::to(['item/update']); ?>?id=' + itemId;
+        }
+        $.ajax({
+            url    : customUrl,
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#popup-modal').modal('show');
+                    $('#modal-content').html(response.data);
+                } else {
+                    $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        return false;
     });
 </script>
