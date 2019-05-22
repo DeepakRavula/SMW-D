@@ -165,7 +165,7 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
     {
         foreach (range(1, 12) as  $number) {
             if ($number < 10) {
-               $dayList [$number] = $number; 
+               $dayList [$number] = "0". $number; 
             } else {
                $dayList [$number] = $number;
             }

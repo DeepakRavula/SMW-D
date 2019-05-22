@@ -24,7 +24,7 @@ use insolita\wgadminlte\LteConst;
     ?>
 
 <div class="clearfix"></div>
-<?php Pjax::Begin(['id' => 'recurring-payment-list', 'timeout' => 6000, 'enablePushState' => false]); ?>
+<?php Pjax::Begin(['id' => 'recurring-payment-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
     <?= GridView::widget([
         'dataProvider' => $customerRecurringPaymentsDataProvider,
         'summary' => false,
