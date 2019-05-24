@@ -104,7 +104,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
                 }
             }
                  $firstSplitLesson = Lesson::findOne($firstSplitId);
-                 $amountNeeded = $firstSplitLesson->netPrice; 
+                 $amountNeeded = $lesson->netPrice;
                     foreach ($payments as $payment){
                         $payment = Payment::findOne($payment->id);
                         if ($payment->balance > 0) { 
@@ -112,10 +112,12 @@ class PrivateLesson extends \yii\db\ActiveRecord
                                 $lessonPayment->lessonId    = $lesson->id;
                                 $lessonPayment->paymentId   = $payment->id;
                                 $lessonPayment->enrolmentId = $enrolment->id;
-                            if ($payment->balance >= $amountNeeded) {
+                            if (round($amountNeeded, 2) <= round($payment->balance, 2)) {
                                 $lessonPayment->amount      = $amountNeeded;
+                                $amountNeeded = $amountNeeded-$lessonPayment->amount;
                             } else {
                                 $lessonPayment->amount      = $payment->balance;
+                                $amountNeeded = $amountNeeded-$payment->balance;
                             }
                             $lessonPayment->save();
                             $payment->save();
