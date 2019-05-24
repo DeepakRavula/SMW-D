@@ -97,32 +97,35 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $newLesson->privateLesson->save();
             if ($i == 0) {
                 $firstSplitId = $lesson->id;
-            } else {
-                $firstSplitLesson = Lesson::findOne($firstSplitId);
-                if ($firstSplitLesson->hasCredit($enrolment->id)) {
-                    $amountNeeded = $firstSplitLesson->netPrice;
-                    $amount = 0;
-                    foreach ($firstSplitLesson->lessonPayments as $firstSplitLessonPayment) {
-                        $amount += $firstSplitLessonPayment->amount;
-                        if (!$firstSplitLessonPayment->payment->isAutoPayments()) {
-                            if ($amountNeeded < $amount) {
-                                $amount -= $firstSplitLessonPayment->amount;
-                                $lessonPayment = new LessonPayment();
-                                $lessonPayment->lessonId    = $lesson->id;
-                                $lessonPayment->paymentId   = $firstSplitLessonPayment->paymentId;
-                                $amountRemin = ($amount + $firstSplitLessonPayment->amount) - $amountNeeded;
-                                $lessonPayment->amount      = $lesson->netPrice >= $amountRemin ? $amountRemin : $lesson->netPrice;
-                                $lessonPayment->enrolmentId = $enrolment->id;
-                                $lessonPayment->save();
-                                $firstSplitLessonPayment->amount -= $amountRemin;
-                                $firstSplitLessonPayment->save();
-                                $amount += $firstSplitLessonPayment->amount;
-                            }
-                        }
-                    }
+                $payments = $lesson->payments;
+                $lessonPayments = $lesson->lessonPayments;
+                foreach ($lessonPayments as $lessonPayment){
+                    $lessonPayment->delete();
                 }
             }
+                 $firstSplitLesson = Lesson::findOne($firstSplitId);
+                 $amountNeeded = $lesson->netPrice;
+                    foreach ($payments as $payment){
+                        $payment = Payment::findOne($payment->id);
+                        if ($payment->balance > 0) { 
+                                $lessonPayment = new LessonPayment();
+                                $lessonPayment->lessonId    = $lesson->id;
+                                $lessonPayment->paymentId   = $payment->id;
+                                $lessonPayment->enrolmentId = $enrolment->id;
+                            if (round($amountNeeded, 2) <= round($payment->balance, 2)) {
+                                $lessonPayment->amount      = $amountNeeded;
+                                $amountNeeded = $amountNeeded-$lessonPayment->amount;
+                            } else {
+                                $lessonPayment->amount      = $payment->balance;
+                                $amountNeeded = $amountNeeded-$payment->balance;
+                            }
+                            $lessonPayment->save();
+                            $payment->save();
+                        }
+
+                
         }
+    }
         return $model->cancel();
     }
     
