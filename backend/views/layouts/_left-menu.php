@@ -121,6 +121,13 @@ echo Menu::widget([
             'options' => ['class' => 'treeview'],
             'visible' => Yii::$app->user->can('manageReports'),
             'items' => [
+                [
+                    'label' => Yii::t('backend', 'Ageing Accounts Receivable Summary'),
+                    'icon' => '<i class="fa fa-account" aria-hidden="true"></i>',
+                    'url' => ['/report/account-receivable'],
+					'visible' => Yii::$app->user->can('manageAccountReceivableReport'),
+                    'active' => (Yii::$app->controller->action->id === 'account-receivable') ? true : false,
+                ],
                     [
                     'label' => Yii::t('backend', 'Birthdays'),
                     'icon' => '<i class="fa fa-birthday-cake" aria-hidden="true"></i>',
