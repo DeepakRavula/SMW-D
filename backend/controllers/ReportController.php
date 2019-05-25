@@ -503,7 +503,7 @@ class ReportController extends BaseController
         $customers = User::find()
                 ->customers($locationId)
                 ->joinWith(['customerAccount' => function ($query) {
-                    $query->andWhere(['OR', ['>', 'customer_account.balance', 0.09], ['<', 'customer_account.balance', -0.09]]);
+                    $query->andWhere(['>', 'customer_account.balance', 0.09]);
                 }])
                 ->notDeleted();
         $dataProvider = new ActiveDataProvider([

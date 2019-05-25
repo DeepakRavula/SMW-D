@@ -10,6 +10,5 @@ use yii\helpers\Html;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Aging Account Receivable Summary';
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']);
 ?>
 <?php echo $this->render('account-receivable', ['dataProvider' => $dataProvider,]); ?>
