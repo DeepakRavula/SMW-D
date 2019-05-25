@@ -505,6 +505,9 @@ class ReportController extends BaseController
                 ->joinWith(['customerAccount' => function ($query) {
                     $query->andWhere(['>', 'customer_account.balance', 0.09]);
                 }])
+                ->joinWith(['userProfile' => function($query) {
+                    $query->orderBy(['user_profile.firstname' => SORT_ASC]);
+                }])
                 ->notDeleted();
         $dataProvider = new ActiveDataProvider([
             'query' => $customers,
