@@ -75,7 +75,7 @@ use insolita\wgadminlte\LteConst;
 <?php LteBox::end() ?>
 
 <script>
-    $(document).on('click', '#recurring-payment,#recurring-payment-list  tbody > tr', function () {
+    $(document).on('click', '#recurring-payment,#recurring-payment-listing  tbody > tr', function () {
         var recurringPaymentId = $(this).data('key');
         var userId = '<?= $model->id ?>';
         if (!recurringPaymentId) {
