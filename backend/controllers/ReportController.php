@@ -502,9 +502,6 @@ class ReportController extends BaseController
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $customers = User::find()
                 ->customers($locationId)
-                ->joinWith(['customerAccount' => function ($query) {
-                    $query->andWhere(['>', 'customer_account.balance', 0.09]);
-                }])
                 ->joinWith(['userProfile' => function($query) {
                     $query->orderBy(['user_profile.firstname' => SORT_ASC]);
                 }])

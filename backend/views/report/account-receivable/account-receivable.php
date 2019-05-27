@@ -77,7 +77,7 @@ use kartik\grid\GridView;
             [
                 'label' => 'Balance',
                 'value' => function ($data) {
-                    return  Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id) - ($data->getPrePaidLessons($data->id) + $data->getTotalCredits($data->id)), 2), 2);
+                    return  Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2) - (round($data->getPrePaidLessons($data->id), 2) + round($data->getTotalCredits($data->id), 2)), 2);
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right dollar'],

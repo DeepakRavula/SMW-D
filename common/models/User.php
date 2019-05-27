@@ -1185,7 +1185,9 @@ class User extends ActiveRecord implements IdentityInterface
             ->isConfirmed()
             ->notCanceled()
             ->privateLessons()
-            ->joinWith('lessonPayments')
+            ->joinWith(['lessonPayments' => function ($query) {
+                $query->andWhere(['NOT', ['lesson_payment.id' => null]]);
+            }])
             ->customer($id)
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
             ->andWhere(['invoiced_lesson.id' => null])
