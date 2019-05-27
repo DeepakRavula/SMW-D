@@ -36,7 +36,7 @@ use kartik\grid\GridView;
         'showPageSummary' => true,
         'columns' => [
             [
-                'label' => 'Customrer Name',
+                'label' => 'Customer Name',
                 'value' => function ($data) {
                     return  $data->userProfile->fullName;
                 },
