@@ -1170,4 +1170,27 @@ class User extends ActiveRecord implements IdentityInterface
             ->sum("private_lesson.balance");
         return $privateLessonsOwingAmount ? $privateLessonsOwingAmount : 0.00;
     }
+
+    public function getPrePaidLessons($id)
+    {
+        $invoicedLessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->privateLessons()
+            ->customer($id)
+            ->invoiced();
+        $prePaidLessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->privateLessons()
+            ->joinWith('lessonPayments')
+            ->customer($id)
+            ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+            ->andWhere(['invoiced_lesson.id' => null])
+            ->sum("lesson_payment.amount");
+
+        return $prePaidLessons;
+    }
 }

@@ -55,7 +55,7 @@ use kartik\grid\GridView;
             [
                 'label' => 'Pre-Paid Lessons',
                 'value' => function ($data) {
-                    return  $data->getLessonsDue($data->id) ? Yii::$app->formatter->asDecimal(round($data->getLessonsDue($data->id), 2), 2) : '0.00';
+                    return  $data->getPrePaidLessons($data->id) ? Yii::$app->formatter->asDecimal(round($data->getPrePaidLessons($data->id), 2), 2) : '0.00';
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right dollar',],
@@ -77,7 +77,7 @@ use kartik\grid\GridView;
             [
                 'label' => 'Balance',
                 'value' => function ($data) {
-                    return  Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id) - ($data->getLessonsDue($data->id) + $data->getTotalCredits($data->id)), 2), 2);
+                    return  Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id) - ($data->getPrePaidLessons($data->id) + $data->getTotalCredits($data->id)), 2), 2);
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right dollar'],
