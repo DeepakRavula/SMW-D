@@ -126,7 +126,7 @@ echo Menu::widget([
                     'icon' => '<i class="fa fa-dollar" aria-hidden="true"></i>',
                     'url' => ['/report/account-receivable'],
 					'visible' => Yii::$app->user->can('manageAccountReceivableReport'),
-                    'active' => (Yii::$app->controller->action->id === 'account-receivable') ? true : false,
+                    'active' => (Yii::$app->controller->action->id === 'account-receivable')
                 ],
                     [
                     'label' => Yii::t('backend', 'Birthdays'),
