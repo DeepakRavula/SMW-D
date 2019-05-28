@@ -122,7 +122,7 @@ echo Menu::widget([
             'visible' => Yii::$app->user->can('manageReports'),
             'items' => [
                 [
-                    'label' => Yii::t('backend', 'Ageing Accounts Receivable Summary'),
+                    'label' => Yii::t('backend', 'Accounts Receivable'),
                     'icon' => '<i class="fa fa-dollar" aria-hidden="true"></i>',
                     'url' => ['/report/account-receivable'],
 					'visible' => Yii::$app->user->can('manageAccountReceivableReport'),

@@ -33,6 +33,13 @@ use kartik\grid\GridView;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'emptyText' => false,
+        'toolbar' =>  [
+            '{export}',
+            '{toggleData}'
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT
+        ],
         'showPageSummary' => true,
         'columns' => [
             [
