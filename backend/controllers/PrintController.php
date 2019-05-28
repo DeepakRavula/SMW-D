@@ -55,7 +55,7 @@ class PrintController extends BaseController
                             'time-voucher', 'customer-invoice', 'account-view', 
                             'royalty', 'royalty-free', 'tax-collected', 'user', 
                             'customer-items-print', 'proforma-invoice','payment',
-                            'receipt', 'sales-and-payment', 'customer-statement', 'all-locations'
+                            'receipt', 'sales-and-payment', 'customer-statement', 'all-locations', 'accounts-receivable'
                         ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
@@ -724,6 +724,38 @@ class PrintController extends BaseController
         $this->layout = '/print';
         return $this->render('/report/all-locations/_print', [
                 'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionAccountsReceivable()
+    {
+        $searchModel = new ReportSearch();
+        $request = Yii::$app->request;
+        $searchModel->load($request->get());
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $customersInclude = [];
+        $customers = User::find()
+                ->customers($locationId)
+                ->notDeleted()
+                ->all();
+        foreach ($customers as $customer) {
+            if ($customer->customerAccountBalance() != '0.00') {
+                $customersInclude[] = $customer->id;
+            }
+        }
+        $customerslist = User::find()
+                ->customers($locationId)
+                ->joinWith(['userProfile' => function($query) {
+                    $query->orderBy(['user_profile.firstname' => SORT_ASC]);
+                }])
+                ->andWhere(['IN', 'user.id', $customersInclude]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $customerslist,
+            'pagination' => false,
+        ]);
+        $this->layout = '/print';
+        return $this->render('/report/account-receivable/_print', [
                 'dataProvider' => $dataProvider,
         ]);
     }

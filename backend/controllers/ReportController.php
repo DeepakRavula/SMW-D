@@ -15,6 +15,7 @@ use yii\data\ActiveDataProvider;
 use common\models\PaymentMethod;
 use backend\models\search\DiscountSearch;
 use common\models\Location;
+use common\models\User;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 
@@ -89,6 +90,11 @@ class ReportController extends BaseController
                         'allow' => true,
                         'actions' => ['item-category'],
                         'roles' => ['manageItemCategoryReport'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['account-receivable'],
+                        'roles' => ['manageAccountReceivableReport'],
                     ],
                 ],
             ], 
@@ -489,6 +495,32 @@ class ReportController extends BaseController
                         'paymentsDataProvider' => $paymentsDataProvider,
                 ]
                 );
-            }
+    }
 
+    public function actionAccountReceivable()
+    {  
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $customersInclude = [];
+        $customers = User::find()
+                ->customers($locationId)
+                ->notDeleted()
+                ->all();
+        foreach ($customers as $customer) {
+            if ($customer->customerAccountBalance() != '0.00') {
+                $customersInclude[] = $customer->id;
+            }
+        }
+        $customerslist = User::find()
+                ->customers($locationId)
+                ->joinWith(['userProfile' => function($query) {
+                    $query->orderBy(['user_profile.firstname' => SORT_ASC]);
+                }])
+                ->andWhere(['IN', 'user.id', $customersInclude]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $customerslist,
+        ]);
+        return $this->render( 'account-receivable/index', [
+                'dataProvider' => $dataProvider,
+            ]);
+    }
 }
