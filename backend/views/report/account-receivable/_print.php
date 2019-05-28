@@ -33,7 +33,7 @@ use yii\helpers\Url;
             [
                 'label' => 'Customer Name',
                 'value' => function ($data) {
-                    return  $data->userProfile->fullName;
+                    return  $data->userProfile ? $data->userProfile->fullName : null;
                 },
             ],
             [
