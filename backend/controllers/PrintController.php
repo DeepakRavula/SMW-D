@@ -734,14 +734,23 @@ class PrintController extends BaseController
         $request = Yii::$app->request;
         $searchModel->load($request->get());
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $customersInclude = [];
         $customers = User::find()
                 ->customers($locationId)
                 ->joinWith(['userProfile' => function($query) {
                     $query->orderBy(['user_profile.firstname' => SORT_ASC]);
                 }])
-                ->notDeleted();
+                ->notDeleted()
+                ->all();
+        foreach ($customers as $customer) {
+            if ($customer->customerAccountBalance() != '0.00') {
+                $customersInclude[] = $customer->id;
+            }
+        }
+        $customerslist = User::find()
+                ->andWhere(['IN', 'id', $customersInclude]);
         $dataProvider = new ActiveDataProvider([
-            'query' => $customers,
+            'query' => $customerslist,
             'pagination' => false,
         ]);
         $this->layout = '/print';

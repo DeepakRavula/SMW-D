@@ -1195,4 +1195,10 @@ class User extends ActiveRecord implements IdentityInterface
 
         return $prePaidLessons;
     }
+
+    public function customerAccountBalance()
+    {
+        $customerAccountBalance = round($this->getInvoiceOwingAmountTotal($this->id), 2) - (round($this->getPrePaidLessons($this->id), 2) + round($this->getTotalCredits($this->id), 2));
+        return $customerAccountBalance;
+    }
 }

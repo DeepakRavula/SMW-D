@@ -500,14 +500,23 @@ class ReportController extends BaseController
     public function actionAccountReceivable()
     {  
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $customersInclude = [];
         $customers = User::find()
                 ->customers($locationId)
                 ->joinWith(['userProfile' => function($query) {
                     $query->orderBy(['user_profile.firstname' => SORT_ASC]);
                 }])
-                ->notDeleted();
+                ->notDeleted()
+                ->all();
+        foreach ($customers as $customer) {
+            if ($customer->customerAccountBalance() != '0.00') {
+                $customersInclude[] = $customer->id;
+            }
+        }
+        $customerslist = User::find()
+                ->andWhere(['IN', 'id', $customersInclude]);
         $dataProvider = new ActiveDataProvider([
-            'query' => $customers,
+            'query' => $customerslist,
         ]);
         return $this->render( 'account-receivable/index', [
                 'dataProvider' => $dataProvider,
