@@ -737,9 +737,6 @@ class PrintController extends BaseController
         $customersInclude = [];
         $customers = User::find()
                 ->customers($locationId)
-                ->joinWith(['userProfile' => function($query) {
-                    $query->orderBy(['user_profile.firstname' => SORT_ASC]);
-                }])
                 ->notDeleted()
                 ->all();
         foreach ($customers as $customer) {
@@ -748,7 +745,11 @@ class PrintController extends BaseController
             }
         }
         $customerslist = User::find()
-                ->andWhere(['IN', 'id', $customersInclude]);
+                ->customers($locationId)
+                ->joinWith(['userProfile' => function($query) {
+                    $query->orderBy(['user_profile.firstname' => SORT_ASC]);
+                }])
+                ->andWhere(['IN', 'user.id', $customersInclude]);
         $dataProvider = new ActiveDataProvider([
             'query' => $customerslist,
             'pagination' => false,
