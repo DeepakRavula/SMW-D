@@ -162,12 +162,12 @@ class LessonSearch extends Lesson
  
         if ((int) $this->owingStatus === lesson::STATUS_OWING) {
             $query->joinWith(['privateLesson' => function ($query) {
-                $query->andFilterWhere(['>', 'private_lesson.balance', 0]);
+                $query->andFilterWhere(['>', 'private_lesson.balance', 0.09]);
             }]);
         }
         if ((int) $this->owingStatus === lesson::STATUS_PAID) {
             $query->joinWith(['privateLesson' => function ($query) {
-                $query->andFilterWhere(['=', 'private_lesson.balance', 0]);
+                $query->andFilterWhere(['AND', ['>=', 'private_lesson.balance', 0.00], ['<=', 'private_lesson.balance', 0.09]]);
             }]);
         }
         $query->joinWith('teacherProfile');
