@@ -2,7 +2,6 @@
 
 use yii\helpers\Url;
 use yii\widgets\Pjax;
-use common\models\LocationDebt;
 use yii\helpers\Html;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;

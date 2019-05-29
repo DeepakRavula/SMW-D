@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Url;
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use common\models\Invoice;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
@@ -30,9 +30,10 @@ use common\models\User;
 ]) ?>
 <?php echo  GridView::widget([
     'dataProvider' => $prePaidLessonsDataProvider,
-    'options' => ['class' => 'col-md-12'],
+    'options' => ['class' => 'col-md-12', 'id' => 'account-receivable-report-prepaid-lessons'],
     'summary' => false,
     'emptyText' => false,
+    'showPageSummary' => true,
     'tableOptions' => ['class' => 'table table-bordered table table-condensed'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'rowOptions' => function ($model, $key, $index, $grid) {
@@ -62,6 +63,9 @@ use common\models\User;
                 $lessonPaid = !empty($data->getCreditAppliedAmount($data->enrolment->id)) ? $data->getCreditAppliedAmount($data->enrolment->id) : 0;
                 return round($lessonPaid, 2);
             },
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM,
         ],
        
     ],

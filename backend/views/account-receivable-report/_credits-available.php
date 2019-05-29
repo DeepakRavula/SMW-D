@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Url;
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use common\models\Invoice;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
@@ -30,8 +30,9 @@ use common\models\User;
 ]) ?>
 <?php echo  GridView::widget([
     'dataProvider' => $creditsDataProvider,
-    'options' => ['class' => 'col-md-12'],
+    'options' => ['class' => 'col-md-12', 'id' => 'account-receivable-report-credits-available'],
     'summary' => false,
+    'showPageSummary' => true,
     'emptyText' => false,
     'tableOptions' => ['class' => 'table table-bordered table table-condensed'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
@@ -61,7 +62,10 @@ use common\models\User;
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right credit-value'],
         'label' => 'Amount',
-        'value' => 'amount'
+        'value' => 'amount',
+        'hAlign' => 'right',
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
     ],
     ]
 ]); ?>

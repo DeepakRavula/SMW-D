@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Url;
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use common\models\Invoice;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
@@ -30,8 +30,9 @@ use common\models\User;
 ]) ?>
 <?php echo  GridView::widget([
     'dataProvider' => $outstandingInvoiceDataProvider,
-    'options' => ['class' => 'col-md-12'],
+    'options' => ['class' => 'col-md-12', 'id' => 'account-receivable-report-outstanding-invoices'],
     'summary' => false,
+    'showPageSummary' => true,
     'emptyText' => false,
     'tableOptions' => ['class' => 'table table-bordered table table-condensed'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
@@ -60,6 +61,9 @@ use common\models\User;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM,
             'value' => function ($data) {
                 return (round($data->balance, 2) > 0.00 && round($data->balance, 2) <= 0.09) || (round($data->balance, 2) < 0.00 && round($data->balance, 2) >= -0.09) ? 0.00  : round($data->balance, 2) ;
             },

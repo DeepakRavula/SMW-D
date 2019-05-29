@@ -1,10 +1,31 @@
+<?php 
+$this->title = $model->publicIdentity;
+$this->params['label'] = $this->render('_title', [
+    'model' => $model,
+]);
+$this->params['show-all'] = $this->render('_button', [
+   ]);
+?>
+<div class="m-b-25"> </div>
+<div class="row">
+    <div class = col-md-12>
 <?= $this->render('_outstanding-invoice', [
                 'outstandingInvoiceDataProvider' => $outstandingInvoice,
                 'userModel' => $model,
             ]); ?>
+            </div>
+</div>      
+<div class="row">  
+<div class = col-md-12>    
 <?= $this->render('_pre-paid-lessons', [
                 'prePaidLessonsDataProvider' => $prePaidLessons,
             ]); ?>
-            <?= $this->render('_credits-available', [
+            </div>
+</div>
+<div class="row">
+<div class = col-md-12>
+<?= $this->render('_credits-available', [
                 'creditsDataProvider' => $unUsedCredits,
             ]); ?>
+            </div>
+            </div>
