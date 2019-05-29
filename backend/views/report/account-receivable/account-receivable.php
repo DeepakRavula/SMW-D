@@ -24,11 +24,7 @@ use kartik\grid\GridView;
     <?php Pjax::begin(['id' => 'locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['customer/view', 'id' => $model->id]);
-            $data = ['data-url' => $url];
-            return $data;
-        },
+        'rowOptions' =>  ['class' => 'account-receivable-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -97,3 +93,12 @@ use kartik\grid\GridView;
 
     ?>
 <?php Pjax::end(); ?>
+<script>
+$(document).off('click', '.account-receivable-report-detail-view').on('click', '.account-receivable-report-detail-view', function() { 
+    var userId = $(this).attr('data-key');
+    var params = $.param({ 'id' : userId});
+    var url = '<?= Url::to(['account-receivable-report/view']) ?>?' + params;
+    window.open(url, '_blank');
+        return false;   
+     });
+</script>

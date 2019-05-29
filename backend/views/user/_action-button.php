@@ -13,6 +13,7 @@ $user = User::findOne($model->id);
             <li><a id="receive-payments" href="#">Receive Payment</a></li>
             <li><a id="print-customer-statement" href="#">Print Statement</a></li>
             <li><a id="mail-customer-statement" href="#">Email Statement</a></li>
+            <li><a id="ar-report-detail" href="#">A/R Report Detail</a></li>
         <?php endif ; ?>
         <?php if (($loggedUser->isAdmin()) || ($loggedUser->isOwner() && $user->isManagableByOwner()) || ($loggedUser->isStaff() && $user->isManagableByStaff())) : ?>
             <li><a class="user-delete-button" href="<?= Url::to(['delete', 'id' => $model->id]);?>">Delete</a></li>
@@ -54,6 +55,12 @@ $user = User::findOne($model->id);
             });
         return false;
     });
+
+    $(document).off('click', '#ar-report-detail').on('click', '#ar-report-detail', function() { 
+        var url = '<?= Url::to(['account-receivable-report/view' ,'id' => $model->id]); ?>';
+        window.open(url,'_blank');
+        return false;   
+     });
 
     $(document).off('click', '#print-customer-statement').on('click', '#print-customer-statement', function() {
         var userId = '<?= $model->id ?>';
