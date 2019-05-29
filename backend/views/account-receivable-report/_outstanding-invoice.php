@@ -59,7 +59,7 @@ use common\models\User;
             'label' => 'Owing',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right total-outstanding-invoices'],
             'enableSorting' => false,
             'hAlign' => 'right',
             'pageSummary' => true,

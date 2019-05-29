@@ -63,11 +63,13 @@ class AccountReceivableReportController extends \common\components\controllers\B
     public function actionView($id)
     {
        $model =  User::findOne($id);
+       
         return $this->render('_detail-view', [
             'outstandingInvoice' => $this->getOutstandingInvoice($id),
             'prePaidLessons' => $this->getPrePaidLessons($id),
             'unUsedCredits' => $this->getAvailableCredit($id),
             'model' => $model,
+            'customerBalance' => $model->customerAccountBalance(),
             'isPrintView' => false,
         ]);
     }
@@ -80,6 +82,7 @@ class AccountReceivableReportController extends \common\components\controllers\B
             'prePaidLessons' => $this->getPrePaidLessons($id),
             'unUsedCredits' => $this->getAvailableCredit($id),
             'model' => $model,
+            'customerBalance' => $model->customerAccountBalance(),
             'isPrintView' => true,
         ]);
     }

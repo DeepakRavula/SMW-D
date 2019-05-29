@@ -31,12 +31,13 @@ $this->params['show-all'] = $this->render('_button', [
 <div class = col-md-12>
 <?= $this->render('_credits-available', [
                 'creditsDataProvider' => $unUsedCredits,
+                'customerBalance' => $customerBalance,
             ]); ?>
             </div>
             </div>
 <script>
     $(document).ready(function () {
-        var isPrintView = <?= $isPrintView ?>;
+        var isPrintView = '<?= $isPrintView ?>';
         if (isPrintView) {
         window.print();
         }

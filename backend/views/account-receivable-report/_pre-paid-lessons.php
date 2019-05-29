@@ -57,7 +57,7 @@ use common\models\User;
         [
             'label' => 'Paid',
             'attribute' => 'owing',
-            'contentOptions' => ['class' => 'text-right dollar'],
+            'contentOptions' => ['class' => 'text-right dollar total-prepaid-lessons'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
                 $lessonPaid = !empty($data->getCreditAppliedAmount($data->enrolment->id)) ? $data->getCreditAppliedAmount($data->enrolment->id) : 0;

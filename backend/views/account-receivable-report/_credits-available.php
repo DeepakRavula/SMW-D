@@ -33,7 +33,7 @@ use common\models\User;
     'summary' => false,
     'showPageSummary' => true,
     'emptyText' => false,
-    'tableOptions' => ['class' => 'table table-bordered table table-condensed'],
+    'tableOptions' => ['class' => 'table table-bordered table table-condensed table-credits-available-account-receviable-report'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [      
         [
@@ -53,7 +53,7 @@ use common\models\User;
     [
         'format' => 'currency',
         'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right credit-value'],
+        'contentOptions' => ['class' => 'text-right credit-value total-credits'],
         'label' => 'Amount',
         'value' => 'amount',
         'hAlign' => 'right',
@@ -66,3 +66,22 @@ use common\models\User;
 
 <?php LteBox::end() ?>
 	
+<script>
+    $(document).ready(function() {
+        report.addNewRow();
+});
+    var report = {
+        addNewRow: function () {
+    var newSummaryContainer=$("<tbody>");
+    var newRow = $("<tr class='report-footer-grandtotal click-disable'>");
+        var cols = "";
+        var totalReportValue= '<?= $customerBalance ?>';
+        colSpanValue=6;
+        cols += '<td colspan='+colSpanValue+' class="text-right">'+totalReportValue+'</td>';   
+        newRow.append(cols);
+        newSummaryContainer.append(newRow);
+        $("table.table-credits-available-account-receviable-report").append(newSummaryContainer);
+
+}
+    };
+    </script>
