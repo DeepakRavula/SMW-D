@@ -55,7 +55,7 @@ use common\models\User;
             },
         ],
         [
-            'label' => 'Amount',
+            'label' => 'Paid',
             'attribute' => 'owing',
             'contentOptions' => ['class' => 'text-right dollar'],
             'headerOptions' => ['class' => 'text-right'],

@@ -23,7 +23,6 @@ use common\models\User;
     ?>
 
 <div class="clearfix"></div>
-<div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
     'id' => 'customer-credits-grid'
@@ -37,26 +36,20 @@ use common\models\User;
     'tableOptions' => ['class' => 'table table-bordered table table-condensed'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [      
+        [
+            'headerOptions' => ['class' => 'text-left'],
+            'contentOptions' => ['class' => 'text-left'],
+            'label' => 'ID',
+            'value' => 'reference',
+       ],
  [
         'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => function ($model) {
-            return [
-                'creditId' => $model['id'],
-                'class' => 'text-left credit-type'
-            ];
-        },
-        'label' => 'Type',
-        'value' => 'type',
+        'contentOptions' => ['class' => 'text-left'],
+        'label' => 'Date',
+        'value' => 'date',
     ],
 
-   [
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left'],
-        'label' => 'Reference',
-        'value' => 'reference',
-   ],
-
-
+  
     [
         'format' => 'currency',
         'headerOptions' => ['class' => 'text-right'],
@@ -70,6 +63,6 @@ use common\models\User;
     ]
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
-</div>
+
 <?php LteBox::end() ?>
 	

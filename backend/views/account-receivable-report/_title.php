@@ -4,6 +4,6 @@ use common\models\Lesson;
 
 ?>
 
-	<a href="<?= Url::to(['report/account-receivable']);?>">Accounts Receivable</a>
+	Accounts Receivable
 / 
 <?= $model->publicIdentity;?>

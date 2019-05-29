@@ -42,7 +42,7 @@ class AccountReceivableReportController extends \common\components\controllers\B
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['view'],
+                        'actions' => ['view', 'print'],
                         'roles' => ['manageAccountReceivableReport'],
                     ],
                 ],
@@ -68,6 +68,19 @@ class AccountReceivableReportController extends \common\components\controllers\B
             'prePaidLessons' => $this->getPrePaidLessons($id),
             'unUsedCredits' => $this->getAvailableCredit($id),
             'model' => $model,
+            'isPrintView' => false,
+        ]);
+    }
+
+    public function actionPrint($id)
+    {
+       $model =  User::findOne($id);
+        return $this->render('_detail-view', [
+            'outstandingInvoice' => $this->getOutstandingInvoice($id),
+            'prePaidLessons' => $this->getPrePaidLessons($id),
+            'unUsedCredits' => $this->getAvailableCredit($id),
+            'model' => $model,
+            'isPrintView' => true,
         ]);
     }
     /**
@@ -100,7 +113,7 @@ class AccountReceivableReportController extends \common\components\controllers\B
         $outstandingInvoice = Invoice::find()
                 ->customer($id)
                 ->invoice()
-                ->andWhere(['>', 'invoice.balance', 0.0])
+                ->andWhere(['>', 'invoice.balance', 0.09])
                 ->notDeleted();
         return new ActiveDataProvider([
             'query' => $outstandingInvoice,
@@ -158,6 +171,7 @@ class AccountReceivableReportController extends \common\components\controllers\B
                     'id' => $invoiceCredit->id,
                     'type' => 'Invoice Credit',
                     'reference' => $invoiceCredit->getInvoiceNumber(),
+                    'date' => $invoiceCredit->date,
                     'amount' => round(abs($invoiceCredit->balance), 2)
                 ];
             }
@@ -170,6 +184,7 @@ class AccountReceivableReportController extends \common\components\controllers\B
                         'id' => $paymentCredit->id,
                         'type' => 'Payment Credit',
                         'reference' => $paymentCredit->reference,
+                        'date' => $paymentCredit->date,
                         'amount' => round($paymentCredit->creditAmount, 2)
                     ];
                 }
