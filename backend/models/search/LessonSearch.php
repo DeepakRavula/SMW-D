@@ -38,6 +38,7 @@ class LessonSearch extends Lesson
     public $studentId;
     public $programId;
     public $dueDate;
+    public $owingStatus;
     /**
      * {@inheritdoc}
      */
@@ -47,7 +48,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId','studentId', 'programId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll', 'dueDate'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll', 'dueDate', 'owingStatus'], 'safe'],
         ];
     }
     
@@ -159,6 +160,16 @@ class LessonSearch extends Lesson
             $query->andWhere(['between', 'DATE(lesson.dueDate)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         }
  
+        if ((int) $this->owingStatus === lesson::STATUS_OWING) {
+            $query->joinWith(['privateLesson' => function ($query) {
+                $query->andFilterWhere(['>', 'private_lesson.balance', 0]);
+            }]);
+        }
+        if ((int) $this->owingStatus === lesson::STATUS_PAID) {
+            $query->joinWith(['privateLesson' => function ($query) {
+                $query->andFilterWhere(['=', 'private_lesson.balance', 0]);
+            }]);
+        }
         $query->joinWith('teacherProfile');
         $dataProvider->setSort([
             'attributes' => [
@@ -209,6 +220,13 @@ class LessonSearch extends Lesson
         return [
             Lesson::STATUS_PRESENT => 'Yes',
             Lesson::STATUS_ABSENT=> 'No',
+        ];
+    }
+    public static function owingStatuses()
+    {
+        return [
+            Lesson::STATUS_OWING => 'Owing',
+            Lesson::STATUS_PAID => 'Paid',
         ];
     }
 }

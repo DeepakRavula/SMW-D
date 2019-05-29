@@ -159,6 +159,8 @@ array_push($columns,
     [
         'label' => 'Owing',
         'attribute' => 'owing',
+        'attribute' => 'owingStatus',
+        'filter'=> LessonSearch::owingStatuses(),
         'contentOptions' => function ($data) {
             $highLightClass = 'text-right';
             if ($data->hasInvoice()) {
@@ -170,7 +172,7 @@ array_push($columns,
             }
             return ['class' => $highLightClass];
         },
-        'headerOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
         'value' => function ($data) {
             if ($data->hasInvoice()) {
                 $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
