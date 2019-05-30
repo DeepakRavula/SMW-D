@@ -55,6 +55,12 @@ use common\models\User;
             },
         ],
         [
+            'label' => 'Status',
+            'value' => function ($data) {
+                return $data->getStatus();
+            },
+        ],
+        [
             'label' => 'Paid',
             'attribute' => 'owing',
             'contentOptions' => ['class' => 'text-right dollar total-prepaid-lessons'],
