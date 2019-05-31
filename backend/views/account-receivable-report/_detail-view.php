@@ -39,7 +39,7 @@ $this->params['show-all'] = $this->render('_button', [
     $(document).ready(function () {
         var isPrintView = '<?= $isPrintView ?>';
         if (isPrintView) {
-        window.print();
+            window.print();
         }
     });
     </script>
