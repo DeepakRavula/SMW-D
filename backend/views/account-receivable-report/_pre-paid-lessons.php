@@ -12,6 +12,7 @@ use common\models\Student;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use common\models\User;
+use common\models\Lesson;
 
 ?>
 <?php
@@ -57,7 +58,11 @@ use common\models\User;
         [
             'label' => 'Status',
             'value' => function ($data) {
-                return $data->getStatus();
+                if ($data->status == Lesson::STATUS_RESCHEDULED && !$data->isCompleted()) {
+                    return $data->getStatus() . ' from ' . (new \DateTime($data->getOriginalDate()))->format('l, F jS, Y');
+                } else {
+                    return $data->getStatus();
+                }
             },
         ],
         [
