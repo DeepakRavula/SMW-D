@@ -29,11 +29,15 @@ use kartik\grid\GridView;
         'summary' => false,
         'emptyText' => false,
         'toolbar' =>  [
+            'content' =>
+                    Html::a('<i class="fa fa-print"></i>', '#', 
+                    ['id' => 'print', 'class' => 'btn btn-box-tool']),
             '{export}',
             '{toggleData}'
         ],
         'panel' => [
-            'type' => GridView::TYPE_DEFAULT
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Accounts Receivable'
         ],
         'showPageSummary' => true,
         'columns' => [
