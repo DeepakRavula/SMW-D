@@ -676,6 +676,10 @@ class LessonController extends BaseController
         }
         if (!$model->courseId) {
             $message = "Future lesson's teacher have been changed successfully";
+            foreach ($model->enrolmentIds as $enrolmentId){
+                $enrolment = Enrolment::findOne($enrolmentId);
+                $enrolment->course->updateDates();
+            }
             $link = $this->redirect(['enrolment/index']);
         } else if ($courseModel->program->isPrivate()) {
             if ($model->rescheduleBeginDate) {
