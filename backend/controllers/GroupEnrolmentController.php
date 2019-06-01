@@ -13,6 +13,7 @@ use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\discount\EnrolmentDiscount;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -30,7 +31,7 @@ class GroupEnrolmentController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'edit-discount'
+                    'edit-discount', 'edit-end-date'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -43,7 +44,7 @@ class GroupEnrolmentController extends BaseController
                     [
                         'allow' => true,
                         'actions' => [
-                            'edit-discount'
+                            'edit-discount', 'edit-end-date'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -93,5 +94,32 @@ class GroupEnrolmentController extends BaseController
             ];
         }
         return $response;
+    }
+    public function actionEditEndDate($id) {
+        $model = Enrolment::findOne($id);
+        if ($model->course->program->isGroup() && $model->canDeleted()) {
+            $lessons = Lesson::find()
+                ->andWhere(['lesson.courseId' => $model->courseId])
+                ->enrolment($id)
+                ->isConfirmed()
+                ->notCanceled()
+                ->all();
+            $message = null;
+            $model->revertGroupLessonsCredit($lessons);
+            $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
+            $model->deleteWithOutTransactionalData();
+            $model->setStatus();
+            $response = [
+                'status' => true,
+                'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
+                'message' => $message
+            ];
+        } else {
+            $response = [
+                'status' => false
+            ];
+        }
+        return $response;
+
     }
 }

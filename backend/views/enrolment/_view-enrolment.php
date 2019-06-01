@@ -142,6 +142,8 @@ Modal::begin([
     });
 
     $(document).on('click', '.edit-enrolment-enddate', function() {
+        var isPrivate = '<?= $model->course->isPrivate()?>';
+        if (isPrivate) {
         $.ajax({
             url: '<?= Url::to(['enrolment/edit-end-date', 'id' => $model->id]); ?>',
             type: 'get',
@@ -155,6 +157,21 @@ Modal::begin([
                 }
             }
         });
+        } else {
+            $.ajax({
+            url: '<?= Url::to(['group-enrolment/edit-end-date', 'id' => $model->id]); ?>',
+            type: 'get',
+            dataType: "json",
+            success: function(response) {
+                if (response.status) {
+                    $('#popup-modal').modal('show');
+                    $('#modal-content').html(response.data);
+                } else {
+                    $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        }
         return false;
     });
 

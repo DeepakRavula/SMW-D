@@ -128,6 +128,17 @@ trait Invoiceable
         return true;
     }
 
+    public function revertGroupLessonsCredit($lessons)
+    {
+        foreach ($lessons as $lesson) {
+            if (!$lesson->hasInvoice()) {
+                $lesson->cancel();
+                $lesson->delete();
+            }
+        }
+        return true;
+    }
+
     public function createInvoice()
     {
         $invoice = new Invoice();
