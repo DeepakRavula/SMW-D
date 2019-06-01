@@ -31,7 +31,7 @@ use kartik\grid\GridView;
         'toolbar' =>  [
             'content' =>
                     Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-box-tool']),
+                    ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}'
         ],
