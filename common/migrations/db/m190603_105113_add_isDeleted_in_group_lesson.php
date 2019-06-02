@@ -23,17 +23,16 @@ class m190603_105113_add_isDeleted_in_group_lesson extends Migration
 
         $this->addColumn(
             'enrolment',
-            'endDate',
+            'endDateTime',
             $this->timestamp()->notNull()->after('isDeleted')
         );
 
         $enrolments = Enrolment::find()->all();
         foreach ($enrolments as $enrolment) {
             if ($enrolment->course) {
-            $enrolment->updateAttributes(['endDate' => Carbon::parse($enrolment->course->endDate)->format('Y-m-d')]);
+                $enrolment->updateAttributes(['endDateTime' => Carbon::parse($enrolment->course->endDate)->format('Y-m-d H:i:s')]);
             }
         }
-
     }
 
     /**
