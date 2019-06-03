@@ -77,7 +77,7 @@ use common\models\User;
         var cols = "";
         var totalReportValue= '<?= $customerBalance ?>';
         colSpanValue=6;
-        cols += '<td colspan='+colSpanValue+' class="text-right">'+totalReportValue+'</td>';   
+        cols += '<td colspan='+colSpanValue+' class="text-right dollar">'+totalReportValue+'</td>';   
         newRow.append(cols);
         newSummaryContainer.append(newRow);
         $("table.table-credits-available-account-receviable-report").append(newSummaryContainer);
