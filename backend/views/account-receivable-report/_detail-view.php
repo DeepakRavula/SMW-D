@@ -1,5 +1,5 @@
 <?php 
-$this->title = $model->publicIdentity;
+$this->title = $model->publicIdentity . '/ Account';
 if (!$isPrintView) {
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
