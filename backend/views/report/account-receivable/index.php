@@ -8,7 +8,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
+$this->title = 'Account Receivable';
 ?>
 <?php echo $this->render('account-receivable', ['dataProvider' => $dataProvider,]); ?>
 

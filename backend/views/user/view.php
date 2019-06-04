@@ -61,7 +61,7 @@ foreach ($roleNames as $name => $description) {
     <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_AQUA,
-                      'number'=> round($model->getLessonsDue($model->id), 2),
+                      'number'=> Yii::$app->formatter->asCurrency(round($model->getLessonsDue($model->id), 2)),
                       'text'=> 'LESSONS DUE',
                       'icon'=> 'fa fa-dollar',
                   ])?>
@@ -69,7 +69,7 @@ foreach ($roleNames as $name => $description) {
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_RED,
-                      'number'=> round($model->getInvoiceOwingAmountTotal($model->id), 2),
+                      'number'=> Yii::$app->formatter->asCurrency(round($model->getInvoiceOwingAmountTotal($model->id), 2)),
                       'text'=> 'OUTSTANDING INVOICE',
                       'icon'=> 'fa fa-dollar',
                   ])?>
@@ -77,7 +77,7 @@ foreach ($roleNames as $name => $description) {
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_GREEN,
-                      'number'=> round($model->getTotalCredits($model->id), 2),
+                      'number'=> Yii::$app->formatter->asCurrency(round($model->getTotalCredits($model->id), 2)),
                       'text'=> 'CREDITS',
                       'icon'=> 'fa fa-dollar',
                   ])?>
@@ -85,7 +85,7 @@ foreach ($roleNames as $name => $description) {
 <div class="col-md-3">  
 <?= LteInfoBox::widget([
                       'bgIconColor'=> LteConst::COLOR_ORANGE,
-                      'number'=> round(($model->getLessonsDue($model->id) + $model->getInvoiceOwingAmountTotal($model->id)) - $model->getTotalCredits($model->id), 2),
+                      'number'=> Yii::$app->formatter->asCurrency(round(($model->getLessonsDue($model->id) + $model->getInvoiceOwingAmountTotal($model->id)) - $model->getTotalCredits($model->id), 2)),
                       'text'=> 'BALANCE',
                       'icon'=> 'fa fa-dollar',
                   ])?>
