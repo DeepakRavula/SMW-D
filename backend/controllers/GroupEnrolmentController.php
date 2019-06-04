@@ -14,7 +14,7 @@ use common\models\Enrolment;
 use common\models\discount\EnrolmentDiscount;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
-
+use Carbon\Carbon;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -96,30 +96,92 @@ class GroupEnrolmentController extends BaseController
         return $response;
     }
     public function actionEditEndDate($id) {
+
         $model = Enrolment::findOne($id);
         if ($model->course->program->isGroup() && $model->canDeleted()) {
-            $lessons = Lesson::find()
-                ->andWhere(['lesson.courseId' => $model->courseId])
-                ->enrolment($id)
-                ->isConfirmed()
-                ->notCanceled()
-                ->all();
-            $message = null;
-            $model->revertGroupLessonsCredit($lessons);
-            $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
-            $model->deleteWithOutTransactionalData();
-            $model->setStatus();
+            $changedEndDate = Yii::$app->request->get('endDate');
+            $lastLesson = $model->lastRootLesson;
+            if (!$lastLesson) {
+                return [
+                    'status' => false,
+                    'message' => 'There are no lessons in the enrolment so end date cannnot be adjusted.',
+                ];
+            }
+            $lastLessonDate = Carbon::parse($lastLesson->date);
+            $action = null;
+            $dateRange = null;
+            $previewDataProvider = null;
+            if ($changedEndDate) {
+                $date = Carbon::parse($changedEndDate);
+                $objects = ['Lessons'];
+                $results = [];
+                if ($lastLessonDate > $date) {
+                    $dateRange = $date->format('M d, Y') . ' - ' . $lastLessonDate->format('M d, Y');
+                    $action = 'shrink';
+                    foreach ($objects as $value) {
+                        $results[] = [
+                            'objects' => $value,
+                            'action' => 'will be deleted',
+                            'date_range' => 'within ' . $dateRange
+                        ]; 
+                    }
+                } else if ($lastLessonDate < $date) {
+                    $dateRange = $lastLessonDate->format('M d, Y') . ' - ' . $date->format('M d, Y');
+                    $action = 'extend';
+                    foreach ($objects as $value) {
+                        $results[] = [
+                            'objects' => $value,
+                            'action' => 'will be created',
+                            'date_range' => 'within ' . $dateRange
+                        ]; 
+                    }
+                }
+                $previewDataProvider = new ArrayDataProvider([
+                    'allModels' => $results,
+                    'sort' => [
+                        'attributes' => ['objects', 'action', 'date_range'],
+                    ],
+                ]);
+            }
+            $post = Yii::$app->request->post();
+            $course = $model->course;
+            $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
+            $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
+           
+                $post = Yii::$app->request->post();
+                if ($post) {
+                $lessons = GroupLesson::find()
+                    ->andWhere(['group_lesson.enrolmentId' => $model->id])
+                    ->all();
+                $message = null;
+                $model->revertGroupLessonsCredit($lessons);
+                $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
+                $model->setStatus();
+                $response = [
+                    'status' => true,
+                ];
+            } else {
+            $data = $this->renderAjax('_form-schedule', [
+                'model' => $model,
+                'action' => $action,
+                'dateRange' => $dateRange,
+                'course' => $model->course,
+                'previewDataProvider' => $previewDataProvider
+            ]);
             $response = [
                 'status' => true,
-                'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
-                'message' => $message
+                'data' => $data,
             ];
-        } else {
-            $response = [
-                'status' => false
-            ];
+            }
         }
+     else {
+            $errors = ActiveForm::validate($course);
+            $response = [
+                'error' => end($errors),
+                'status' => false,
+            ];
+    }
         return $response;
-
+        
     }
 }

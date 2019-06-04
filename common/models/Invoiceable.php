@@ -130,10 +130,9 @@ trait Invoiceable
 
     public function revertGroupLessonsCredit($lessons)
     {
-        foreach ($lessons as $lesson) {
-            if (!$lesson->hasInvoice()) {
-                $lesson->cancel();
-                $lesson->delete();
+        foreach ($lessons as $groupLesson) {
+            if (!$groupLesson->lesson->hasInvoice()) {
+               $groupLesson->delete();
             }
         }
         return true;

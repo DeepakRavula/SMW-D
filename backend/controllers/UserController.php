@@ -831,7 +831,8 @@ class UserController extends BaseController
                 ->andWhere(['invoiced_lesson.id' => null])
                 ->andWhere(['>', 'group_lesson.balance', 0.00])
                 ->orderBy(['group_lesson.dueDate' => SORT_ASC])
-                ->dueLessons();
+                ->dueLessons()
+                ->notDeleted();
         return new ActiveDataProvider([
             'query' => $lessonQuery,
             'pagination' => false,

@@ -46,4 +46,9 @@ class GroupLessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andFilterWhere(['enrolmentId' => $enrolmentId]);
     }
+
+    public function notDeleted()
+    {
+        return $this->andWhere(['group_lesson.isDeleted' => false]);
+    }
 }

@@ -126,7 +126,10 @@ class ViewAction extends Action
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->groupLessons()
-                ->notCompleted();
+                ->notCompleted()
+                ->joinWith(['groupLesson' => function ($query) {
+                    $query->notDeleted();
+                }]);
 
         return new ActiveDataProvider([
                 'query' => $lessons,

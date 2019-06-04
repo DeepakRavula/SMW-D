@@ -144,7 +144,8 @@ class EnrolmentController extends BaseController
                 ])->limit(12);
         } else {
             $query->joinWith(['groupLesson' => function ($query) use ($id) {
-                $query->enrolment($id);
+                $query->enrolment($id)
+                ->notDeleted();
             }])
                 ->orderBy([
                 'group_lesson.dueDate' => SORT_ASC,
