@@ -29,11 +29,15 @@ use kartik\grid\GridView;
         'summary' => false,
         'emptyText' => false,
         'toolbar' =>  [
+            'content' =>
+                    Html::a('<i class="fa fa-print"></i>', '#', 
+                    ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}'
         ],
         'panel' => [
-            'type' => GridView::TYPE_DEFAULT
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Accounts Receivable'
         ],
         'showPageSummary' => true,
         'columns' => [
@@ -45,44 +49,48 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'OutStanding Invoices',
+                'format' => 'currency',
                 'value' => function ($data) {
                     return  $data->getInvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2), 2) : '0.00';
                 },
                 'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right dollar'],
+                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
                 'label' => 'Pre-Paid Lessons',
+                'format' => 'currency',
                 'value' => function ($data) {
                     return  $data->getPrePaidLessons($data->id) ? Yii::$app->formatter->asDecimal(round($data->getPrePaidLessons($data->id), 2), 2) : '0.00';
                 },
                 'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right dollar',],
+                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right',],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
                 'label' => 'Unused Credits',
+                'format' => 'currency',
                 'value' => function ($data) {
                     return  $data->getTotalCredits($data->id) ? Yii::$app->formatter->asDecimal(round($data->getTotalCredits($data->id), 2), 2) : '0.00';
                 },
                 'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right dollar',],
+                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right',],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
                 'label' => 'Balance',
+                'format' => 'currency',
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2) - (round($data->getPrePaidLessons($data->id), 2) + round($data->getTotalCredits($data->id), 2)), 2);
                 },
                 'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right dollar'],
+                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
