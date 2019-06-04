@@ -96,8 +96,8 @@ class GroupEnrolmentController extends BaseController
         return $response;
     }
     public function actionEditEndDate($id) {
-
         $model = Enrolment::findOne($id);
+        $course = $model->course;
         if ($model->course->program->isGroup() && $model->canDeleted()) {
             $changedEndDate = Yii::$app->request->get('endDate');
             $lastLesson = $model->lastRootLesson;
@@ -125,17 +125,7 @@ class GroupEnrolmentController extends BaseController
                             'date_range' => 'within ' . $dateRange
                         ]; 
                     }
-                } else if ($lastLessonDate < $date) {
-                    $dateRange = $lastLessonDate->format('M d, Y') . ' - ' . $date->format('M d, Y');
-                    $action = 'extend';
-                    foreach ($objects as $value) {
-                        $results[] = [
-                            'objects' => $value,
-                            'action' => 'will be created',
-                            'date_range' => 'within ' . $dateRange
-                        ]; 
-                    }
-                }
+                } 
                 $previewDataProvider = new ArrayDataProvider([
                     'allModels' => $results,
                     'sort' => [
@@ -144,14 +134,18 @@ class GroupEnrolmentController extends BaseController
                 ]);
             }
             $post = Yii::$app->request->post();
-            $course = $model->course;
             $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
             $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
            
                 $post = Yii::$app->request->post();
                 if ($post) {
+                $course->load($post);
+                $courseEndDate = $course->endDate;
                 $lessons = GroupLesson::find()
                     ->andWhere(['group_lesson.enrolmentId' => $model->id])
+                    ->joinWith(['lesson' => function ($query) use($courseEndDate) { 
+                        $query->andWhere(['>', 'lesson.date', Carbon::parse($courseEndDate)->format('Y-m-d')]);
+                    }])
                     ->all();
                 $message = null;
                 $model->revertGroupLessonsCredit($lessons);
