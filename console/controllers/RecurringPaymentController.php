@@ -45,7 +45,6 @@ class RecurringPaymentController extends Controller
                                 ->joinWith(['customer' =>function ($query) { 
                                     $query->notDeleted();
                                 }])
-                                ->andWhere(['customer_recurring_payment.id' => 390])
                                 ->andWhere(['<=', 'DATE(customer_recurring_payment.startDate)', $currentDate])
                                 ->all();
         $count = count($recurringPayments);                        
