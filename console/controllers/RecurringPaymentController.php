@@ -114,5 +114,93 @@ class RecurringPaymentController extends Controller
     }
         return true;
     }
+
+    public function actionMissingRecurringPayment() {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationIds = [];
+        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
+        foreach ($locations as $location) {
+            $locationIds[] = $location->id;
+        }
+        $currentDate = (new \DateTime())->format('Y-m-d');
+        $recurringPayments = CustomerRecurringPayment::find()
+                                ->notDeleted()
+                                ->isRecurringPaymentEnabled()
+                                ->andWhere(['>', 'amount' ,0.00])
+                                ->andWhere(['<', 'DATE(nextEntryDay)', $currentDate])
+                                ->andWhere(['>=', 'DATE(nextEntryDay)', $currentDate])
+                                ->joinWith(['customer' =>function ($query) { 
+                                    $query->notDeleted();
+                                }])
+                                ->andWhere(['<=', 'DATE(customer_recurring_payment.startDate)', $currentDate])
+                                ->all();
+        $count = count($recurringPayments);                        
+        Console::startProgress(0, $count, 'Processing Recurring Payments.....');                        
+        foreach ($recurringPayments as $recurringPayment) {
+            $frequencyDays = $recurringPayment->paymentFrequencyId * 30;
+            $startDate = Carbon::parse($currentDate)->modify('-'.$frequencyDays.'days')->format('Y-m-d');
+            $endDate = Carbon::parse($currentDate)->format('Y-m-d');
+            Console::output("processing for " . $recurringPayment->customer->publicIdentity, Console::FG_GREEN, Console::BOLD);
+            $previousRecordedPayment = RecurringPayment::find()
+                                        ->andWhere(['customerRecurringPaymentId' => $recurringPayment->id])
+                                        ->between($startDate,$endDate)
+                                        ->all();
+            if (!$previousRecordedPayment) {
+            $payment = new Payment();
+            $payment->amount = $recurringPayment->amount;
+            $date = Carbon::parse($recurringPayment->nextPaymentDate())->format('Y-m-d');
+            $payment->date = $date;
+            $payment->user_id = $recurringPayment->customerId;
+            $payment->payment_method_id = $recurringPayment->paymentMethodId;
+            $payment->save();
+            $recurringPaymentModel = new RecurringPayment();
+            $recurringPaymentModel->paymentId = $payment->id;
+            $recurringPaymentModel->customerRecurringPaymentId = $recurringPayment->id;
+            $recurringPaymentModel->date = Carbon::parse($currentDate)->format('Y-m-d');
+            $recurringPaymentModel->save();
+            $customerRecurringPaymentModel = CustomerRecurringPayment::findOne($recurringPayment->id);
+            $customerRecurringPaymentModel->nextEntryDay = Carbon::parse($customerRecurringPaymentModel->nextEntryDay)->addMonthsNoOverflow($customerRecurringPaymentModel->paymentFrequencyId)->format('Y-m-d');
+            $customerRecurringPaymentModel->save();
+            $recurringPaymentEnrolments = $recurringPayment->enrolments;
+            $paymentAmount = $payment->amount;
+            foreach ($recurringPaymentEnrolments as $enrolment) {
+                $invoicedLessons = Lesson::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled()
+                    ->enrolment($enrolment->id)
+                    ->invoiced();
+                $query = Lesson::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled()
+                    ->dueUntil($date)
+                    ->enrolment($enrolment->id)
+                    ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+                    ->andWhere(['invoiced_lesson.id' => null])
+                    ->orderBy(['lesson.dueDate' => SORT_ASC]);
+                $lessonsToPay = $query->all();
+                foreach ($lessonsToPay as $lesson) {
+                    if ($paymentAmount > 0) {
+                    $lessonPayment = new LessonPayment();
+                    $lessonPayment->enrolmentId = $enrolment->id;
+                    $lessonPayment->paymentId = $payment->id;
+                    $lessonPayment->lessonId = $lesson->id;
+                    if ($paymentAmount < round($lesson->getOwingAmount($enrolment->id), 2) ) {
+                        $lessonPayment->amount = $paymentAmount;
+                    } else {
+                        $lessonPayment->amount = round($lesson->getOwingAmount($enrolment->id), 2);
+                    }
+                    $paymentAmount = $paymentAmount - $lessonPayment->amount;
+                    $lessonPayment->save();
+                  
+                }
+            }
+            }
+        }
+    }
+        return true;
+    }
 }
 
