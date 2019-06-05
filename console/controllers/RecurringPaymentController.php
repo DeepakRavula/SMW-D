@@ -125,10 +125,10 @@ class RecurringPaymentController extends Controller
         $currentDate = (new \DateTime())->format('Y-m-d');
         $recurringPayments = CustomerRecurringPayment::find()
                                 ->notDeleted()
+                                ->andWhere(['nextEntryDay' => Carbon::parse($currentDate)->format('Y-m-d')])
+                                ->andWhere(['>=', 'DATE(customer_recurring_payment.expiryDate)', $currentDate])
                                 ->isRecurringPaymentEnabled()
                                 ->andWhere(['>', 'amount' ,0.00])
-                                ->andWhere(['<', 'DATE(nextEntryDay)', $currentDate])
-                                ->andWhere(['>=', 'DATE(nextEntryDay)', $currentDate])
                                 ->joinWith(['customer' =>function ($query) { 
                                     $query->notDeleted();
                                 }])
@@ -137,8 +137,7 @@ class RecurringPaymentController extends Controller
         $count = count($recurringPayments);                        
         Console::startProgress(0, $count, 'Processing Recurring Payments.....');                        
         foreach ($recurringPayments as $recurringPayment) {
-            $frequencyDays = $recurringPayment->paymentFrequencyId * 30;
-            $startDate = Carbon::parse($currentDate)->modify('-'.$frequencyDays.'days')->format('Y-m-d');
+            $startDate = Carbon::parse($currentDate)->subMonthsNoOverflow($recurringPayment->paymentFrequencyId-1)->format('Y-m-1');
             $endDate = Carbon::parse($currentDate)->format('Y-m-d');
             Console::output("processing for " . $recurringPayment->customer->publicIdentity, Console::FG_GREEN, Console::BOLD);
             $previousRecordedPayment = RecurringPayment::find()
