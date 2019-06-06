@@ -30,11 +30,6 @@ class RecurringPaymentController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $locationIds = [];
-        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
-        foreach ($locations as $location) {
-            $locationIds[] = $location->id;
-        }
         $currentDate = (new \DateTime())->format('Y-m-d');
         $recurringPayments = CustomerRecurringPayment::find()
                                 ->notDeleted()
@@ -117,28 +112,26 @@ class RecurringPaymentController extends Controller
     public function actionMissingRecurringPayment() {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $locationIds = [];
-        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
-        foreach ($locations as $location) {
-            $locationIds[] = $location->id;
-        }
-        $currentDate = (new \DateTime())->format('Y-m-d');
+      
+        $currentDate = Carbon::now();
         $recurringPayments = CustomerRecurringPayment::find()
                                 ->notDeleted()
-                                ->andWhere(['nextEntryDay' => Carbon::parse($currentDate)->format('Y-m-d')])
-                                ->andWhere(['>=', 'DATE(customer_recurring_payment.expiryDate)', $currentDate])
+                                ->andWhere(['>=', 'DATE(customer_recurring_payment.nextEntryDay)', $currentDate->format('Y-m-1')])
+                                ->andWhere(['<=', 'DATE(customer_recurring_payment.nextEntryDay)', $currentDate->format('Y-m-d')])
+                                ->andWhere(['>=', 'DATE(customer_recurring_payment.expiryDate)', $currentDate->format('Y-m-d')])
                                 ->isRecurringPaymentEnabled()
-                                ->andWhere(['>', 'amount' ,0.00])
+                                ->andWhere(['>', 'amout' ,0.00])
                                 ->joinWith(['customer' =>function ($query) { 
-                                    $query->notDeleted();
+                                    $query->notDeleted()
+                                   ->location([4,9,14,15,16,17,18,19,20,21]);
                                 }])
-                                ->andWhere(['<=', 'DATE(customer_recurring_payment.startDate)', $currentDate])
+                                ->andWhere(['<=', 'DATE(customer_recurring_payment.startDate)', $currentDate->format('Y-m-d')])
                                 ->all();
         $count = count($recurringPayments);                        
         Console::startProgress(0, $count, 'Processing Recurring Payments.....');                        
         foreach ($recurringPayments as $recurringPayment) {
-            $startDate = Carbon::parse($currentDate)->subMonthsNoOverflow($recurringPayment->paymentFrequencyId-1)->format('Y-m-1');
-            $endDate = Carbon::parse($currentDate)->format('Y-m-d');
+            $startDate = $currentDate->subMonthsNoOverflow($recurringPayment->paymentFrequencyId-1)->format('Y-m-1');
+            $endDate = $currentDate->format('Y-m-d');
             Console::output("processing for " . $recurringPayment->customer->publicIdentity, Console::FG_GREEN, Console::BOLD);
             $previousRecordedPayment = RecurringPayment::find()
                                         ->andWhere(['customerRecurringPaymentId' => $recurringPayment->id])
@@ -155,7 +148,7 @@ class RecurringPaymentController extends Controller
             $recurringPaymentModel = new RecurringPayment();
             $recurringPaymentModel->paymentId = $payment->id;
             $recurringPaymentModel->customerRecurringPaymentId = $recurringPayment->id;
-            $recurringPaymentModel->date = Carbon::parse($currentDate)->format('Y-m-d');
+            $recurringPaymentModel->date =$currentDate->format('Y-m-d');
             $recurringPaymentModel->save();
             $customerRecurringPaymentModel = CustomerRecurringPayment::findOne($recurringPayment->id);
             $customerRecurringPaymentModel->nextEntryDay = Carbon::parse($customerRecurringPaymentModel->nextEntryDay)->addMonthsNoOverflow($customerRecurringPaymentModel->paymentFrequencyId)->format('Y-m-d');
