@@ -141,6 +141,7 @@ class GroupEnrolmentController extends BaseController
                 if ($post) {
                 $course->load($post);
                 $courseEndDate = $course->endDate;
+                $model->endDateTime = $courseEndDate;
                 $lessons = GroupLesson::find()
                     ->andWhere(['group_lesson.enrolmentId' => $model->id])
                     ->joinWith(['lesson' => function ($query) use($courseEndDate) { 
@@ -149,6 +150,7 @@ class GroupEnrolmentController extends BaseController
                     ->all();
                 $message = null;
                 $model->revertGroupLessonsCredit($lessons);
+                $model->save();
                 $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
                 $model->setStatus();
                 $response = [
