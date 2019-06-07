@@ -99,7 +99,8 @@ class Enrolment extends \yii\db\ActiveRecord
             [['paymentFrequencyId', 'isDeleted', 'isConfirmed', 'createdAt',
                 'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt', 'createdByUserId', 
                 'updatedByUserId', 'endDateTime'], 'safe'],
-            ['courseId', 'validateOnEdit', 'on' => self::SCENARIO_EDIT]
+            ['courseId', 'validateOnEdit', 'on' => self::SCENARIO_EDIT],
+            ['endDateTime', 'validateOnAdjustment', 'on' => self::SCENARIO_EDIT]
         ];
     }
 
@@ -199,6 +200,15 @@ class Enrolment extends \yii\db\ActiveRecord
                 $this->addError($attribute, "You can't edit discounts.");
             }
         }
+    }
+
+    public function validateOnAdjustment($attribute)
+    {
+        if ($this->course->program->isGroup()) {
+            if(Carbon::parse($this->endDateTime) > Carbon::parse($this->course->endDate)) {
+                $this->addError($attribute, "You can't extend group enrolments");
+        }
+    }
     }
 
     public function getCustomer()

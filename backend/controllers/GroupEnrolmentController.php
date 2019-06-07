@@ -98,7 +98,7 @@ class GroupEnrolmentController extends BaseController
     public function actionEditEndDate($id) {
         $model = Enrolment::findOne($id);
         $course = $model->course;
-        if ($model->course->program->isGroup() && $model->canDeleted()) {
+        if ($model->course->program->isGroup()) {
             $changedEndDate = Yii::$app->request->get('endDate');
             $lastLesson = $model->lastRootLesson;
             if (!$lastLesson) {
@@ -141,7 +141,7 @@ class GroupEnrolmentController extends BaseController
                 if ($post) {
                 $course->load($post);
                 $courseEndDate = $course->endDate;
-                $model->endDateTime = $courseEndDate;
+                $model->endDateTime = Carbon::parse($courseEndDate)->format('Y-m-d');
                 $lessons = GroupLesson::find()
                     ->andWhere(['group_lesson.enrolmentId' => $model->id])
                     ->joinWith(['lesson' => function ($query) use($courseEndDate) { 
