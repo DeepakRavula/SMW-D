@@ -34,7 +34,6 @@ class Enrolment extends \yii\db\ActiveRecord
     public $enrolmentCount;
     public $userName;
     public $applyFullDiscount;
-    public $mariCopeland;
     
     const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const AUTO_RENEWAL_STATE_ENABLED = 'enabled';

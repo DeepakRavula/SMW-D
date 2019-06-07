@@ -533,6 +533,7 @@ class Course extends \yii\db\ActiveRecord
             'dueDate' => $day->format('Y-m-d')
         ]);
         $lesson->save();
+        $enrolments = $lesson->enrolments;
     }
 
     public function createExtraLessonEnrolment()
