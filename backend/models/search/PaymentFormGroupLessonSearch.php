@@ -66,7 +66,8 @@ class PaymentFormGroupLessonSearch extends Lesson
             $fromDueDate = new \DateTime($this->fromDueDate);
             $toDueDate = new \DateTime($this->toDueDate);
         }
-        $lessonsQuery = GroupLesson::find();
+        $lessonsQuery = GroupLesson::find()
+                        ->notDeleted();
         
         if (isset($this->lessonIds)) {
             $lessonsQuery->andWhere(['group_lesson.lessonId' => $this->lessonIds]);

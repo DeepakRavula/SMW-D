@@ -22,7 +22,7 @@ use yii\bootstrap\Modal;
             <li><a id="substitute-teacher-group-lesson" href="#">Substitute Teacher</a></li>
         </ul>
     </div>
-     <a href="#"  title="Add" id="new-lesson" class="add-new-lesson"><i class="fa fa-plus"></i></a>
+     <!-- <a href="#"  title="Add" id="new-lesson" class="add-new-lesson"><i class="fa fa-plus"></i></a> -->
 </div>
         
     </div>

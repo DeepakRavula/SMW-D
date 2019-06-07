@@ -143,8 +143,12 @@ $this->params['action-button'] = $this->render('_action-button', [
         onEditableSuccess: function () {
             var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
             $.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
+            if ($('#enrolment-payment-frequency').length > 0) {
             $.pjax.reload({url: url, container: "#enrolment-payment-frequency", replace: false, async: false, timeout: 4000});
+            }
+            if ($('#enrolment-pfi').length > 0) {
             $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
+            }
             $.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
             $.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
             $.pjax.reload({url: url, container: "#enrolment-lesson-index", replace: false, async: false, timeout: 4000});
