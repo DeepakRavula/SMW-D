@@ -97,6 +97,7 @@ class GroupEnrolmentController extends BaseController
     }
     public function actionEditEndDate($id) {
         $model = Enrolment::findOne($id);
+        $model->setScenario(Enrolment::SCENARIO_GROUP_ENROLMENT_ENDDATE_ADJUSTMENT);
         $course = $model->course;
         if ($model->course->program->isGroup()) {
             $changedEndDate = Yii::$app->request->get('endDate');
@@ -142,6 +143,7 @@ class GroupEnrolmentController extends BaseController
                 $course->load($post);
                 $courseEndDate = $course->endDate;
                 $model->endDateTime = Carbon::parse($courseEndDate)->format('Y-m-d');
+                if ($model->validate()) {
                 $lessons = GroupLesson::find()
                     ->andWhere(['group_lesson.enrolmentId' => $model->id])
                     ->joinWith(['lesson' => function ($query) use($courseEndDate) { 
@@ -156,7 +158,14 @@ class GroupEnrolmentController extends BaseController
                 $response = [
                     'status' => true,
                 ];
-            } else {
+            }  else {
+                $errors = ActiveForm::validate($model);
+                $response = [
+                    'error' => end($errors),
+                    'status' => false,
+                ];
+        }
+        }else {
             $data = $this->renderAjax('_form-schedule', [
                 'model' => $model,
                 'action' => $action,

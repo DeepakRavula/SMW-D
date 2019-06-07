@@ -49,6 +49,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const CONSOLE_USER_ID  = 727;
 
     const SCENARIO_EDIT = 'scenario-edit';
+    const SCENARIO_GROUP_ENROLMENT_ENDDATE_ADJUSTMENT = 'scenario-group-enrolment-enddate-adjustment';
     /**
      * {@inheritdoc}
      */
@@ -100,7 +101,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt', 'createdByUserId', 
                 'updatedByUserId', 'endDateTime'], 'safe'],
             ['courseId', 'validateOnEdit', 'on' => self::SCENARIO_EDIT],
-            ['endDateTime', 'validateOnAdjustment', 'on' => self::SCENARIO_EDIT]
+            ['endDateTime', 'validateOnAdjustment', 'on' => self::SCENARIO_GROUP_ENROLMENT_ENDDATE_ADJUSTMENT]
         ];
     }
 
@@ -205,7 +206,8 @@ class Enrolment extends \yii\db\ActiveRecord
     public function validateOnAdjustment($attribute)
     {
         if ($this->course->program->isGroup()) {
-            if(Carbon::parse($this->endDateTime) > Carbon::parse($this->course->endDate)) {
+            $course = Course::findOne($this->course->id);
+            if(Carbon::parse($this->endDateTime) > Carbon::parse($course->endDate)) {
                 $this->addError($attribute, "You can't extend group enrolments");
         }
     }
