@@ -46,7 +46,7 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return  $data->userProfile ? $data->userProfile->fullName : null;
                 },
-                'headerOptions' => ['style' => 'font-size:20px'],
+                'headerOptions' => ['class' => 'f-s-20'],
             ],
             [
                 'label' => 'OutStanding Invoices',
@@ -54,7 +54,7 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return  $data->getInvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2), 2) : '0.00';
                 },
-                'headerOptions' => ['class' => 'text-right', 'style' => 'font-size:20px'],
+                'headerOptions' => ['class' => 'text-right f-s-20'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
@@ -66,7 +66,7 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return  $data->getPrePaidLessons($data->id) ? Yii::$app->formatter->asDecimal(round($data->getPrePaidLessons($data->id), 2), 2) : '0.00';
                 },
-                'headerOptions' => ['class' => 'text-right', 'style' => 'font-size:20px'],
+                'headerOptions' => ['class' => 'text-right f-s-20'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right',],
                 'hAlign' => 'right',
                 'pageSummary' => true,
@@ -78,7 +78,7 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return  $data->getTotalCredits($data->id) ? Yii::$app->formatter->asDecimal(round($data->getTotalCredits($data->id), 2), 2) : '0.00';
                 },
-                'headerOptions' => ['class' => 'text-right', 'style' => 'font-size:20px'],
+                'headerOptions' => ['class' => 'text-right f-s-20'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right',],
                 'hAlign' => 'right',
                 'pageSummary' => true,
@@ -90,7 +90,7 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2) - (round($data->getPrePaidLessons($data->id), 2) + round($data->getTotalCredits($data->id), 2)), 2);
                 },
-                'headerOptions' => ['class' => 'text-right', 'style' => 'font-size:20px'],
+                'headerOptions' => ['class' => 'text-right f-s-20'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
