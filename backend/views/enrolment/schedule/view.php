@@ -35,7 +35,11 @@ LteBox::begin([
 	<dt>Start Date</dt>
 	<dd><?= Yii::$app->formatter->asDate($model->course->startDate);?></dd>
 	<dt>End Date</dt>
+	<?php if($model->course->program->isGroup()) : ?>
+	<dd><?= Yii::$app->formatter->asDate($model->endDateTime);?></dd>
+	<?php else : ?>
 	<dd><?= Yii::$app->formatter->asDate($model->course->endDate);?></dd>
+	<?php endif;?>
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>

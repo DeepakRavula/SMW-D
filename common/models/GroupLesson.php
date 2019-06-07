@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\query\GroupLessonQuery;
@@ -42,7 +43,7 @@ class GroupLesson extends \yii\db\ActiveRecord
             [['lessonId', 'enrolmentId'], 'required'],
             [['lessonId', 'enrolmentId', 'paidStatus'], 'integer'],
             [['total', 'balance'], 'number'],
-            [['dueDate', 'createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId'], 'safe'],
+            [['dueDate', 'createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -64,6 +65,13 @@ class GroupLesson extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
             [
                 'class' => TimestampBehavior::className(),
                 'createdAtAttribute' => 'createdOn',
@@ -121,6 +129,23 @@ class GroupLesson extends \yii\db\ActiveRecord
         $this->paidStatus = $this->getStatus();
 
         return parent::beforeSave($insert);
+    }
+
+    public function beforeSoftDelete()
+    {  
+        if ($this->lessonPayments) {
+        foreach($this->lessonPayments as $lessonPayment){
+            $lessonPayment->delete();
+        }
+    }
+       
+        return true;
+    }
+
+    public function getLessonPayments()
+    {
+        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'lessonId'],['enrolmentId' => 'enrolmentId'])
+             ->onCondition(['lesson_payment.isDeleted' => false]);
     }
 
     public function getOwingStatus() 

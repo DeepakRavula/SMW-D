@@ -144,7 +144,8 @@ class EnrolmentController extends BaseController
                 ])->limit(12);
         } else {
             $query->joinWith(['groupLesson' => function ($query) use ($id) {
-                $query->enrolment($id);
+                $query->enrolment($id)
+                ->notDeleted();
             }])
                 ->orderBy([
                 'group_lesson.dueDate' => SORT_ASC,
@@ -262,6 +263,7 @@ class EnrolmentController extends BaseController
         $enrolmentModel = Enrolment::findOne($enrolmentId);
         $course = Course::findOne($enrolmentModel->courseId);
         $enrolmentModel->isConfirmed = true;
+        $enrolmentModel->endDateTime = Carbon::parse($course->endDate)->format('Y-m-d');
         if ($course->hasExtraCourse()) {
             foreach ($course->extraCourses as $extraCourse) {
                 $extraCourse->studentId = $enrolmentModel->studentId;
