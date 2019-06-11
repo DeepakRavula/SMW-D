@@ -52,7 +52,7 @@ class RecurringPaymentController extends Controller
                                         ->andWhere(['customerRecurringPaymentId' => $recurringPayment->id])
                                         ->between($startDate,$endDate)
                                         ->all();
-            if (!$previousRecordedPayment) {
+            if (!$previousRecordedPayment && Carbon::parse($recurringPayment->expiryDate) >= Carbon::parse($recurringPayment->nextPaymentDate()) ) {
             $payment = new Payment();
             $payment->amount = $recurringPayment->amount;
             $date = Carbon::parse($recurringPayment->nextPaymentDate())->format('Y-m-d');
