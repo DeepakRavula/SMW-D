@@ -377,10 +377,9 @@ class ScheduleController extends BaseController
                 ]);
             }
 
-            $customerBalance = round(($lesson->student->customer->getLessonsDue($lesson->student->customer->id) + $lesson->student->customer->getInvoiceOwingAmountTotal($lesson->student->customer->id)) - $lesson->student->customer->getTotalCredits($lesson->student->customer->id), 2);
             $events[] = [
                 'lessonId' => $lesson->id,
-                'isOwing' => $lesson->student ? $customerBalance > 0.09 : null,
+                'isOwing' => $lesson->student ? round(($lesson->student->customer->getLessonsDue($lesson->student->customer->id) + $lesson->student->customer->getInvoiceOwingAmountTotal($lesson->student->customer->id)) - $lesson->student->customer->getTotalCredits($lesson->student->customer->id), 2) : null,
                 'resourceId' => $lesson->teacherId,
                 'title' => $title,
                 'start' => $lesson->date,
