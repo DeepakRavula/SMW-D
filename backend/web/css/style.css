@@ -75,6 +75,12 @@ a.desc:after {
 .smw-logo {
 	width : 160px;	
 }
+.wrapper {
+    height: 100%;
+    position: relative;
+    overflow-x: unset;
+    overflow-y: unset;
+}
 .location {
     margin: 9px 10px 0 0;
     border: 0;
