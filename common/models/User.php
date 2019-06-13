@@ -1129,9 +1129,14 @@ class User extends ActiveRecord implements IdentityInterface
                     'invoice.type' => Invoice::TYPE_INVOICE,
                 ])
                 ->andWhere(['>', 'invoice.balance', 0.09])
-                ->notDeleted()
-                ->andWhere(['between', 'invoice.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
-                ->sum("invoice.balance");
+                ->notDeleted();
+                if ($days > 90) {  
+                    $fromDate = $fromDate->modify('- 90 days');     
+                    $invoicesBalanceTotal->andWhere(['>', 'invoice.date', $fromDate->format('Y-m-d')]);
+                } else {
+                    $invoicesBalanceTotal->andWhere(['between', 'invoice.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
+                }
+                $invoicesBalanceTotal->sum("invoice.balance");
                 
         return $invoicesBalanceTotal;
     }
