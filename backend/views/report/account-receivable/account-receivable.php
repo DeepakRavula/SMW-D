@@ -52,7 +52,7 @@ use kartik\grid\GridView;
                 'label' => '0-30',
                 'format' => 'currency',
                 'value' => function ($data) {
-                    return  $data->get30InvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asDecimal(round($data->get30InvoiceOwingAmountTotal($data->id), 2), 2) : '0.00';
+                    return  $data->getRecentInvoicesBalanceTotal(30) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(30), 2), 2) : '0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
@@ -64,7 +64,7 @@ use kartik\grid\GridView;
                 'label' => '31-60',
                 'format' => 'currency',
                 'value' => function ($data) {
-                    return  $data->getInvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2), 2) : '0.00';
+                    return  $data->getRecentInvoicesBalanceTotal(60) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(60), 2), 2) : '0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
@@ -76,19 +76,7 @@ use kartik\grid\GridView;
                 'label' => '61-90',
                 'format' => 'currency',
                 'value' => function ($data) {
-                    return  $data->getInvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2), 2) : '0.00';
-                },
-                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
-                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
-                'hAlign' => 'right',
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
-            ],
-            [
-                'label' => '90+',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  $data->getInvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2), 2) : '0.00';
+                    return  $data->getRecentInvoicesBalanceTotal(90) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(90), 2), 2) : '0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
