@@ -20,6 +20,7 @@ use common\models\log\LogHistory;
 use common\models\log\LogObject;
 use common\models\log\Log;
 use common\models\Payment;
+use Carbon\Carbon;
 
 /**
  * User model.
@@ -1115,6 +1116,29 @@ class User extends ActiveRecord implements IdentityInterface
                 ->sum("invoice.balance");
                 
         return $invoiceOwingAmount;
+    }
+
+    public function getRecentInvoicesBalanceTotal($days)
+    {
+        $fromDate = new \DateTime();
+        $toDate = (new \DateTime());
+        $fromDate = $fromDate->modify('- '.$days.'days'); 
+        $toDate = $toDate->modify('- '.($days - 30).'days');
+        $invoicesBalanceTotal = Invoice::find()
+                ->andWhere([
+                    'invoice.user_id' => $this->id,
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                ])
+                ->andWhere(['>', 'invoice.balance', 0.09])
+                ->notDeleted();
+                if ($days > 90) {       
+                     $invoicesBalanceTotal->andWhere(['<', 'invoice.date', Carbon::now()->modify('- 90 days')->format('Y-m-d')]);
+                } else {
+                    $invoicesBalanceTotal->andWhere(['between', 'invoice.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
+                }
+              $invoicesBalanceTotalSum = $invoicesBalanceTotal->sum("invoice.balance");
+                
+        return $invoicesBalanceTotalSum;
     }
 
     public function getTotalCredits($id) 

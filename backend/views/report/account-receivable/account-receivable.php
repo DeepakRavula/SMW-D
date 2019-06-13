@@ -43,17 +43,66 @@ use kartik\grid\GridView;
         'columns' => [
             [
                 'label' => 'Customer Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'value' => function ($data) {
                     return  $data->userProfile ? $data->userProfile->fullName : null;
                 },
             ],
             [
-                'label' => 'OutStanding Invoices',
+                'label' => '0-30',
+                'format' => 'currency',
+                'value' => function ($data) {
+                    return  $data->getRecentInvoicesBalanceTotal(30) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(30), 2), 2) : '0.00';
+                },
+                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
+                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
+                'hAlign' => 'right',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM
+            ],
+            [
+                'label' => '31-60',
+                'format' => 'currency',
+                'value' => function ($data) {
+                    return  $data->getRecentInvoicesBalanceTotal(60) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(60), 2), 2) : '0.00';
+                },
+                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
+                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
+                'hAlign' => 'right',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM
+            ],
+            [
+                'label' => '61-90',
+                'format' => 'currency',
+                'value' => function ($data) {
+                    return  $data->getRecentInvoicesBalanceTotal(90) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(90), 2), 2) : '0.00';
+                },
+                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
+                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
+                'hAlign' => 'right',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM
+            ],
+            [
+                'label' => '90+',
+                'format' => 'currency',
+                'value' => function ($data) {
+                    return  $data->getRecentInvoicesBalanceTotal(91) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(91), 2), 2) : '0.00';
+                },
+                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
+                'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
+                'hAlign' => 'right',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM
+            ],
+            [
+                'label' => 'Total',
                 'format' => 'currency',
                 'value' => function ($data) {
                     return  $data->getInvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2), 2) : '0.00';
                 },
-                'headerOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
@@ -65,7 +114,7 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return  $data->getPrePaidLessons($data->id) ? Yii::$app->formatter->asDecimal(round($data->getPrePaidLessons($data->id), 2), 2) : '0.00';
                 },
-                'headerOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right',],
                 'hAlign' => 'right',
                 'pageSummary' => true,
@@ -77,7 +126,7 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return  $data->getTotalCredits($data->id) ? Yii::$app->formatter->asDecimal(round($data->getTotalCredits($data->id), 2), 2) : '0.00';
                 },
-                'headerOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right',],
                 'hAlign' => 'right',
                 'pageSummary' => true,
@@ -89,13 +138,23 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2) - (round($data->getPrePaidLessons($data->id), 2) + round($data->getTotalCredits($data->id), 2)), 2);
                 },
-                'headerOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
-        ]
+        ],
+        'beforeHeader'=>[
+            [
+                'columns'=>[
+                    ['content'=>'', 'options'=>['colspan'=>0, 'class'=>'text-center warning']], 
+                    ['content'=>'OutStanding Invoices', 'options'=>['colspan'=>5, 'class'=>'text-center warning']], 
+                    ['content'=>'', 'options'=>['colspan'=>3, 'class'=>'text-center warning']], 
+                ],
+                'options'=>['class'=>'skip-export'] // remove this row from export
+            ]
+        ],
 ]);
 
     ?>
