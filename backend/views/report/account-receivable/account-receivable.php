@@ -88,7 +88,7 @@ use kartik\grid\GridView;
                 'label' => '90+',
                 'format' => 'currency',
                 'value' => function ($data) {
-                    return  $data->getRecentInvoicesBalanceTotal(91) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(90), 2), 2) : '0.00';
+                    return  $data->getRecentInvoicesBalanceTotal(91) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(91), 2), 2) : '0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
