@@ -1117,6 +1117,25 @@ class User extends ActiveRecord implements IdentityInterface
         return $invoiceOwingAmount;
     }
 
+    public function getRecentInvoicesBalanceTotal($days)
+    {
+        $fromDate = new \DateTime();
+        $toDate = (new \DateTime());
+        $fromDate = $fromDate->modify('- '.$days.'days'); 
+        $toDate = $toDate->modify('- '.($days - 30).'days');
+        $invoicesBalanceTotal = Invoice::find()
+                ->andWhere([
+                    'invoice.user_id' => $this->id,
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                ])
+                ->andWhere(['>', 'invoice.balance', 0.09])
+                ->notDeleted()
+                ->andWhere(['between', 'invoice.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+                ->sum("invoice.balance");
+                
+        return $invoicesBalanceTotal;
+    }
+
     public function getTotalCredits($id) 
     {
         $invoiceCredits = Invoice::find()
