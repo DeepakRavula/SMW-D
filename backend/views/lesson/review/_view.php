@@ -45,6 +45,20 @@ $columns = [
         ],
     ],
 ];
+if ($courseModel->program->isGroup()){
+array_push($columns,   [
+    'class' => 'yii\grid\ActionColumn',
+    'template' => '{edit}',
+    'buttons' => [
+        'edit' => function ($url, $model) {
+            return  Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', '#', [
+                'id' => 'delete-button-' . $model->id,
+                'class' => 'review-lesson-delete-button m-l-20'
+            ]);
+        },
+    ],
+]);
+}
 ?>
 	
 <div class="box">

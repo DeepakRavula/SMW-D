@@ -73,7 +73,8 @@ if ($conflictedLessonIdsCount > 0) {
         <?= $this->render('review/_view', [
             'searchModel' => $searchModel,
             'lessonDataProvider' => $lessonDataProvider,
-            'conflicts' => $conflicts
+            'conflicts' => $conflicts,
+            'courseModel' => $courseModel,
         ]); ?>
     </div>
 </div>
@@ -163,6 +164,25 @@ if ($conflictedLessonIdsCount > 0) {
                     $('.modal-save').text('Apply');
                     $('.modal-save').show();
                     $('.modal-save-all').show();
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).off('click', '.review-lesson-delete-button').on('click', '.review-lesson-delete-button', function () {
+        var params = $.param({
+            'id': $(this).parent().parent().data('key'),
+        });
+        $.ajax({
+            url: '<?= Url::to(['group-lesson/delete']); ?>?' + params,
+            type: 'post',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $.pjax.reload({container: "#review-lesson-listing", replace: false, timeout: 4000}); 
                 }
             }
         });

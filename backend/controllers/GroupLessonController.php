@@ -28,7 +28,7 @@ class GroupLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'apply-discount'
+                    'apply-discount', 'delete'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -41,7 +41,7 @@ class GroupLessonController extends BaseController
                     [
                         'allow' => true,
                         'actions' => [
-                            'apply-discount'
+                            'apply-discount', 'delete'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -84,6 +84,19 @@ class GroupLessonController extends BaseController
                 'data' => $data,
             ];
         }
+        return $response;
+    }
+
+    public function actionDelete($id)
+    {
+        $lesson = Lesson::findOne($id);
+        if ($lesson->course->program->isGroup()) {
+            $lesson->delete();
+            $lesson->calcLessonPrice($lesson->course->id);   
+        }
+        $response = [
+            'status' => true,
+        ];
         return $response;
     }
 }
