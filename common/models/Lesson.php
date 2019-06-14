@@ -922,7 +922,9 @@ class Lesson extends \yii\db\ActiveRecord
             }
             $this->course->updateDates();
         }
+        if ($this->customer) {
         $this->customer->updateCustomerBalance();
+        }
         return true;
     }
 
