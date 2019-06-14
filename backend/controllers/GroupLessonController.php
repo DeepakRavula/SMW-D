@@ -92,7 +92,7 @@ class GroupLessonController extends BaseController
         $lesson = Lesson::findOne($id);
         if ($lesson->course->program->isGroup()) {
             $lesson->delete();
-            
+            $lesson->calcLessonPrice($lesson->course->id);   
         }
         $response = [
             'status' => true,
