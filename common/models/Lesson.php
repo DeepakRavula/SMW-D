@@ -1707,8 +1707,10 @@ class Lesson extends \yii\db\ActiveRecord
         $lessons = $lessonsQuery->all();
         $lastLessonPrice = $this->programRate - (round($this->programRate / $lessonsCount, 2) * ($lessonsCount - 1));
         $pricePerLesson = round($this->programRate / $lessonsCount, 2);
-        foreach ($lessons as $lesson => $value){
-            if ($value == $lessonsCount){
+        $i = 0;
+        foreach ($lessons as $lesson){
+            $i++;
+            if ($i === $lessonsCount){
                 $lesson->programRate = $lastLessonPrice;
             } else {
                 $lesson->programRate = $pricePerLesson;
