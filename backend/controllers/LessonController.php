@@ -525,9 +525,6 @@ class LessonController extends BaseController
         $query = Lesson::find()
             ->andWhere(['id' => $lessonIds])
             ->orderBy(['lesson.date' => SORT_ASC]);
-        if (!$searchModel->showAllReviewLessons) {
-            $query->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']]);
-        }
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false
