@@ -76,7 +76,7 @@ echo GridView::widget([
     });
     
     $(document).off('click', '#unavailability-delete-button').on('click', '#unavailability-delete-button', function () {
-        var unavailabilityId = $('#unavailability-list  tbody > tr').data('key');
+        var unavailabilityId = $(this).data('key');
         $.ajax({
             url    : '<?= Url::to(['teacher-unavailability/delete']); ?>?id=' + unavailabilityId,
             type   : 'get',
