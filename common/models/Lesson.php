@@ -1693,31 +1693,26 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return $lessonDate;
     }
-    public function calcLessonPrice($courseId) 
+    public function calcLessonPrice() 
     {
-       $course = Course::findOne($courseId);
+       $course = Course::findOne($this->course->id);
         $rate = $course->courseProgramRate->programRate;
         if ($course->program->isGroup()) {
             $lessonsQuery = Lesson::find()
             ->andWhere(['lesson.courseId' => $course->id])
             ->notDeleted();
-            $lessonsCount = $lessonsQuery->count();
-        $courseRate = $this->courseProgramRate->programRate;
-        $rate = round($courseRate / $lessonsCount, 2);  
+        $lessonsCount = $lessonsQuery->count();
         $lessons = $lessonsQuery->all();
-        $lastLessonPrice = $this->programRate - (round($this->programRate / $lessonsCount, 2) * ($lessonsCount - 1));
-        $pricePerLesson = round($this->programRate / $lessonsCount, 2);
-        $i = 0;
-        foreach ($lessons as $lesson){
-            $i++;
-            if ($i === $lessonsCount){
+        $lastLessonPrice = $rate - (round($rate / $lessonsCount, 2) * ($lessonsCount - 1));
+        $pricePerLesson = round($rate / $lessonsCount, 2);
+        foreach ($lessons as $i => $lesson){
+            if ($i === ($lessonsCount-1)){
                 $lesson->programRate = $lastLessonPrice;
             } else {
                 $lesson->programRate = $pricePerLesson;
             }
             $lesson->save();
-        }   
+        }  
     }
-    
     }
 }

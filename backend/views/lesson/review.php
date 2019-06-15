@@ -124,25 +124,6 @@ if ($conflictedLessonIdsCount > 0) {
             $('#confirm-button').bind('click', false);
         }
     });
-        
-    $(document).on('change', '#lessonsearch-showallreviewlessons', function () {
-        var showAllReviewLessons = $(this).is(":checked");
-        var startDate = '<?= $model->rescheduleBeginDate; ?>';
-        var endDate = '<?= $model->rescheduleEndDate; ?>';
-        if (startDate && endDate) {
-            var params = $.param({
-                'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-                'LessonReview[rescheduleBeginDate]': startDate, 'LessonReview[rescheduleEndDate]': endDate
-            });
-        } else {
-            var params = $.param({
-                'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0)
-            });
-        }
-        var url = "<?php echo Url::to(['lesson/review', 'LessonReview[courseId]' => $courseModel ? $courseModel->id : null, 
-            'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>&" + params;
-        $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
-    });
 
     $(document).on('click', '.review-lesson-edit-button', function () {
         var params = $.param({
