@@ -1693,9 +1693,9 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return $lessonDate;
     }
-    public function calcLessonPrice($courseId) 
+    public function calcLessonPrice() 
     {
-       $course = Course::findOne($courseId);
+       $course = Course::findOne($this->course->id);
         $rate = $course->courseProgramRate->programRate;
         if ($course->program->isGroup()) {
             $lessonsQuery = Lesson::find()
