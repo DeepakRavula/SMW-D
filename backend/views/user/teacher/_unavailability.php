@@ -45,7 +45,7 @@ echo GridView::widget([
 	<?php Modal::end();?>
 <script>
     $(document).on('click', '.add-unavailability, #unavailability-list  tbody > tr', function() {
-        var unavailabilityId = $('#unavailability-list  tbody > tr').data('key');
+        var unavailabilityId = $(this).data('key');
         var teacherId = '<?= $model->id;?>';
         if (unavailabilityId === undefined) {
             var customUrl = '<?= Url::to(['teacher-unavailability/create']); ?>?id=' + teacherId;
