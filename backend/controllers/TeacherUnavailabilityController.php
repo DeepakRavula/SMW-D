@@ -136,12 +136,13 @@ class TeacherUnavailabilityController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-	        $teacher = User::findOne(['id' => $id]);
-
+	    $teacher = User::findOne(['id' => $id]);
         $model->dateRange = (new \DateTime($model->fromDate))->format('M d, Y') . ' - ' . (new \DateTime($model->toDate))->format('M d, Y');
+        $model->fromTime = (new \DateTime($model->fromTime))->format('H:i A');
+        $model->toTime = (new \DateTime($model->toTime))->format('g:i A');
         $data = $this->renderAjax('_form', [
             'model' => $model,
-	    'teacher' => $teacher
+	        'teacher' => $teacher
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return [
