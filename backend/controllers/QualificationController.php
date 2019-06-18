@@ -137,15 +137,24 @@ class QualificationController extends BaseController
         $post = Yii::$app->request->post();
         if ($post) {
             if ($model->load($post) && $model->save()) {
+                $invoicedLessons = Lesson::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled()
+                    ->privateLessons()
+                    ->customer($id)
+                    ->invoiced();
                 $lessons  = Lesson::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->notCanceled()
-                    ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                    ->notExpired()
                     ->andWhere(['lesson.teacherId' => $model->teacher_id])
                     ->joinWith(['program' => function($query) use ($model){
                         $query->andWhere(['program.id' => $model->program_id]);
                     }])
+                    ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+                    ->andWhere(['invoiced_lesson.id' => null])
                     ->all();
                 foreach ($lessons as $lesson) {
                     $lesson->updateAttributes(['teacherRate' => $model->rate]);
