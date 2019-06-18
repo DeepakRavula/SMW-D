@@ -138,7 +138,7 @@ class TeacherUnavailabilityController extends BaseController
         $model = $this->findModel($id);
 	    $teacher = User::findOne(['id' => $id]);
         $model->dateRange = (new \DateTime($model->fromDate))->format('M d, Y') . ' - ' . (new \DateTime($model->toDate))->format('M d, Y');
-        $model->fromTime = (new \DateTime($model->fromTime))->format('H:i A');
+        $model->fromTime = (new \DateTime($model->fromTime))->format('g:i A');
         $model->toTime = (new \DateTime($model->toTime))->format('g:i A');
         $data = $this->renderAjax('_form', [
             'model' => $model,
