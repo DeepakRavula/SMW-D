@@ -137,26 +137,32 @@ class QualificationController extends BaseController
         $post = Yii::$app->request->post();
         if ($post) {
             if ($model->load($post) && $model->save()) {
-                $invoicedLessons = Lesson::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->notCanceled()
-                    ->privateLessons()
-                    ->customer($id)
-                    ->invoiced();
                 $lessons  = Lesson::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->notCanceled()
                     ->notExpired()
+                    ->notCompleted()
                     ->andWhere(['lesson.teacherId' => $model->teacher_id])
                     ->joinWith(['program' => function($query) use ($model){
                         $query->andWhere(['program.id' => $model->program_id]);
                     }])
-                    ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
-                    ->andWhere(['invoiced_lesson.id' => null])
+                    ->all();
+                $unscheduledLessons = Lesson::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->notCanceled()
+                    ->unscheduled()
+                    ->notExpired()
+                    ->andWhere(['lesson.teacherId' => $model->teacher_id])
+                    ->joinWith(['program' => function($query) use ($model){
+                        $query->andWhere(['program.id' => $model->program_id]);
+                    }])
                     ->all();
                 foreach ($lessons as $lesson) {
+                    $lesson->updateAttributes(['teacherRate' => $model->rate]);
+                }
+                foreach ($unscheduledLessons as $lesson) {
                     $lesson->updateAttributes(['teacherRate' => $model->rate]);
                 }
                 $response = [
