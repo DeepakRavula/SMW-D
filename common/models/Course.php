@@ -412,7 +412,11 @@ class Course extends \yii\db\ActiveRecord
             $lesson->id = null;
             $lesson->isNewRecord = true;
             $lesson->teacherId = $teacherId;
-            $lesson->duration = (new \DateTime($duration))->format('H:i:s');;
+            if ($lesson->isExploded){
+                $lesson->duration = (new \DateTime(Lesson::DEFAULT_LESSON_DURATION))->format('H:i:s');
+            } else {
+                $lesson->duration = (new \DateTime($duration))->format('H:i:s');
+            }
             $lesson->status = Lesson::STATUS_SCHEDULED;
             $nextWeekScheduledDate->setTime($hour, $minute, $second);
             $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
