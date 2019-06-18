@@ -402,6 +402,7 @@ class Course extends \yii\db\ActiveRecord
         $nextWeekScheduledDate = $startDate;
         foreach ($lessons as $lesson) {
             $isUnscheduled = false;
+            $isExploded = false;
             if ($lesson->isUnscheduled()) {
                 $isUnscheduled = true;
             }
@@ -409,10 +410,17 @@ class Course extends \yii\db\ActiveRecord
             if ($lesson->hasInvoice()) {
                 $isInvoiced = true;
             }
+            if ($lesson->isExploded){
+                $isExploded = true;
+            }
             $lesson->id = null;
             $lesson->isNewRecord = true;
             $lesson->teacherId = $teacherId;
-            $lesson->duration = (new \DateTime($duration))->format('H:i:s');;
+            if ($isExploded){
+                $lesson->duration = (new \DateTime(Lesson::DEFAULT_LESSON_DURATION))->format('H:i:s');
+            } else {
+            $lesson->duration = (new \DateTime($duration))->format('H:i:s');
+            }
             $lesson->status = Lesson::STATUS_SCHEDULED;
             $nextWeekScheduledDate->setTime($hour, $minute, $second);
             $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
