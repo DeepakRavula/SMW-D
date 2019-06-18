@@ -142,27 +142,13 @@ class QualificationController extends BaseController
                     ->isConfirmed()
                     ->notCanceled()
                     ->notExpired()
-                    ->notCompleted()
-                    ->andWhere(['lesson.teacherId' => $model->teacher_id])
-                    ->joinWith(['program' => function($query) use ($model){
-                        $query->andWhere(['program.id' => $model->program_id]);
-                    }])
-                    ->all();
-                $unscheduledLessons = Lesson::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->notCanceled()
-                    ->unscheduled()
-                    ->notExpired()
+                    ->andWhere(['OR', ['lesson.status' => Lesson::STATUS_UNSCHEDULED], ['AND', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['>', 'lesson.date', (new \DateTime())->format('Y-m-d')]]])
                     ->andWhere(['lesson.teacherId' => $model->teacher_id])
                     ->joinWith(['program' => function($query) use ($model){
                         $query->andWhere(['program.id' => $model->program_id]);
                     }])
                     ->all();
                 foreach ($lessons as $lesson) {
-                    $lesson->updateAttributes(['teacherRate' => $model->rate]);
-                }
-                foreach ($unscheduledLessons as $lesson) {
                     $lesson->updateAttributes(['teacherRate' => $model->rate]);
                 }
                 $response = [
