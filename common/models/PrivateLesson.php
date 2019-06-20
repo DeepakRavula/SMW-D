@@ -71,12 +71,20 @@ class PrivateLesson extends \yii\db\ActiveRecord
         $enrolment = $model->enrolment;
         $lessonDurationSec = $model->durationSec;
         $splitCount = $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC;
+        $lastLessonPrice = ($model->netPrice - (round($model->netPrice/ ($splitCount), 2) * ($splitCount - 1))) * 4;
+        $pricePerLesson = round($model->netPrice / $splitCount, 2) * 4; 
+        
         for ($i = 0; $i < $splitCount; $i++) {
             $lesson = clone $model;
             $lesson->isNewRecord = true;
             $lesson->id = null;
             $lesson->duration = Lesson::DEFAULT_MERGE_DURATION;
             $lesson->status = Lesson::STATUS_UNSCHEDULED;
+            if ($i == $splitCount-1) {
+                $lesson->programRate =  $lastLessonPrice;
+            } else {
+                $lesson->programRate = $pricePerLesson;
+            }
             $duration = gmdate('H:i:s', Lesson::DEFAULT_EXPLODE_DURATION_SEC * ($i));
             $lessonDuration = new \DateTime($duration);
             $date = new \DateTime($model->date);
@@ -102,6 +110,9 @@ class PrivateLesson extends \yii\db\ActiveRecord
                 foreach ($lessonPayments as $lessonPayment){
                     $lessonPayment->delete();
                 }
+            }
+            if ($i == $splitCount - 1) {
+
             }
                  $firstSplitLesson = Lesson::findOne($firstSplitId);
                  $amountNeeded = $lesson->netPrice;
