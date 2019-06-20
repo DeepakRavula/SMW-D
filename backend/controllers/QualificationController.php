@@ -141,7 +141,8 @@ class QualificationController extends BaseController
                     ->notDeleted()
                     ->isConfirmed()
                     ->notCanceled()
-                    ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                    ->notExpired()
+                    ->andWhere(['OR', ['lesson.status' => Lesson::STATUS_UNSCHEDULED], ['AND', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['>', 'lesson.date', (new \DateTime())->format('Y-m-d')]]])
                     ->andWhere(['lesson.teacherId' => $model->teacher_id])
                     ->joinWith(['program' => function($query) use ($model){
                         $query->andWhere(['program.id' => $model->program_id]);
