@@ -44,14 +44,14 @@ use kartik\daterange\DateRangePicker;
 		<?php
             echo $form->field($model, 'fromTime')->widget(TimePicker::classname(), [
                 'pluginOptions' => [
-                    'defaultTime' => false,
+                    'defaultTime' => '12:00 PM',
                 ],
             ]);
             ?>
 		<?php
             echo $form->field($model, 'toTime')->widget(TimePicker::classname(), [
                 'pluginOptions' => [
-                    'defaultTime' => false,
+                    'defaultTime' => '01:00 PM',
                 ],
             ]);
             ?>		

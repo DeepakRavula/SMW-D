@@ -62,9 +62,6 @@ array_push($columns,   [
 ?>
 	
 <div class="box">
-	<?= $this->render('_show-all', [
-        'searchModel' => $searchModel
-    ]);?>
 	<?php Pjax::begin([
         'id' => 'review-lesson-listing',
         'timeout' => 6000,
