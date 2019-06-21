@@ -200,7 +200,6 @@ class RecurringPaymentController extends Controller
         $recurringPaymentIds = [422,447,448,481,565,642,647,1094];
         $customerRecurringPayments = CustomerRecurringPayment::find()
         ->notDeleted()
-        ->isRecurringPaymentEnabled()
         ->andWhere(['IN', 'id', $recurringPaymentIds])
         ->all();
         foreach ($customerRecurringPayments as $customerRecurringPayment){
