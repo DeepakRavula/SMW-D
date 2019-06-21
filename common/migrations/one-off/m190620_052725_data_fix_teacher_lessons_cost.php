@@ -38,11 +38,7 @@ class m190620_052725_data_fix_teacher_lessons_cost extends Migration
                 } 
                 $lessonOwing = new LessonOwing();
                 $lessonOwing->lessonId = $lesson->id;
-                if ($lessonOwing->save()) {
-
-                } else {
-                    print_r($lessonOwing->getErrors());
-                }
+                $lessonOwing->save();
                 Console::output("processing: " . $lesson->id, Console::FG_GREEN, Console::BOLD); 
             }
         }
