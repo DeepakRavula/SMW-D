@@ -192,4 +192,19 @@ class RecurringPaymentController extends Controller
         }
         return true;
     }
+
+    public function actionChangeExpiryDate()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $recurringPaymentIds = [422,447,448,481,565,642,647,1094];
+        $customerRecurringPayments = CustomerRecurringPayment::find()
+        ->notDeleted()
+        ->andWhere(['IN', 'id', $recurringPaymentIds])
+        ->all();
+        foreach ($customerRecurringPayments as $customerRecurringPayment){
+            $customerRecurringPayment->updateAttributes(['expiryDate' => '2023-01-31']);
+        }
+        return true;
+    }
 }
