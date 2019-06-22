@@ -18,7 +18,6 @@ class m190620_052725_data_fix_teacher_lessons_cost extends Migration
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $this->truncateTable('lesson_owing');
         $locationIds = [1, 4, 9, 14, 15, 16, 17, 18, 19, 20, 21];
         $locations = Location::find()->andWhere(['id' => $locationIds])->all();
         foreach ($locations as $location) {
@@ -36,9 +35,6 @@ class m190620_052725_data_fix_teacher_lessons_cost extends Migration
                 if ($lesson->teacherRate != $lesson->teacherCost) {
                     $lesson->updateAttributes(['teacherRate' => $lesson->teacherCost]);
                 } 
-                $lessonOwing = new LessonOwing();
-                $lessonOwing->lessonId = $lesson->id;
-                $lessonOwing->save();
                 Console::output("processing: " . $lesson->id, Console::FG_GREEN, Console::BOLD); 
             }
         }
