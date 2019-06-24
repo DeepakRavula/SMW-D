@@ -45,6 +45,7 @@ $columns = [
         ],
     ],
 ];
+
 if ($courseModel->program->isGroup()){
 array_push($columns,   [
     'class' => 'yii\grid\ActionColumn',
