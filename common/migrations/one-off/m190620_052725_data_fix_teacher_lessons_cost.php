@@ -34,8 +34,8 @@ class m190620_052725_data_fix_teacher_lessons_cost extends Migration
             foreach ($lessons as $lesson) {
                 if ($lesson->teacherRate != $lesson->teacherCost) {
                     $lesson->updateAttributes(['teacherRate' => $lesson->teacherCost]);
+                    Console::output("processing: " . $lesson->id, Console::FG_GREEN, Console::BOLD);
                 } 
-                Console::output("processing: " . $lesson->id, Console::FG_GREEN, Console::BOLD); 
             }
         }
         Console::endProgress(true);
