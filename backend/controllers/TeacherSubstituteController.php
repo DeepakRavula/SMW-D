@@ -247,7 +247,7 @@ class TeacherSubstituteController extends BaseController
                     $response = [
                         'status' => true,
                         'url' => Url::to(['/lesson/review', 'LessonReview[enrolmentIds]' => $model->enrolmentIds, 
-                            'LessonReview[changesFrom]' => $model->changesFrom, 'LessonReview[courseId]' => $courseModel->id]),
+                            'LessonReview[changesFrom]' => $model->changesFrom, 'LessonReview[courseModelId]' => $courseModel->id]),
                     ];  
                 } else {
                     $response = [

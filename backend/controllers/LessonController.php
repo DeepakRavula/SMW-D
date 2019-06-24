@@ -545,6 +545,9 @@ class LessonController extends BaseController
             'query' => $rescheduledLesson,
             'pagination' => false
         ]);
+        if ($model->courseModelId) {
+            $courseModel = Course::findOne($model->courseModelId);
+        }
         return $this->render('review', [
             'courseModel' => $courseModel ?? null,
             'lessonDataProvider' => $lessonDataProvider,
