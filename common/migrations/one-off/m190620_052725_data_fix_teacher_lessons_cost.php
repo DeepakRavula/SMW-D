@@ -32,6 +32,7 @@ class m190620_052725_data_fix_teacher_lessons_cost extends Migration
             $count = count($lessons);
             Console::startProgress(0, $count, 'Updating Lessons teacher cost for', $location->id);
             foreach ($lessons as $lesson) {
+                $lesson->updateAttributes(['teacherRateOld' => $lesson->teacherRate]);
                 if ($lesson->teacherRate != $lesson->teacherCost) {
                     $lesson->updateAttributes(['teacherRate' => $lesson->teacherCost]);
                     Console::output("processing: " . $lesson->id, Console::FG_GREEN, Console::BOLD);
