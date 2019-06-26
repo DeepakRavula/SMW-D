@@ -168,7 +168,8 @@ use kartik\select2\Select2;
                         {
                             if (response.status) {
                                 $('#popup-modal').modal('hide');
-                                $.pjax.reload({container: "#recurring-payment-listing", replace: false, timeout: 4000});
+                                $.pjax.reload({container: "#recurring-payment-listing", replace: false, timeout: 4000,async:false});
+                                $.pjax.reload({container: "#user-log", replace: false, timeout: 4000});
                                 }
                             else {
                                 if (response.message) {
