@@ -14,6 +14,8 @@ use yii\web\Response;
 use yii\helpers\Url;
 use common\models\Enrolment;
 use common\models\CustomerRecurringPayment;
+use common\models\User;
+use common\models\log\CustomerRecurringPaymentLog;
 use common\models\Location;
 use Carbon\Carbon;
 use yii\bootstrap\ActiveForm;
@@ -112,6 +114,10 @@ $enrolmentDataProvider  = new ActiveDataProvider([
             } else {
                 $model->nextEntryDay = Carbon::parse($model->startDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
             }
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                 $model->on(CustomerRecurringPayment::EVENT_AFTER_INSERT, [new CustomerRecurringPaymentLog(), 'customerRecurringPaymentCreate'],
+                    ['loggedUser' => $loggedUser,]
+                 );
             if($model->save()) {
                   $customerRecurringPaymentEnrolmentModel->load($get);
                   if ($customerRecurringPaymentEnrolmentModel->enrolmentIds) {
@@ -177,6 +183,10 @@ $enrolmentDataProvider  = new ActiveDataProvider([
                 } else {
                     $model->nextEntryDay = Carbon::parse($model->startDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
                 }
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                 $model->on(CustomerRecurringPayment::EVENT_AFTER_UPDATE, [new CustomerRecurringPaymentLog(), 'customerRecurringPaymentEdit'],
+                    ['loggedUser' => $loggedUser,]
+                 );
                 if ($model->save()) {
                     $customerRecurringPaymentEnrolments = CustomerRecurringPaymentEnrolment::find()
                                                         ->notDeleted()
