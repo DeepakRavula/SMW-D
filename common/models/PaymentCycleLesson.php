@@ -109,12 +109,10 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
             $firstLessonDate = $this->paymentCycle->firstLesson->getOriginalDate(); 
             $dueDate = carbon::parse($firstLessonDate)->modify('first day of previous month');
             $dueDate = carbon::parse($dueDate)->modify('+ 14 day')->format('Y-m-d');
             $this->lesson->updateAttributes(['dueDate' => $dueDate]); 
-        }
         return parent::afterSave($insert, $changedAttributes);
     }
 }
