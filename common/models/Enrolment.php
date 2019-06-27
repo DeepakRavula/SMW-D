@@ -828,7 +828,6 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function setDueDate()
     {
-        die('coming');
         $lessons = Lesson::find()
             ->enrolment($this->id)
             ->isConfirmed()
