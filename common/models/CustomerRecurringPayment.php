@@ -179,5 +179,12 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         }
         return $dayList;
     }
+    public function beforeSave($insert)
+   {
+       if ($insert) {
+           $this->isDeleted = false;
+       }
+       return parent::beforeSave($insert);
+   }
 
 }

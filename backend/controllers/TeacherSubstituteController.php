@@ -213,6 +213,7 @@ class TeacherSubstituteController extends BaseController
                 ->andWhere(['id' => $model->enrolmentIds])
                 ->all();
             $teacherId = end($enrolments)->course->teacherId;
+            $courseModel = end($enrolments)->course;
             $programIds = ArrayHelper::getColumn(Program::find()
                 ->notDeleted()
                 ->enrollment($model->enrolmentIds)
@@ -246,7 +247,7 @@ class TeacherSubstituteController extends BaseController
                     $response = [
                         'status' => true,
                         'url' => Url::to(['/lesson/review', 'LessonReview[enrolmentIds]' => $model->enrolmentIds, 
-                            'LessonReview[changesFrom]' => $model->changesFrom]),
+                            'LessonReview[changesFrom]' => $model->changesFrom, 'LessonReview[courseModelId]' => $courseModel->id]),
                     ];  
                 } else {
                     $response = [
