@@ -35,7 +35,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule'
+                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -49,7 +49,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule'
+                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -409,4 +409,20 @@ class PrivateLessonController extends BaseController
         return $response;
     }
 
+    public function actionBulkReschedule()
+    {
+        $privateLessonModel = new PrivateLesson();
+        $privateLessonModel->load(Yii::$app->request->get());
+        //print_r($privateLessonModel->lessonIds);die('coming');
+        $model = new Lesson();
+        $post = Yii::$app->request->post();
+        if ($post) {
+          
+        } else {
+            $data = $this->renderAjax('/lesson/_form-bulk-reschedule', [
+                'model' => $model,
+            ]);       
+        }
+        return $data;
+    }
 }
