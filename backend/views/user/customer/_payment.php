@@ -110,7 +110,7 @@ $columns = [
 	 var payment_count = '<?= $count; ?>' ;
 		if (payment_count > 10) {
 			$(".more-payment").show();
-			var customer = '<?= $userModel->userProfile->fullName; ?>' ;
+			var customer = "<?= $userModel->userProfile->fullName; ?>" ;
 			var params = $.param({ 'PaymentSearch[customer]': customer, 'PaymentSearch[isDefault]': 0 });
 			var url = '<?= Url::to(['payment/index']); ?>?' + params;
 			$('.show-more').attr("href", url);
