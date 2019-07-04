@@ -13,11 +13,26 @@ use common\models\Location;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
+<?php print_r($model); ?>
 <div class="row bulk-reschedule-form">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
         ]); ?>
 
-    
+<div class="col-md-2">
+    <?= $form->field($model, 'date')->widget(
+        DatePicker::classname(), [
+            'dateFormat' => 'php:M d, Y',
+            'options' => [
+                'class' => 'form-control'
+            ],
+            'clientOptions' => [
+                'changeMonth' => true,
+                'yearRange' => '1500:3000',
+                'changeYear' => true
+            ]
+        ]);
+    ?>
+</div>
     <?php ActiveForm::end(); ?>
 </div>
