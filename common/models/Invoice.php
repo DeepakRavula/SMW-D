@@ -1040,8 +1040,10 @@ class Invoice extends \yii\db\ActiveRecord
                 $lineItem->delete();
             }
             $this->updateAttributes(['isVoid' => true]);
-            $this->tax = 0.00;
-            $this->save();
+            $this->updateAttributes(['tax' => 0.00]);
+            $this->updateAttributes(['subTotal' => 0.00]);
+            $this->updateAttributes(['balance' => 0.00]);
+            $this->updateAttributes(['total' => 0.00]);
         }
         return true;
     }
