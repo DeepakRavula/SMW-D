@@ -423,6 +423,9 @@ class PrivateLessonController extends BaseController
                 'model' => $model,
             ]);       
         }
-        return $data;
+        return $response = [
+                'status' => true,
+                'data' => $data,
+            ];
     }
 }
