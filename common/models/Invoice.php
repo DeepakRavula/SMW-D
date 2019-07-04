@@ -1040,6 +1040,8 @@ class Invoice extends \yii\db\ActiveRecord
                 $lineItem->delete();
             }
             $this->updateAttributes(['isVoid' => true]);
+            $this->tax = 0.00;
+            $this->save();
         }
         return true;
     }
