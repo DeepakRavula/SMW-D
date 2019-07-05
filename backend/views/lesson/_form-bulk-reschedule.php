@@ -13,13 +13,12 @@ use common\models\Location;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<?php print_r($model); ?>
 <div class="row bulk-reschedule-form">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
         ]); ?>
 
-<div class="col-md-2">
+<div class="col-md-6">
     <?= $form->field($model, 'date')->widget(
         DatePicker::classname(), [
             'dateFormat' => 'php:M d, Y',
@@ -36,3 +35,10 @@ use common\models\Location;
 </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#popup-modal .modal-dialog').css({'width' : '400'})
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Bulk Reschedule</h4>');
+    });
+</script>

@@ -8,6 +8,7 @@ use common\components\controllers\BaseController;
 use common\models\EditClassroom;
 use common\models\Lesson;
 use common\models\PrivateLesson;
+use common\models\Location;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -413,19 +414,54 @@ class PrivateLessonController extends BaseController
     {
         $privateLessonModel = new PrivateLesson();
         $privateLessonModel->load(Yii::$app->request->get());
-        //print_r($privateLessonModel->lessonIds);die('coming');
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $lessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->location($locationId)
+                ->andWhere(['lesson.id' => $privateLessonModel->lessonIds])
+                ->all();
         $model = new Lesson();
         $post = Yii::$app->request->post();
         if ($post) {
-          
+            if ($model->load($post)) {
+                $date = (new \DateTime($model->date))->format('Y-m-d');
+                $allLessons = Lesson::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->notCanceled()
+                        ->location($locationId)
+                        ->notExpired()
+                        ->andWhere(['DATE(lesson.date)' => $date])
+                        ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
+                        ->all();
+                if (empty($allLessons)) {
+                    foreach ($lessons as $lesson) {
+                        $time = (new \DateTime($lesson->date))->format('H:i:s');
+                        $dateTime = $date . ' ' . $time;
+                        $lesson->updateAttributes(['date' => $dateTime]);
+                    }
+                    $response = [
+                        'status' => true,
+                        'message' => 'Lesson Rescheduled Sucessfully',
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'error' => 'Lesson Rescheduled not Sucessfully',
+                    ];
+                }
+            }
         } else {
             $data = $this->renderAjax('/lesson/_form-bulk-reschedule', [
                 'model' => $model,
-            ]);       
-        }
-        return $response = [
+            ]);  
+            $response = [
                 'status' => true,
                 'data' => $data,
-            ];
+            ];     
+        }
+        return $response;
     }
 }
