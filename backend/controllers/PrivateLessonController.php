@@ -8,6 +8,7 @@ use common\components\controllers\BaseController;
 use common\models\EditClassroom;
 use common\models\Lesson;
 use common\models\PrivateLesson;
+use common\models\Location;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -18,6 +19,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\discount\LessonDiscount;
+use Carbon\Carbon;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -35,7 +37,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule'
+                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -49,7 +51,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule'
+                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -409,4 +411,74 @@ class PrivateLessonController extends BaseController
         return $response;
     }
 
+    public function actionBulkReschedule()
+    {
+        $privateLessonModel = new PrivateLesson();
+        $privateLessonModel->load(Yii::$app->request->get());
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $lessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->location($locationId)
+                ->andWhere(['lesson.id' => $privateLessonModel->lessonIds])
+                ->all();
+        $endLesson = end($lessons);
+        $endLessonDate = (new \DateTime($endLesson->date))->format('Y-m-d');
+        foreach ($lessons as $lesson) {
+            $date = (new \DateTime($lesson->date))->format('Y-m-d');
+            if ($date != $endLessonDate) {
+                return $response = [
+                    'status' => false,
+                    'error' => 'choose the lessons in same date',
+                ];
+            }
+        }
+        $model = new Lesson();
+        $post = Yii::$app->request->post();
+        if ($post) {
+            if ($model->load($post)) {
+                $date = (new \DateTime($model->date))->format('Y-m-d');
+                $allLessons = Lesson::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->notCanceled()
+                        ->location($locationId)
+                        ->notExpired()
+                        ->andWhere(['DATE(lesson.date)' => $date])
+                        ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
+                        ->all();
+                if (empty($allLessons)) {
+                    foreach ($lessons as $lesson) {
+                        $time = (new \DateTime($lesson->date))->format('H:i:s');
+                        $dateTime = $date . ' ' . $time;
+                        $lesson->date = $dateTime;
+                        $lesson->status = Lesson::STATUS_RESCHEDULED;
+                        $dueDate = carbon::parse($date)->modify('first day of previous month');
+                        $dueDate = carbon::parse($dueDate)->modify('+ 14 day')->format('Y-m-d');
+                        $lesson->dueDate = $dueDate;
+                        $lesson->save();
+                    }
+                    $response = [
+                        'status' => true,
+                        'message' => 'Lesson rescheduled Sucessfully',
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
+                    ];
+                }
+            }
+        } else {
+            $data = $this->renderAjax('/lesson/_form-bulk-reschedule', [
+                'model' => $model,
+            ]);  
+            $response = [
+                'status' => true,
+                'data' => $data,
+            ];     
+        }
+        return $response;
+    }
 }
