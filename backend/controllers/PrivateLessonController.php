@@ -19,6 +19,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\discount\LessonDiscount;
+use Carbon\Carbon;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -440,7 +441,12 @@ class PrivateLessonController extends BaseController
                     foreach ($lessons as $lesson) {
                         $time = (new \DateTime($lesson->date))->format('H:i:s');
                         $dateTime = $date . ' ' . $time;
-                        $lesson->updateAttributes(['date' => $dateTime]);
+                        $lesson->date = $dateTime;
+                        $lesson->status = Lesson::STATUS_RESCHEDULED;
+                        $dueDate = carbon::parse($date)->modify('first day of previous month');
+                        $dueDate = carbon::parse($dueDate)->modify('+ 14 day')->format('Y-m-d');
+                        $lesson->dueDate = $dueDate;
+                        $lesson->save();
                     }
                     $response = [
                         'status' => true,
