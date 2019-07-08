@@ -20,6 +20,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
         return 'private_lesson';
     }
 
+    public $lessonIds;
     /**
      * {@inheritdoc}
      */
@@ -28,7 +29,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
         return [
             [['lessonId'], 'required'],
             [['lessonId'], 'integer'],
-            [['expiryDate', 'total', 'balance'], 'safe'],
+            [['expiryDate', 'total', 'balance', 'lessonIds'], 'safe'],
         ];
     }
 
