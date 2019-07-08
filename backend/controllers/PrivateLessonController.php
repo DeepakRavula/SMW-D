@@ -423,6 +423,17 @@ class PrivateLessonController extends BaseController
                 ->location($locationId)
                 ->andWhere(['lesson.id' => $privateLessonModel->lessonIds])
                 ->all();
+        $endLesson = end($lessons);
+        $endLessonDate = (new \DateTime($endLesson->date))->format('Y-m-d');
+        foreach ($lessons as $lesson) {
+            $date = (new \DateTime($lesson->date))->format('Y-m-d');
+            if ($date != $endLessonDate) {
+                return $response = [
+                    'status' => false,
+                    'error' => 'choose the lessons in same date',
+                ];
+            }
+        }
         $model = new Lesson();
         $post = Yii::$app->request->post();
         if ($post) {
@@ -450,12 +461,12 @@ class PrivateLessonController extends BaseController
                     }
                     $response = [
                         'status' => true,
-                        'message' => 'Lesson Rescheduled Sucessfully',
+                        'message' => 'Lesson rescheduled Sucessfully',
                     ];
                 } else {
                     $response = [
                         'status' => false,
-                        'error' => 'Lesson Rescheduled not Sucessfully',
+                        'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
                     ];
                 }
             }
