@@ -434,36 +434,39 @@ class PrivateLessonController extends BaseController
                 ];
             }
         }
-        $model = new Lesson();
         $post = Yii::$app->request->post();
         if ($post) {
-            if ($model->load($post)) {
-                $date = (new \DateTime($model->date))->format('Y-m-d');
+            if ($privateLessonModel->load($post)) {
                 $allLessons = Lesson::find()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->notCanceled()
-                        ->location($locationId)
-                        ->notExpired()
-                        ->andWhere(['DATE(lesson.date)' => $date])
-                        ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
-                        ->all();
-                if (empty($allLessons)) {
-                    foreach ($lessons as $lesson) {
-                        $time = (new \DateTime($lesson->date))->format('H:i:s');
-                        $dateTime = $date . ' ' . $time;
-                        $lesson->date = $dateTime;
-                        $lesson->status = Lesson::STATUS_RESCHEDULED;
-                        $dueDate = carbon::parse($date)->modify('first day of previous month');
-                        $dueDate = carbon::parse($dueDate)->modify('+ 14 day')->format('Y-m-d');
-                        $lesson->dueDate = $dueDate;
-                        $lesson->save();
-                    }
+                       ->notDeleted()
+                       ->isConfirmed()
+                       ->notCanceled()
+                       ->location($locationId)
+                       ->notExpired()
+                       ->andWhere(['DATE(lesson.date)' => $date])
+                       ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
+                       ->all();
+                if (empty($allLessons)) {       
+                $oldLessons = Lesson::findAll($privateLessonModel->lessonIds);
+                foreach ($oldLessons as $i => $oldLesson) {
+                    $newLesson = clone $lesson;
+                    $newLesson->isNewRecord = true;
+                    $newLesson->id = null;
+                    $newLesson->isConfirmed = true;
+                    $newLesson->save();
+                    $newLessonIds[] = $newLesson->id;
+                    $oldLesson->cancel();
+                    $oldLesson->rescheduleTo($newLesson);
+                    $lessonIds[] = $lesson->id;
+                    $lesson->isConfirmed = true;
+                    $lesson->save();
+                }
+                Lesson::triggerPusher();
                     $response = [
                         'status' => true,
                         'message' => 'Lesson rescheduled Sucessfully',
                     ];
-                } else {
+                 } else {
                     $response = [
                         'status' => false,
                         'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
@@ -472,7 +475,7 @@ class PrivateLessonController extends BaseController
             }
         } else {
             $data = $this->renderAjax('/lesson/_form-bulk-reschedule', [
-                'model' => $model,
+                'model' => $privateLessonModel,
             ]);  
             $response = [
                 'status' => true,
