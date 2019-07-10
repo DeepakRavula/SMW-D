@@ -36,6 +36,7 @@ class m190710_061653_data_fix_for_holiday_unscheduled_lesson extends Migration
                     ->unscheduled()
                     ->location($location->id)
                     ->notCanceled()
+                    ->notExpired()
                     ->all();
             foreach ($lessons as $lesson) {
                 $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
