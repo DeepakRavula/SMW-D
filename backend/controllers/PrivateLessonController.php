@@ -434,6 +434,12 @@ class PrivateLessonController extends BaseController
                     'error' => 'choose the lessons in same date',
                 ];
             }
+            if ($lesson->hasInvoice()) {
+                return $response = [
+                    'status' => false,
+                    'error' => 'one of the chosen lesson is invoiced. You can\'t reschedule for this lessons',
+                ];
+            }
         }
         $post = Yii::$app->request->post();
         if ($post) {
@@ -451,7 +457,6 @@ class PrivateLessonController extends BaseController
                 $oldLessons = Lesson::findAll($privateLessonModel->lessonIds);
                 foreach ($oldLessons as $i => $oldLesson) {
                     $oldLessonDate = $oldLesson->date;
-                   
                     $hour = (new \DateTime($oldLessonDate))->format('H');
                     $minute = (new \DateTime($oldLessonDate))->format('i');
                     $second = (new \DateTime($oldLessonDate))->format('s');
@@ -476,18 +481,17 @@ class PrivateLessonController extends BaseController
                     Lesson::triggerPusher();
                    
                  } 
-                }
-                 else {
+                 $response = [
+                    'status' => true,
+                    'message' => 'Lesson rescheduled Sucessfully',
+                ];
+                } else {
                     $response = [
                         'status' => false,
                         'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
                     ];
                 }
             }
-            $response = [
-                'status' => true,
-                'message' => 'Lesson rescheduled Sucessfully',
-            ];
         }
  
     else {
