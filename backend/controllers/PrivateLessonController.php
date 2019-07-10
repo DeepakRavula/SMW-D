@@ -461,7 +461,9 @@ class PrivateLessonController extends BaseController
                     $newLesson->isNewRecord = true;
                     $newLesson->id = null;
                     $newLesson->date = $lessonDate->format('Y-m-d H:i:s');
+                    $newLesson->save();
                     $oldLesson->cancel();
+                    $oldLesson->rescheduleTo($newLesson);
                     if ($newLesson->validate()) {
                         $newLesson->on(
                             Lesson::EVENT_RESCHEDULE_ATTEMPTED,
@@ -469,9 +471,8 @@ class PrivateLessonController extends BaseController
                             ['oldAttrtibutes' => $newLesson->getOldAttributes()]
                         );
                     } 
-                    $newLesson->save();
-                 
-                    $oldLesson->rescheduleTo($newLesson);
+                    $newLesson->isConfirmed = true;
+                    $newLesson->save();                 
                     Lesson::triggerPusher();
                    
                  } 
