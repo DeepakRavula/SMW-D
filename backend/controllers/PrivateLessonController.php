@@ -20,6 +20,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\discount\LessonDiscount;
 use Carbon\Carbon;
+use common\models\LessonReschedule;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -445,35 +446,50 @@ class PrivateLessonController extends BaseController
                        ->notExpired()
                        ->andWhere(['DATE(lesson.date)' => $date])
                        ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
-                       ->all();
+                       ->all();     
                 if (empty($allLessons)) {       
                 $oldLessons = Lesson::findAll($privateLessonModel->lessonIds);
                 foreach ($oldLessons as $i => $oldLesson) {
-                    $newLesson = clone $lesson;
+                    $oldLessonDate = $oldLesson->date;
+                   
+                    $hour = (new \DateTime($oldLessonDate))->format('H');
+                    $minute = (new \DateTime($oldLessonDate))->format('i');
+                    $second = (new \DateTime($oldLessonDate))->format('s');
+                    $lessonDate = Carbon::parse($privateLessonModel->bulkRescheduleDate);
+                    $lessonDate->setTime($hour, $minute, $second);
+                    $newLesson = clone $oldLesson;
                     $newLesson->isNewRecord = true;
                     $newLesson->id = null;
-                    $newLesson->isConfirmed = true;
+                    $newLesson->date = $lessonDate->format('Y-m-d H:i:s');
                     $newLesson->save();
-                    $newLessonIds[] = $newLesson->id;
                     $oldLesson->cancel();
                     $oldLesson->rescheduleTo($newLesson);
-                    $lessonIds[] = $lesson->id;
-                    $lesson->isConfirmed = true;
-                    $lesson->save();
+                    if ($newLesson->validate()) {
+                        $newLesson->on(
+                            Lesson::EVENT_RESCHEDULE_ATTEMPTED,
+                                [new LessonReschedule(), 'reschedule'],
+                            ['oldAttrtibutes' => $newLesson->getOldAttributes()]
+                        );
+                    } 
+                    
+                    Lesson::triggerPusher();
+                   
+                 } 
                 }
-                Lesson::triggerPusher();
-                    $response = [
-                        'status' => true,
-                        'message' => 'Lesson rescheduled Sucessfully',
-                    ];
-                 } else {
+                 else {
                     $response = [
                         'status' => false,
                         'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
                     ];
                 }
             }
-        } else {
+            $response = [
+                'status' => true,
+                'message' => 'Lesson rescheduled Sucessfully',
+            ];
+        }
+ 
+    else {
             $data = $this->renderAjax('/lesson/_form-bulk-reschedule', [
                 'model' => $privateLessonModel,
             ]);  
@@ -482,6 +498,7 @@ class PrivateLessonController extends BaseController
                 'data' => $data,
             ];     
         }
-        return $response;
-    }
+    return $response;
 }
+}
+
