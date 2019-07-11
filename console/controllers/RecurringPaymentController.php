@@ -237,7 +237,12 @@ class RecurringPaymentController extends Controller
             if (!$recentRecordedPayment) {
                 $previousRecordedPaymentAny = $previousRecordedPayment->one();
                 if ($previousRecordedPaymentAny) {
-                    $customerRecurringPayment->nextEntryDay = Carbon::parse($previousRecordedPayment->date)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
+                    $nextEntryDay = Carbon::parse($previousRecordedPayment->date)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
+                    if ($nextEntryDay >= $currentDate->format('Y-m-d')) {
+                        $customerRecurringPayment->nextEntryDay = $nextEntryDay;
+                    } else {
+                        $customerRecurringPayment->nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
+                    }
                 } else {
                     $nextEntryDayDate = Carbon::parse($customerRecurringPayment->startDate)->format('d');
                     $nextEntryDayMonth = $currentDate->format('m');
