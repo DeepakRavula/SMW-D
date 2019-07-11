@@ -15,6 +15,8 @@ class PrivateLesson extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $bulkRescheduleDate;
+
     public static function tableName()
     {
         return 'private_lesson';
@@ -29,7 +31,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
         return [
             [['lessonId'], 'required'],
             [['lessonId'], 'integer'],
-            [['expiryDate', 'total', 'balance', 'lessonIds'], 'safe'],
+            [['expiryDate', 'total', 'balance', 'lessonIds', 'bulkRescheduleDate'], 'safe'],
         ];
     }
 

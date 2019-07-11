@@ -19,7 +19,7 @@ use common\models\Location;
         ]); ?>
 
 <div class="col-md-6">
-    <?= $form->field($model, 'date')->widget(
+    <?= $form->field($model, 'bulkRescheduleDate')->widget(
         DatePicker::classname(), [
             'dateFormat' => 'php:M d, Y',
             'options' => [
