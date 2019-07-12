@@ -222,12 +222,11 @@ class RecurringPaymentController extends Controller
             ->andWhere(['>', 'amount', 0.00])
             ->joinWith(['customer' => function ($query) {
                 $query->notDeleted()
-                    ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21]);
+                    ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22]);
             }])
             ->andWhere(['<=', 'DATE(customer_recurring_payment.startDate)', $currentDate->format('Y-m-d')])
             ->all();
-            $recordWithPayments = 0;
-        foreach ($customerRecurringPayments as $customerRecurringPayment) {
+        foreach ($customerRecurringPayments as $customerRecurringPayment) { 
             $startDate = $currentDate->subMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId - 1)->format('Y-m-1');
             $endDate = $currentDate->format('Y-m-d');
             $previousRecordedPayment = RecurringPayment::find()
