@@ -36,12 +36,28 @@ class m190710_061653_data_fix_for_holiday_unscheduled_lesson extends Migration
                     ->unscheduled()
                     ->location($location->id)
                     ->notCanceled()
+                    ->activePrivateLessons()
                     ->notExpired()
                     ->all();
             foreach ($lessons as $lesson) {
                 $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
                 if (in_array($lessonDate, $holidayDates)) {
-                    Console::output("Affected Lesson: " . $lesson->id, Console::FG_GREEN, Console::BOLD);
+                    Console::output("Affected Private Lesson: " . $lesson->id, Console::FG_GREEN, Console::BOLD);
+                    $lesson->updateAttributes(['status' => Lesson::STATUS_SCHEDULED]);
+                }
+            }
+            $groupLessons = Lesson::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->unscheduled()
+                    ->location($location->id)
+                    ->notCanceled()
+                    ->groupLessons()
+                    ->all();
+            foreach ($groupLessons as $lesson) {
+                $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
+                if (in_array($lessonDate, $holidayDates)) {
+                    Console::output("Affected Group Lesson: " . $lesson->id, Console::FG_GREEN, Console::BOLD);
                     $lesson->updateAttributes(['status' => Lesson::STATUS_SCHEDULED]);
                 }
             }
