@@ -631,8 +631,10 @@ class LessonController extends BaseController
         $request = Yii::$app->request;
         $model->load($request->get());
         $courseModel = Course::findOne(['id' => $model->courseId]);
-        if ($model->courseId) {
-            $model->manageHolidayLessons();
+        if ($courseModel) {
+            $courseModel->updateAttributes([
+                'isConfirmed' => true
+            ]);
         }
         if ($model->enrolmentIds) {
             $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
