@@ -18,11 +18,14 @@ use yii\widgets\Pjax;
 
 <?php Pjax::begin() ?>
 
-<div class="show-all-top">
-    <div class="checkbox">
-        <div id="show-all">
-            <?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
-        </div>
+<div id="bulk-action-menu" class="m-b-10 pull-right">
+    <div class="btn-group">
+        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter fa-1x"></i>&nbsp;&nbsp;<span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li>
+            <?= $form->field($searchModel, 'showAllEnrolments')->label(false)->checkbox(['label' => 'Show Inactive Items','data-pjax' => true]); ?>
+</li>
+        </ul>
     </div>
 </div>
 
