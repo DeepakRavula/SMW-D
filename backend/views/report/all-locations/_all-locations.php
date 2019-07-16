@@ -8,7 +8,6 @@ use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
 ?>
 <style>
-<style>
   .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
 	background-color: white !important;
 }
@@ -118,17 +117,38 @@ use kartik\grid\GridView;
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM
         ],
+   ],
+    'panel' => [
+        'heading' => 'All Locations',
     ],
         'toolbar' =>  [
+             [
+ 			'content'=> $this->render('_search', ['model' => $searchModel])
+ 				
+ 		],
+ 		   [
+ 		       'content'=>
+ 		       Html::a('<i class="glyphicon glyphicon-print"></i>','#',
+ 					[
+ 						'id' => 'print',
+ 						'class'=>'btn btn-default',
+ 					]
+ 				),
+ 		     ],
             '{export}',
         ],  
         'export' => [
             'fontAwesome' => true,
         ], 
-        'panel' => [
-            'type' => GridView::TYPE_DEFAULT
-        ],
 ]);
 
     ?>
 <?php Pjax::end(); ?>
+<script>
+        $(document).on("click", "#print", function () {
+            var dateRange = $('#reportsearch-daterange').val();
+            var params = $.param({'ReportSearch[dateRange]': dateRange});
+            var url = '<?php echo Url::to(['print/all-locations']); ?>?' + params;
+            window.open(url, '_blank');
+        });
+</script> 
