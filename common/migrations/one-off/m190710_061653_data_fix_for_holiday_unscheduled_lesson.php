@@ -37,7 +37,7 @@ class m190710_061653_data_fix_for_holiday_unscheduled_lesson extends Migration
                     ->location($location->id)
                     ->notCanceled()
                     ->activePrivateLessons()
-                    ->notExpired()
+                    ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
                     ->all();
             foreach ($lessons as $lesson) {
                 $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
@@ -53,6 +53,7 @@ class m190710_061653_data_fix_for_holiday_unscheduled_lesson extends Migration
                     ->location($location->id)
                     ->notCanceled()
                     ->groupLessons()
+                    ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
                     ->all();
             foreach ($groupLessons as $lesson) {
                 $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
