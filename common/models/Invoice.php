@@ -1035,11 +1035,13 @@ class Invoice extends \yii\db\ActiveRecord
     public function void($canbeUnscheduled)
     {
         if (!$this->isVoid && !$this->isPaymentCreditInvoice()) {
+            $this->updateAttributes(['isVoid' => true]);
+            $this->updateAttributes(['tax' => 0.00]);
+            $this->updateAttributes(['isTaxAdjusted' => false]);
             foreach ($this->lineItems as $lineItem) {
                 $lineItem->lessonCanBeUnscheduled = $canbeUnscheduled;
                 $lineItem->delete();
             }
-            $this->updateAttributes(['isVoid' => true]);
         }
         return true;
     }

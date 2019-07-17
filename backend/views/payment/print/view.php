@@ -46,6 +46,6 @@
 </div>
 <script>
     $(document).ready(function() {
-        window.print();
-        });
+        setTimeout(function(){window.print()},3000);
+    });
 </script>
