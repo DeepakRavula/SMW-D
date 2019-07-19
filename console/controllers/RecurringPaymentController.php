@@ -237,21 +237,14 @@ class RecurringPaymentController extends Controller
                 $previousRecordedPaymentAny = $previousRecordedPayment->one();
                 if ($previousRecordedPaymentAny) {
                     $nextEntryDay = Carbon::parse($previousRecordedPayment->date)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
-                    if ($nextEntryDay >= $currentDate->format('Y-m-d')) {
-                        $customerRecurringPayment->nextEntryDay = $nextEntryDay;
-                    } else {
-                        $customerRecurringPayment->nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
-                    }
                 } else {
                     $nextEntryDayDate = Carbon::parse($customerRecurringPayment->startDate)->format('d');
                     $nextEntryDayMonth = $currentDate->format('m');
                     $nextEntryDayYear = $currentDate->format('Y');
                     $nextEntryDay = Carbon::parse($nextEntryDayYear.'-'.$nextEntryDayMonth.'-'.$nextEntryDayDate)->format('Y-m-d');
-                    if ($nextEntryDay >= $currentDate->format('Y-m-d')) {
-                        $customerRecurringPayment->nextEntryDay = $nextEntryDay;
-                    } else {
-                        $customerRecurringPayment->nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
-                    }
+                }
+                while ($nextEntryDay >= $currentDate->format('Y-m-d')) {
+                    $customerRecurringPayment->nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
                 }
                 $customerRecurringPayment->save(); 
             }
