@@ -13,12 +13,6 @@ use kartik\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-$this->title = 'Enrolments';
-$this->params['action-button'] = $this->render('_action-menu');
-
-$this->params['show-all'] = $this->render('_button', [
-    'searchModel' => $searchModel
-]);
 ?>
 
 <div id="index-success-notification" style="display:none;" class="alert-success alert fade in"></div>
@@ -96,7 +90,7 @@ $this->params['show-all'] = $this->render('_button', [
         'attribute' => 'enddate',
         'contentOptions' => ['style' => 'width:20%'],
         'value' => function ($data) {
-            return Yii::$app->formatter->asDate($data->course->endDate);
+            return Yii::$app->formatter->asDate($data->endDateTime);
         },
         'filterType' => KartikGridView::FILTER_DATE_RANGE,
         'filterWidgetOptions' => [
@@ -135,14 +129,23 @@ $this->params['show-all'] = $this->render('_button', [
         'summary' => "Showing {begin} - {end} of {totalCount} items",
         'emptyText' => false,
         'toolbar' =>  [
-            ['content' =>  Html::a(Yii::t('backend', '<i class="fa fa-plus fa-2x" aria-hidden="true"></i>'), '#',
-                ['class' => 'new-enrol-btn'])
+            [
+            'content' =>
+                Html::button('<i class="fa fa-plus"></i>', [
+                    'class' => 'btn btn-success new-enrol-btn',
+                ]),
+            'options' => ['class' => 'btn-group mr-2']
+        ],
+            ['content' =>  $this->render('_action-menu')
+            ],
+            ['content' =>  $this->render('_button', ['searchModel' => $searchModel])
             ],
             '{export}',
             '{toggleData}'
         ],
         'panel' => [
-            'type' => GridView::TYPE_DEFAULT
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Enrolments'
         ],
         'toggleDataOptions' => ['minCount' => 20],
         'filterModel' => $searchModel,

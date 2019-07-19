@@ -100,7 +100,7 @@ class GroupEnrolmentController extends BaseController
         $model->setScenario(Enrolment::SCENARIO_GROUP_ENROLMENT_ENDDATE_ADJUSTMENT);
         $course = $model->course;
         if ($model->course->program->isGroup()) {
-            $changedEndDate = Yii::$app->request->get('endDate');
+            $changedEndDate = Yii::$app->request->get('endDateTime');
             $lastLesson = $model->lastRootLesson;
             if (!$lastLesson) {
                 return [
@@ -138,55 +138,53 @@ class GroupEnrolmentController extends BaseController
             $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
             $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
            
-                $post = Yii::$app->request->post();
-                if ($post) {
+            $post = Yii::$app->request->post();
+            if ($post) {
                 $course->load($post);
-                $courseEndDate = $course->endDate;
-                $model->endDateTime = Carbon::parse($courseEndDate)->format('Y-m-d');
-                if ($model->validate()) {
-                $lessons = GroupLesson::find()
-                    ->andWhere(['group_lesson.enrolmentId' => $model->id])
-                    ->joinWith(['lesson' => function ($query) use($courseEndDate) { 
-                        $query->andWhere(['>', 'lesson.date', Carbon::parse($courseEndDate)->format('Y-m-d')]);
-                    }])
-                    ->all();
-                $message = null;
-                $model->revertGroupLessonsCredit($lessons);
-                $model->save();
-                $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
-                $model->setStatus();
+                    if ($model->load($post) && $model->validate()) {
+                        $courseEndDate = $model->endDateTime;
+                        $model->endDateTime = Carbon::parse($courseEndDate)->format('Y-m-d');
+                        $lessons = GroupLesson::find()
+                            ->andWhere(['group_lesson.enrolmentId' => $model->id])
+                            ->joinWith(['lesson' => function ($query) use($courseEndDate) { 
+                                $query->andWhere(['>', 'lesson.date', Carbon::parse($courseEndDate)->format('Y-m-d')]);
+                            }])
+                            ->all();
+                        $message = null;
+                        $model->revertGroupLessonsCredit($lessons);
+                        $model->save();
+                        $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
+                        $model->setStatus();
+                        $response = [
+                            'status' => true,
+                        ];
+                    } else {
+                        $errors = ActiveForm::validate($model);
+                        $response = [
+                            'error' => end($errors),
+                            'status' => false,
+                        ];
+                    }
+            } else {
+                $data = $this->renderAjax('_form-schedule', [
+                    'model' => $model,
+                    'action' => $action,
+                    'dateRange' => $dateRange,
+                    'course' => $model->course,
+                    'previewDataProvider' => $previewDataProvider
+                ]);
                 $response = [
                     'status' => true,
+                    'data' => $data,
                 ];
-            }  else {
-                $errors = ActiveForm::validate($model);
-                $response = [
-                    'error' => end($errors),
-                    'status' => false,
-                ];
-        }
-        }else {
-            $data = $this->renderAjax('_form-schedule', [
-                'model' => $model,
-                'action' => $action,
-                'dateRange' => $dateRange,
-                'course' => $model->course,
-                'previewDataProvider' => $previewDataProvider
-            ]);
-            $response = [
-                'status' => true,
-                'data' => $data,
-            ];
             }
-        }
-     else {
+        } else {
             $errors = ActiveForm::validate($course);
             $response = [
                 'error' => end($errors),
                 'status' => false,
             ];
-    }
+        }
         return $response;
-        
     }
 }
