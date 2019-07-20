@@ -86,7 +86,7 @@ class CourseReschedule extends Model
             ->andWhere(['courseId' => $this->courseId])
             ->regular()
             ->notDeleted()
-            ->statusScheduled()
+            ->notCanceled()
             ->isConfirmed()
             ->andWhere(['between', 'DATE(lesson.date)', $firstday, $lastday])
             ->orderBy(['lesson.date' => SORT_ASC])
