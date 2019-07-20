@@ -220,11 +220,11 @@ class RecurringPaymentController extends Controller
             ->andWhere(['>=', 'DATE(customer_recurring_payment.expiryDate)', $currentDate->format('Y-m-d')])
             ->isRecurringPaymentEnabled()
             ->andWhere(['>', 'amount', 0.00])
+            ->andWhere(['customer_recurring_payment.id' => 1390])
             ->joinWith(['customer' => function ($query) {
                 $query->notDeleted()
-                    ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22]);
+                    ->location([1, 4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22]);
             }])
-            ->andWhere(['<=', 'DATE(customer_recurring_payment.startDate)', $currentDate->format('Y-m-d')])
             ->all();
         foreach ($customerRecurringPayments as $customerRecurringPayment) { 
             $startDate = $currentDate->subMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId - 1)->format('Y-m-1');
@@ -243,9 +243,10 @@ class RecurringPaymentController extends Controller
                     $nextEntryDayYear = $currentDate->format('Y');
                     $nextEntryDay = Carbon::parse($nextEntryDayYear.'-'.$nextEntryDayMonth.'-'.$nextEntryDayDate)->format('Y-m-d');
                 }
-                while ($nextEntryDay >= $currentDate->format('Y-m-d')) {
-                    $customerRecurringPayment->nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
+                while ($nextEntryDay <= $currentDate->format('Y-m-d')) {
+                    $nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
                 }
+                $customerRecurringPayment->nextEntryDay = $nextEntryDay;
                 $customerRecurringPayment->save(); 
             }
         }
