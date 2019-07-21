@@ -90,7 +90,7 @@ use kartik\grid\GridView;
         'attribute' => 'enddate',
         'contentOptions' => ['style' => 'width:20%'],
         'value' => function ($data) {
-            return Yii::$app->formatter->asDate($data->course->endDate);
+            return Yii::$app->formatter->asDate($data->endDateTime);
         },
         'filterType' => KartikGridView::FILTER_DATE_RANGE,
         'filterWidgetOptions' => [
