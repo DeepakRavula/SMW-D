@@ -20,8 +20,8 @@ use yii\widgets\Pjax;
         <label>End Date</label>
     </div>
     <div class="col-md-3">
-        <?= $form->field($course, 'endDate')->widget(DatePicker::classname(), [
-            'value'  => Yii::$app->formatter->asDate($course->endDate),
+        <?= $form->field($model, 'endDateTime')->widget(DatePicker::classname(), [
+            'value'  => Yii::$app->formatter->asDate($model->endDateTime),
             'dateFormat' => 'php:M d, Y',
             'options' => [
                 'class' => 'form-control'
@@ -103,7 +103,7 @@ $columns = [
         $('#popup-modal .modal-dialog').css({'width': '600px'});
     });
 
-    $(document).on('change', '#course-enddate', function () {
+    $(document).on('change', '#enrolment-enddatetime', function () {
         $('#modal-spinner').show();
         var endDate = $(this).val();
         var url = '<?= Url::to(['enrolment/edit-end-date', 'id' => $model->id]); ?>&endDate=' + endDate;

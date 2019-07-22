@@ -77,8 +77,9 @@ class LessonSearch extends Lesson
             ->location($locationId)
             ->activePrivateLessons()
             ->orderBy(['lesson.dueDate' => SORT_ASC])
-            ->scheduledOrRescheduled();
-
+            ->notCanceled()
+            ->notExpired();
+            
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -86,7 +87,7 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
         if (!$this->showAll) {
-            $query->notCompleted();
+            $query->andWhere(['OR', ['lesson.status' => Lesson::STATUS_UNSCHEDULED], ['AND', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['>', 'lesson.date', (new \DateTime())->format('Y-m-d')]]]);
         }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
@@ -136,6 +137,8 @@ class LessonSearch extends Lesson
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_RESCHEDULED) {
             $query->rescheduled()
 		    ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
+        } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
+            $query->unscheduled();
         } 
         
         if ($this->invoiceStatus === self::STATUS_INVOICED) {
@@ -200,6 +203,7 @@ class LessonSearch extends Lesson
             Lesson::STATUS_COMPLETED => 'Completed',
             Lesson::STATUS_SCHEDULED => 'Scheduled',
             Lesson::STATUS_RESCHEDULED => 'Rescheduled',
+            Lesson::STATUS_UNSCHEDULED => 'Unscheduled',
         ];
     }
     public static function invoiceStatuses()

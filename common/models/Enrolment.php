@@ -205,8 +205,8 @@ class Enrolment extends \yii\db\ActiveRecord
     public function validateOnAdjustment($attribute)
     {
         if ($this->course->program->isGroup()) {
-            $course = Course::findOne($this->course->id);
-            if(Carbon::parse($this->endDateTime) > Carbon::parse($course->endDate)) {
+            $enrolment = Enrolment::findOne($this->id);
+            if(Carbon::parse($this->endDateTime) > Carbon::parse($enrolment->endDateTime)) {
                 $this->addError($attribute, "You can't extend group enrolments");
         }
     }
