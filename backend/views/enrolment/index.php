@@ -134,20 +134,14 @@ use kartik\grid\GridView;
                 Html::button('<i class="fa fa-plus"></i>', [
                     'class' => 'btn btn-success new-enrol-btn',
                 ]),
-            'options' => ['data-toggle' => 'tooltip',  
-                          'data-placement' => 'tooltip',
-                          'title' =>'Add',
+            'options' => ['title' =>'Add',
                           'class' => 'btn-group mr-2']
         ],
             ['content' =>  $this->render('_action-menu'),
-             'options' => ['data-toggle' => 'tooltip',  
-                           'data-placement' => 'tooltip',
-                           'title' =>'Edit',]
+             'options' => ['title' =>'Edit',]
             ],
             ['content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-             'options' => ['data-toggle' => 'tooltip',  
-                           'data-placement' => 'tooltip',
-                           'title' =>'Filter',]
+             'options' => ['title' =>'Filter',]
             ],
             '{export}',
             '{toggleData}'
