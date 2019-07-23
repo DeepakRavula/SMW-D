@@ -74,8 +74,8 @@ class PrivateLesson extends \yii\db\ActiveRecord
         $enrolment = $model->enrolment;
         $lessonDurationSec = $model->durationSec;
         $splitCount = $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC;
-        $lastLessonPrice = ($model->netPrice - (round($model->netPrice / ($splitCount), 2) * ($splitCount - 1))) * 4;
-        $pricePerLesson = round($model->netPrice / $splitCount, 2) * 4; 
+        $lastLessonPrice = ($model->programRate - (round($model->programRate / ($splitCount), 2) * ($splitCount - 1))) * 2;
+        $pricePerLesson = round($model->programRate / $splitCount, 2) * 2; 
         
         for ($i = 0; $i < $splitCount; $i++) {
             $lesson = clone $model;
