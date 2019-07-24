@@ -53,8 +53,7 @@ class CourseReschedule extends Model
             [['dayTime', 'teacherId', 'duration'], 'safe'],
             [['dateToChangeSchedule', 'rescheduleBeginDate'], 'safe'],
             [['courseId'], 'safe'],
-            ['dateToChangeSchedule', 'validateDateToChangeSchedule'],
-            ['rescheduleBeginDate','validateRescheduleBeginDate']
+            
         ];
     }
 
@@ -74,39 +73,7 @@ class CourseReschedule extends Model
         }
     }
     
-    public function validateDateToChangeSchedule($attribute) {
-        $ddate = ($this->dateToChangeSchedule);
-        $givenday = carbon::parse($ddate)->format('Y-m-d');
-        $date = Carbon::parse($ddate);
-        $first = $date->modify('first day of this month');
-        $firstday = Carbon::parse($first)->format('Y-m-d');
-        $last = $date->modify('last day of this month');
-        $lastday = Carbon::parse($last)->format('Y-m-d');
-        $lesson = Lesson::find()
-            ->andWhere(['courseId' => $this->courseId])
-            ->regular()
-            ->notDeleted()
-            ->notCanceled()
-            ->isConfirmed()
-            ->andWhere(['between', 'DATE(lesson.date)', $firstday, $lastday])
-            ->orderBy(['lesson.date' => SORT_ASC])
-            ->one();
-        $lessondate = Carbon::parse($lesson->date)->format('Y-m-d');
-        if ($givenday > $lessondate) {
-            $this->addError($attribute, "Date to change schedule should be in the first week of the month");
-        }
-    }
-    public function validateRescheduleBeginDate($attribute) {
-        $ddate = ($this->rescheduleBeginDate);
-        $givenday = carbon::parse($ddate)->format('Y-m-d');
-        $date = Carbon::parse($ddate);
-        $firstDayOfTheMonth = $date->modify('first day of this month');
-        $firstDayOfTheMonth = Carbon::parse($firstDayOfTheMonth);
-        $endOfTheWeek = Carbon::parse($firstDayOfTheMonth->endOfWeek())->format('Y-m-d');
-        if ($givenday > $endOfTheWeek) {
-            $this->addError($attribute, "Reschedule begin date should be in the first week of the month");
-        }
-    }
+    
 
     /**
      * {@inheritdoc}
