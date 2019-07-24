@@ -100,21 +100,10 @@ class CourseReschedule extends Model
         $ddate = ($this->rescheduleBeginDate);
         $givenday = carbon::parse($ddate)->format('Y-m-d');
         $date = Carbon::parse($ddate);
-        $first = $date->modify('first day of this month');
-        $firstday = Carbon::parse($first)->format('Y-m-d');
-        $last = $date->modify('last day of this month');
-        $lastday = Carbon::parse($last)->format('Y-m-d');
-        $lesson = Lesson::find()
-            ->andWhere(['courseId' => $this->courseId])
-            ->regular()
-            ->notDeleted()
-            ->statusScheduled()
-            ->isConfirmed()
-            ->andWhere(['between', 'DATE(lesson.date)', $firstday, $lastday])
-            ->orderBy(['lesson.date' => SORT_ASC])
-            ->one();
-        $lessondate = Carbon::parse($lesson->date)->format('Y-m-d');
-        if ($givenday > $lessondate) {
+        $firstDayOfTheMonth = $date->modify('first day of this month');
+        $firstDayOfTheMonth = Carbon::parse($firstDayOfTheMonth);
+        $endOfTheWeek = Carbon::parse($firstDayOfTheMonth->endOfWeek())->format('Y-m-d');
+        if ($givenday > $endOfTheWeek) {
             $this->addError($attribute, "Reschedule begin date should be in the first week of the month");
         }
     }
