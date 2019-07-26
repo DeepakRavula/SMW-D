@@ -16,11 +16,16 @@ class m190726_060034_fix_explode_lesson_with_program_rate extends Migration
         $locationIds = [1,4,5,6,9,13,14,15,16,17,18,19,20,21];
         $explodedLessons = Lesson::find()
         ->exploded()
+        ->notDeleted()
+        ->notCanceled()
         ->location($locationIds)
-        ->andWhere(['NOT', ['lesson.p' => Yii::$app->user->id]]);
         ->all();
-        
-
+        foreach ($explodedLessons as $explodedLesson){
+            if ($explodedLesson->programRate != $explodedLesson->rootLesson->programRate) {
+                print_r("\n".$explodedLesson->id."\t".$explodedLesson->course->location->id."\t changed from ".$explodedLesson->rootLesson->programRate." to ".$explodedLesson->programRate);
+            }
+        }
+        die('coming');
     }
 
     /**
