@@ -128,6 +128,7 @@ class LessonConfirm extends Model
         $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT, [new StudentLog(), 'addEnrolment'],
             ['loggedUser' => $loggedUser]);
         $enrolmentModel->customer->updateCustomerBalance();
+        $enrolmentModel->setDueDate();
         return true;
     }
 
