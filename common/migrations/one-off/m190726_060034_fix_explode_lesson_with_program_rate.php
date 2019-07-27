@@ -20,12 +20,15 @@ class m190726_060034_fix_explode_lesson_with_program_rate extends Migration
         ->notCanceled()
         ->location($locationIds)
         ->all();
+        $lessonCount = 0;
         foreach ($explodedLessons as $explodedLesson){
-            if ($explodedLesson->programRate != $explodedLesson->rootLesson->programRate) {
+            if ($explodedLesson->programRate != $explodedLesson->rootLesson->programRate && $explodedLesson->programRate > $explodedLesson->rootLesson->programRate ) {
+                $explodedLesson->updateAttributes(['programRate' => $explodedLesson->rootLesson->programRate]);
                 print_r("\n".$explodedLesson->id."\t".$explodedLesson->course->location->id."\t changed from ".$explodedLesson->rootLesson->programRate." to ".$explodedLesson->programRate);
+                $lessonCount++;
             }
         }
-        die('coming');
+        print_r("Processed Lessons Count".$lessonCount);
     }
 
     /**
