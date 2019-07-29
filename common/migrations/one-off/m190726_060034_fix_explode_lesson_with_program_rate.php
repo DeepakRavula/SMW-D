@@ -26,11 +26,12 @@ class m190726_060034_fix_explode_lesson_with_program_rate extends Migration
         ->exploded()
         ->notDeleted()
         ->notCanceled()
+        ->unInvoiced()
         ->location($locationIds)
         ->all();
         $lessonCount = 0;
         foreach ($explodedLessons as $explodedLesson){
-            if ($explodedLesson->programRate != $explodedLesson->rootLesson->programRate && ($explodedLesson->programRate > $explodedLesson->rootLesson->programRate || ($explodedLesson->rootLesson->programRate - $explodedLesson->programRate ) > 0.09 )) {
+            if ($explodedLesson->programRate != $explodedLesson->rootLesson->programRate && ($explodedLesson->rootLesson->programRate - $explodedLesson->programRate) <= 0.05 ) {
                 print_r("\n".$explodedLesson->id."\t".$explodedLesson->course->location->id."\t changed from ".$explodedLesson->programRate);
                 $explodedLesson->programRate = $explodedLesson->rootLesson->programRate;
                 $explodedLesson->save();
