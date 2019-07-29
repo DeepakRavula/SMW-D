@@ -31,9 +31,10 @@ class m190726_060034_fix_explode_lesson_with_program_rate extends Migration
         $lessonCount = 0;
         foreach ($explodedLessons as $explodedLesson){
             if ($explodedLesson->programRate != $explodedLesson->rootLesson->programRate && ($explodedLesson->programRate > $explodedLesson->rootLesson->programRate || ($explodedLesson->rootLesson->programRate - $explodedLesson->programRate ) > 0.09 )) {
-                print_r("\n".$explodedLesson->id."\t".$explodedLesson->course->location->id."\t changed from ".$explodedLesson->rootLesson->programRate." to ".$explodedLesson->programRate);
+                print_r("\n".$explodedLesson->id."\t".$explodedLesson->course->location->id."\t changed from ".$explodedLesson->programRate);
                 $explodedLesson->programRate = $explodedLesson->rootLesson->programRate;
                 $explodedLesson->save();
+                print_r("to ".$explodedLesson->programRate);
                 $lessonCount++;
             }
         }
