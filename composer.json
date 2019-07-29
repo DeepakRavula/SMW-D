@@ -105,7 +105,8 @@
     "codemix/yii2-localeurls": "^1.5",
     "friendsofphp/php-cs-fixer": "^2.10",
     "pusher/pusher-php-server": "^3.0",
-    "asinfotrack/yii2-audittrail": "^0.8.3"
+    "asinfotrack/yii2-audittrail": "^0.8.3",
+    "kartik-v/yii2-field-range": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "*",
