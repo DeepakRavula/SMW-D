@@ -1,8 +1,7 @@
 <?php
 
-use kartik\daterange\DateRangePicker;
+use kartik\date\DatePicker;
 use yii\bootstrap\ActiveForm;
-use yii\jui\DatePicker;
 use yii\helpers\Url;
 ?>
 
@@ -16,17 +15,16 @@ use yii\helpers\Url;
         <div class="row">
             <div class="col-xs-8">
                 <?= $form->field($courseReschedule, 'dateToChangeSchedule')->widget(DatePicker::classname(), [
-                'options' => [
-                    'class' => 'form-control',
-                ],
-                'dateFormat' => 'php:M d, Y',
-                'clientOptions' => [
-                    'defaultDate' => (new \DateTime($courseReschedule->dateToChangeSchedule))->format('M d, Y'),
-                    'changeMonth' => true,
-                    'yearRange' => '1500:3000',
-                    'changeYear' => true,
-                ]
-            ])->label('Date To Change Schedule') ?>
+               'options' => ['placeholder' => Yii::t('app', 'Starting Date')],
+               'attribute2'=>'dateToChangeSchedule',
+               'type' => DatePicker::TYPE_INPUT,
+               'pluginOptions' => [
+                   'autoclose' => true,
+                   'startView'=>'year',
+                   'minViewMode'=>'months',
+                   'format' => 'MM yyyy'
+               ]
+           ])->label('Date To Change Schedule') ?>
             </div>
         </div>
     </div>
