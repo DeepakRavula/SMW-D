@@ -53,6 +53,8 @@ class CourseReschedule extends Model
             [['dayTime', 'teacherId', 'duration'], 'safe'],
             [['dateToChangeSchedule', 'rescheduleBeginDate'], 'safe'],
             [['courseId'], 'safe'],
+            ['dateToChangeSchedule', 'validateDateToChangeSchedule'],
+            ['rescheduleBeginDate','validateRescheduleBeginDate']
             
         ];
     }
@@ -129,5 +131,37 @@ class CourseReschedule extends Model
         $rescheduleStartDate->modify('next ' . $day);
         $lastLessonDate = $course->generateLessons($lessons, $rescheduleStartDate, $this->teacherId, $this->dayTime, $this->duration);
         return $lastLessonDate;
+    }
+
+    public function validateDateToChangeSchedule($attribute) {
+        $date = Carbon::parse($this->dateToChangeSchedule);
+        $first = $date->modify('first day of this month');
+        $firstday = Carbon::parse($first)->format('Y-m-d');
+        $last = $date->modify('last day of this month');
+        $lastday = Carbon::parse($last)->format('Y-m-d');
+        $lesson = Lesson::find()
+            ->andWhere(['courseId' => $this->courseId])
+            ->regular()
+            ->notDeleted()
+            ->statusScheduled()
+            ->isConfirmed()
+            ->invoiced()
+            ->andWhere(['between', 'DATE(lesson.date)', $firstday, $lastday])
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->one();
+         if (!empty($lesson)){
+             $this->addError($attribute, "You cannot select this month");
+         }
+    }
+    
+    public function validateRescheduleBeginDate($attribute) {
+        $ddate = ($this->rescheduleBeginDate);
+        $givenday = carbon::parse($ddate)->format('Y-m-d');
+        $date = Carbon::parse($ddate);
+        $first = $date->modify('first day of this month');
+        $endofweek = ($first->endOfWeek())->format('Y-m-d');
+        if ($givenday > $endofweek) {
+            $this->addError($attribute, "Reschedule begin date should be in the first week of the month");
+        }
     }
 }
