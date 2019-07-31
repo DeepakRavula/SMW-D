@@ -492,4 +492,9 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function teacherAvailabilityDay($day) {
         return $this->andWhere(['=', 'WEEKDAY(lesson.date)', $day-1]);
     }
+
+    public function exploded()
+    {
+        return $this->andWhere(['lesson.isExploded' => true]);
+    }
 }
