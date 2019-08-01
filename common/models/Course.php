@@ -255,6 +255,9 @@ class Course extends \yii\db\ActiveRecord
                 'startDate' => $firstLessonDate,
                 'endDate' => $lastLessonDate
             ]);
+            $this->enrolment->updateAttributes([
+                'endDateTime' => $lastLessonDate,
+            ]);
         }
         return true;
     }
