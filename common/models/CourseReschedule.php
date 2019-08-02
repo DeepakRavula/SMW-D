@@ -158,10 +158,11 @@ class CourseReschedule extends Model
         $ddate = ($this->rescheduleBeginDate);
         $givenday = carbon::parse($ddate)->format('Y-m-d');
         $date = Carbon::parse($ddate);
-        $first = $date->modify('first day of this month');
-        $endofweek = $first->modify('+6 days')->format('Y-m-d');
-        if ($givenday > $endofweek) {
-            $this->addError($attribute, "Reschedule begin date should be within seven days of the month");
+        $first = Carbon::parse($date->modify('first day of this month'));
+        $firstDate = Clone $first;
+        $endOfWeek = $firstDate->modify('+6 days')->format('Y-m-d');
+        if ($givenday > $endOfWeek) {
+            $this->addError($attribute, "Reschedule begin date should be within first seven days (".Carbon::parse($first)->format('M d, Y')." - ".Carbon::parse($endOfWeek)->format('M d, Y').")of the month");
         }
     }
 }
