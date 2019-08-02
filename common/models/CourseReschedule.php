@@ -161,7 +161,7 @@ class CourseReschedule extends Model
         $first = $date->modify('first day of this month');
         $endofweek = $first->modify('+6 days')->format('Y-m-d');
         if ($givenday > $endofweek) {
-            $this->addError($attribute, "Reschedule begin date should be in the first week of the month");
+            $this->addError($attribute, "Reschedule begin date should be within seven days of the month");
         }
     }
 }
