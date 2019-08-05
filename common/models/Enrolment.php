@@ -1105,6 +1105,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $this->addCreditInvoice($this->course->endDate);
         $this->updateAttributes(['isAutoRenew' => false]);
         $this->resetPaymentCycle();
+        $this->course->updateDates();
         return true;
     }
 
