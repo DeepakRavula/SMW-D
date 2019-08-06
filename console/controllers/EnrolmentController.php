@@ -100,6 +100,7 @@ class EnrolmentController extends Controller
                        ->location($this->id) 
                        ->isConfirmed()
                        ->notDeleted()
+                       ->isRegular()
                        ->privateProgram()
                        ->all();
         foreach ($enrolments as $enrolment){
