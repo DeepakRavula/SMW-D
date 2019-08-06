@@ -13,7 +13,7 @@ $this->registerCssFile("@web/css/note.css");
 	<?php endif; ?>
     <p class="message">
 		<a class="name">
-			<small class="text-muted pull-right direct-chat-timestamp"><?= Yii::$app->formatter->asDatetime($model->createdOn, "php:d M g:i a"); ?></small>
+			<small class="text-muted pull-right direct-chat-timestamp"><?= Yii::$app->formatter->asDatetime($model->createdOn, "php:M d Y g:i a"); ?></small>
 			<?= $model->createdUser->publicIdentity; ?>
 		</a>
 		<?= $model->content; ?>
