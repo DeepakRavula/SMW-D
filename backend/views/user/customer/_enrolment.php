@@ -72,7 +72,7 @@ use yii\helpers\Url;
             [
                 'label' => 'Renewal Date',
                 'value' => function ($data) {
-                    return !empty($data->course->endDate) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
+                    return !empty($data->endDateTime) ? Yii::$app->formatter->asDate($data->endDateTime) : null;
                 },
             ],
         ],

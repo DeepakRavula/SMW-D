@@ -38,7 +38,7 @@ LteBox::begin([
 	<?php if($model->course->program->isGroup()) : ?>
 	<dd><?= Yii::$app->formatter->asDate($model->endDateTime);?></dd>
 	<?php else : ?>
-	<dd><?= Yii::$app->formatter->asDate($model->course->endDate);?></dd>
+	<dd><?= Yii::$app->formatter->asDate($model->endDateTime);?></dd>
 	<?php endif;?>
 </dl>
 <?php LteBox::end()?>
