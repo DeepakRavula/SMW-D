@@ -11,6 +11,7 @@ use common\models\Course;
 use common\models\CourseProgramRate;
 use common\models\Location;
 
+
 class EnrolmentController extends Controller
 {
     public $id;
@@ -26,7 +27,7 @@ class EnrolmentController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'delete' ? ['id'] : []
+            $actionID == 'delete' || 'set-lesson-due-date' ? ['id'] : []
         );
     }
     
@@ -87,5 +88,43 @@ class EnrolmentController extends Controller
     {
         $model = Enrolment::findOne($this->id);
         return $model->deleteWithTransactionalData();
+    }
+
+    public function actionSetLessonDueDate()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        Console::startProgress(0, 'Processing Enrolments');
+        $enrolments = Enrolment::find()
+                       ->location($this->id) 
+                       ->isConfirmed()
+                       ->notDeleted()
+                       ->privateProgram()
+                       ->all();
+        foreach ($enrolments as $enrolment){
+            Console::output("processing: " . $enrolment->id . 'processing', Console::FG_GREEN, Console::BOLD);
+           $this->setDueDate($enrolment->id);
+        }  
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);             
+        return true;
+    }
+
+    public function setDueDate($enrolmentId)
+    {
+        $lessons = Lesson::find()
+            ->enrolment($enrolmentId)
+            ->isConfirmed()
+            ->notCanceled()
+            ->notDeleted()
+            ->all();
+        foreach ($lessons as $lesson){
+            if ($lesson->paymentCycle) {
+                $dueDate = Carbon::parse($lesson->dueDate)->format('m');
+                print_r($dueDate);die('Coming');
+                $this->updateAttributes(['dueDate' => $dueDate]); 
+            }
+        }
+        return true;
     }
 }
