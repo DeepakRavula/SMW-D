@@ -10,7 +10,8 @@ use yii\console\Controller;
 use common\models\Course;
 use common\models\CourseProgramRate;
 use common\models\Location;
-
+use yii\helpers\Console;
+use common\models\Lesson;
 
 class EnrolmentController extends Controller
 {
@@ -120,9 +121,11 @@ class EnrolmentController extends Controller
             ->all();
         foreach ($lessons as $lesson){
             if ($lesson->paymentCycle) {
-                $dueDate = Carbon::parse($lesson->dueDate)->format('m');
-                print_r($dueDate);die('Coming');
-                $this->updateAttributes(['dueDate' => $dueDate]); 
+                $dueDateMonth = Carbon::parse($lesson->dueDate)->format('m');
+                $dueDateYear = Carbon::parse($lesson->dueDate)->format('Y');
+                $formatedDate = 15 . '-' . $dueDateMonth . '-' . $dueDateYear;
+                $dueDate = Carbon::parse($formatedDate)->format('Y-m-d');
+                $lesson->updateAttributes(['dueDate' => $dueDate]); 
             }
         }
         return true;
