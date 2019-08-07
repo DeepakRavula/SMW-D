@@ -10,6 +10,8 @@ use yii\console\Controller;
 use common\models\Course;
 use common\models\CourseProgramRate;
 use common\models\Location;
+use yii\helpers\Console;
+use common\models\Lesson;
 
 class EnrolmentController extends Controller
 {
@@ -26,7 +28,7 @@ class EnrolmentController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'delete' ? ['id'] : []
+            $actionID == 'delete' || 'set-lesson-due-date' ? ['id'] : []
         );
     }
     
@@ -88,4 +90,5 @@ class EnrolmentController extends Controller
         $model = Enrolment::findOne($this->id);
         return $model->deleteWithTransactionalData();
     }
+
 }
