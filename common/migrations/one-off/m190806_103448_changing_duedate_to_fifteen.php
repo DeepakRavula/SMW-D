@@ -49,6 +49,7 @@ class m190806_103448_changing_duedate_to_fifteen extends Migration
             ->isConfirmed()
             ->notCanceled()
             ->notDeleted()
+            ->andWhere(['>', 'DATE(lesson.date)' , Carbon::now()->format('Y-m-d')])
             ->all();
         foreach ($lessons as $lesson){
             if ($lesson->paymentCycle) {
