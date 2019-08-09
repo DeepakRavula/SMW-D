@@ -174,6 +174,11 @@ class Course extends \yii\db\ActiveRecord
         return (int) $this->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
     }
 
+    public function isGroup()
+    {
+        return (int) $this->program->type === (int) Program::TYPE_GROUP_PROGRAM;
+    }
+
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId']);
@@ -255,9 +260,11 @@ class Course extends \yii\db\ActiveRecord
                 'startDate' => $firstLessonDate,
                 'endDate' => $lastLessonDate
             ]);
+            if ($this->enrolment) {
             $this->enrolment->updateAttributes([
                 'endDateTime' => $lastLessonDate,
             ]);
+            }
         }
         return true;
     }
