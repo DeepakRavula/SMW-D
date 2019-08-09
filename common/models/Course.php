@@ -174,6 +174,11 @@ class Course extends \yii\db\ActiveRecord
         return (int) $this->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
     }
 
+    public function isGroup()
+    {
+        return (int) $this->program->type === (int) Program::TYPE_GROUP_PROGRAM;
+    }
+
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId']);
