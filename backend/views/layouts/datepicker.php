@@ -10,6 +10,7 @@
             'readonly' => true
         ],
         'clientOptions' => [
+            'firstDay' => 1,
             'changeMonth' => true,
             'yearRange' => '1500:3000',
             'changeYear' => true
