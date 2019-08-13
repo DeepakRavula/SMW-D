@@ -55,7 +55,7 @@ use yii\helpers\Url;
     $(document).off('change', '#invoicelineitemsearch-daterange').on('change', '#invoicelineitemsearch-daterange', function() {
       
         var url = $("#customer-item-search-form").attr('action');
-        debugger;
+        
         $("#customer-item-search-form").submit();
 
 
