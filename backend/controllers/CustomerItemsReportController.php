@@ -66,6 +66,7 @@ class CustomerItemsReportController extends \common\components\controllers\BaseC
         $searchModel->dateRange        = $searchModel->fromDate.' - '.$searchModel->toDate;
         $searchModel->customerId       = $id;
         $searchModel->isCustomerReport = true;
+        $userModel = User::findOne($id);
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
             $invoiceLineItemRequest = $request->get('InvoiceLineItemSearch');
@@ -79,6 +80,7 @@ class CustomerItemsReportController extends \common\components\controllers\BaseC
                 [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'userModel' => $userModel,
         ]
         );
     }
