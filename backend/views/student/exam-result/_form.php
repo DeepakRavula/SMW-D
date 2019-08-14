@@ -49,6 +49,7 @@ if ($model->isNewRecord) {
                     'changeMonth' => true,
                     'yearRange' => '1500:3000',
                     'changeYear' => true,
+                    'firstDay' => 1,
                 ],
             ])->textInput(['placeholder' => 'Select Date']);?>
     </div>

@@ -44,6 +44,7 @@ use yii\helpers\Url;
 		'clientOptions' => [
 		'changeMonth' => true,
 		'changeYear' => true,
+		'firstDay' => 1,
 		'yearRange' => '-70:today',
 		],
 		]); ?>
