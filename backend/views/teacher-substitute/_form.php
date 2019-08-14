@@ -245,6 +245,7 @@ Modal::begin([
     
     $(document).off('click', '#sub-teacher-confirm').on('click', '#sub-teacher-confirm', function () {
         if (!$(this).attr('disabled')) {
+            $(this).attr('disabled', true);
             var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
             var params = $.param({ ids: lessonIds });
             $.ajax({
