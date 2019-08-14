@@ -61,6 +61,7 @@ use kartik\select2\Select2;
                         'yearRange' => '-70:+20',
                         'defaultDate' => (new \DateTime())->format('M d, Y'),
                         'changeYear' => true,
+                        'firstDay' => 1,
                         'disabled' => $disabled,
                         ], ])->textInput(['placeholder' => 'Select Start Date'])->label('As Of');?>
     </div>

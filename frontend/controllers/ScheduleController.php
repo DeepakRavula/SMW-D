@@ -21,6 +21,8 @@ use common\models\Holiday;
 use common\models\TeacherUnavailability;
 use Carbon\Carbon;
 use common\components\controllers\FrontendBaseController;
+use Carbon\CarbonInterval;
+use League\Period\Period;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -199,56 +201,49 @@ class ScheduleController extends FrontendBaseController
 
     public function getAvailabilityEvents($teachersAvailability, $unavailability, $date)
     {
-        $availabilityStart = Carbon::parse($teachersAvailability->from_time);
-        $availabilityEnd = Carbon::parse($teachersAvailability->to_time);
-        $availabilityDiff = $availabilityStart->diff($availabilityEnd);
-        $availabilityInterval = CarbonInterval::hour($availabilityDiff->h)->minutes($availabilityDiff->i)->seconds($availabilityDiff->s);
-        
-        $unavailabilityStart = Carbon::parse($unavailability->fromTime);
-        $unavailabilityEnd = Carbon::parse($unavailability->toTime);
-        $unavailabilityDiff = $unavailabilityStart->diff($unavailabilityEnd);
-        $unavailabilityInterval = CarbonInterval::hour($unavailabilityDiff->h)->minutes($unavailabilityDiff->i)->seconds($unavailabilityDiff->s);
+        $events = [];
+        $availabilityStartDateTime = new \DateTime($teachersAvailability->from_time);
+        $availabilityEndDateTime = new \DateTime($teachersAvailability->to_time);
+        $availabilityStart = clone $date->setTime($availabilityStartDateTime->format('H'), $availabilityStartDateTime->format('i'), 
+            $availabilityStartDateTime->format('s'));
+        $availabilityEnd = clone $date->setTime($availabilityEndDateTime->format('H'), $availabilityEndDateTime->format('i'), 
+            $availabilityEndDateTime->format('s'));
+
+        $unavailabilityStartDateTime = new \DateTime($unavailability->fromTime);
+        $unavailabilityEndDateTime = new \DateTime($unavailability->toTime);
+        $unavailabilityStart = clone $date->setTime($unavailabilityStartDateTime->format('H'), $unavailabilityStartDateTime->format('i'), 
+            $unavailabilityStartDateTime->format('s'));
+        $unavailabilityEnd = clone $date->setTime($unavailabilityEndDateTime->format('H'), $unavailabilityEndDateTime->format('i'), 
+            $unavailabilityEndDateTime->format('s'));
             
-        $availabilityPeriods = Period::createFromDuration(
-            $teachersAvailability->from_time,
-            
-            $availabilityInterval
-            
-        );
-        $unavailabilityPeriods  = Period::createFromDuration(
-            $unavailability->fromTime,
-    
-            $unavailabilityInterval
-    
-        );
-        
-        $overlapPeriod = $availabilityPeriods->overlaps($unavailabilityPeriods);
-        if ($overlapPeriod) {
-            $events = [];
-            $availabilities = $availabilityPeriods->diff($unavailabilityPeriods);
-            foreach ($availabilities as $availability) {
-                if ($availability->getStartDate()->format('H:i:s') >= $teachersAvailability->from_time &&
-                    $availability->getEndDate()->format('H:i:s') <= $teachersAvailability->to_time) {
-                    $startTime = $availability->getStartDate()->format('Y-m-d H:i:s');
-                    $startTime = Carbon::parse($startTime);
-                    $start = $date->setTime($startTime->hour, $startTime->minute, $startTime->second);
-                    $endTime = $availability->getEndDate()->format('Y-m-d H:i:s');
-                    $endTime = Carbon::parse($endTime);
-                    $end = clone $date;
-                    $end = $end->setTime($endTime->hour, $endTime->minute, $endTime->second);
-                    $events[] = [
-                        'resourceId' => $teachersAvailability->teacher->id,
-                        'title'      => '',
-                        'start'      => $start->format('Y-m-d H:i:s'),
-                        'end'        => $end->format('Y-m-d H:i:s'),
-                        'rendering'  => 'background',
-                    ];
-                }
-            }
-        } else {
-            $events = $this->getRegularAvailability($teachersAvailability, $date);
+        if ($unavailabilityStart > $availabilityStart && $availabilityEnd > $unavailabilityEnd) {
+            $start = $availabilityStart;
+            $end = $unavailabilityStart;
+            $events[] = $this->setEvents($teachersAvailability, $start, $end);
+            $start = $unavailabilityEnd;
+            $end = $availabilityEnd;
+            $events[] = $this->setEvents($teachersAvailability, $start, $end);
+        } elseif ($unavailabilityStart < $availabilityStart && $availabilityEnd > $unavailabilityEnd) {
+            $start = $unavailabilityEnd;
+            $end = $availabilityEnd;
+            $events[] = $this->setEvents($teachersAvailability, $start, $end);
+        } elseif ($unavailabilityStart > $availabilityStart && $availabilityEnd < $unavailabilityEnd) {
+            $start = $availabilityStart;
+            $end = $unavailabilityStart;
+            $events[] = $this->setEvents($teachersAvailability, $start, $end);
         }
         return $events;
+    }
+
+    public function setEvents($teachersAvailability, $start, $end)
+    {
+        return [
+            'resourceId' => $teachersAvailability->teacher->id,
+            'title'      => '',
+            'start'      => $start->format('Y-m-d H:i:s'),
+            'end'        => $end->format('Y-m-d H:i:s'),
+            'rendering'  => 'background',
+        ];
     }
 
     public function actionRenderDayEvents()
