@@ -26,7 +26,8 @@ use yii\jui\DatePicker;
                     'clientOptions' => [
                         'changeMonth' => true,
                         'yearRange' => '1500:3000',
-                        'changeYear' => true
+                        'changeYear' => true,
+                        'firstDay' => 1,
                     ]
                 ]);
             ?>
