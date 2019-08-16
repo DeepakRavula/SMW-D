@@ -39,7 +39,11 @@ class UserForm extends Model
     public function rules()
     {
         return [
-        
+            ['firstname', 'filter', 'filter' => 'trim'],
+            ['firstname', 'required'],
+
+            ['lastname', 'filter', 'filter' => 'trim'],
+            ['lastname', 'required'],
             ['pin', 'integer', 'min' => 1111, 'max' => 9999],
             ['pin', 'validatePin'],
             [['status'], 'integer'],
