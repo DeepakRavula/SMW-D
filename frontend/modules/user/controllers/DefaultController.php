@@ -21,7 +21,7 @@ use backend\models\search\InvoiceSearch;
 use backend\models\search\UserSearch;
 use yii\data\ActiveDataProvider;
 use common\models\Invoice;
-
+use yii\widgets\ActiveForm;
 class DefaultController extends Controller
 {
     /**
@@ -116,11 +116,19 @@ class DefaultController extends Controller
         if ($userProfile->load($request->post())) { 
             if ($model->save()) {
                 $userProfile->setScenario(UserProfile::SCENARIO_FRONT_END_USER_EDIT);
+                if ($userProfile->validate()) {
                 $userProfile->save();
                 return [
                    'status' => true,
                 ];
             } else {
+                $errors = ActiveForm::validate($userProfile);
+                return [
+                    'status' => false,
+                    'errors' => $errors
+                ];
+            }
+         } else {
                 $errors = ActiveForm::validate($model);
                 return [
                     'status' => false,
