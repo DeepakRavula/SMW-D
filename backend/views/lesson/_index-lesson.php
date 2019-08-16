@@ -227,6 +227,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 <script>
     $(document).ready(function () {
         bulkAction.setAction();
+        
     });
 
     $(document).off('click', '#substitute-teacher').on('click', '#substitute-teacher', function(){
