@@ -14,7 +14,7 @@ class m190813_093436_add_fromdatetime_todatetime extends Migration
     public function safeUp()
     {
         $this->addColumn('teacher_unavailability', 'fromDateTime', $this->timestamp()->after('reason'));
-        $this->addColumn('teacher_unavailability', 'toDateTime', $this->timestamp()->after('reason'));
+        $this->addColumn('teacher_unavailability', 'toDateTime', $this->timestamp()->after('fromDateTime'));
         $teacherUnavailabilities = TeacherUnavailability::find()
                 ->all();
         foreach ($teacherUnavailabilities as $teacherUnavailability) {
