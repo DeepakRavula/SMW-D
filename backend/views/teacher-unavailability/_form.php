@@ -3,7 +3,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use kartik\time\TimePicker;
-use kartik\daterange\DateRangePicker;
+use kartik\datetime\DateTimePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Holiday */
@@ -25,34 +25,22 @@ use kartik\daterange\DateRangePicker;
         'validationUrl' => $validationUrl,
     ]); ?>
     <div class="row">
-            <label>Date Range</label>
-                <?php
-                echo DateRangePicker::widget([
-                    'model' => $model,
-                    'attribute' => 'dateRange',
-                    'convertFormat' => true,
-                    'initRangeExpr' => true,
-                    'pluginOptions' => [
-                        'autoApply' => true,
-                        'locale' => [
-                            'format' => 'M d, Y',
-                        ],
-                        'opens' => 'right',
-                    ],
-                ]);
-                ?>
 		<?php
-            echo $form->field($model, 'fromTime')->widget(TimePicker::classname(), [
+            echo $form->field($model, 'fromDateTime')->widget(DateTimePicker::classname(), [
+                'type' => DateTimePicker::TYPE_INPUT,
                 'pluginOptions' => [
-                    'defaultTime' => '12:00 PM',
-                ],
+                    'autoclose'=>true,
+                    'format' => 'M dd, yyyy hh:ii'
+                ]
             ]);
             ?>
 		<?php
-            echo $form->field($model, 'toTime')->widget(TimePicker::classname(), [
+            echo $form->field($model, 'toDateTime')->widget(DateTimePicker::classname(), [
+                'type' => DateTimePicker::TYPE_INPUT,
                 'pluginOptions' => [
-                    'defaultTime' => '01:00 PM',
-                ],
+                    'autoclose'=>true,
+                    'format' => 'M dd, yyyy hh:ii'
+                ]
             ]);
             ?>		
 		<?php
@@ -60,5 +48,4 @@ use kartik\daterange\DateRangePicker;
         <div class="clearfix"></div>
     </div>
     <?php ActiveForm::end(); ?>
-
 </div>

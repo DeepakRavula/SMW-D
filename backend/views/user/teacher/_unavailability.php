@@ -25,11 +25,9 @@ echo GridView::widget([
 'tableOptions' => ['class' => 'table table-bordered m-t-15'],
 'headerRowOptions' => ['class' => 'bg-light-gray'],
 'columns' => [
-    'fromDate:date',
-    'toDate:date',
+    'fromDateTime:datetime',
+    'toDateTime:datetime',
     'reason:raw',
-    'fromTime:time',
-    'toTime:time'
 ],
 ]);
 ?>
