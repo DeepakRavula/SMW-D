@@ -59,6 +59,7 @@ echo GridView::widget([
                 {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
+                    $('.modal-save').addClass('disabled');
                     if (unavailabilityId !== undefined) {
                         var params = $.param({ id: unavailabilityId });
                         var url    = '<?= Url::to(['teacher-unavailability/delete']) ?>?' + params;

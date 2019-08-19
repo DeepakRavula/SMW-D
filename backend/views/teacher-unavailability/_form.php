@@ -49,3 +49,16 @@ use kartik\datetime\DateTimePicker;
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).on('change', '#teacherunavailability-fromdatetime', function () {
+        var fromDateTime = $(this).val();
+        var endDate = moment(fromDateTime).format("MMM DD, YYYY");
+        var endTime = moment(fromDateTime).format("mm");
+        var fromTime = new Date (fromDateTime);
+        var fromTime = fromTime.getHours()+1 ;
+        $('#teacherunavailability-todatetime').val(endDate +' '+ fromTime + ':' + endTime);
+        $('.modal-save').removeClass('disabled');
+        return false;
+    });
+</script>
