@@ -16,17 +16,17 @@ class TeacherUnavailabilityQuery extends ActiveQuery
         return $this->andWhere(['OR', 
             ['AND',
                 [
-                    '<', 'DATE(fromDate)', $date->format('Y-m-d')
+                    '<', 'DATE(fromDateTime)', $date->format('Y-m-d H:i:s')
                 ],
                 [
-                    '>', 'DATE(toDate)', $date->format('Y-m-d')
+                    '>', 'DATE(toDateTime)', $date->format('Y-m-d H:i:s')
                 ]
             ], 
             [
-                'DATE(fromDate)' => $date->format('Y-m-d')
+                'DATE(fromDateTime)' => $date->format('Y-m-d H:i:s')
             ],
             [
-                'DATE(toDate)' => $date->format('Y-m-d')
+                'DATE(toDateTime)' => $date->format('Y-m-d H:i:s')
             ]
         ]);
     }
