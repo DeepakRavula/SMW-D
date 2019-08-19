@@ -55,4 +55,17 @@ class CustomerController extends Controller
             $customer->setActiveStatus();
         }
     }
+
+    public function actionUpdateBalance()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $customers = User::find()
+            ->allCustomers()
+            ->notDeleted()
+            ->all();
+        foreach ($customers as $customer) {
+            $customer->updateCustomerBalance();
+        }
+    }
 }

@@ -71,7 +71,17 @@ class ScheduleController extends BaseController
     public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-      
+        $customers = User::find()
+        ->allCustomers()
+        ->notDeleted()
+        ->location($locationId)
+        ->all();
+        foreach ($customers as $customer) {
+            $calculatedBalance = round(($customer->getLessonsDue($customer->id) + $customer->getInvoiceOwingAmountTotal($customer->id)) - $customer->getTotalCredits($customer->id), 2);
+            if ($calculatedBalance != $customer->customerAccount->balance) {
+            print_r("\n Customer:".$customer->publicIdentity."(".$customer->id.")    Calculated Balance : ".Yii::$app->formatter->asCurrency($calculatedBalance)."    Shown Balance :".$customer->customerAccount->balance);
+         } }
+        die('coming');
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
