@@ -131,7 +131,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                     'filter'=> UserSearch::balanceStatus(),
                     'label' => 'Balance',
                     'value' => function ($data) {
-                        return round(($data->getLessonsDue($data->id) + $data->getInvoiceOwingAmountTotal($data->id)) - $data->getTotalCredits($data->id), 2);
+                        return round($data->customerAccount->balance, 2);
                 },
                     'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width:20%'],
                     'hAlign' => 'right',

@@ -35,6 +35,7 @@ use kartik\select2\Select2;
                 'changeMonth' => true,
                 'yearRange' => '-70:+0',
                 'changeYear' => true,
+                'firstDay' => 1,
             ],
             ]);
         ?>
