@@ -44,10 +44,10 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['dateRange'], 'required'],
             [['teacherId'], 'integer'],
-            [['fromDate', 'toDate'], 'safe'],
-            [['fromTime', 'toTime', 'reason', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            [['reason', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            ['toDateTime', 'validateToDateTime'],
+            [['fromDateTime', 'toDateTime'], 'required']
         ];
     }
 
@@ -59,10 +59,8 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'teacherId' => 'Teacher',
-            'fromDate' => 'From Date',
-            'toDate' => 'To Date',
-            'fromTime' => 'From Time',
-            'toTime' => 'To Time',
+            'fromDateTime' => 'From Date Time',
+            'toDateTime' => 'To Date Time',
             'reason' => 'Reason'
         ];
     }
@@ -99,16 +97,17 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
     }
     public function beforeSave($insert)
     {
-        if (!empty($this->fromTime) || !empty($this->toTime)) {
-            $this->fromTime = (new \DateTime($this->fromTime))->format('H:i:s');
-            $this->toTime = (new \DateTime($this->toTime))->format('H:i:s');
-        }
-        list($fromDate, $toDate) = explode(' - ', $this->dateRange);
-        $this->fromDate = (new \DateTime($fromDate))->format('Y-m-d');
-        $this->toDate = (new \DateTime($toDate))->format('Y-m-d');
         if ($insert) {
             $this->isDeleted = false;
         }
         return parent::beforeSave($insert);
+    }
+
+    public function validateToDateTime($attribute) {
+        $fromDateTime = (new \DateTime($this->fromDateTime))->format('Y-m-d H:i');
+        $toDateTime = (new \DateTime($this->toDateTime))->format('Y-m-d H:i');
+        if ($fromDateTime > $toDateTime) {
+            $this->addError($attribute, "Enrolment end date must be greater than or equal to start date");
+        }
     }
 }
