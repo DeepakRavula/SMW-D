@@ -33,7 +33,6 @@ use common\models\Province;
                 'clientOptions' => [
                     'changeMonth' => true,
                     'changeYear' => true,
-                    'firstDay' => 1,
                     'yearRange' => '-2:+70',
                 ],
             ]);

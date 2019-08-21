@@ -40,7 +40,7 @@ use yii\jui\DatePicker;
                     'changeMonth' => true,
                     'yearRange' => '2010:2080',
                     'changeYear' => true,
-                    'firstDay' => 1,
+
                 ]
             ])->label('Effect From'); ?>
         </div>

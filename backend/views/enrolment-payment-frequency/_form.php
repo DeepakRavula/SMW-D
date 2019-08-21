@@ -39,7 +39,6 @@ use yii\jui\DatePicker;
                 'clientOptions' => [
                     'changeMonth' => true,
                     'yearRange' => '1500:3000',
-                    'firstDay' => 1,
                     'changeYear' => true,
                 ]
             ])->label('Effective Date') ?>

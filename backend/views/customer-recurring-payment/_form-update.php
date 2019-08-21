@@ -38,7 +38,6 @@ use Carbon\Carbon;
                         'changeMonth' => true,
                         'defaultDate' => (new \DateTime($model->startDate))->format('M d, Y'),
                         'yearRange' => '-70:+20',
-                        'firstDay' => 1,
                         'changeYear' => true,
                         ], ])->textInput(['placeholder' => 'Select Start Date'])->label('As Of');?>
     </div>

@@ -34,7 +34,6 @@ use kartik\switchinput\SwitchInput;
                 'clientOptions' => [
                      'defaultDate' => (new \DateTime($model->expiryDate))->format('M d, Y'),
                     'changeMonth' => true,
-                    'firstDay' => 1,
                     'yearRange' => '-10:+20',
                     'changeYear' => true,
                    

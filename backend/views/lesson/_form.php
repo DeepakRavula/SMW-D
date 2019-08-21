@@ -85,7 +85,6 @@ use common\models\Location;
                     'clientOptions' => [
                         'changeMonth' => true,
                         'yearRange' => '1500:3000',
-                        'firstDay' => 1,
                         'changeYear' => true
                     ]
                 ]);
