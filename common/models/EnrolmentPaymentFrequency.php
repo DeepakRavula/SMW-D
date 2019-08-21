@@ -114,6 +114,7 @@ class EnrolmentPaymentFrequency extends \yii\db\ActiveRecord
                 $paymentCycle->save();
             }
         }
+        $enrolment->setDueDate();
     }
 
     public function deletePaymentCycles()
