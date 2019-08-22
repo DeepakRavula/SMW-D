@@ -52,6 +52,7 @@ class UserForm extends Model
             ['roles', 'required'],
             [['locations', 'pin', 'canLogin', 'canMerge', 'locationId'], 'safe'],
             [['password', 'confirmPassword'], 'string', 'min' => 6],
+            ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => "Confirm Password doesn't match with the password"],
         ];
 
         
