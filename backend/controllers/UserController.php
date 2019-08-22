@@ -59,7 +59,7 @@ class UserController extends BaseController
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
                     'edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson',
-                    'update-primary-email', 'delete', 'create', 'upload'
+                    'update-primary-email', 'delete', 'create', 'upload','set-password'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -71,7 +71,7 @@ class UserController extends BaseController
                     [
                         'allow' => true,
                         'actions' => ['index', 'view', 'edit-profile', 'import', 'delete-contact', 
-                            'create', 'edit-lesson', 'delete', 'avatar-upload'
+                            'create', 'edit-lesson', 'delete', 'avatar-upload','set-password'
                         ],
                         'roles' => [
                             'manageTeachers', 'manageCustomers', 'manageAdmin', 'manageStaff',
@@ -599,6 +599,7 @@ class UserController extends BaseController
 
     public function actionEditProfile($id)
     {
+        
         $request = Yii::$app->request;
         $model = new UserForm();
         $model->setModel($this->findModel($id));
@@ -609,14 +610,7 @@ class UserController extends BaseController
         } else {
             $customerReferralSource = new CustomerReferralSource(); 
         }
-        if ($model->load($request->post()) && $userProfile->load($request->post())) {
-           
-            if (!empty($model->password)) {
-                $model->getModel()->setPassword($model->password);
-            }
-            if (!empty($model->pin)) {
-                $model->getModel()->setPin($model->pin);
-            }
+        if ($userProfile->load($request->post())) {
             if ($model->save()) {  
                if ($userProfile->validate()) {
                    $userProfile->save();
@@ -645,7 +639,37 @@ class UserController extends BaseController
                     'errors' => $errors
                 ];
             }
+        } else {
+            die('else coming');
         }
+    }
+
+    public function actionSetPassword($id)
+    {   
+        $request = Yii::$app->request;
+        $model = new UserForm();
+        $model->setModel($this->findModel($id));
+        $userModel = $model->getModel();
+        if ($model->load($request->post())) {
+            if (!empty($model->password)) {
+                $model->getModel()->setPassword($model->password);
+            }
+            if (!empty($model->pin)) {
+                $model->getModel()->setPin($model->pin);
+            }
+            if ($model->save()) { 
+                return [
+                   'status' => true,
+                ];
+            }
+             else {
+                $errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => $errors
+                ];
+            }
+    }
     }
         
     /**
