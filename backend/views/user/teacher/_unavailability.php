@@ -25,11 +25,9 @@ echo GridView::widget([
 'tableOptions' => ['class' => 'table table-bordered m-t-15'],
 'headerRowOptions' => ['class' => 'bg-light-gray'],
 'columns' => [
-    'fromDate:date',
-    'toDate:date',
+    'fromDateTime:datetime',
+    'toDateTime:datetime',
     'reason:raw',
-    'fromTime:time',
-    'toTime:time'
 ],
 ]);
 ?>
@@ -61,6 +59,7 @@ echo GridView::widget([
                 {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
+                    $('.modal-save').addClass('disabled');
                     if (unavailabilityId !== undefined) {
                         var params = $.param({ id: unavailabilityId });
                         var url    = '<?= Url::to(['teacher-unavailability/delete']) ?>?' + params;

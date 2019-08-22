@@ -96,7 +96,9 @@ class TeacherUnavailabilityController extends BaseController
         ]);
         $model->teacherId = $teacher->id;
         if ($model->load(Yii::$app->request->post())) {
-            if($model->save()) {
+            $model->fromDateTime = (new \DateTime($model->fromDateTime))->format('Y-m-d H:i:s');
+            $model->toDateTime = (new \DateTime($model->toDateTime))->format('Y-m-d H:i:s');
+            if ($model->save()) {
                 return [
                     'status' => true
                 ];
@@ -137,17 +139,25 @@ class TeacherUnavailabilityController extends BaseController
     {
         $model = $this->findModel($id);
 	    $teacher = User::findOne(['id' => $id]);
-        $model->dateRange = (new \DateTime($model->fromDate))->format('M d, Y') . ' - ' . (new \DateTime($model->toDate))->format('M d, Y');
-        $model->fromTime = (new \DateTime($model->fromTime))->format('g:i A');
-        $model->toTime = (new \DateTime($model->toTime))->format('g:i A');
+        $model->fromDateTime = (new \DateTime($model->fromDateTime))->format('M d, Y H:i');
+        $model->toDateTime = (new \DateTime($model->toDateTime))->format('M d, Y H:i');
         $data = $this->renderAjax('_form', [
             'model' => $model,
 	        'teacher' => $teacher
         ]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return [
-                'status' => true
-            ];
+        if ($model->load(Yii::$app->request->post())) {
+            $model->fromDateTime = (new \DateTime($model->fromDateTime))->format('Y-m-d H:i:s');
+            $model->toDateTime = (new \DateTime($model->toDateTime))->format('Y-m-d H:i:s');
+            if($model->save()) {
+                return [
+                    'status' => true
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'errors' => $model->getErrors(),
+                ];
+            }
         } else {
             return [
                 'status' => true,

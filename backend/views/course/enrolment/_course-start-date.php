@@ -27,7 +27,6 @@ use yii\jui\DatePicker;
                 'defaultDate' => (new \DateTime($model->startDate))->format('M d, Y'),
                 'changeMonth' => true,
                 'yearRange' => '1500:3000',
-                'firstDay' => 1,
                 'changeYear' => true,
             ]
             ])->label('Start Date');
@@ -44,7 +43,6 @@ use yii\jui\DatePicker;
             'clientOptions' => [
                 'defaultDate' => (new \DateTime())->format('M d, Y'),
                 'changeMonth' => true,
-                 'firstDay' => 1,
                 'yearRange' => '1500:3000',
                 'changeYear' => true,
             ]

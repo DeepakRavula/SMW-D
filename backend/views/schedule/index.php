@@ -53,7 +53,6 @@ $this->params['action-button'] = $this->render('_button');
                     'changeMonth' => true,
                     'yearRange' => '-20:+100',
                     'changeYear' => true,
-                    'firstDay' => 1,
                 ]
             ])->label(false);
         ?>
