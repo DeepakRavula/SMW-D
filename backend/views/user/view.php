@@ -714,6 +714,11 @@ foreach ($roleNames as $name => $description) {
         return false;
     });
 
+    $(document).on('click', '#user-cancel-btn', function () {
+        $('#user-change-password-modal').modal('hide');
+        return false;
+    });
+
     $(document).on('click', '#customer-merge', function () {
         $.ajax({
             url    : '<?= Url::to(['customer/merge', 'id' => $model->id]); ?>',

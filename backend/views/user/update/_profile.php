@@ -64,6 +64,8 @@ $loggedUser = User::findOne(Yii::$app->user->id);
                 </div> 
             </div>
 		<?php endif; ?>
+    </div>
+    <div class="row">
         <div class="col-xs-6">
         <?= $form->field($userProfile, 'picture')->widget(
             Upload::classname(),
@@ -73,7 +75,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         )
         ?>
         </div>
-    </div>
+        </div>
     <div class="row">
 	<div class="col-md-12">
             <div class="pull-right">

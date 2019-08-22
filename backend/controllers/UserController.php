@@ -611,12 +611,6 @@ class UserController extends BaseController
             $customerReferralSource = new CustomerReferralSource(); 
         }
         if ($userProfile->load($request->post())) {
-            if (!empty($model->password)) {
-                $model->getModel()->setPassword($model->password);
-            }
-            if (!empty($model->pin)) {
-                $model->getModel()->setPin($model->pin);
-            }
             if ($model->save()) {  
                if ($userProfile->validate()) {
                    $userProfile->save();
