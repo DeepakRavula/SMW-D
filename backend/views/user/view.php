@@ -394,6 +394,7 @@ foreach ($roleNames as $name => $description) {
 </div>
 
 <?php $userForm = new UserForm(); 
+      $userForme = new UserForm();
     $userForm->setModel($model);
     $userModel = $userForm->getModel();
     if ($userModel->customerReferralSource) {
@@ -407,6 +408,16 @@ foreach ($roleNames as $name => $description) {
     'id' => 'user-edit-modal',
 ]); ?>
 <?= $this->render('update/_profile', [
+    'model' => $userForm,
+    'userProfile' => $model->userProfile,
+    'customerReferralSource' => $customerReferralSource,
+]);?>
+<?php Modal::end(); ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0"> Edit</h4>',
+    'id' => 'user-change-password-modal',
+]); ?>
+<?= $this->render('update/_password', [
     'model' => $userForm,
     'userProfile' => $model->userProfile,
     'customerReferralSource' => $customerReferralSource,
@@ -611,6 +622,11 @@ foreach ($roleNames as $name => $description) {
         return false;
     });
 
+    $(document).on('click', '#user-change-password', function () {
+        $('#user-change-password-modal').modal('show');
+        return false;
+    });
+
     $(document).off('click', '.ob-add-btn').on('click', '.ob-add-btn', function () {
         $.ajax({
             url    : '<?= Url::to(['customer/add-opening-balance', 'id' => $model->id]); ?>',
@@ -756,6 +772,25 @@ foreach ($roleNames as $name => $description) {
         });
         return false;
     });
+
+    $(document).on('beforeSubmit', '#user-change-password-form', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+                    $('#user-change-password-modal').modal('hide');
+                } else {
+                    $('#user-change-password-form').yiiActiveForm('updateMessages', response.errors, true); 
+                }
+            }
+        });
+        return false;
+    });
+
 
     $(document).on('beforeSubmit', '#email-form', function () {
         $.ajax({
