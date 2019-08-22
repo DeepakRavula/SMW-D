@@ -40,10 +40,10 @@ class UserForm extends Model
     {
         return [
             ['firstname', 'filter', 'filter' => 'trim'],
-            ['firstname', 'required'],
+            ['firstname', 'safe'],
 
             ['lastname', 'filter', 'filter' => 'trim'],
-            ['lastname', 'required'],
+            ['lastname', 'safe'],
             ['pin', 'integer', 'min' => 1111, 'max' => 9999],
             ['pin', 'validatePin'],
             [['status'], 'integer'],
