@@ -24,14 +24,6 @@ $loggedUser = User::findOne(Yii::$app->user->id);
             <?php echo $form->field($userProfile, 'lastname') ?>
 	</div>
     </div>
-        <div class="row">
-        <div class="col-xs-6 can-login" style="display: none">
-                <?php echo $form->field($model, 'password')->passwordInput() ?>
-        </div>
-        <div class="col-xs-6 can-login" style="display: none">
-                <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
-        </div>
-    </div>
     <div class="row">
 		<?php if ($model->getModel()->isTeacher()) : ?>
 	        <div class="col-xs-4">
@@ -72,31 +64,8 @@ $loggedUser = User::findOne(Yii::$app->user->id);
                 </div> 
             </div>
 		<?php endif; ?>
-        <div class="col-xs-4">
-        <?php if ($loggedUser->canManagePin()) : ?>
-            <?php if ($model->getModel()->hasPin()) : ?>
-                    <?php echo $form->field($model, 'pin')->passwordInput() ?>
-            <?php endif; ?>          
-        <?php endif; ?>
-            </div>
     </div>
-    <?php if ($loggedUser->isAdmin()) : ?>
-        <?php if ($model->getModel()->isOwner()) : ?>
-            <div class="row">
-                <div class="col-xs-6">
-                    <?= $form->field($model, 'canMerge')->checkbox() ?>
-                </div>
-            </div>
-        <?php endif; ?>
-    <?php endif; ?>
     <div class="row">
-        <?php if ($loggedUser->canManagePin()) : ?>
-        <?php if ($model->getModel()->isStaff()) : ?>
-            <div class="col-xs-6">
-                <?php echo $form->field($model, 'canLogin')->checkbox() ?>
-            </div>
-        <?php endif; ?>
-        <?php endif; ?>
         <div class="col-xs-6">
         <?= $form->field($userProfile, 'picture')->widget(
             Upload::classname(),
@@ -106,7 +75,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         )
         ?>
         </div>
-    </div>
+        </div>
     <div class="row">
 	<div class="col-md-12">
             <div class="pull-right">

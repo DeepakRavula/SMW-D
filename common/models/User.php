@@ -64,6 +64,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_DELETE = 'delete';
+    const SCENARIO_CREATE = 'create';
 
     const CONSOLE_USER_ID  = 727;
 

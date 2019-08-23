@@ -40,10 +40,11 @@ class UserForm extends Model
     {
         return [
             ['firstname', 'filter', 'filter' => 'trim'],
-            ['firstname', 'required'],
-
+            ['firstname', 'required',  'on' => User::SCENARIO_CREATE],
+            ['firstname', 'string', 'min' => 2, 'max' => 255, 'on' => User::SCENARIO_CREATE],
+            ['lastname', 'string', 'min' => 2, 'max' => 255, 'on' => User::SCENARIO_CREATE],
             ['lastname', 'filter', 'filter' => 'trim'],
-            ['lastname', 'required'],
+            ['lastname', 'required',  'on' => User::SCENARIO_CREATE ],
             ['pin', 'integer', 'min' => 1111, 'max' => 9999],
             ['pin', 'validatePin'],
             [['status'], 'integer'],
@@ -52,6 +53,8 @@ class UserForm extends Model
             [['password', 'confirmPassword'], 'string', 'min' => 6],
             ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => "Confirm Password doesn't match with the password"],
         ];
+
+        
     }
 
     /**
