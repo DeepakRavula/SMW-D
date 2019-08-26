@@ -12,6 +12,7 @@ use common\models\UserEmail;
         'emailTemplate' => $emailTemplate
     ]);
     $model->to = $emails;
+    $userModel = $lessonModel->enrolment->student->customer;
     $data = null;
     if (!empty($userModel)) {
         $data = ArrayHelper::map(UserEmail::find()
@@ -28,5 +29,7 @@ use common\models\UserEmail;
     'model' => $model,
     'data' => $data,
     'subject' => $subject,
-    'emailTemplate' => $emailTemplate
+    'emailTemplate' => $emailTemplate,
+    'userModel' => $userModel,
+    'lessonId' => $lessonModel->id,
 ]);

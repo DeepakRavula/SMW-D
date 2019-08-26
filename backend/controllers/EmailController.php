@@ -33,6 +33,8 @@ use backend\models\search\PaymentFormGroupLessonSearch;
 use common\models\log\CustomerStatementLog;
 use common\models\CustomerStatement;
 use common\models\log\LogActivity;
+use common\models\log\LessonLog;
+use common\models\log\InvoiceLog;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -63,6 +65,7 @@ class EmailController extends BaseController
     }
     public function actionSend()
     { 
+       
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $location = Location::findOne(['id' => $locationId]);
         $objectId = Yii::$app->request->get('EmailForm')['objectId'];
@@ -77,7 +80,7 @@ class EmailController extends BaseController
                 ->setReplyTo($location->email)
                 ->setSubject($model->subject)
                 ->setBcc($model->bcc);
-            Yii::$app->mailer->sendMultiple($content);
+          //  Yii::$app->mailer->sendMultiple($content);
             if (!empty($model->invoiceId)) {
                 $invoice = Invoice::findOne(['id' => $model->invoiceId]);
                 $invoice->isSent = true;
@@ -94,6 +97,17 @@ class EmailController extends BaseController
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $customerStatement->on(CustomerStatement::EVENT_MAIL, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_MAIL]);
                 $customerStatement->trigger(CustomerStatement::EVENT_MAIL);
+            } elseif ($objectId == EmailObject::OBJECT_LESSON) {
+                $lesson = Lesson::findOne($model->lessonId);
+                $lesson->userId = $userId;
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $lesson->on(Lesson::EVENT_LESSON_MAILED, [new LessonLog(), 'lessonMailed'], ['loggedUser' => $loggedUser]);
+                $lesson->trigger(Lesson::EVENT_LESSON_MAILED);
+            } elseif ($objectId == EmailObject::OBJECT_INVOICE) {
+                $invoice = Invoice::findOne($model->invoiceId);
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $invoice->on(Invoice::EVENT_INVOICE_MAILED, [new InvoiceLog(), 'invoiceMailed'], ['loggedUser' => $loggedUser]);
+                $invoice->trigger(Invoice::EVENT_INVOICE_MAILED);
             }
             return [
                 'status' => true,

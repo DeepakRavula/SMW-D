@@ -23,6 +23,9 @@ use dosamigos\ckeditor\CKEditor;
     <?php if (!empty($invoiceId)) : ?>
     <?= $form->field($model, 'invoiceId')->hiddenInput(['value' => $invoiceId])->label(false) ?>
     <?php endif; ?>
+    <?php if (!empty($lessonId)) : ?>
+    <?= $form->field($model, 'lessonId')->hiddenInput(['value' => $lessonId])->label(false) ?>
+    <?php endif; ?>
     
     <div class="row">
         <div class="col-lg-12">
