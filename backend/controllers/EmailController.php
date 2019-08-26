@@ -80,7 +80,7 @@ class EmailController extends BaseController
                 ->setReplyTo($location->email)
                 ->setSubject($model->subject)
                 ->setBcc($model->bcc);
-          //  Yii::$app->mailer->sendMultiple($content);
+            Yii::$app->mailer->sendMultiple($content);
             if (!empty($model->invoiceId)) {
                 $invoice = Invoice::findOne(['id' => $model->invoiceId]);
                 $invoice->isSent = true;
