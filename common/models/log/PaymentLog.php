@@ -25,6 +25,20 @@ class PaymentLog extends Log
         $this->addLog($object, $activity, $message, $data, $loggedUser, $PaymentModel, $locationId, $index, $path);
     }
 
+    public function paymentMailed($event)
+    {
+        $PaymentModel       = $event->sender;
+        $loggedUser         = end($event->data);
+        $data               = Payment::find(['id' => $PaymentModel->id])->asArray()->one();
+        $index       = $PaymentModel->user->publicIdentity;
+        $path        = Url::to(['/user/view','UserSearch[role_name]' => 'customer', 'id' => $PaymentModel->user_id]);
+        $message            = $loggedUser->publicIdentity.' mailed this payment details '.$PaymentModel->getPaymentNumber().' to {{'.$index.'}}';
+        $object             = LogObject::findOne(['name' => LogObject::TYPE_PAYMENT]);
+        $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
+        $locationId = $PaymentModel->user->userLocation->location->id;
+        $this->addLog($object, $activity, $message, $data, $loggedUser, $PaymentModel, $locationId, $index, $path);
+    }
+
     public function addLog($object, $activity, $message, $data, $loggedUser, $model, $locationId, $index, $path)
     {
         $log                = new Log();

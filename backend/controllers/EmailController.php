@@ -108,6 +108,11 @@ class EmailController extends BaseController
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $invoice->on(Invoice::EVENT_INVOICE_MAILED, [new InvoiceLog(), 'invoiceMailed'], ['loggedUser' => $loggedUser]);
                 $invoice->trigger(Invoice::EVENT_INVOICE_MAILED);
+            } elseif ($objectId == EmailObject::OBJECT_PAYMENT) {
+                $payment = Payment::findOne($model->paymentId);
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $payment->on(Payment::EVENT_INVOICE_MAILE, [new InvoiceLog(), 'invoiceMailed'], ['loggedUser' => $loggedUser]);
+                $invoice->trigger(Invoice::EVENT_INVOICE_MAILED);
             }
             return [
                 'status' => true,
@@ -348,6 +353,7 @@ class EmailController extends BaseController
             'paymentModel' => $model,
 	        'searchModel' => $searchModel,
             'userModel' => $model->user,
+
         ]);
         $post = Yii::$app->request->post();
         if (!$post) {
