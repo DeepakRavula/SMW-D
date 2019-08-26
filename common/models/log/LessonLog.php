@@ -95,7 +95,7 @@ class LessonLog extends Log
         $log = new Log();
         $log->logObjectId = $object->id;
         $log->logActivityId = $activity->id;
-        $log->message = $loggedUser->publicIdentity . 'mailed this lesson details';
+        $log->message = $loggedUser->publicIdentity . ' mailed this lesson details';
         $log->data = json_encode($lesson);
         $log->createdUserId = $loggedUser->id;
         $log->locationId = $locationId;
