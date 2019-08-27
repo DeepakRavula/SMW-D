@@ -4,6 +4,7 @@ namespace common\models\log;
 
 use Yii;
 use common\models\Lesson;
+use common\models\User;
 use common\models\log\Log;
 use yii\helpers\Json;
 use yii\helpers\Url;
@@ -42,10 +43,10 @@ class LessonLog extends Log
         $userModel          = $lessonModel->enrolment->student->customer;
         $studentName        = $lessonModel->enrolment->student->fullName;
         $customerName       = $lessonModel->enrolment->student->customer->publicIdentity;
-        $enrolmentId        = $lessonModel->enrolment->id;
+        $enrolmentId        = 'enrolment';
         $loggedUser         = end($event->data);
         $data               = Lesson::findone(['id' => $lessonModel->id]);
-        $message            = $loggedUser->publicIdentity.' deleted lesson for {{'.$studentName.'}} {{'.$customerName.'}} {{'.$enrolmentId.'}}';
+        $message            = $loggedUser->publicIdentity.' deleted lesson for {{'.$studentName.'}} ({{'.$customerName.'}}) for this {{'.$enrolmentId.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_LESSON]);
         $enrolmentObject    = LogObject::findOne(['name' => LogObject::TYPE_ENROLMENT]);
         $studentObject      = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
@@ -62,7 +63,7 @@ class LessonLog extends Log
         $customerIndex      = $customerName;
         $enrolmentIndex     = $enrolmentId;
         $studentPath        = Url::to(['/student/view', 'id' => $lessonModel->enrolment->student->id]);
-        $customerPath       = Url::to(['/user/view', 'id' => $lessonModel->enrolment->student->customer->id]);
+        $customerPath       = Url::to(['/user/view','UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $lessonModel->enrolment->student->customer->id]);
         $enrolmentPath      = Url::to(['/enrolment/view', 'id' => $lessonModel->enrolment->id]);
         $baseUrl = Yii::$app->request->hostInfo;
         if ($log->save()) {
