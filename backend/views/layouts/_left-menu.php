@@ -80,7 +80,7 @@ echo Menu::widget([
         ],
 	[
             'label' => Yii::t('backend', 'Unscheduled Lessons'),
-            'url' => ['unscheduled-lesson/index'],
+            'url' => ['unscheduled-lesson/index', 'UnscheduledLessonSearch[showAll]' => false],
             'icon' => '<i class="fa fa-music"></i>',
 	        'active' => (Yii::$app->controller->id === 'unscheduled-lesson')
         ],

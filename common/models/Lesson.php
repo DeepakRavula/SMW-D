@@ -87,6 +87,7 @@ class Lesson extends \yii\db\ActiveRecord
     const EVENT_MISSED = 'missed';
     const EVENT_CREATE_INVOICE = 'addInvoice';
     const EVENT_LESSON_EXPIRED = 'lessonExpired';
+    const EVENT_LESSON_MAILED = 'lessonMailed';
 
     const APPLY_SINGLE_LESSON = 1;
     const APPLY_ALL_FUTURE_LESSONS = 2;
@@ -108,6 +109,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $lessonIds;
     public $lessonId;
     public $paymentAmount;
+    public $userId;
 
     /**
      * {@inheritdoc}

@@ -83,6 +83,27 @@ class LessonLog extends Log
             $this->addHistory($log, $lessonModel, $object);
         }
     }
+
+    public function lessonMailed($event)
+    { 
+        $lessonModel = $event->sender;
+        $lesson = Lesson::find()->andWhere(['id' => $lessonModel->id])->asArray()->one();
+        $loggedUser     =   end($event->data);
+        $object         =   LogObject::findOne(['name' => LogObject::TYPE_LESSON]);
+        $activity       =   LogActivity::findOne(['name' => LogActivity::TYPE_MAIL]);
+        $locationId     =   $lessonModel->course->locationId;
+        $log = new Log();
+        $log->logObjectId = $object->id;
+        $log->logActivityId = $activity->id;
+        $log->message = $loggedUser->publicIdentity . ' mailed this lesson details';
+        $log->data = json_encode($lesson);
+        $log->createdUserId = $loggedUser->id;
+        $log->locationId = $locationId;
+        
+        if ($log->save()) {
+            $this->addHistory($log, $lessonModel, $object);
+        }
+    }
     public function addLink($log, $index, $path,$baseUrl)
     {
         $logLink          = new LogLink();

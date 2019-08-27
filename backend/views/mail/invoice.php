@@ -2,6 +2,7 @@
 
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
+use common\models\User;
 
     $content = $this->renderAjax('/invoice/mail/content', [
         'model' => $invoiceModel,
@@ -28,5 +29,6 @@ use common\models\UserEmail;
     'invoiceId' => $invoiceModel->id,
     'data' => $data,
     'subject' => $subject,
-    'emailTemplate' => $emailTemplate
+    'emailTemplate' => $emailTemplate,
+    'userModel' => $userModel ? $userModel : new User(),
 ]);
