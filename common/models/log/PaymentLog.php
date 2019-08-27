@@ -8,6 +8,7 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use common\models\log\LogObject;
 use common\models\log\LogActivity;
+use yii\helpers\ArrayHelper;
 
 class PaymentLog extends Log
 {
@@ -19,6 +20,21 @@ class PaymentLog extends Log
         $index       = $PaymentModel->user->publicIdentity;
         $path        = Url::to(['/user/view','UserSearch[role_name]' => 'customer', 'id' => $PaymentModel->user_id]);
         $message            = $loggedUser->publicIdentity.' Added new payment of $'.$PaymentModel->amount.' for {{'.$index.'}}';
+        $object             = LogObject::findOne(['name' => LogObject::TYPE_PAYMENT]);
+        $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
+        $locationId = $PaymentModel->user->userLocation->location->id;
+        $this->addLog($object, $activity, $message, $data, $loggedUser, $PaymentModel, $locationId, $index, $path);
+    }
+
+    public function paymentMailed($event)
+    {
+        $PaymentModel       = $event->sender;
+        $loggedUser         = end($event->data);
+        $model = Payment::findOne($PaymentModel->id);
+        $data               =  ArrayHelper::toArray($model);
+        $index       = $PaymentModel->user->publicIdentity;
+        $path        = Url::to(['/user/view','UserSearch[role_name]' => 'customer', 'id' => $PaymentModel->user_id]);
+        $message            = $loggedUser->publicIdentity.' mailed the details of payment ('.$PaymentModel->getPaymentNumber().')  to {{'.$index.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_PAYMENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $locationId = $PaymentModel->user->userLocation->location->id;
