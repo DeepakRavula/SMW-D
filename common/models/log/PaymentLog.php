@@ -8,6 +8,7 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use common\models\log\LogObject;
 use common\models\log\LogActivity;
+use yii\helpers\ArrayHelper;
 
 class PaymentLog extends Log
 {
@@ -29,10 +30,11 @@ class PaymentLog extends Log
     {
         $PaymentModel       = $event->sender;
         $loggedUser         = end($event->data);
-        $data               = Payment::find(['id' => $PaymentModel->id])->asArray()->one();
+        $model = Payment::findOne($PaymentModel->id);
+        $data               =  ArrayHelper::toArray($model);
         $index       = $PaymentModel->user->publicIdentity;
         $path        = Url::to(['/user/view','UserSearch[role_name]' => 'customer', 'id' => $PaymentModel->user_id]);
-        $message            = $loggedUser->publicIdentity.' mailed this payment details '.$PaymentModel->getPaymentNumber().' to {{'.$index.'}}';
+        $message            = $loggedUser->publicIdentity.' mailed the details of payment ('.$PaymentModel->getPaymentNumber().')  to {{'.$index.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_PAYMENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $locationId = $PaymentModel->user->userLocation->location->id;

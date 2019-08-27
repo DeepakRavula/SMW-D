@@ -35,6 +35,7 @@ use common\models\CustomerStatement;
 use common\models\log\LogActivity;
 use common\models\log\LessonLog;
 use common\models\log\InvoiceLog;
+use common\models\log\PaymentLog;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -111,8 +112,8 @@ class EmailController extends BaseController
             } elseif ($objectId == EmailObject::OBJECT_PAYMENT) {
                 $payment = Payment::findOne($model->paymentId);
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                $payment->on(Payment::EVENT_INVOICE_MAILE, [new InvoiceLog(), 'invoiceMailed'], ['loggedUser' => $loggedUser]);
-                $invoice->trigger(Invoice::EVENT_INVOICE_MAILED);
+                $payment->on(Payment::EVENT_MAILED, [new PaymentLog(), 'paymentMailed'], ['loggedUser' => $loggedUser]);
+                $payment->trigger(Payment::EVENT_MAILED);
             }
             return [
                 'status' => true,
