@@ -9,6 +9,7 @@ use common\models\EditClassroom;
 use common\models\Lesson;
 use common\models\PrivateLesson;
 use common\models\Location;
+use common\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -21,6 +22,7 @@ use yii\widgets\ActiveForm;
 use common\models\discount\LessonDiscount;
 use Carbon\Carbon;
 use common\models\LessonReschedule;
+use common\models\log\LessonLog;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -161,6 +163,13 @@ class PrivateLessonController extends BaseController
                 $message .= ' Lesson credits transfered to customer account';
             }
             $lesson->delete();
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+            $lesson->on(
+                Lesson::EVENT_AFTER_DELETE,
+                [new LessonLog(), 'lessonDelete'],
+                ['loggedUser' => $loggedUser]
+            );
+            $lesson->trigger(Lesson::EVENT_AFTER_DELETE);
             $response = [
                 'status' => true,
                 'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),

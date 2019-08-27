@@ -58,6 +58,7 @@ class Payment extends ActiveRecord
     const EVENT_CREATE = 'create';
     const EVENT_EDIT = 'edit';
     const EVENT_DELETE = 'delete';
+    const EVENT_MAILED = 'paymentMailed';
 
     /**
      * {@inheritdoc}

@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use Carbon\Carbon;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -19,17 +20,10 @@ use yii\grid\GridView;
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [
         [
-            'label' => 'Createdon',
-            'value' => function ($data) {
-                return $data->log->createdOn;
-            },
-            'format' => 'datetime',
-        ],
-        [
             'label' => 'Message',
             'format' => 'raw',
             'value' => function ($data) {
-                return $data->getMessage();
+                return 'On '.carbon::parse($data->log->createdOn)->toFormattedDateString().', '.'at '.carbon::parse($data->log->createdOn)->format('h:i A').', '.$data->getMessage();
             },
         ],
     ],
