@@ -141,13 +141,13 @@ class LessonConfirm extends Model
         return true;
     }
 
-    public function confirmEnrolmentTeacherChange()
+    public function confirmEnrolmentTeacherChange($enrolmentId)
     {
         $changesFrom = (new \DateTime($this->changesFrom))->format('Y-m-d');
         $oldLessons = Lesson::find()
             ->notDeleted()
             ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
-            ->enrolment($this->enrolmentIds)
+            ->enrolment($enrolmentId)
             ->notCanceled()
             ->orderBy(['lesson.date' => SORT_ASC])
             ->isConfirmed()
@@ -155,7 +155,7 @@ class LessonConfirm extends Model
         $lessons = Lesson::find()
             ->notDeleted()
             ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
-            ->enrolment($this->enrolmentIds)
+            ->enrolment($enrolmentId)
             ->notCanceled()
             ->orderBy(['lesson.date' => SORT_ASC])
             ->notConfirmed()
