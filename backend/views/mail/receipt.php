@@ -16,6 +16,7 @@ use common\models\UserEmail;
         'customer' => $customer,
         'payment' => $payment,
         'model' => $paymentFormModel,
+        'userModel' => $userModel,
     ]);
     $model->to = $emails;
     $data = null;
