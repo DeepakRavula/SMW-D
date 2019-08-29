@@ -23,7 +23,12 @@ use dosamigos\ckeditor\CKEditor;
     <?php if (!empty($invoiceId)) : ?>
     <?= $form->field($model, 'invoiceId')->hiddenInput(['value' => $invoiceId])->label(false) ?>
     <?php endif; ?>
-    
+    <?php if (!empty($lessonId)) : ?>
+    <?= $form->field($model, 'lessonId')->hiddenInput(['value' => $lessonId])->label(false) ?>
+    <?php endif; ?>
+    <?php if (!empty($paymentId)) : ?>
+    <?= $form->field($model, 'paymentId')->hiddenInput(['value' => $paymentId])->label(false) ?>
+    <?php endif; ?>
     <div class="row">
         <div class="col-lg-12">
             <?= $form->field($model, 'to')->widget(Select2::classname(), [

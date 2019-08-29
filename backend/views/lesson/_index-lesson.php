@@ -227,6 +227,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 <script>
     $(document).ready(function () {
         var showAll = $('#lessonsearch-showall').is(":checked");
+        if(showAll == true){
         var student = $("input[name*='LessonSearch[student]").val();
         var program = $("input[name*='LessonSearch[program]").val();
         var teacher = $("input[name*='LessonSearch[teacher]").val();
@@ -235,6 +236,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         var url = "<?=Url::to(['lesson/index']);?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});
         bulkAction.setAction();
+        }
     });
 
     $(document).off('click', '#substitute-teacher').on('click', '#substitute-teacher', function(){

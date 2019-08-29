@@ -28,5 +28,7 @@ use common\models\UserEmail;
     'paymentRequestId' => $paymentModel->id,
     'data' => $data,
     'subject' => $subject,
-    'emailTemplate' => $emailTemplate
+    'emailTemplate' => $emailTemplate,
+    'userModel' => $userModel,
+    'paymentId' => $paymentModel->id,
 ]);
