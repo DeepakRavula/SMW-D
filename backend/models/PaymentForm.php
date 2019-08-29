@@ -40,6 +40,7 @@ class PaymentForm extends Model
     const SCENARIO_STUDENT = 'enrolment-student';
     const SCENARIO_DATE_DETAILED = 'enrolment-start-date';
     const SCENARIO_NEGATIVE_PAYMENT = 'add-negative-payment';
+    const EVENT_TRANSACTION_MAILED = 'mail-transaction';
 
     public $date;
     public $prId;

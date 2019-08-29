@@ -36,6 +36,7 @@ use common\models\log\LogActivity;
 use common\models\log\LessonLog;
 use common\models\log\InvoiceLog;
 use common\models\log\PaymentLog;
+use common\models\log\ReceivePaymentLog;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -92,28 +93,29 @@ class EmailController extends BaseController
                 $proformaInvoice->isMailSent = true;
                 $proformaInvoice->save();
             }
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             if ($objectId == EmailObject::OBJECT_CUSTOMER_STATEMENT && $userId) {
                 $customerStatement = new CustomerStatement();
                 $customerStatement->userId = $userId;
-                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $customerStatement->on(CustomerStatement::EVENT_MAIL, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_MAIL]);
                 $customerStatement->trigger(CustomerStatement::EVENT_MAIL);
             } elseif ($objectId == EmailObject::OBJECT_LESSON) {
                 $lesson = Lesson::findOne($model->lessonId);
                 $lesson->userId = $userId;
-                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $lesson->on(Lesson::EVENT_LESSON_MAILED, [new LessonLog(), 'lessonMailed'], ['loggedUser' => $loggedUser]);
                 $lesson->trigger(Lesson::EVENT_LESSON_MAILED);
             } elseif ($objectId == EmailObject::OBJECT_INVOICE) {
                 $invoice = Invoice::findOne($model->invoiceId);
-                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $invoice->on(Invoice::EVENT_INVOICE_MAILED, [new InvoiceLog(), 'invoiceMailed'], ['loggedUser' => $loggedUser]);
                 $invoice->trigger(Invoice::EVENT_INVOICE_MAILED);
             } elseif ($objectId == EmailObject::OBJECT_PAYMENT) {
                 $payment = Payment::findOne($model->paymentId);
-                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $payment->on(Payment::EVENT_MAILED, [new PaymentLog(), 'paymentMailed'], ['loggedUser' => $loggedUser]);
                 $payment->trigger(Payment::EVENT_MAILED);
+            } elseif ($objectId == EmailObject::OBJECT_RECEIPT) {
+                $user = User::findOne($userId);
+                $user->on(PaymentForm::EVENT_TRANSACTION_MAILED, [new ReceivePaymentLog(), 'transactionMailed'], ['loggedUser' => $loggedUser]);
+                $user->trigger(PaymentForm::EVENT_TRANSACTION_MAILED);
             }
             return [
                 'status' => true,
