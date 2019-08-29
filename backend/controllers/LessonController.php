@@ -660,7 +660,11 @@ class LessonController extends BaseController
             $model->confirmBulkReschedule();
         }
         if ($model->enrolmentIds) {
-            $model->confirmEnrolmentTeacherChange();
+            foreach ($model->enrolmentIds as $enrolmentId) {
+                if ($enrolmentId) {
+                    $model->confirmEnrolmentTeacherChange($enrolmentId);
+                }
+            }
         }
         if (!$model->rescheduleBeginDate) {
             foreach ($lessons as $lesson) {
