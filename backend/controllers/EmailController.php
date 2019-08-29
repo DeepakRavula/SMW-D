@@ -308,6 +308,7 @@ class EmailController extends BaseController
                 'subject' => $emailTemplate->subject ?? 'Receipt from Arcadia Academy of Music',
                 'payment' => $paymentNew,
                 'paymentFormModel' => $model,
+                'userModel' => $customer
             ]);
             return [
                 'status' => true,
