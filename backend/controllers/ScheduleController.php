@@ -254,8 +254,8 @@ class ScheduleController extends BaseController
         foreach ($teachersAvailabilities as $teachersAvailability) {
             $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
             if (!empty($unavailability)) {
-                if (empty($unavailability->fromTime) && empty($unavailability->toTime) || $unavailability->fromTime === 
-                    $teachersAvailability->from_time && $unavailability->toTime === $teachersAvailability->to_time) {
+                if (empty($unavailability->fromDateTime) && empty($unavailability->toDateTime) || $unavailability->fromDateTime === 
+                    $teachersAvailability->from_time && $unavailability->toDateTime === $teachersAvailability->to_time) {
                     continue;
                 } else {
                     $events = array_merge($events, $this->getAvailabilityEvents($teachersAvailability, $unavailability, $date));
@@ -278,8 +278,8 @@ class ScheduleController extends BaseController
         $availabilityEnd = clone $dateObject->setTime($availabilityEndDateTime->format('H'), $availabilityEndDateTime->format('i'), 
             $availabilityEndDateTime->format('s'));
 
-        $unavailabilityStartDateTime = new \DateTime($unavailability->fromTime);
-        $unavailabilityEndDateTime = new \DateTime($unavailability->toTime);
+        $unavailabilityStartDateTime = new \DateTime($unavailability->fromDateTime);
+        $unavailabilityEndDateTime = new \DateTime($unavailability->toDateTime);
         $unavailabilityStart = clone $dateObject->setTime($unavailabilityStartDateTime->format('H'), $unavailabilityStartDateTime->format('i'), 
             $unavailabilityStartDateTime->format('s'));
         $unavailabilityEnd = clone $dateObject->setTime($unavailabilityEndDateTime->format('H'), $unavailabilityEndDateTime->format('i'), 
