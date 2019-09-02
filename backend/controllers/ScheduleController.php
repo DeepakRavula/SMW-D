@@ -285,14 +285,16 @@ class ScheduleController extends BaseController
         $unavailabilityEnd = clone $dateObject->setTime($unavailabilityEndDateTime->format('H'), $unavailabilityEndDateTime->format('i'), 
             $unavailabilityEndDateTime->format('s'));
             
-        if ($unavailabilityStart > $availabilityStart && $availabilityEnd > $unavailabilityEnd) {
+        if ($unavailabilityStart > $availabilityStart && $availabilityEnd >= $unavailabilityEnd) {
             $start = $availabilityStart;
             $end = $unavailabilityStart;
             $events[] = $this->setEvents($teachersAvailability, $start, $end);
-            $start = $unavailabilityEnd;
-            $end = $availabilityEnd;
-            $events[] = $this->setEvents($teachersAvailability, $start, $end);
-        } elseif ($unavailabilityStart < $availabilityStart && $availabilityEnd > $unavailabilityEnd) {
+            if ($unavailabilityEnd != $availabilityEnd) {
+                $start = $unavailabilityEnd;
+                $end = $availabilityEnd;
+                $events[] = $this->setEvents($teachersAvailability, $start, $end);
+            }
+        } elseif ($unavailabilityStart <= $availabilityStart && $availabilityEnd > $unavailabilityEnd) {
             $start = $unavailabilityEnd;
             $end = $availabilityEnd;
             $events[] = $this->setEvents($teachersAvailability, $start, $end);
