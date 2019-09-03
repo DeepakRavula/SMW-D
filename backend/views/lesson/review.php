@@ -12,7 +12,8 @@ $this->title = 'Review Lessons';
     <div class="col-md-6">
         <?= $this->render('review/_details', [
             'model' => $model,
-            'courseModel' => $courseModel
+            'courseModel' => $courseModel,
+            'newTeacherId' => $newTeacherId,
         ]); ?>
     </div>
     <div class="col-md-6">

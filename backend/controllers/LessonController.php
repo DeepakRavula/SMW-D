@@ -441,6 +441,7 @@ class LessonController extends BaseController
         $searchModel = new LessonSearch();
         $request = Yii::$app->request;
         $model->load($request->get());
+        $newTeacherId = $model->teacherId;
         $searchModel->load($request->get());
         $oldLessonIds[] = null;
         if ($model->courseId) {
@@ -560,6 +561,7 @@ class LessonController extends BaseController
             'unscheduledLessonCount' => $unscheduledLessonCount,
             'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider, 
             'rescheduledLessonDataProvider' => $rescheduledLessonDataProvider,
+            'newTeacherId' => $model->isBulkTeacherChange ? $newTeacherId : null,
         ]);
     }
 

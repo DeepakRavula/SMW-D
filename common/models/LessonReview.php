@@ -26,6 +26,7 @@ class LessonReview extends Model
     public $changesFrom;
     public $isTeacherOnlyChanged;
     public $courseModelId;
+    public $isBulkTeacherChange;
     
     /**
      * {@inheritdoc}
@@ -34,7 +35,7 @@ class LessonReview extends Model
     {
         return [
             [['enrolmentType', 'rescheduleBeginDate', 'rescheduleEndDate', 'enrolmentIds', 'courseId',
-                'changesFrom', 'teacherId', 'isTeacherOnlyChanged', 'courseModelId'], 'safe']
+                'changesFrom', 'teacherId', 'isTeacherOnlyChanged', 'courseModelId', 'isBulkTeacherChange'], 'safe']
         ];
     }
 
