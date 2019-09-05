@@ -283,8 +283,7 @@ class TeacherAvailabilityController extends BaseController
                     foreach ($lessons as $lesson) {
                         $lesson->setScenario(Lesson::SCENARIO_EDIT_CLASSROOM);
                         if ($lesson->validate()) {
-                            $lesson->classroomId = $roomModel->classroomId;
-                            $lesson->save();
+                            $lesson->updateAttributes(['classroomId' => $roomModel->classroomId]);
                         }
                     }
                     Lesson::triggerPusher();
