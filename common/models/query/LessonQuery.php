@@ -372,19 +372,19 @@ class LessonQuery extends \yii\db\ActiveQuery
         $this->andWhere(['DATE(date)' => $date])
         ->andWhere(['OR',
                     [
-                            'between', 'TIME(lesson.date)', $fromTime, $toTime
+                        'between', 'TIME(lesson.date)', $fromTime, $toTime
                     ],
                     [
-                            'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
+                        'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
                     ],
                     [
-                            'AND',
-                            [
-                                    '<', 'TIME(lesson.date)', $fromTime
-                            ],
-                            [
-                                    '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
-                            ]
+                        'AND',
+                        [
+                                '<', 'TIME(lesson.date)', $fromTime
+                        ],
+                        [
+                                '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
+                        ]
 
                     ]
             ]);
@@ -409,7 +409,6 @@ class LessonQuery extends \yii\db\ActiveQuery
                             [
                                 '>', 'ADDTIME(TIME(lesson.date),lesson.duration)', $toTime
                             ]
-
                     ]
             ]);
     }
