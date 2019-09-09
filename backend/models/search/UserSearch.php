@@ -90,6 +90,7 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id')
             ->andWhere(['aa.item_name' => $this->role_name]);
         $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
+        $query->joinWith('emails'); 
         if ($this->phone) {
             $query->joinWith(['userContacts' => function ($query) {
                 $query->joinWith(['phone' => function ($query) {
