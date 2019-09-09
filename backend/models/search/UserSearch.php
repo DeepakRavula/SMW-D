@@ -92,7 +92,9 @@ class UserSearch extends User
         $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
         if ($this->phone) {
             $query->joinWith(['userContacts' => function ($query) {
-                $query->joinWith('phone');
+                $query->joinWith(['phone' => function ($query) {
+                    $query->andFilterWhere(['like', 'number', $this->phone]);
+                }]);
             }]);
         }
 
