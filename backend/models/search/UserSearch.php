@@ -90,12 +90,12 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id')
             ->andWhere(['aa.item_name' => $this->role_name]);
         $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
-        $query->joinWith(['userContacts' => function ($query) {
-		    $query->joinWith('phone');
-        }]);
-        $query->joinWith('emails');
-        $query->joinWith(['student' => function ($query) {
-        }]);
+        if ($this->phone) {
+            $query->joinWith(['userContacts' => function ($query) {
+                $query->joinWith('phone');
+            }]);
+        }
+
         $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
@@ -110,27 +110,28 @@ class UserSearch extends User
                     'asc' => ['user_email.email' => SORT_ASC],
                     'desc' => ['user_email.email' => SORT_DESC],
                 ],
-		         'student' => [
-                    'asc' => ['student.first_name' => SORT_ASC],
-                    'desc' => ['student.first_name' => SORT_DESC],
-                ]
             ]
         ]);
 	    $dataProvider->sort->defaultOrder = [
           'lastname' => SORT_ASC
-	    ];
-        $query->joinWith(['emails' => function ($query) {
-            $query->andFilterWhere(['like', 'email', $this->email]);
-        }]);
+        ];
+        if ($this->email) {
+            $query->joinWith(['emails' => function ($query) {
+                $query->andFilterWhere(['like', 'email', $this->email]);
+            }]);
+        }
         if ((int) $this->status === self::STATUS_OWING) {
             $query->joinWith(['customerAccount' => function ($query) {
                 $query->andFilterWhere(['>', 'customer_account.balance', 0]);
             }]);
         }
-        $query->andFilterWhere(['like', 'uf.firstname', $this->firstname])
-                ->andFilterWhere(['like', 'uf.lastname', $this->lastname])
-                ->andFilterWhere(['like', 'student.first_name', $this->student])
-                ->orFilterWhere(['like', 'student.last_name', $this->student]);
+        if ($this->firstname) {
+            $query->andFilterWhere(['like', 'uf.firstname', $this->firstname]);
+        }
+        if ($this->lastname) {
+            $query->andFilterWhere(['like', 'uf.lastname', $this->lastname]);
+        }
+                
         if ($this->role_name !== USER::ROLE_ADMINISTRATOR) {
             $query->joinWith(['userLocation' => function ($query) use ($locationId) {
                 $query->andWhere([ 'user_location.location_id' => $locationId]);
