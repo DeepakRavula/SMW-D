@@ -41,7 +41,7 @@
     </div>
     <div class="row">
         <div class="col-xs-6">
-            <div class="new-invoice-print-address">
+            <div class="">
                 From
                 <address>
                     <b>Arcadia Academy of Music ( <?= $locationModel->name; ?> )</b><br>
@@ -74,7 +74,7 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-6">
-            <div class="new-invoice-print-address">
+            <div class="">
 
                 <?php if (!empty($userModel)) : ?>
                     To
