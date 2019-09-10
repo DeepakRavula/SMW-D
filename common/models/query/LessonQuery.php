@@ -163,7 +163,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->joinWith(['invoiceItemLessons' => function ($query) {
             $query->joinWith(['invoiceLineItem' => function ($query) {
                 $query->joinWith(['invoice' => function ($query) {
-                    $query->andWhere(['OR', ['invoice.id' => null], ['invoice.isDeleted' => true]]);
+                    $query->andWhere(['OR', ['invoice.id' => null], ['invoice.isDeleted' => true], ['invoice.isVoid' => true]]);
                 }])
                 ->andWhere(['OR', ['invoice_line_item.id' => null], ['invoice_line_item.isDeleted' => true]]);
             }]);
@@ -372,19 +372,19 @@ class LessonQuery extends \yii\db\ActiveQuery
         $this->andWhere(['DATE(date)' => $date])
         ->andWhere(['OR',
                     [
-                            'between', 'TIME(lesson.date)', $fromTime, $toTime
+                        'between', 'TIME(lesson.date)', $fromTime, $toTime
                     ],
                     [
-                            'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
+                        'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
                     ],
                     [
-                            'AND',
-                            [
-                                    '<', 'TIME(lesson.date)', $fromTime
-                            ],
-                            [
-                                    '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
-                            ]
+                        'AND',
+                        [
+                                '<', 'TIME(lesson.date)', $fromTime
+                        ],
+                        [
+                                '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
+                        ]
 
                     ]
             ]);
@@ -409,7 +409,6 @@ class LessonQuery extends \yii\db\ActiveQuery
                             [
                                 '>', 'ADDTIME(TIME(lesson.date),lesson.duration)', $toTime
                             ]
-
                     ]
             ]);
     }

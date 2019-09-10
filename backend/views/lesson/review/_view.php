@@ -32,33 +32,36 @@ $columns = [
             }
         },
     ],
-    [
-        'class' => 'yii\grid\ActionColumn',
-        'template' => '{edit}',
-        'buttons' => [
-            'edit' => function ($url, $model) {
-                return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', '#', [
-                    'id' => 'edit-button-' . $model->id,
-                    'class' => 'review-lesson-edit-button m-l-20'
-                ]);
-            },
-        ],
-    ],
 ];
-
-if ($courseModel->program->isGroup()){
-array_push($columns,   [
+if (!$model->isBulkTeacherChange) {
+array_push($columns,  [
     'class' => 'yii\grid\ActionColumn',
     'template' => '{edit}',
     'buttons' => [
         'edit' => function ($url, $model) {
-            return  Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', '#', [
-                'id' => 'delete-button-' . $model->id,
-                'class' => 'review-lesson-delete-button m-l-20'
+            return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', '#', [
+                'id' => 'edit-button-' . $model->id,
+                'class' => 'review-lesson-edit-button m-l-20'
             ]);
         },
     ],
 ]);
+
+
+    if ($courseModel->program->isGroup()){
+    array_push($columns,   [
+        'class' => 'yii\grid\ActionColumn',
+        'template' => '{edit}',
+        'buttons' => [
+            'edit' => function ($url, $model) {
+                return  Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', '#', [
+                    'id' => 'delete-button-' . $model->id,
+                    'class' => 'review-lesson-delete-button m-l-20'
+                ]);
+            },
+        ],
+    ]);
+    }
 }
 ?>
 	

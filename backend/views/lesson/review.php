@@ -76,6 +76,7 @@ if ($conflictedLessonIdsCount > 0) {
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflicts,
             'courseModel' => $courseModel,
+            'model' => $model,
         ]); ?>
     </div>
 </div>
