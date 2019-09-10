@@ -27,6 +27,6 @@ use common\models\Location;
 </div>
 <script>
 	$(document).ready(function(){
-		setTimeout(function(){window.print()},3000);
+        window.print();
 	});
 </script>

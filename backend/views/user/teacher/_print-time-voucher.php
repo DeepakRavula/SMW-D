@@ -29,6 +29,6 @@ use kartik\grid\GridView;
 
 <script>
     $(document).ready(function () {
-        setTimeout(function(){window.print()},3000);
+       window.print();
     });
 </script>
