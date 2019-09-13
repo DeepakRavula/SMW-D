@@ -143,6 +143,7 @@ class InvoiceSearch extends Invoice
 		    $query->andFilterWhere(['like', 'student.first_name', $this->student])
                   ->orFilterWhere(['like', 'student.last_name', $this->student]);
         }
+        $query->location($locationId);
         $query->groupBy('invoice.id');
        	$dataProvider->setSort([
             'attributes' => [
