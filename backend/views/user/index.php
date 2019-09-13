@@ -36,53 +36,6 @@ $this->params['show-all'] = $this->render('_button', [
 ]);
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $user = User::findOne(['id' => Yii::$app->user->id]);
-$first_name = UserProfile::find()->orderBy('firstname')
-	->joinWith(['user' => function($first_name) use ($roleName,$locationId) {	
-if($roleName == User::ROLE_ADMINISTRATOR) {
-	$first_name->admin();
-}
-elseif($roleName == User::ROLE_OWNER) {
-	$first_name->owner()
-		->location($locationId);
-}
-elseif($roleName == User::ROLE_STAFFMEMBER) {
-	$first_name->staffs()
-		->location($locationId);
-}
-elseif($roleName == User::ROLE_CUSTOMER) {
-	$first_name->customers($locationId)->excludeWalkin();
-}
-else {
-	$first_name->allTeachers()
-		->location($locationId);
-}
-}])
-->all();
-$first_names = ArrayHelper::map($first_name, 'user_id','firstname');
-
-$last_name = UserProfile::find()->orderBy('lastname')
-	->joinWith(['user' => function($last_name) use ($roleName,$locationId) {	
-if($roleName == User::ROLE_ADMINISTRATOR) {
-	$last_name->admin();
-}
-elseif($roleName == User::ROLE_OWNER) {
-	$last_name->owner()
-		->location($locationId);
-}
-elseif($roleName == User::ROLE_STAFFMEMBER) {
-	$last_name->staffs()
-		->location($locationId);
-}
-elseif($roleName == User::ROLE_CUSTOMER) {
-	$last_name->customers($locationId)->excludeWalkin();
-}
-else {
-	$last_name->allTeachers()
-		->location($locationId);
-}
-}]) 
-	->all();
-$last_names = ArrayHelper::map($last_name, 'user_id','lastname');
 ?>
  
 
