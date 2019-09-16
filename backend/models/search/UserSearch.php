@@ -139,9 +139,7 @@ class UserSearch extends User
             $query->joinWith(['userLocation' => function ($query) use ($locationId) {
                 $query->andWhere([ 'user_location.location_id' => $locationId]);
                 if ($this->role_name === USER::ROLE_TEACHER && !$this->showAll) {
-                    $query->joinWith(['teacherAvailability' => function ($query) {
-                        $query->andWhere(['NOT', [ 'teacher_availability_day.id' =>  null]]);
-                    }]);
+                    $query->joinWith('qualification');
                 }
             }]);
         }
