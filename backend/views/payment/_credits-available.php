@@ -21,8 +21,8 @@ use yii\bootstrap\ActiveForm;
         <tr class="line-items-value lesson-line-items" data-key="1">
             <td class="text-left"> <?= $model->notes ?> </td>
             <td class="text-left"> <?= $model->paymentMethod->name ?> </td>
-            <td class="text-right"><?= $model->amount ?></td>
-            <td class="text-right"><?= $model->balance ?></td>
+            <td class="text-right"><?= round($model->amount , 2) ?></td>
+            <td class="text-right"><?= round($model->balance, 2) ?></td>
         </tr>
     </tbody>
 </table>
