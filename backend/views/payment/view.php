@@ -15,7 +15,10 @@ use yii\bootstrap\ActiveForm;
 ]); ?>
 
 <?php ActiveForm::end(); ?>
-
+<div>
+    <h4 class = "payment-receipt">This is to acknowledge the receipt of payment from <?= $model->userProfile->firstname .' '.$model->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($model->date); ?> 
+in the amount of <?= $model->amount; ?> via <?= $model->paymentMethod->name; ?>. We have distributed it to the items below.</h4>
+</div>
 <?php $lessonCount = $lessonDataProvider->getCount(); ?>
 <?php $groupLessonCount = $groupLessonDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceDataProvider->getCount(); ?>
@@ -56,7 +59,11 @@ use yii\bootstrap\ActiveForm;
     ?>
 <?php endif; ?>
     <?php endif;?>
-
+    <?= Html::label('Payments Used', ['class' => 'admin-login']) ?>
+    <?= $this->render('/payment/_credits-available', [
+       'model' => $model,
+    ]);
+    ?>
 <script>
 	$(document).ready(function () {
 		var header = '<?= $this->render('payment-summary', ['model' => $model]); ?>';
