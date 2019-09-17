@@ -546,6 +546,7 @@ class PrintController extends BaseController
             'model' => $model,
 	    'lessonDataProvider' => $lessonDataProvider,
             'invoiceDataProvider' => $invoiceDataProvider,
+            
         ]);
     }
 

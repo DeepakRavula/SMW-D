@@ -17,6 +17,7 @@
    ?>
 
 <div class="row-fluid invoice-info m-t-10">
+
 <?php $lessonCount = $lessonDataProvider->getCount(); ?>
     <?php if ($lessonCount > 0) : ?>
     <div class="col-xs-10">
@@ -43,6 +44,14 @@
 	?>
 	</div>
     <?php endif; ?>
+    <div class="col-xs-10">
+        <div class="m-l-22"> <b>Payments Used</b></div>
+	<?=
+	$this->render('/payment/_credits-available', [
+	    'model' => $model,
+	]);
+	?>
+	</div>
 </div>
 <script>
     $(document).ready(function() {

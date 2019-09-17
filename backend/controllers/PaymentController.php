@@ -155,13 +155,14 @@ class PaymentController extends BaseController
             'query' => $invoicePayment,
             'pagination' => false
         ]);
+
         if (!Yii::$app->request->isPost) {
             $data = $this->renderAjax('view', [
                 'model' => $model,
                 'canEdit' => false,
                 'lessonDataProvider' => $lessonDataProvider,
                 'groupLessonDataProvider' => $groupLessonDataProvider,
-                'invoiceDataProvider' => $invoiceDataProvider
+                'invoiceDataProvider' => $invoiceDataProvider,
             ]);
             return [
                 'status' => true,
