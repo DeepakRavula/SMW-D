@@ -25,7 +25,7 @@ class m190917_071839_correcting_enrolments_enddate_respective_lastlesson extends
         foreach ($enrolments as $enrolment) {
             if ($enrolment->endDateTime != $enrolment->course->endDate) {
                 Console::output("Affected Private Enrolment: Enrolment Id:  " .$enrolment->id."   ". Carbon::parse($enrolment->endDateTime)->format('M d, Y')."   Course end date   ".Carbon::parse($enrolment->course->endDate)->format('M, d, Y')." Location: ".$enrolment->course->locationId." Last Lesson Date: ".Carbon::parse($enrolment->course->lastLesson->date)->format('Y-m-d'), Console::FG_GREEN, Console::BOLD);
-                //$enrolment->updateAttributes(['endDateTime' => $enrolment->course->endDate]);
+                $enrolment->updateAttributes(['endDateTime' => $enrolment->course->endDate]);
             }
         }
     }
