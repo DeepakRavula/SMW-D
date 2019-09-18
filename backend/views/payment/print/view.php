@@ -31,6 +31,19 @@
     ?>
    </div>
     <?php endif; ?>
+    <?php $lessonCount = $groupLessonDataProvider->getCount(); ?>
+    <?php if ($lessonCount > 0) : ?>
+    <div class="col-xs-10">
+        <div class="m-l-22"> <b>Group Lessons</b></div>
+    <?=
+    $this->render('/payment/_group-lesson-line-item', [
+        'model' => $model,
+        'canEdit' => false,
+        'lessonDataProvider' => $groupLessonDataProvider,
+    ]);
+    ?>
+   </div>
+    <?php endif; ?>
     <?php $invoiceCount = $invoiceDataProvider->getCount(); ?>
         <?php if ($invoiceCount > 0) : ?>
     <div class="col-xs-10">

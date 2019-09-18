@@ -1,6 +1,7 @@
 <?= $emailTemplate->header ?? 'Please find the payment below:'; ?><Br>
 <?php $lessonCount = $lessonDataProvider->getCount(); ?>
 <?php if ($lessonCount > 0) : ?>
+<div class="m-l-22"> <b>Lessons</b></div>
 	<table style="width:100%">
     	<tr>
 			<td>
@@ -14,11 +15,28 @@
     	</tr>
 	</table>
 <?php endif; ?>
+<?php $lessonCount = $groupLessonDataProvider->getCount(); ?>
+<?php if ($lessonCount > 0) : ?>
+<div class="m-l-22"> <b>Group Lessons</b></div>
+	<table style="width:100%">
+    	<tr>
+			<td>
+    			<?= $this->render('/payment/_group-lesson-line-item', [
+            		'lessonDataProvider' => $groupLessonDataProvider,
+	    			'searchModel' => $searchModel,
+					'model' => $model,
+					'canEdit' => false,
+        		]); ?>
+			</td>
+    	</tr>
+	</table>
+<?php endif; ?>
 <div class="row">
     <!-- /.col -->
     <div class="table-responsive">
 	<?php $invoiceCount = $invoiceDataProvider->getCount(); ?>
-        <?php if ($invoiceCount > 0) : ?>
+		<?php if ($invoiceCount > 0) : ?>
+		<div class="m-l-22"> <b>Invoices</b></div>
             <table class="table table-invoice-total" style="width: 100%;">
             <tbody>
             	<tr>
@@ -34,6 +52,22 @@
             </tbody>
             </table>
 		<?php endif; ?>   
+
+	</div>
+</div>
+<div class="table-responsive">
+<div class="m-l-22"> <b>Payments Used</b></div>
+            <table class="table table-invoice-total" style="width: 100%;">
+            <tbody>
+            	<tr>
+					<td>
+    					<?= $this->render('/payment/_credits-available', [
+							'model' => $model,
+        				]); ?>
+					</td>
+    			</tr>
+            </tbody>
+            </table>		
 	</div>
 </div>
         <!-- /.col -->

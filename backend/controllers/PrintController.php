@@ -9,6 +9,7 @@ use common\models\Invoice;
 use yii\data\ActiveDataProvider;
 use common\models\Course;
 use common\models\Lesson;
+use common\models\GroupLesson;
 use common\models\ExamResult;
 use common\models\Student;
 use common\models\User;
@@ -520,6 +521,7 @@ class PrintController extends BaseController
     {
         $model = Payment::findOne($id);
         $lessonPayment = Lesson::find()
+            ->privateLessons()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id])
 			->notDeleted();
@@ -528,7 +530,18 @@ class PrintController extends BaseController
             'query' => $lessonPayment,
             'pagination' => false
         ]);
-	    
+        
+        $groupLessonPayment = GroupLesson::find()
+            ->joinWith(['lessonPayments' => function ($query) use ($id) {
+                $query->andWhere(['paymentId' => $id])
+            ->notDeleted();
+            }]);
+
+        $groupLessonDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonPayment,
+            'pagination' => false
+        ]);
+
         $invoicePayment = Invoice::find()
             ->notDeleted()
             ->joinWith(['invoicePayments' => function ($query) use ($id) {
@@ -544,9 +557,9 @@ class PrintController extends BaseController
 	
         return $this->render('/payment/print/view', [
             'model' => $model,
-	    'lessonDataProvider' => $lessonDataProvider,
+	        'lessonDataProvider' => $lessonDataProvider,
             'invoiceDataProvider' => $invoiceDataProvider,
-            
+            'groupLessonDataProvider' =>  $groupLessonDataProvider
         ]);
     }
 
