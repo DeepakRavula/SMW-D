@@ -1,6 +1,7 @@
 <?= $emailTemplate->header ?? 'Please find the payment below:'; ?><Br>
 <?php $lessonCount = $lessonDataProvider->getCount(); ?>
 <?php if ($lessonCount > 0) : ?>
+<div class="m-l-22"> <b>Lessons</b></div>
 	<table style="width:100%">
     	<tr>
 			<td>
@@ -18,7 +19,8 @@
     <!-- /.col -->
     <div class="table-responsive">
 	<?php $invoiceCount = $invoiceDataProvider->getCount(); ?>
-        <?php if ($invoiceCount > 0) : ?>
+		<?php if ($invoiceCount > 0) : ?>
+		<div class="m-l-22"> <b>Invoices</b></div>
             <table class="table table-invoice-total" style="width: 100%;">
             <tbody>
             	<tr>
@@ -38,6 +40,7 @@
 	</div>
 </div>
 <div class="table-responsive">
+<div class="m-l-22"> <b>Payments Used</b></div>
             <table class="table table-invoice-total" style="width: 100%;">
             <tbody>
             	<tr>
