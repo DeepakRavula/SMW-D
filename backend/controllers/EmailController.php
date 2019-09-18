@@ -9,6 +9,7 @@ use yii\web\Response;
 use common\models\Location;
 use common\models\Invoice;
 use common\models\Lesson;
+use common\models\GroupLesson;
 use common\models\Enrolment;
 use common\models\Student;
 use common\models\EmailTemplate;
@@ -324,12 +325,24 @@ class EmailController extends BaseController
         $model = Payment::findOne($id);
         $searchModel = new PaymentSearch();
         $lessonPayment = Lesson::find()
+            ->privateLessons()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id])
 			->notDeleted();
             }]);
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => $lessonPayment,
+            'pagination' => false
+        ]);
+
+        $groupLessonPayment = GroupLesson::find()
+            ->joinWith(['lessonPayments' => function ($query) use ($id) {
+                $query->andWhere(['paymentId' => $id])
+            ->notDeleted();
+            }]);
+
+        $groupLessonDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonPayment,
             'pagination' => false
         ]);
 	    
@@ -357,6 +370,7 @@ class EmailController extends BaseController
             'paymentModel' => $model,
 	        'searchModel' => $searchModel,
             'userModel' => $model->user,
+            'groupLessonDataProvider' =>  $groupLessonDataProvider
 
         ]);
         $post = Yii::$app->request->post();

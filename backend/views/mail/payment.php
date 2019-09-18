@@ -6,6 +6,7 @@ use common\models\UserEmail;
     $content = $this->renderAjax('/payment/mail_content', [
     'model' => $paymentModel,
     'lessonDataProvider' => $lessonDataProvider,
+    'groupLessonDataProvider' =>  $groupLessonDataProvider,
     'invoiceDataProvider' => $invoiceDataProvider,
     'emailTemplate' => $emailTemplate,
     'searchModel' => $searchModel,

@@ -15,6 +15,22 @@
     	</tr>
 	</table>
 <?php endif; ?>
+<?php $lessonCount = $groupLessonDataProvider->getCount(); ?>
+<?php if ($lessonCount > 0) : ?>
+<div class="m-l-22"> <b>Group Lessons</b></div>
+	<table style="width:100%">
+    	<tr>
+			<td>
+    			<?= $this->render('/payment/_group-lesson-line-item', [
+            		'lessonDataProvider' => $groupLessonDataProvider,
+	    			'searchModel' => $searchModel,
+					'model' => $model,
+					'canEdit' => false,
+        		]); ?>
+			</td>
+    	</tr>
+	</table>
+<?php endif; ?>
 <div class="row">
     <!-- /.col -->
     <div class="table-responsive">
