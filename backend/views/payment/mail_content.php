@@ -34,6 +34,21 @@
             </tbody>
             </table>
 		<?php endif; ?>   
+
+	</div>
+</div>
+<div class="table-responsive">
+            <table class="table table-invoice-total" style="width: 100%;">
+            <tbody>
+            	<tr>
+					<td>
+    					<?= $this->render('/payment/_credits-available', [
+							'model' => $model,
+        				]); ?>
+					</td>
+    			</tr>
+            </tbody>
+            </table>		
 	</div>
 </div>
         <!-- /.col -->
