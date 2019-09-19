@@ -4,6 +4,7 @@ namespace console\controllers;
 
 use Yii;
 use Carbon\Carbon;
+use common\models\AutoRenewal;
 use common\models\AutoRenewalEnrolmentLessons;
 use common\models\User;
 use common\models\Enrolment;
@@ -17,7 +18,7 @@ use common\models\Lesson;
 class EnrolmentController extends Controller
 {
     public $id;
-    
+
     public function init()
     {
         parent::init();
@@ -28,23 +29,24 @@ class EnrolmentController extends Controller
 
     public function options($actionID)
     {
-        return array_merge(parent::options($actionID),
+        return array_merge(
+            parent::options($actionID),
             $actionID == 'delete' || 'set-lesson-due-date' ? ['id'] : []
         );
     }
-    
+
     public function actionAutoRenewal()
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $priorDate = (new Carbon())->addDays(Enrolment::AUTO_RENEWAL_DAYS_FROM_END_DATE);
         $courses = Course::find()
-                ->regular()
-                ->confirmed()
-                ->needToRenewal($priorDate)
-                ->privateProgram()
-                ->notDeleted()
-                ->all();
+            ->regular()
+            ->confirmed()
+            ->needToRenewal($priorDate)
+            ->privateProgram()
+            ->notDeleted()
+            ->all();
         foreach ($courses as $course) {
             $lastPaymentCycle = $course->enrolment->lastPaymentCycle;
             $lastPaymentCycleStartDate = new Carbon($lastPaymentCycle->startDate);
@@ -58,8 +60,16 @@ class EnrolmentController extends Controller
             $courseProgramRate->endDate = $renewalEndDate->format('Y-m-d');
             $courseProgramRate->programRate = $course->program->rate;
             $courseProgramRate->save();
+            $autoRenewal = new AutoRenewal();
+            $autoRenewal->enrolmentId = $course->enrolment->id;
+            $autoRenewal->enrolmentEndDateCurrent = $course->enrolment->endDateTime;
+            $autoRenewal->enrolmentEndDateNew = $course->enrolment->endDateTime;
+            $autoRenewal->paymentFrequency = $course->enrolment->paymentFrequencyId;
+            $autoRenewal->lastPaymentCycleStartDate = $course->enrolment->lastPaymentCycle->startDate;
+            $autoRenewal->lastPaymentCycleEndDate = $course->enrolment->lastPaymentCycle->endDate;
+            $autoRenewal->save();
             $interval = new \DateInterval('P1D');
-            $start = new \DateTime($renewalStartDate);            
+            $start = new \DateTime($renewalStartDate);
             $end = new \DateTime($renewalEndDate);
             $period = new \DatePeriod($start, $interval, $end);
             foreach ($period as $day) {
@@ -70,15 +80,12 @@ class EnrolmentController extends Controller
                     }
                     $createdLesson = $course->createAutoRenewalLesson($day);
                     $createdLesson->makeAsRoot();
-                    $autoRenewalEnrolmentLesson = new AutoRenewalEnrolmentLessons();
-                    $autoRenewalEnrolmentLesson->lessonId = $createdLesson->id;
-                    $autoRenewalEnrolmentLesson->save();
                 }
             }
             if ($lastPaymentCycleMonthCount !== $course->enrolment->paymentsFrequency->frequencyLength) {
                 $lastPaymentCycle->endDate = $lastPaymentCycleStartDate
-                        ->addMonth($course->enrolment->paymentsFrequency->frequencyLength)
-                        ->subDay(1);
+                    ->addMonth($course->enrolment->paymentsFrequency->frequencyLength)
+                    ->subDay(1);
                 $lastPaymentCycle->save();
                 $nextPaymentCycleStartDate = (new Carbon($lastPaymentCycle->endDate))->addDay(1);
                 $course->enrolment->setPaymentCycle($nextPaymentCycleStartDate);
@@ -95,5 +102,4 @@ class EnrolmentController extends Controller
         $model = Enrolment::findOne($this->id);
         return $model->deleteWithTransactionalData();
     }
-
 }

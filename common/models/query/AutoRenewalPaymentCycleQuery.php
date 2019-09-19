@@ -3,11 +3,11 @@
 namespace common\models\query;
 
 /**
- * This is the ActiveQuery class for [[\common\models\AutoRenewalEnrolmentLessons]].
+ * This is the ActiveQuery class for [[\common\models\AutoRenewalPaymentCycle]].
  *
- * @see \common\models\AutoRenewalEnrolmentLessons
+ * @see \common\models\AutoRenewalPaymentCycle
  */
-class AutoRenewalEnrolmentLessonsQuery extends \yii\db\ActiveQuery
+class AutoRenewalPaymentCycleQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class AutoRenewalEnrolmentLessonsQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\AutoRenewalEnrolmentLessons[]|array
+     * @return \common\models\AutoRenewalPaymentCycle[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class AutoRenewalEnrolmentLessonsQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\AutoRenewalEnrolmentLessons|array|null
+     * @return \common\models\AutoRenewalPaymentCycle|array|null
      */
     public function one($db = null)
     {
