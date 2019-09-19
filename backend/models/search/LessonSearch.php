@@ -89,7 +89,9 @@ class LessonSearch extends Lesson
         if (!$this->showAll) {
             $query->andWhere(['OR', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['AND', ['lesson.status' => [Lesson::STATUS_UNSCHEDULED]],['>', 'private_lesson.expiryDate', (new \DateTime())->format('Y-m-d')]]])
             ->andWhere(['>', 'lesson.date',(new \DateTime())->format('Y-m-d') ]);
-        } 
+        } else {
+            $query->andWhere(['OR', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['AND', ['lesson.status' => [Lesson::STATUS_UNSCHEDULED]],['>', 'private_lesson.expiryDate', (new \DateTime())->format('Y-m-d')]]]);
+        }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
                     ->andWhere(['id' => $this->ids]);
