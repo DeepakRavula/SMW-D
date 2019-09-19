@@ -78,8 +78,7 @@ class LessonSearch extends Lesson
             ->activePrivateLessons()
             ->orderBy(['lesson.dueDate' => SORT_ASC])
             ->joinWith(['privateLesson'])
-            ->notCanceled()
-            ->notExpired();
+            ->notCanceled();
             
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
