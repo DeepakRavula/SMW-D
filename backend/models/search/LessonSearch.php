@@ -78,6 +78,7 @@ class LessonSearch extends Lesson
             ->activePrivateLessons()
             ->orderBy(['lesson.dueDate' => SORT_ASC])
             ->notCanceled()
+            ->andWhere(['OR', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['AND', ['lesson.status' => [Lesson::STATUS_UNSCHEDULED]],['>', 'private_lesson.expiryDate', (new \DateTime())->format('Y-m-d')]]])
             ->notExpired();
             
         $dataProvider = new ActiveDataProvider([
