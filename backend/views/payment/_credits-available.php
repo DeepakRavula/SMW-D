@@ -12,17 +12,17 @@ use yii\bootstrap\ActiveForm;
     <thead>
         <tr class="bg-light-gray">
             <th class="text-left">Reference</th>
+            <th class="text-left">Date</th>
             <th class="text-left">Payment Method</th>
             <th class="text-right">Amount</th>
-            <th class="text-right">Amount Used</th>
         </tr>
     </thead>
     <tbody>
         <tr class="line-items-value lesson-line-items" data-key="1">
             <td class="text-left"> <?= $model->notes ?> </td>
+            <td class="text-left"> <?= (new DateTime($model->date))->format('M d, Y'); ?> </td>
             <td class="text-left"> <?= $model->paymentMethod->name ?> </td>
-            <td class="text-right"><?= Yii::$app->formatter->asCurrency(round($model->amount, 2)); ?></td>  
-            <td class="text-right"><?= Yii::$app->formatter->asCurrency(round($model->balance, 2)); ?></td>
+            <td class="text-right"><?= Yii::$app->formatter->asCurrency(round($model->amount, 2)); ?></td>
         </tr>
     </tbody>
 </table>

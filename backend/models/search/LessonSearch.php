@@ -77,17 +77,20 @@ class LessonSearch extends Lesson
             ->location($locationId)
             ->activePrivateLessons()
             ->orderBy(['lesson.dueDate' => SORT_ASC])
-            ->notCanceled()
-            ->notExpired();
+            ->joinWith(['privateLesson'])
+            ->notCanceled();
             
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
-        }
+        } 
         if (!$this->showAll) {
-            $query->andWhere(['OR', ['lesson.status' => Lesson::STATUS_UNSCHEDULED], ['AND', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['>', 'lesson.date', (new \DateTime())->format('Y-m-d')]]]);
+            $query->andWhere(['OR', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['AND', ['lesson.status' => [Lesson::STATUS_UNSCHEDULED]],['>', 'private_lesson.expiryDate', (new \DateTime())->format('Y-m-d')]]])
+            ->andWhere(['>', 'lesson.date',(new \DateTime())->format('Y-m-d') ]);
+        } else {
+            $query->andWhere(['OR', ['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]], ['AND', ['lesson.status' => [Lesson::STATUS_UNSCHEDULED]],['>', 'private_lesson.expiryDate', (new \DateTime())->format('Y-m-d')]]]);
         }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
