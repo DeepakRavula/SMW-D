@@ -546,6 +546,23 @@ class Course extends \yii\db\ActiveRecord
         $lesson->save();
     }
 
+    public function createAutoRenewalLesson($day)
+    {
+        $lesson = new Lesson();
+        $status = Lesson::STATUS_SCHEDULED;
+        $lesson->setAttributes([
+            'courseId' => $this->id,
+            'teacherId' => $this->teacherId,
+            'status' => $status,
+            'date' => $day->format('Y-m-d H:i:s'),
+            'duration' => $this->recentCourseSchedule->duration,
+            'isConfirmed' => true,
+            'dueDate' => $day->format('Y-m-d')
+        ]);
+        $lesson->save();
+        return $lesson;
+    }
+
     public function createExtraLessonEnrolment()
     {
         $enrolment                     = new Enrolment();

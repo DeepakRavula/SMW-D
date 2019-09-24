@@ -4,6 +4,7 @@ namespace console\controllers;
 
 use Yii;
 use Carbon\Carbon;
+use common\models\AutoRenewalEnrolmentLessons;
 use common\models\User;
 use common\models\Enrolment;
 use yii\console\Controller;
@@ -57,7 +58,6 @@ class EnrolmentController extends Controller
             $courseProgramRate->endDate = $renewalEndDate->format('Y-m-d');
             $courseProgramRate->programRate = $course->program->rate;
             $courseProgramRate->save();
-            $course->updateAttributes(['endDate' => $renewalEndDate]);
             $interval = new \DateInterval('P1D');
             $start = new \DateTime($renewalStartDate);            
             $end = new \DateTime($renewalEndDate);
@@ -68,8 +68,11 @@ class EnrolmentController extends Controller
                     if ($course->isProfessionalDevelopmentDay($day)) {
                         continue;
                     }
-                    $isConfirmed = true;
-                    $course->createLesson($day, $isConfirmed);
+                    $createdLesson = $course->createAutoRenewalLesson($day);
+                    $createdLesson->makeAsRoot();
+                    $autoRenewalEnrolmentLesson = new AutoRenewalEnrolmentLessons();
+                    $autoRenewalEnrolmentLesson->lessonId = $createdLesson->id;
+                    $autoRenewalEnrolmentLesson->save();
                 }
             }
             if ($lastPaymentCycleMonthCount !== $course->enrolment->paymentsFrequency->frequencyLength) {
@@ -82,6 +85,8 @@ class EnrolmentController extends Controller
             } else {
                 $course->enrolment->setPaymentCycle($renewalStartDate);
             }
+            $course->updateAttributes(['endDate' => $renewalEndDate]);
+            $course->enrolment->updateAttributes(['endDateTime' => $renewalEndDate]);
         }
     }
 
