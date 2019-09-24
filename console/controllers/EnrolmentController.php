@@ -80,6 +80,7 @@ class EnrolmentController extends Controller
                     }
                     $createdLesson = $course->createAutoRenewalLesson($day);
                     $createdLesson->makeAsRoot();
+                    $createdLesson->setDiscount();
                     $autoRenewalLesson = new AutoRenewalLessons();
                     $autoRenewalLesson->autoRenewalId = $autoRenewal->id;
                     $autoRenewalLesson->lessonId = $createdLesson->id;
