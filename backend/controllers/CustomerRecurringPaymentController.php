@@ -20,6 +20,7 @@ use common\models\Location;
 use Carbon\Carbon;
 use yii\bootstrap\ActiveForm;
 use phpDocumentor\Reflection\Types\Null_;
+use common\models\RecurringPayment;
 
 class CustomerRecurringPaymentController extends \common\components\controllers\BaseController
 {
@@ -169,6 +170,7 @@ $enrolmentDataProvider  = new ActiveDataProvider([
             'enrolmentDataProvider' => $enrolmentDataProvider,
         ]);
         if (Yii::$app->request->post()) {
+            $oldStartDate = Carbon::parse($model->startDate)->format('Y-m-d');
             if ($model->load(Yii::$app->request->post())) {
                 if ($model->expiryMonth && $model->expiryYear) {
                     $expiryDate = (new \DateTime())->format('d') . '-' . $model->expiryMonth . '-' . $model->expiryYear;
@@ -178,11 +180,33 @@ $enrolmentDataProvider  = new ActiveDataProvider([
                 }
                 $model->startDate = Carbon::parse($model->startDate)->format('Y-m-d');
                 $currentDate = Carbon::now()->format('Y-m-d');
+                if ($oldStartDate != Carbon::parse($model->startDate)->format('Y-m-d')) {
                 if (Carbon::parse($model->startDate)->format('Y-m-d') >= $currentDate ) {
                     $model->nextEntryDay = Carbon::parse($model->startDate)->format('Y-m-d');
                 } else {
-                    $model->nextEntryDay = Carbon::parse($model->startDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
+                    $startDate = Carbon::parse($currentDate)->subMonthsNoOverflow($model->paymentFrequencyId - 1)->format('Y-m-1');
+                    $endDate = $currentDate;
+                    $previousRecordedPayment = RecurringPayment::find()
+                        ->andWhere(['customerRecurringPaymentId' => $model->id])
+                        ->orderBy(['recurring_payment.date' => SORT_DESC]);
+                    $recentRecordedPayment = $previousRecordedPayment->between($startDate, $endDate)->one();
+                    if (!$recentRecordedPayment) {
+                        $previousRecordedPaymentAny = $previousRecordedPayment->one();
+                        if ($previousRecordedPaymentAny) {
+                            $nextEntryDay = Carbon::parse($previousRecordedPayment->date)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
+                        } else {
+                            $nextEntryDayDate = Carbon::parse($model->startDate)->format('d');
+                            $nextEntryDayMonth = Carbon::parse($currentDate)->format('m');
+                            $nextEntryDayYear = Carbon::parse($currentDate)->format('Y');
+                            $nextEntryDay = Carbon::parse($nextEntryDayYear . '-' . $nextEntryDayMonth . '-' . $nextEntryDayDate)->format('Y-m-d');
+                        }
+                        while (Carbon::parse($nextEntryDay) <= Carbon::parse($currentDate)->format('Y-m-d')) {
+                            $nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
+                        }
+                        $model->nextEntryDay = $nextEntryDay;
+                    }
                 }
+            }
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                  $model->on(CustomerRecurringPayment::EVENT_AFTER_UPDATE, [new CustomerRecurringPaymentLog(), 'customerRecurringPaymentEdit'],
                     ['loggedUser' => $loggedUser,]
