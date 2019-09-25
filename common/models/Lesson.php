@@ -787,6 +787,8 @@ class Lesson extends \yii\db\ActiveRecord
             case self::STATUS_SCHEDULED:
                 if (!$this->isCompleted()) {
                     $status = 'Scheduled';
+                } else if (!$this->isPresent) {
+                    $status = 'Absent';
                 } else {
                     $status = 'Completed';
                 }
@@ -797,6 +799,8 @@ class Lesson extends \yii\db\ActiveRecord
             case self::STATUS_RESCHEDULED:
                 if (!$this->isCompleted()) {
                     $status = 'Rescheduled';
+                } else if (!$this->isPresent) {
+                    $status = 'Absent';
                 } else {
                     $status = 'Completed';
                 }
