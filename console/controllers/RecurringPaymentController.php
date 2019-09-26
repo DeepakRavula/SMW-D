@@ -224,6 +224,7 @@ class RecurringPaymentController extends Controller
                 $query->notDeleted()
                     ->location([1, 4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22]);
             }])
+            ->andWhere(['customer_recurring_payment.id' => 1246])
             ->all();  
         foreach ($customerRecurringPayments as $customerRecurringPayment) {
             $startDate = $currentDate->subMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId - 1)->format('Y-m-1');
@@ -244,11 +245,11 @@ class RecurringPaymentController extends Controller
                 }
                 
                 while (Carbon::parse($nextEntryDay)->format('Y-m-d') <= $currentDate->format('Y-m-d')) {
-                    print_r("\nssss");
                     $nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
+                    print_r("\nssss".$nextEntryDay);
                 }
-                print_r($nextEntryDay);die('coming');
                 $customerRecurringPayment->nextEntryDay = $nextEntryDay;
+                die('coming');
                 print_r("\nProcessing Customer Recurring payment:".$customerRecurringPayment->id);
                 $customerRecurringPayment->save();
             }
