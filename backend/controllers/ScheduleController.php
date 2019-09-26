@@ -23,6 +23,7 @@ use common\models\User;
 use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
 use backend\models\search\ScheduleSearch;
+use common\models\CustomerRecurringPayment;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -71,7 +72,23 @@ class ScheduleController extends BaseController
     public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-
+        $currentDate = Carbon::now();
+        $recurringPayments = CustomerRecurringPayment::find()
+        ->notDeleted()
+        ->andWhere(['<=', 'DATE(customer_recurring_payment.nextEntryDay)', $currentDate->format('Y-m-d')])
+        ->andWhere(['>=', 'DATE(customer_recurring_payment.expiryDate)', $currentDate->format('Y-m-d')])
+        ->isRecurringPaymentEnabled()
+        ->andWhere(['>', 'amount', 0.00])
+        ->joinWith(['customer' => function ($query) {
+            $query->notDeleted()
+                ->location([4, 9, 14, 15, 16, 17, 18, 19, 20, 21]);
+        }])
+        ->andWhere(['<=', 'DATE(customer_recurring_payment.startDate)', $currentDate->format('Y-m-d')])
+        ->all();
+        foreach ($recurringPayments as $recurringPayment) {
+            print_r("\n".$recurringPayment->id);
+        }
+        die('coming');
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
