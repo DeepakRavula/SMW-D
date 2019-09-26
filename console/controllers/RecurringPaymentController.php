@@ -224,17 +224,12 @@ class RecurringPaymentController extends Controller
                 $query->notDeleted()
                     ->location([1, 4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22]);
             }])
-            ->andWhere(['customer_recurring_payment.id' => 1246])
             ->all();  
         foreach ($customerRecurringPayments as $customerRecurringPayment) {
-            $startDate = $currentDate->subMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId - 1)->format('Y-m-1');
-            $endDate = $currentDate->format('Y-m-d');
             $previousRecordedPayment = RecurringPayment::find()
                 ->andWhere(['customerRecurringPaymentId' => $customerRecurringPayment->id])
                 ->orderBy(['recurring_payment.date' => SORT_DESC]);
             $previousRecordedPaymentAny = $previousRecordedPayment->one();
-            $recentRecordedPayment = $previousRecordedPayment->between($startDate, $endDate)->one();
-            if (!$recentRecordedPayment) {
                 if ($previousRecordedPaymentAny) {
                     $nextEntryDay = Carbon::parse($previousRecordedPaymentAny->date)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
                 } else {
@@ -246,14 +241,12 @@ class RecurringPaymentController extends Controller
                 
                 while (Carbon::parse($nextEntryDay)->format('Y-m-d') <= $currentDate->format('Y-m-d')) {
                     $nextEntryDay = Carbon::parse($nextEntryDay)->addMonthsNoOverflow($customerRecurringPayment->paymentFrequencyId)->format('Y-m-d');
-                    print_r("\nssss".$nextEntryDay);
                 }
-                $customerRecurringPayment->nextEntryDay = $nextEntryDay;
-                die('coming');
+                $customerRecurringPayment->nextEntryDay = Carbon::parse($nextEntryDay)->format('Y-m-d');
                 print_r("\nProcessing Customer Recurring payment:".$customerRecurringPayment->id);
                 $customerRecurringPayment->save();
-            }
-        }
+            } 
+        
         return true;
     }
 }
