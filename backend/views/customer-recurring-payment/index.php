@@ -24,7 +24,7 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [
             [
-                'label' => 'Customer',
+                'attribute' => 'customer',
                 'value' => function ($data) {
                     return $data->customer->publicIdentity;
                 },
@@ -48,6 +48,7 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
                 },
             ],
             [
+                'attribute' => 'expiryDate',
                 'label' => 'Expiry Date',
                 'value' => function ($data) {
                     return $data->expiryDate ? (new \DateTime($data->expiryDate))->format('M d, Y') : null;
