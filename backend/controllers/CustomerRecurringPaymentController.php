@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use yii\bootstrap\ActiveForm;
 use phpDocumentor\Reflection\Types\Null_;
 use common\models\RecurringPayment;
+use backend\models\search\CustomerRecurringPaymentSearch;
 
 class CustomerRecurringPaymentController extends \common\components\controllers\BaseController
 {
@@ -59,15 +60,12 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
 
     public function actionIndex()
     {
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $recurringPayments = CustomerRecurringPayment::find()
-                ->notDeleted()
-                ->location($locationId);
-        $recurringPaymentDataProvider  = new ActiveDataProvider([
-            'query' =>  $recurringPayments,
-        ]);
+        $searchModel = new CustomerRecurringPaymentSearch();
+        $request = Yii::$app->request;
+        $dataProvider = $searchModel->search($request->queryParams);
+       
         return $this->render('index', [
-                'dataProvider' => $recurringPaymentDataProvider
+                'dataProvider' => $dataProvider
             ]);
     }
 
