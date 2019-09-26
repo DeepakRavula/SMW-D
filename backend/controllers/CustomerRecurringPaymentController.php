@@ -60,16 +60,10 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
 
     public function actionIndex()
     {
-        //$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $searchModel = new CustomerRecurringPaymentSearch();
         $request = Yii::$app->request;
         $dataProvider = $searchModel->search($request->queryParams);
-        // $recurringPayments = CustomerRecurringPayment::find()
-        //         ->notDeleted()
-        //         ->location($locationId);
-        // $recurringPaymentDataProvider  = new ActiveDataProvider([
-        //     'query' =>  $recurringPayments,
-        // ]);
+       
         return $this->render('index', [
                 'dataProvider' => $dataProvider
             ]);
