@@ -60,6 +60,10 @@ class CustomerRecurringPaymentSearch extends CustomerRecurringPayment
                     'asc' => ['user_profile.firstname' => SORT_ASC],
                     'desc' => ['user_profile.firstname' => SORT_DESC]
                 ],
+                'expiryDate' => [
+                    'asc' => ['customer_recurring_payment.expiryDate' => SORT_ASC],
+                    'desc' => ['customer_recurring_payment.expiryDate' => SORT_DESC]
+                ],
             ]
         ]);
 
