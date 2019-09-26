@@ -50,8 +50,17 @@ class CustomerRecurringPaymentSearch extends CustomerRecurringPayment
                     $query->joinWith('userProfile');
                     }
                 ]);
+                
         $dataProvider  = new ActiveDataProvider([
             'query' =>  $query,
+        ]);
+        $dataProvider->setSort([
+            'attributes' => [
+                'customer' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC]
+                ],
+            ]
         ]);
 
         if (!($this->load($params) && $this->validate())) {
@@ -60,14 +69,7 @@ class CustomerRecurringPaymentSearch extends CustomerRecurringPayment
         
         $query->joinWith('userProfile');
 
-        $dataProvider->setSort([
-            'attributes' => [
-                'customer' => [
-                    'asc' => ['userProfile.firstname' => SORT_ASC],
-                    'desc' => ['userProfile.firstname' => SORT_DESC]
-                ],
-            ]
-        ]);
+       
         $dataProvider->sort->defaultOrder = [
             'customer' => SORT_ASC
         ];
