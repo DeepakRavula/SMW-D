@@ -138,6 +138,11 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'customerId']);
     }
 
+    public function getUserProfile()
+    {
+        return $this->hasOne(UserProfile::className(), ['user_id' => 'customerId']);
+    }
+
     public static function find()
     {
         return new \common\models\query\CustomerRecurringPaymentQuery(get_called_class());
