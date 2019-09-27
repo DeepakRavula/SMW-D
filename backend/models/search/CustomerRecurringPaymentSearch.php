@@ -16,11 +16,12 @@ class CustomerRecurringPaymentSearch extends CustomerRecurringPayment
      * {@inheritdoc}
      */
     public $customer;
+    public $showAll;
 
     public function rules()
     {
         return [
-            [['customer'], 'safe'],
+            [['customer','showAll'], 'safe'],
         ];
     }
 

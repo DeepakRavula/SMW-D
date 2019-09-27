@@ -12,6 +12,9 @@ use yii\widgets\Pjax;
 
 $this->title = 'Recurring Payments';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['show-all'] = $this->render('_show-all-button', [
+    'searchModel' => $searchModel,
+]);
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['id' => 'recurring-payment']);
 ?> 
 <div class="recurring-payment-index">  
