@@ -53,7 +53,7 @@ class EnrolmentController extends Controller
             $lastPaymentCycleEndDate = new Carbon($lastPaymentCycle->endDate);
             $lastPaymentCycleMonthCount = $lastPaymentCycleEndDate->diffInMonths($lastPaymentCycleStartDate);
             $renewalStartDate = (new Carbon($course->endDate))->addDays(1);
-            $renewalEndDate = (new Carbon($course->endDate))->addMonths(11)->endOfMonth();
+            $renewalEndDate = (new Carbon($course->endDate))->addMonths(24)->endOfMonth();
             $courseProgramRate = new CourseProgramRate();
             $courseProgramRate->courseId = $course->id;
             $courseProgramRate->startDate  = $renewalStartDate->format('Y-m-d');
