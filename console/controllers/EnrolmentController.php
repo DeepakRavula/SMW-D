@@ -47,6 +47,7 @@ class EnrolmentController extends Controller
             ->notDeleted()
             ->all();
         foreach ($courses as $course) {
+            if ($course->enrolment->isAutoRenew) {
             $lastPaymentCycle = $course->enrolment->lastPaymentCycle;
             $lastPaymentCycleStartDate = new Carbon($lastPaymentCycle->startDate);
             $lastPaymentCycleEndDate = new Carbon($lastPaymentCycle->endDate);
@@ -80,6 +81,7 @@ class EnrolmentController extends Controller
                     }
                     $createdLesson = $course->createAutoRenewalLesson($day);
                     $createdLesson->makeAsRoot();
+                    $createdLesson->setDiscount();
                     $autoRenewalLesson = new AutoRenewalLessons();
                     $autoRenewalLesson->autoRenewalId = $autoRenewal->id;
                     $autoRenewalLesson->lessonId = $createdLesson->id;
@@ -109,6 +111,7 @@ class EnrolmentController extends Controller
             //     $autoRenewalPaymentCycle->save();
             // }
         }
+    }
     }
 
     public function actionDelete()
