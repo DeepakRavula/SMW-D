@@ -1187,4 +1187,25 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->lessonPayment;
     }
+
+    public function setAutoRenewalPaymentCycle($startDate)
+    {
+        $enrolmentStartDate      = new \DateTime($startDate);
+        $endDate = (new \DateTime($startDate))->format('Y-m-1');
+        $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
+        for ($i = 0; $i <= (int) 10 / $this->paymentsFrequency->frequencyLength; $i++) {
+            if ($i !== 0) {
+                $paymentCycleStartDate     = $endDate->modify('First day of next month');
+            }
+            $paymentCycle              = new PaymentCycle();
+            $paymentCycle->enrolmentId = $this->id;
+            $paymentCycle->startDate   = $paymentCycleStartDate->format('Y-m-d');
+            $endDate = $paymentCycleStartDate->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
+            $paymentCycle->id          = null;
+            $paymentCycle->isNewRecord = true;
+            $paymentCycle->endDate     = $endDate->format('Y-m-d');
+            $paymentCycle->save();
+        }
+        return true;
+    }
 }
