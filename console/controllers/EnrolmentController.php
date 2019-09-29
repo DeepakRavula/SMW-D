@@ -99,8 +99,7 @@ class EnrolmentController extends Controller
             } else {
                 $course->enrolment->setAutoRenewalPaymentCycle($renewalStartDate);
             } 
-            $course->updateAttributes(['endDate' => $renewalEndDate]);
-            $course->enrolment->updateAttributes(['endDateTime' => $renewalEndDate]);
+            $course->updateDates();
         }
     }
     }
