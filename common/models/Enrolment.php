@@ -966,7 +966,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function extend()
     {
-        $lastLesson = $this->lastRootLesson;
+        $lastLesson = $this->lastLesson;
         $interval = new \DateInterval('P1D');
         $start = (new \DateTime($lastLesson->date))->modify('+1 day');
         $end = new \DateTime($this->course->endDate);

@@ -732,7 +732,7 @@ class EnrolmentController extends BaseController
     {
         $changedEndDate = Yii::$app->request->get('endDate');
         $model = $this->findModel($id);
-        $lastLesson = $model->lastRootLesson;
+        $lastLesson = $model->lastLesson;
         if (!$lastLesson) {
             return [
                 'status' => false,
@@ -783,12 +783,6 @@ class EnrolmentController extends BaseController
         if ($post) {
             if ($course->validate()) {
                 $message = null;
-                $course->updateAttributes([
-                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
-                ]);
-                $model->updateAttributes([
-                    'endDateTime' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
-                ]);
                 $newEndDate = Carbon::parse($course->endDate);
                 if ($endDate !== $newEndDate) {
                     if ($lastLessonDate > $newEndDate) {
@@ -799,6 +793,12 @@ class EnrolmentController extends BaseController
                     $model->setStatus();
                     if ($message) {
                         $message = 'Enrolment end date succesfully updated!';
+                        $course->updateAttributes([
+                            'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
+                        ]);
+                        $model->updateAttributes([
+                            'endDateTime' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
+                        ]);
                     }
                 }
                 $response = [
