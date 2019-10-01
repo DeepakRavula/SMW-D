@@ -86,7 +86,12 @@ class EnrolmentPaymentFrequency extends \yii\db\ActiveRecord
     public function resetPaymentCycle()
     {
         $enrolment = Enrolment::find()->andWhere(['id' => $this->enrolmentId])->one();
-        $effectiveDate = "01".$this->effectiveDate;
+        
+        $month =  Carbon::parse($this->effectiveDate)->format('m');
+        $year =  Carbon::parse($this->effectiveDate)->format('Y');
+        $day = 01;
+        $formatedDate = $day . '-' . $month . '-' . $year;
+        $effectiveDate = (new \DateTime($formatedDate))->format('Y-m-d');
         $startDate = Carbon::parse($effectiveDate)->format('Y-m-1');
         $enrolmentLastPaymentCycleEndDate = new \DateTime($enrolment->course->endDate);
         $intervalMonths = $this->diffInMonths(Carbon::parse($startDate), $enrolmentLastPaymentCycleEndDate);
