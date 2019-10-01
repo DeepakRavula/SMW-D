@@ -47,10 +47,8 @@ class CustomerRecurringPaymentSearch extends CustomerRecurringPayment
         $query = CustomerRecurringPayment::find()
                 ->notDeleted()
                 ->location($locationId);
-                $query->joinWith(['customer' => function($query) {
-                    $query->joinWith('userProfile');
-                    }
-                ]);
+        
+        $query->joinWith('userProfile');      
                 
         $dataProvider  = new ActiveDataProvider([
             'query' =>  $query,
@@ -71,8 +69,9 @@ class CustomerRecurringPaymentSearch extends CustomerRecurringPayment
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-        
-        $query->joinWith('userProfile');
+        if (!$this->showAll) {
+            $query->isRecurringPaymentEnabled();
+        } 
 
        
         $dataProvider->sort->defaultOrder = [

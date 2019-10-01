@@ -88,7 +88,7 @@ echo Menu::widget([
         [
             'label' => Yii::t('backend', 'Recurring Payments'),
             'icon' => '<i class="fa  fa-dollar"></i>',
-            'url' => ['/customer-recurring-payment/index'],
+            'url' => ['/customer-recurring-payment/index','CustomerRecurringPaymentSearch[showAll]' => false],
             'visible' => Yii::$app->user->can('manageRecurringPayment'),
             'active' => (Yii::$app->controller->id === 'customer-recurring-payment')
         ],
