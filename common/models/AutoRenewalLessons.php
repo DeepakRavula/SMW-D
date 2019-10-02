@@ -1,6 +1,8 @@
 <?php
 
 namespace common\models;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 use Yii;
 
@@ -23,13 +25,30 @@ class AutoRenewalLessons extends \yii\db\ActiveRecord
         return 'auto_renewal_lessons';
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => false,
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => false
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['autoRenewalId', 'lessonId', 'createdByUserId'], 'required'],
+            [['autoRenewalId', 'lessonId'], 'required'],
             [['autoRenewalId', 'lessonId', 'createdByUserId'], 'integer'],
             [['createdOn'], 'safe'],
         ];
@@ -56,5 +75,12 @@ class AutoRenewalLessons extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\AutoRenewalLessonsQuery(get_called_class());
+    }
+
+    
+    public function getPaymentCycleLesson()
+    {
+        return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'lessonId'])
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 }

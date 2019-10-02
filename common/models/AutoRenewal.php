@@ -1,6 +1,8 @@
 <?php
 
 namespace common\models;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 use Yii;
 
@@ -27,13 +29,30 @@ class AutoRenewal extends \yii\db\ActiveRecord
         return 'auto_renewal';
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => false,
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => false
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['enrolmentId', 'paymentFrequency', 'createdByUserId'], 'required'],
+            [['enrolmentId', 'paymentFrequency'], 'required'],
             [['enrolmentId', 'paymentFrequency', 'createdByUserId'], 'integer'],
             [['enrolmentEndDateCurrent', 'enrolmentEndDateNew', 'lastPaymentCycleStartDate', 'lastPaymentCycleEndDate', 'createdOn'], 'safe'],
         ];

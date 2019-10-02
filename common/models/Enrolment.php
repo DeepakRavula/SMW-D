@@ -966,7 +966,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function extend()
     {
-        $lastLesson = $this->lastRootLesson;
+        $lastLesson = $this->lastLesson;
         $interval = new \DateInterval('P1D');
         $start = (new \DateTime($lastLesson->date))->modify('+1 day');
         $end = new \DateTime($this->course->endDate);
@@ -978,9 +978,10 @@ class Enrolment extends \yii\db\ActiveRecord
             $extendedLesson->makeAsRoot();
         }
         $paymentCycleStartDate = (new \DateTime($lastLesson->date))->format('Y-m-t');
-        $paymentCycleStartDate = (new \DateTime($paymentCycleStartDate))->modify('+1 day')->format('Y-m-d');
+        $paymentCycleStartDate = (new \DateTime($paymentCycleStartDate))->modify('+1 day')->format('M, Y');
         $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
-        $enrolmentPaymentFrequency->effectiveDate = $paymentCycleStartDate;
+        $enrolmentPaymentFrequency->effectiveDate = clone (new \DateTime($this->lastLesson->date));
+        $enrolmentPaymentFrequency->effectiveDate =  $enrolmentPaymentFrequency->effectiveDate->format('Y-m-d');
         $enrolmentPaymentFrequency->enrolmentId = $this->id;
         $enrolmentPaymentFrequency->resetPaymentCycle();
         return true;
@@ -1186,5 +1187,26 @@ class Enrolment extends \yii\db\ActiveRecord
     public function hasPayment()
     {
         return $this->lessonPayment;
+    }
+
+    public function setAutoRenewalPaymentCycle($startDate)
+    {
+        $enrolmentStartDate      = new \DateTime($startDate);
+        $endDate = (new \DateTime($startDate))->format('Y-m-1');
+        $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
+        for ($i = 0; $i <= (int) 10 / $this->paymentsFrequency->frequencyLength; $i++) {
+            if ($i !== 0) {
+                $paymentCycleStartDate     = $endDate->modify('First day of next month');
+            }
+            $paymentCycle              = new PaymentCycle();
+            $paymentCycle->enrolmentId = $this->id;
+            $paymentCycle->startDate   = $paymentCycleStartDate->format('Y-m-d');
+            $endDate = $paymentCycleStartDate->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
+            $paymentCycle->id          = null;
+            $paymentCycle->isNewRecord = true;
+            $paymentCycle->endDate     = $endDate->format('Y-m-d');
+            $paymentCycle->save();
+        }
+        return true;
     }
 }
