@@ -966,7 +966,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function extend()
     {
-        $lastLesson = $this->lastRootLesson;
+        $lastLesson = $this->lastLesson;
         $interval = new \DateInterval('P1D');
         $start = (new \DateTime($lastLesson->date))->modify('+1 day');
         $end = new \DateTime($this->course->endDate);
@@ -978,9 +978,10 @@ class Enrolment extends \yii\db\ActiveRecord
             $extendedLesson->makeAsRoot();
         }
         $paymentCycleStartDate = (new \DateTime($lastLesson->date))->format('Y-m-t');
-        $paymentCycleStartDate = (new \DateTime($paymentCycleStartDate))->modify('+1 day')->format('Y-m-d');
+        $paymentCycleStartDate = (new \DateTime($paymentCycleStartDate))->modify('+1 day')->format('M, Y');
         $enrolmentPaymentFrequency = new EnrolmentPaymentFrequency();
-        $enrolmentPaymentFrequency->effectiveDate = $paymentCycleStartDate;
+        $enrolmentPaymentFrequency->effectiveDate = clone (new \DateTime($this->lastLesson->date));
+        $enrolmentPaymentFrequency->effectiveDate =  $enrolmentPaymentFrequency->effectiveDate->format('Y-m-d');
         $enrolmentPaymentFrequency->enrolmentId = $this->id;
         $enrolmentPaymentFrequency->resetPaymentCycle();
         return true;
