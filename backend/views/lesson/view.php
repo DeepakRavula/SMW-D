@@ -343,7 +343,8 @@ echo Tabs::widget([
             {
                 if(response.status)
                 {
-                    $.pjax.reload({container: '#lesson-attendance', timeout: 6000});
+                    $.pjax.reload({container: '#lesson-attendance', replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: '#lesson-detail', replace: false, async: false, timeout: 6000});
                     $('#attendance-modal').modal('hide');
                 }
             }
