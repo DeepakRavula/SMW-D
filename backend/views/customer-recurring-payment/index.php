@@ -25,6 +25,17 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
     'emptyText' => false,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        $data = [];
+        if ($searchModel->showAll) {
+            if (!$model->isRecurringPaymentEnabled) {
+                $data = array_merge($data, ['class' => 'danger inactive']);
+            } else {
+                $data = array_merge($data, ['class' => 'info active']);
+            }
+        }
+        return $data;
+    },
     'columns' => [
             [
                 'attribute' => 'customer',
