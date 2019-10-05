@@ -1206,6 +1206,10 @@ class Enrolment extends \yii\db\ActiveRecord
             $paymentCycle->isNewRecord = true;
             $paymentCycle->endDate     = $endDate->format('Y-m-d');
             $paymentCycle->save();
+            $autoRenewalPaymentCycle = new AutoRenewalPaymentCycle();
+            $autoRenewalPaymentCycle->autoRenewalId = $paymentCycle->paymentCycleLesson->autoRenewalLessons->autoRenewalId;
+            $autoRenewalPaymentCycle->paymentCycleId = $paymentCycle->id;
+            $autoRenewalPaymentCycle->save();
         }
         return true;
     }
