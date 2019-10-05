@@ -99,6 +99,10 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payments</h4>');
                         $('#modal-content').html(response.data);
+                        var showAll = $(this).is(":checked");
+    	                var params = $.param({ 'CustomerRecurringPaymentSearch[showAll]': (showAll | 0) });
+      	                var url = "<?php echo Url::to(['customer-recurring-payment/index']); ?>?"+params;
+                        $.pjax.reload({url: url, container: "#recurring-payment-listing", replace: false, timeout: 4000});
                     }
                 }
             });
@@ -107,7 +111,7 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
 
     $(document).off('change', '#customerrecurringpaymentsearch-showall').on('change', '#customerrecurringpaymentsearch-showall', function () {
       	var showAll = $(this).is(":checked");
-    	var params = $.param({ 'Customerrecurringpaymentsearch[showAll]': (showAll | 0) });
+    	var params = $.param({ 'CustomerRecurringPaymentSearch[showAll]': (showAll | 0) });
       	var url = "<?php echo Url::to(['customer-recurring-payment/index']); ?>?"+params;
         $.pjax.reload({url: url, container: "#recurring-payment-listing", replace: false, timeout: 4000});  //Reload GridView
     });
