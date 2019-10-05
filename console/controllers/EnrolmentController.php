@@ -101,15 +101,6 @@ class EnrolmentController extends Controller
             } 
             $course->updateAttributes(['endDate' => $renewalEndDate]);
             $course->enrolment->updateAttributes(['endDateTime' => $renewalEndDate]);
-            // $autoRenewalLessons = AutoRenewalLessons::find()
-            //             ->andWhere(['autoRenewalId' => $autoRenewal->id])
-            //             ->all();
-            // foreach ($autoRenewalLessons as $autoRenewalLesson) {
-            //     $autoRenewalPaymentCycle = new AutoRenewalPaymentCycle();
-            //     $autoRenewalPaymentCycle->autoRenewalId = $autoRenewal->id;
-            //     $autoRenewalPaymentCycle->paymentCycleId = $autoRenewalLesson->paymentCycleLesson->paymentCycleId;
-            //     $autoRenewalPaymentCycle->save();
-            // }
         }
     }
     }
