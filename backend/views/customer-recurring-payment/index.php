@@ -12,6 +12,9 @@ use yii\widgets\Pjax;
 
 $this->title = 'Recurring Payments';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['show-all'] = $this->render('_show-all-button', [
+    'searchModel' => $searchModel,
+]);
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['id' => 'recurring-payment']);
 ?> 
 <div class="recurring-payment-index">  
@@ -102,6 +105,12 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
             return false;
         });
 
+    $(document).off('change', '#customerrecurringpaymentsearch-showall').on('change', '#customerrecurringpaymentsearch-showall', function () {
+      	var showAll = $(this).is(":checked");
+    	var params = $.param({ 'Customerrecurringpaymentsearch[showAll]': (showAll | 0) });
+      	var url = "<?php echo Url::to(['customer-recurring-payment/index']); ?>?"+params;
+        $.pjax.reload({url: url, container: "#recurring-payment-listing", replace: false, timeout: 4000});  //Reload GridView
+    });
     $(document).on('modal-delete', function(event, params) {
         $.pjax.reload({container: "#recurring-payment-listing", replace: false, timeout: 4000});
         return false;

@@ -65,7 +65,8 @@ class CustomerRecurringPaymentController extends \common\components\controllers\
         $dataProvider = $searchModel->search($request->queryParams);
        
         return $this->render('index', [
-                'dataProvider' => $dataProvider
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
             ]);
     }
 
