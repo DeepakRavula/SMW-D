@@ -137,7 +137,8 @@ class LessonSearch extends Lesson
             $query->completed()
                   ->present();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_SCHEDULED) {
-            $query->scheduled();
+            $query->scheduled()
+                  ->present();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_RESCHEDULED) {
             $query->rescheduled()
 		    ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);

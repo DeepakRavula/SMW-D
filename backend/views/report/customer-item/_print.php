@@ -23,6 +23,8 @@ $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => 
 
 <script>
 	$(document).ready(function(){
-		window.print();
+        setTimeout(function(){
+            window.print();
+}, 1500)
 	});
 </script>

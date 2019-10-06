@@ -12,6 +12,9 @@ use yii\widgets\Pjax;
 
 $this->title = 'Recurring Payments';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['show-all'] = $this->render('_show-all-button', [
+    'searchModel' => $searchModel,
+]);
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['id' => 'recurring-payment']);
 ?> 
 <div class="recurring-payment-index">  
@@ -22,6 +25,17 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
     'emptyText' => false,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        $data = [];
+        if ($searchModel->showAll) {
+            if (!$model->isRecurringPaymentEnabled) {
+                $data = array_merge($data, ['class' => 'danger inactive']);
+            } else {
+                $data = array_merge($data, ['class' => 'info active']);
+            }
+        }
+        return $data;
+    },
     'columns' => [
             [
                 'attribute' => 'customer',
@@ -96,12 +110,22 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recurring Payments</h4>');
                         $('#modal-content').html(response.data);
+                        var showAll = $(this).is(":checked");
+    	                var params = $.param({ 'CustomerRecurringPaymentSearch[showAll]': (showAll | 0) });
+      	                var url = "<?php echo Url::to(['customer-recurring-payment/index']); ?>?"+params;
+                        $.pjax.reload({url: url, container: "#recurring-payment-listing", replace: false, timeout: 4000});
                     }
                 }
             });
             return false;
         });
 
+    $(document).off('change', '#customerrecurringpaymentsearch-showall').on('change', '#customerrecurringpaymentsearch-showall', function () {
+      	var showAll = $(this).is(":checked");
+    	var params = $.param({ 'CustomerRecurringPaymentSearch[showAll]': (showAll | 0) });
+      	var url = "<?php echo Url::to(['customer-recurring-payment/index']); ?>?"+params;
+        $.pjax.reload({url: url, container: "#recurring-payment-listing", replace: false, timeout: 4000});  //Reload GridView
+    });
     $(document).on('modal-delete', function(event, params) {
         $.pjax.reload({container: "#recurring-payment-listing", replace: false, timeout: 4000});
         return false;

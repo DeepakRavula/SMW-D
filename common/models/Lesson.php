@@ -785,7 +785,7 @@ class Lesson extends \yii\db\ActiveRecord
 		}
 		switch ($this->status) {
             case self::STATUS_SCHEDULED:
-                if (!$this->isCompleted()) {
+                if (!$this->isCompleted() && $this->isPresent ) {
                     $status = 'Scheduled';
                 } else if (!$this->isPresent) {
                     $status = 'Absent';
@@ -1292,6 +1292,7 @@ class Lesson extends \yii\db\ActiveRecord
         $note->createdUserId = Yii::$app->user->id;
         $note->save();
         $this->status = self::STATUS_UNSCHEDULED;
+        $this->isPresent = true; 
         $this->save();
         return true;
     }

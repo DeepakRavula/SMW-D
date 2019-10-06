@@ -118,4 +118,8 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
         return parent::afterSave($insert, $changedAttributes);
     }
 
+    public function getAutoRenewalLessons()
+    {
+        return $this->hasOne(AutoRenewalLessons::className(), ['lessonId' => 'lessonId']);
+    }
 }
