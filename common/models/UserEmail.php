@@ -152,7 +152,7 @@ class UserEmail extends \yii\db\ActiveRecord
     public function setModel($model)
     {
         $this->email = $model->email;
-        $this->labelId = $model->labelId;
+        $this->labelId = $model->labelId ?? Label::LABEL_HOME;
         return $this;
     }
 
