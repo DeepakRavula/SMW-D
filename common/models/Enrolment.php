@@ -1194,7 +1194,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $enrolmentStartDate      = new \DateTime($startDate);
         $endDate = (new \DateTime($startDate))->format('Y-m-1');
         $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
-        for ($i = 0; $i <= (int) 10 / $this->paymentsFrequency->frequencyLength; $i++) {
+        for ($i = 0; $i <= (int) 23 / $this->paymentsFrequency->frequencyLength; $i++) {
             if ($i !== 0) {
                 $paymentCycleStartDate     = $endDate->modify('First day of next month');
             }
