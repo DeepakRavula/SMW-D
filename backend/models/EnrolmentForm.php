@@ -4,6 +4,8 @@ namespace backend\models;
 
 use Yii;
 use yii\base\Model;
+use common\models\Location;
+use common\models\UserEmail;
 
 /**
  * This is the model class for table "course".
@@ -81,10 +83,29 @@ class EnrolmentForm extends Model
             [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
                 'addressLabelId', 'address', 'cityId', 'countryId', 'provinceId'],
                 'required', 'on' => self::SCENARIO_CUSTOMER],
-            [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
-                'addressLabelId', 'address', 'cityId', 'countryId', 'provinceId'],
-                'safe'],
+            ['firstname', 'string', 'min' => 2, 'max' => 255, 'on' => self::SCENARIO_CUSTOMER],
+            ['lastname', 'string', 'min' => 2, 'max' => 255, 'on' => self::SCENARIO_CUSTOMER],
+            [['email'], 'email', 'on' => self::SCENARIO_CUSTOMER],
+            [['email'], 'trim', 'on' => self::SCENARIO_CUSTOMER],
+            ['email', 'validateUnique', 'on' => self::SCENARIO_CUSTOMER],
             [['postalCode', 'extension', 'first_name', 'last_name', 'gender', 'birth_date', 'lessonsCount', 'autoRenew', 'referralSourceId', 'description'], 'safe'],
         ];
+    }
+    public function validateUnique($attributes)
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $query = UserEmail::find()
+                ->andWhere(['email' => $this->email])
+                ->joinWith(['userContact' => function ($query) use ($locationId) {
+                    $query->joinWith(['user' => function ($query) use ($locationId) {
+                        $query->notDeleted()
+                            ->location($locationId);
+                    }])
+                    ->notDeleted();
+                }]);
+        $email = $query->one();
+        if ($email) {
+            return $this->addError($attributes, "Email already exists!");
+        }
     }
 }
