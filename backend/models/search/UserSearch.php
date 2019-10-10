@@ -90,7 +90,6 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id')
             ->andWhere(['aa.item_name' => $this->role_name]);
         $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
-        $query->joinWith(['students']);
         $query->joinWith('emails'); 
         if ($this->phone) {
             $query->joinWith(['userContacts' => function ($query) {
@@ -134,10 +133,6 @@ class UserSearch extends User
         }
         if ($this->lastname) {
             $query->andFilterWhere(['like', 'uf.lastname', $this->lastname]);
-        }
-
-        if ($this->student) {
-            $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)],['like', "CONCAT(student.first_name, ' ', student.last_name)", $this->student]]);
         }
                 
         if ($this->role_name !== USER::ROLE_ADMINISTRATOR) {
