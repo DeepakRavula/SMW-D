@@ -71,7 +71,7 @@ class LessonController extends BaseController
                             'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
 							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm', 'invoice', 'modify-classroom',
-                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index', 'edit-due-date'
+                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index', 'edit-due-date', 'index-new'
                         ],
                         'roles' => ['managePrivateLessons', 
 							'manageGroupLessons'],
@@ -112,6 +112,18 @@ class LessonController extends BaseController
             'pagination' => false,
         ]);
         return $this->render('newindex', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionIndexNew()
+    {
+        $searchModel = new LessonSearch();
+        $request = Yii::$app->request;
+        $dataProvider = $searchModel->search($request->queryParams);
+        $dataProvider->pagination->pageSize = 200;
+        return $this->render('index-new', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
