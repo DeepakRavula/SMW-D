@@ -13,6 +13,7 @@ if (env('YII_ENV') === 'prod') {
     $environment = 'pro';
 }
 $schedule->command('customer/update-balance')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('08:00');
+$schedule->command('enrolment/auto-renewal')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:00');
 $schedule->command('invoice/all-completed-lessons')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('23:00');
 $schedule->command('student/set-status-production')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('01:00');
 $schedule->command('student/set-status-non-production')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('01:30');
