@@ -573,3 +573,6 @@ dl {
 	font-weight: normal;
 	font-size: 14px;
 }
+.highlight-expiry {
+    color:red;
+}
