@@ -75,7 +75,7 @@ class CustomerRecurringPaymentSearch extends CustomerRecurringPayment
 
        
         $dataProvider->sort->defaultOrder = [
-            'customer' => SORT_ASC
+            'expiryDate' => SORT_ASC
         ];
         return $dataProvider;
     }
