@@ -27,13 +27,19 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
         $data = [];
+        $class = "";
+        if ($model->isExpired()) {
+            $class = $class .'highlight-expiry';
+        }
         if ($searchModel->showAll) {
             if (!$model->isRecurringPaymentEnabled) {
-                $data = array_merge($data, ['class' => 'danger inactive']);
+                $class = $class.' '.'danger inactive';
             } else {
-                $data = array_merge($data, ['class' => 'info active']);
+                $class = $class.' '.'info active';
             }
+
         }
+        $data = array_merge($data, ['class' => $class]);
         return $data;
     },
     'columns' => [
