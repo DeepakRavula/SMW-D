@@ -164,6 +164,19 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
        return $nextPaymentDate;
     
     }
+    public function isExpired()
+    {
+        $isExpired = false;
+        $nextPaymentDate = Carbon::parse($this->nextEntryDay);
+        $expiryDate = Carbon::parse($this->expiryDate);
+        if ($nextPaymentDate > $expiryDate){
+            $isExpired = true;
+            
+        }
+        return $isExpired;
+      
+    
+    }
 
     public static function getMonthsList()
     {
