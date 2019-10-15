@@ -3,8 +3,6 @@
 use backend\models\search\LessonSearch;
 use common\components\gridView\KartikGridView;
 use common\models\Lesson;
-use common\models\Program;
-use common\models\Student;
 use kartik\daterange\DateRangePicker;
 use kartik\grid\GridView;
 use yii\bootstrap\Modal;
@@ -115,6 +113,7 @@ use yii\widgets\Pjax;
         'attribute' => 'duration',
         'value' => function ($data) {
             $lessonDuration = (new \DateTime($data->duration))->format('H:i');
+            
             return $lessonDuration;
         },
     ],
@@ -149,7 +148,7 @@ array_push($columns,
         },
     ],
     [
-        'label' => 'Owing',
+        'label' => 'Payment',
         'attribute' => 'owing',
         'attribute' => 'owingStatus',
         'filter'=> LessonSearch::owingStatuses(),
@@ -159,7 +158,7 @@ array_push($columns,
                 if ($data->invoice->isOwing()) {
                     $highLightClass .= ' danger';
                 }
-            } else if ($data->privateLesson->balance > 0) {
+            } else if ($data->privateLesson->balance > 0.09) {
                 $highLightClass .= ' danger';
             }
             return ['class' => $highLightClass];
@@ -167,11 +166,11 @@ array_push($columns,
         'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
         'value' => function ($data) {
             if ($data->hasInvoice()) {
-                $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
+                $owingAmount = $data->invoice->balance > 0.09 ? 'owing' : 'paid';
             } else {
-                $owingAmount = $data->privateLesson->balance > 0.09 ? $data->privateLesson->balance : 0.00;
+                $owingAmount = $data->privateLesson->balance > 0.09 ? 'owing' : 'paid';
             }
-            return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
+            return $owingAmount;
         },
     ]
 );
