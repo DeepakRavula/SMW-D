@@ -71,7 +71,7 @@ class EnrolmentSearch extends Enrolment
             ->isRegular();
         if ($this->studentView) {
             if (!$this->showAllEnrolments) {
-                $query->active();
+                $query->activeAndfutureEnrolments();
             } 
             $query->andWhere(['enrolment.studentId' => $this->studentId]);
             $query->groupBy(['enrolment.id']);

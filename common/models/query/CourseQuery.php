@@ -128,6 +128,33 @@ class CourseQuery extends \yii\db\ActiveQuery
                     ]
             ]);
     }
+    public function futureEnrolments($from, $to) 
+    {
+        return $this->andWhere(['OR',
+                    [
+                            'between', 'DATE(course.startDate)', $from, $to
+                    ],
+                    [
+                            'between','DATE(course.endDate)' , $from, $to
+                    ],
+                    [
+                            'AND',
+                            [
+                                    '<', 'DATE(course.startDate)', $from
+                            ],
+                            [
+                                    '>', 'DATE(course.endDate)', $to
+                            ]
+
+                    ],
+        
+                    [
+                          '>', 'DATE(course.startDate)', $from
+                    ]
+
+    
+            ]);
+    }
     
     public function notDeleted()  
     {

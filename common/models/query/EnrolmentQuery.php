@@ -188,4 +188,23 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['enrolment.studentId' => $studentId]);
     }
+    public function activeAndfutureEnrolments()
+    {
+        $fromDate = null;
+        $toDate = null;
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        if (!$fromDate && !$toDate) {
+            $fromDate = $currentDate;
+            $toDate = $currentDate;
+        }
+        return $this->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
+            $query->joinWith(['lessons' => function ($query) {
+                $query->andWhere(['NOT', ['lesson.id' => null]]);
+            }])
+                ->futureEnrolments($fromDate, $toDate)
+                ->regular()
+                ->confirmed()
+                ->notDeleted();
+        }]);
+    }
 }
