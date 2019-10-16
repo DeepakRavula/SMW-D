@@ -15,6 +15,7 @@ use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
 use common\models\EnrolmentPaymentFrequency;
 use Carbon\Carbon;
+use common\models\AutoRenewal;
 
 class EnrolmentPaymentFrequencyController extends BaseController
 {
@@ -63,12 +64,40 @@ class EnrolmentPaymentFrequencyController extends BaseController
               $oldPaymentFrequency = clone $model;
               $model->load($post);  
               $enrolmentPaymentFrequency->load($post);
+              $course = $model->course;
+              $effectiveDate = Carbon::parse($enrolmentPaymentFrequency->effectiveDate);
+              //print_r($model->paymentFrequencyId);
+              $lastPaymentCycleEndDate = Carbon::parse($effectiveDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
+              $courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
+              $extendEnrolmentData = $this->renderAjax('_form-extend-auto-renewal', [
+                'model' => $model, 
+                'enrolmentPaymentFrequency' => $enrolmentPaymentFrequency,
+            ]);
+            //print_r("Course End Date:".$courseEndDate."Lat Payment Cycle End Date".$lastPaymentCycleEndDate); die('coming');
+              if ($courseEndDate < $lastPaymentCycleEndDate) {
+                if ($enrolmentPaymentFrequency->needToRenewal) {
+                    $autoRenew = new AutoRenewal();
+                    $autoRenew->renewEnrolment($model->course);
+                    if ($model->save()) {
+                        $enrolmentPaymentFrequency->resetPaymentCycle();
+                }
+                return [
+                    'status' => true,
+                ];
+                } else {
+                  return [
+                      'status' => false,
+                      'extendEnrolmentData' => $extendEnrolmentData,
+                  ];
+              } 
+            }else {
               if ($model->save()) {
                     $enrolmentPaymentFrequency->resetPaymentCycle();
             }
             return [
                 'status' => true,
             ];
+        }
         }
 }
 
