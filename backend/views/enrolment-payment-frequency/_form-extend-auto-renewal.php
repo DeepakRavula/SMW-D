@@ -22,7 +22,9 @@ use yii\jui\DatePicker;
         'action' => Url::to(['enrolment-payment-frequency/change-payment-frequency', 'id' => $model->id]),
     ]); ?>
          <?= $form->field($enrolmentPaymentFrequency, 'needToRenewal')->checkbox(['data-pjax' => true]); ?>
-         <?= $form->field($enrolment)
+         <?= $form->field($enrolmentPaymentFrequency, 'effectiveDate')->hiddenInput()->label(false);?>
+         <?= $form->field($model, 'paymentFrequencyId')->hiddenInput()->label(false); ?>
+
 
     <?php ActiveForm::end(); ?>
 <script type="text/javascript">
