@@ -68,35 +68,41 @@ class EnrolmentPaymentFrequencyController extends BaseController
               $effectiveDate = Carbon::parse($enrolmentPaymentFrequency->effectiveDate);
               $lastPaymentCycleEndDate = Carbon::parse($effectiveDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
               $courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
-              $extendEnrolmentData = $this->renderAjax('_form-extend-auto-renewal', [
-                'model' => $model, 
-                'enrolmentPaymentFrequency' => $enrolmentPaymentFrequency,
-            ]);
               if ($courseEndDate < $lastPaymentCycleEndDate) {
+                if (!$enrolmentPaymentFrequency->isAlreadyPosted) {
+                    $extendEnrolmentData = $this->renderAjax('_form-extend-auto-renewal', [
+                        'model' => $model, 
+                        'enrolmentPaymentFrequency' => $enrolmentPaymentFrequency,
+                    ]);
+                    return [
+                        'status' => false,
+                        'extendEnrolmentData' => $extendEnrolmentData,
+                        
+                    ];
+                } else {
                 if ($enrolmentPaymentFrequency->needToRenewal) {
                     $autoRenew = new AutoRenewal();
                     $autoRenew->renewEnrolment($model->course);
-                    if ($model->save()) {
-                        $enrolmentPaymentFrequency->resetPaymentCycle();
-                }
-                return [
-                    'status' => true,
-                ];
-                } else {
-                    if ($model->save()) {
-                        $enrolmentPaymentFrequency->resetPaymentCycle();
-                }
-            }
-                return [
-                    'status' => false,
-                    'extendEnrolmentData' => $extendEnrolmentData,
-                ];
+                }       
+                if ($model->save()) {
+                    $enrolmentPaymentFrequency->resetPaymentCycle();
+            }                        
                   
-            }
-            return [
-                'status' => true,
-            ];
+            }       
+        } else {
+            if ($model->save()) {
+                $enrolmentPaymentFrequency->resetPaymentCycle();
+        }                        
+              
         }
+      
+    
+    return [
+        'status' => true,
+    ];
+    $isAlreadyPosted = true;
+    }
+  
 }
 
 protected function findModel($id)
