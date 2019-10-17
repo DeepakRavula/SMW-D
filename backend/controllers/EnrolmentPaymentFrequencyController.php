@@ -83,19 +83,19 @@ class EnrolmentPaymentFrequencyController extends BaseController
                     'status' => true,
                 ];
                 } else {
-                  return [
-                      'status' => false,
-                      'extendEnrolmentData' => $extendEnrolmentData,
-                  ];
-              } 
-            }else {
-              if ($model->save()) {
-                    $enrolmentPaymentFrequency->resetPaymentCycle();
+                    if ($model->save()) {
+                        $enrolmentPaymentFrequency->resetPaymentCycle();
+                }
+            }
+                return [
+                    'status' => false,
+                    'extendEnrolmentData' => $extendEnrolmentData,
+                ];
+                  
             }
             return [
                 'status' => true,
             ];
-        }
         }
 }
 
