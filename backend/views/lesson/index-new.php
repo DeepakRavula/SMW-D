@@ -112,8 +112,15 @@ use yii\widgets\Pjax;
         'label' => 'Duration',
         'attribute' => 'duration',
         'value' => function ($data) {
-            $lessonDuration = (new \DateTime($data->duration))->format('H:i');
-            
+            $lessonDurationHour = (new \DateTime($data->duration))->format('H');
+            $lessonDurationMinutes = (new \DateTime($data->duration))->format('i');
+            if ($lessonDurationHour != 00) {
+                $lessonDurationHour = $lessonDurationHour;
+            }
+            if ($lessonDurationMinutes != 00) {
+                $lessonDurationMinutes = $lessonDurationMinutes;
+            }
+            $lessonDuration = substr($lessonDuration, -2, 2);
             return $lessonDuration;
         },
     ],
@@ -225,7 +232,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 </div>
 
 <script>
-    $(document).ready(function () {
+      $(document).ready(function () {
         var showAll = $('#lessonsearch-showall').is(":checked");
         if(showAll == true){
         var student = $("input[name*='LessonSearch[student]").val();
@@ -233,11 +240,12 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         var teacher = $("input[name*='LessonSearch[teacher]").val();
         var dateRange = $("input[name*='LessonSearch[dateRange]").val();
         var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
-        var url = "<?=Url::to(['lesson/index']);?>?"+params;
+        var url = "<?=Url::to(['lesson/index-new']);?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});
         bulkAction.setAction();
         }
     });
+
 
     $(document).off('click', '#substitute-teacher').on('click', '#substitute-teacher', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
