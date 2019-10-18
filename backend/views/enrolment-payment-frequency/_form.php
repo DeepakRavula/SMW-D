@@ -10,10 +10,10 @@ use yii\grid\GridView;
 use yii\jui\DatePicker;
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
+*/
 
 ?>
 
@@ -44,13 +44,48 @@ use yii\jui\DatePicker;
             ])->label('Effective Date') ?>
         </div>
     </div>
-
+    <?php $enrolmentPaymentFrequency->isAlreadyPosted = 0;?>
+    <?= $form->field($enrolmentPaymentFrequency, 'isAlreadyPosted')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment Frequency</h4>');
         $('.modal-save').show();
         $('.modal-save').text('Confirm');
+        $('#modal-save').removeClass('modal-save');
+        $('#modal-save').addClass('enrolment-payment-frequency-save');
         $('#popup-modal .modal-dialog').css({'width': '600px'});
+    });
+
+    $(document).off('click', '.enrolment-payment-frequency-save').on('click', '.enrolment-payment-frequency-save', function () {
+        $('#modal-spinner').show();
+        var url = $('#modal-form').attr('action');
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: "json",
+            data: $('#modal-form').serialize(),
+            success: function (response)
+            {
+                $('#modal-spinner').hide();
+                if (response.status)
+                {
+                    $(document).trigger("modal-success", response);
+                        $('#popup-modal').modal('hide'); 
+                   
+                } else {
+                    if (response.extendEnrolmentData)
+                {
+                    $('#popup-modal').modal('show');
+                    $('#modal-content').html(response.extendEnrolmentData);
+                } else {
+
+                }
+
+                   
+                }
+            }
+        });
+        return false;
     });
 </script>

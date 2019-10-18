@@ -14,6 +14,8 @@ use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 class EnrolmentPaymentFrequency extends \yii\db\ActiveRecord
 {
     public $effectiveDate;
+    public $needToRenewal;
+    public $isAlreadyPosted;
 
     const CONSOLE_USER_ID  = 727;
 
@@ -61,7 +63,7 @@ class EnrolmentPaymentFrequency extends \yii\db\ActiveRecord
     {
         return [
             [['enrolmentId', 'paymentFrequencyId', 'paymentCycleStartDate'], 'required'],
-            [['isDeleted', 'createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId', 'effectiveDate'], 'safe'],
+            [['isDeleted', 'createdOn', 'updatedOn', 'createdByUserId', 'updatedByUserId', 'effectiveDate', 'needToRenewal','isAlreadyPosted'], 'safe'],
         ];
     }
 
