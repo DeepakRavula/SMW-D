@@ -62,7 +62,9 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
             ],
-            [
+        ];
+        if ($roleName == User::ROLE_TEACHER){
+            array_push($columns,[
                 'attribute' => 'email',
                 'label' => 'Email',
                 'value' => function ($data) {
@@ -76,10 +78,19 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
                 'contentOptions' => ['style' => 'width:15%'],
-            ], 
-        ];
+            ]);
+        }     
+    
             if ($roleName == User::ROLE_CUSTOMER) {
-                array_push($columns, [
+                array_push($columns,[
+                    'attribute' => 'student',
+                    'label' => 'Student',
+                    'value' => function ($data) {
+                        return !empty($data->student) ? $data->getStudentsList() : null;
+                    },
+                    'contentOptions' => ['style' => 'width:15%']
+                ], 
+                [
                     'attribute' => 'status',
                     'filter'=> UserSearch::balanceStatus(),
                     'label' => 'Balance',
@@ -90,7 +101,10 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                     'hAlign' => 'right',
                     'pageSummary' => true,
                     'pageSummaryFunc' => GridView::F_SUM
-                ]);
+               ]
+    
+            
+            );
             }
         ?>
         <?= KartikGridView::widget([
