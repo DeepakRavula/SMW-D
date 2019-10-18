@@ -83,14 +83,6 @@ class UserSearch extends User
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        if ($this->role_name == USER::ROLE_CUSTOMER) {
-            $query->joinWith(['student' => function ($query) {
-                if ($this->student) {    
-                    $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)],['like', "CONCAT(student.first_name, ' ', student.last_name)", $this->student]]);    
-                }
-            
-            }]);
-        }
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
@@ -126,6 +118,14 @@ class UserSearch extends User
 	    $dataProvider->sort->defaultOrder = [
           'lastname' => SORT_ASC
         ];
+        if ($this->role_name == USER::ROLE_CUSTOMER) {
+            $query->joinWith(['student' => function ($query) {
+                if ($this->student) {    
+                    $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)],['like', "CONCAT(student.first_name, ' ', student.last_name)", $this->student]]);    
+                }
+            
+            }]);
+        }
         if ($this->email) {
             $query->joinWith(['emails' => function ($query) {
                 $query->andFilterWhere(['like', 'email', $this->email]);
