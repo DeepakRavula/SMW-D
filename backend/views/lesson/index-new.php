@@ -112,15 +112,7 @@ use yii\widgets\Pjax;
         'label' => 'Duration',
         'attribute' => 'duration',
         'value' => function ($data) {
-            $lessonDurationHour = (new \DateTime($data->duration))->format('H');
-            $lessonDurationMinutes = (new \DateTime($data->duration))->format('i');
-            if ($lessonDurationHour != 00) {
-                $lessonDurationHour = $lessonDurationHour;
-            }
-            if ($lessonDurationMinutes != 00) {
-                $lessonDurationMinutes = $lessonDurationMinutes;
-            }
-            $lessonDuration = substr($lessonDuration, -2, 2);
+            $lessonDuration = (new \DateTime($data->duration))->format('H:i');
             return $lessonDuration;
         },
     ],

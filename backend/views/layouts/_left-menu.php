@@ -72,10 +72,10 @@ echo Menu::widget([
             'active' => (Yii::$app->controller->id === 'lesson')
         ],
         [
-            'label' => Yii::t('backend', 'Private Lessons'),
+            'label' => Yii::t('backend', 'New Private Lessons'),
             'url' => ['/lesson/index-new', 'LessonSearch[dateRange]' => $dateRange],
             'icon' => '<i class="fa fa-music"></i>',
-            'visible' => Yii::$app->user->can('managePrivateLessons'),
+            'visible' => '',
             'active' => (Yii::$app->controller->id === 'lesson')
         ],
         [
