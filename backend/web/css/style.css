@@ -117,6 +117,10 @@ a.desc:after {
 	font-weight: normal;
 	font-size: 17px;
 }
+#show-all-new label{
+	font-weight: normal;
+	font-size: 15px;
+}
 #show-all-programs-label{
 	font-weight: normal;
 	font-size: 18px;	

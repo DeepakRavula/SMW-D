@@ -35,6 +35,7 @@ use yii\helpers\ArrayHelper;
 use common\models\LessonConfirm;
 use common\models\LessonOwing;
 use common\models\UnscheduleLesson;
+use backend\models\search\LessonSearch1;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -118,7 +119,7 @@ class LessonController extends BaseController
 
     public function actionIndexNew()
     {
-        $searchModel = new LessonSearch();
+        $searchModel = new LessonSearch1();
         $request = Yii::$app->request;
         $dataProvider = $searchModel->search($request->queryParams);
         $dataProvider->pagination->pageSize = 200;

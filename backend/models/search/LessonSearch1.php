@@ -12,7 +12,7 @@ use common\models\Location;
 /**
  * LessonSearch represents the model behind the search form about `common\models\Lesson`.
  */
-class LessonSearch extends Lesson
+class LessonSearch1 extends Lesson
 {
     const STATUS_INVOICED = 'Yes';
     const STATUS_UNINVOICED ='No';
@@ -61,6 +61,12 @@ class LessonSearch extends Lesson
         return Model::scenarios();
     }
 
+    public function attributeLabels()
+    {
+        return [
+           'showAll' => 'Show Past Lessons'
+        ];
+    }
     /**
      * Creates data provider instance with search query applied.
      *
