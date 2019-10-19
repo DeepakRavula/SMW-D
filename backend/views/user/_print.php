@@ -6,7 +6,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
-use yii\grid\GridView;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 use common\models\Location;
 
 ?>
@@ -18,14 +19,12 @@ use common\models\Location;
         'id' => 'user-index',
         'timeout' => 6000
     ]); ?>
+    <?php 
+    $roleName = $searchModel->role_name;
+    ?>
 <div class="grid-row-open">
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'summary' => false,
-            'emptyText' => false,
-            'tableOptions' => ['class' => 'table table-bordered'],
-            'headerRowOptions' => ['class' => 'bg-light-gray'],
-            'columns' => [
+<?php
+            $columns = [
             [
                 'label' => 'First Name',
                 'value' => function ($data) {
@@ -38,7 +37,10 @@ use common\models\Location;
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
             ],
-            [
+
+            ];
+            if ($roleName == User::ROLE_TEACHER) {
+                array_push($columns,[
                 'label' => 'Email',
                 'value' => function ($data) {
                     return !empty($data->getEmail()) ? $data->getEmail() : null;
@@ -49,9 +51,36 @@ use common\models\Location;
                 'value' => function ($data) {
                     return !empty($data->getPhone()) ? $data->getPhone() : null;
                 },
+            ]);
+            }    
+            if ($roleName == User::ROLE_CUSTOMER) {
+                array_push($columns,[
+                'label' => 'Student',
+                'value' => function ($data) {
+                    return !empty($data->student) ? $data->getStudentsList() : null;
+                },
             ],
-        ],
-    ]); ?>
+            [
+                'label' => 'Balance',
+                    'value' => function ($data) {
+                        return round($data->customerAccount->balance, 2);
+                },
+                'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width:20%'],
+                    'hAlign' => 'right',
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_SUM
+            ]);
+       } ?>
+        <?= KartikGridView::widget([
+            'dataProvider' => $dataProvider,
+            'summary' => false,
+            'emptyText' => false,
+            'tableOptions' => ['class' => 'table table-bordered'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'showPageSummary' => true,
+            'columns' => $columns,
+        ]);?>
+        
 </div>
 <?php Pjax::end(); ?>
 
