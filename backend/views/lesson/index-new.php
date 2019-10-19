@@ -184,7 +184,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     'options' => ['id' => 'lesson-index-1'],
     'filterModel' => $searchModel,
     'summary' => "Showing {begin} - {end} of {totalCount} items",
-    'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
+    'filterUrl' => Url::to(['lesson/index-new', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
 
@@ -279,9 +279,10 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     });
 
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
-        var dateRange = $("#lessonsearch-daterange").val();
+        debugger;
+        var dateRange = $("#lessonsearch1-daterange").val();
         if (!$.isEmptyObject(dateRange)) {
-            $("#lessonsearch-daterange").val('').trigger('change');
+            $("#lessonsearch1-daterange").val('').trigger('change');
         }
     });
 
