@@ -24,27 +24,6 @@ use yii\widgets\Pjax;
         'mergeHeader' => false,
     ],
     [
-        'label' => 'Student',
-        'attribute' => 'student',
-        'value' => function ($data) {
-            return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
-        },
-    ],
-    [
-        'label' => 'Program',
-        'attribute' => 'program',
-        'value' => function ($data) {
-            return $data->course->program->name;
-        },
-    ],
-    [
-        'label' => 'Teacher',
-        'attribute' => 'teacher',
-        'value' => function ($data) {
-            return $data->teacher->publicIdentity;
-        },
-    ],
-    [
         'label' => 'Date',
         'attribute' => 'dateRange',
         'filter' => '<div class="input-group drp-container">' . DateRangePicker::widget([
@@ -78,34 +57,24 @@ use yii\widgets\Pjax;
         },
     ],
     [
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
-        'label' => 'Due Date',
-        'attribute' => 'dueDate',
-        'filter' => DateRangePicker::widget([
-            'model' => $searchModel,
-            'convertFormat' => true,
-            'initRangeExpr' => true,
-            'attribute' => 'dueDate',
-            'options' => [
-                'class' => 'form-control',
-                'readOnly' => true,
-            ],
-            'pluginOptions' => [
-                'autoApply' => true,
-                'ranges' => [
-                    Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
-                    Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
-                    Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
-                    Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
-                ],
-                'locale' => [
-                    'format' => 'M d, Y',
-                ],
-                'opens' => 'left',
-            ],
-        ]),
+        'label' => 'Student',
+        'attribute' => 'student',
         'value' => function ($data) {
-            return !empty($data->dueDate) ? (new \DateTime($data->dueDate))->format('M d, Y') : null;
+            return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+        },
+    ],
+    [
+        'label' => 'Program',
+        'attribute' => 'program',
+        'value' => function ($data) {
+            return $data->course->program->name;
+        },
+    ],
+    [
+        'label' => 'Teacher',
+        'attribute' => 'teacher',
+        'value' => function ($data) {
+            return $data->teacher->publicIdentity;
         },
     ],
     [
@@ -115,7 +84,7 @@ use yii\widgets\Pjax;
             $lessonDuration = (new \DateTime($data->duration))->format('H:i');
             return $lessonDuration;
         },
-    ],
+    ],     
 ];
 if ($searchModel->showAll) {
     array_push($columns, [
@@ -137,16 +106,7 @@ if ($searchModel->showAll) {
     ]);
 }
 array_push($columns,
-    [
-        'label' => 'Price',
-        'attribute' => 'price',
-        'contentOptions' => ['class' => 'text-right'],
-        'headerOptions' => ['class' => 'text-right'],
-        'value' => function ($data) {
-            return Yii::$app->formatter->asCurrency(round($data->privateLesson->total, 2));
-        },
-    ],
-    [
+     [
         'label' => 'Payment',
         'attribute' => 'owing',
         'attribute' => 'owingStatus',
