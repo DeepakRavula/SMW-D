@@ -72,6 +72,13 @@ echo Menu::widget([
             'active' => (Yii::$app->controller->id === 'lesson')
         ],
         [
+            'label' => Yii::t('backend', 'New Private Lessons'),
+            'url' => ['/lesson/index-new', 'LessonSearch[dateRange]' => $dateRange],
+            'icon' => '<i class="fa fa-music"></i>',
+            'visible' => '',
+            'active' => (Yii::$app->controller->id === 'lesson')
+        ],
+        [
             'label' => Yii::t('backend', 'Group Courses'),
             'url' => ['/course/index', 'CourseSearch[type]' => Lesson::TYPE_GROUP_LESSON],
             'icon' => '<i class="fa fa-music"></i>',
