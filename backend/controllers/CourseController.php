@@ -114,8 +114,7 @@ class CourseController extends BaseController
         $studentDataProvider = new ActiveDataProvider([
             'query' => Student::find()
                 ->notDeleted()
-                ->groupCourseEnrolled($id)
-                ->active(),
+                ->groupCourseEnrolled($id),
             'pagination' => false
         ]);
 
