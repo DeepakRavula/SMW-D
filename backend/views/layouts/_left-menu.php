@@ -75,7 +75,7 @@ echo Menu::widget([
             'label' => Yii::t('backend', 'New Private Lessons'),
             'url' => ['/lesson/index-new', 'LessonSearch[dateRange]' => $dateRange],
             'icon' => '<i class="fa fa-music"></i>',
-            'visible' => '',
+            'visible' => Yii::$app->user->can('managePrivateLessons'),
             'active' => (Yii::$app->controller->id === 'lesson')
         ],
         [
