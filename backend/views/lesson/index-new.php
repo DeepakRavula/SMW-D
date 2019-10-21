@@ -86,25 +86,23 @@ use yii\widgets\Pjax;
         },
     ],     
 ];
-if ($searchModel->showAll) {
-    array_push($columns, [
-        'label' => 'Status',
-        'attribute' => 'lessonStatus',
-        'filter' => LessonSearch::lessonStatuses(),
-        'filterWidgetOptions' => [
-            'options' => [
-                'id' => 'lesson-index-status',
-            ],
+array_push($columns, [
+    'label' => 'Status',
+    'attribute' => 'lessonStatus',
+    'filter' => LessonSearch::lessonStatuses(),
+    'filterWidgetOptions' => [
+        'options' => [
+            'id' => 'lesson-index-status',
         ],
-        'value' => function ($data) {
-            $status = null;
-            if (!empty($data->status)) {
-                return $data->getStatus();
-            }
-            return $status;
-        },
-    ]);
-}
+    ],
+    'value' => function ($data) {
+        $status = null;
+        if (!empty($data->status)) {
+            return $data->getStatus();
+        }
+        return $status;
+    },
+]);
 array_push($columns,
      [
         'label' => 'Payment',
@@ -125,9 +123,9 @@ array_push($columns,
         'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
         'value' => function ($data) {
             if ($data->hasInvoice()) {
-                $owingAmount = $data->invoice->balance > 0.09 ? 'owing' : 'paid';
+                $owingAmount = $data->invoice->balance > 0.09 ? 'Owing' : 'Paid';
             } else {
-                $owingAmount = $data->privateLesson->balance > 0.09 ? 'owing' : 'paid';
+                $owingAmount = $data->privateLesson->balance > 0.09 ? 'Owing' : 'Paid';
             }
             return $owingAmount;
         },
@@ -144,7 +142,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     'options' => ['id' => 'lesson-index-1'],
     'filterModel' => $searchModel,
     'summary' => "Showing {begin} - {end} of {totalCount} items",
-    'filterUrl' => Url::to(['lesson/index-new', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
+    'filterUrl' => Url::to(['lesson/index-new', 'LessonSearch1[type]' => true, 'LessonSearch1[showAll]' => $searchModel->showAll]),
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
 
@@ -154,6 +152,10 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => $columns,
     'toolbar' => [
+        ['content' =>  $this->render('_action-menu', [
+            'searchModel' => $searchModel]),
+             'options' => ['title' =>'Edit',]
+        ],
         ['content' =>  $this->render('_show-all-button-new', ['searchModel' => $searchModel]),
             'options' => ['title' =>'Filter',]
         ],
@@ -194,17 +196,10 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         }
     });
 
-
-
     $(document).off('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]', function () {
         bulkAction.setAction();
         return false;
     });
-
-    
-
-  
-  
 
     $(document).on('modal-success', function(event, params) {
         if (!$.isEmptyObject(params.url)) {
