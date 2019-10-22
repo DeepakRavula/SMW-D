@@ -46,7 +46,7 @@ use yii\widgets\Pjax;
                 'locale' => [
                     'format' => 'M d, Y',
                 ],
-                'opens' => 'left',
+                'opens' => 'right',
             ],
         ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
         'value' => function ($data) {
@@ -183,13 +183,15 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 
 <script>
       $(document).ready(function () {
+        $("input[name*='LessonSearch1[lessonStatus]").addClass('lesson-status');
         var showAll = $('#lessonsearch1-showall').is(":checked");
-        if(showAll == true){
+        if (showAll == true) {
         var student = $("input[name*='LessonSearch1[student]").val();
         var program = $("input[name*='LessonSearch1[program]").val();
         var teacher = $("input[name*='LessonSearch1[teacher]").val();
         var dateRange = $("input[name*='LessonSearch1[dateRange]").val();
-        var params = $.param({'LessonSearch1[student]':student, 'LessonSearch1[program]':program, 'LessonSearch1[teacher]':teacher, 'LessonSearch1[dateRange]': dateRange, 'LessonSearch1[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch1[showAll]': (showAll | 0), 'LessonSearch1[status]': '' });
+        var lessonStatus = $("select[name*='LessonSearch1[lessonStatus]").val();
+        var params = $.param({'LessonSearch1[student]':student, 'LessonSearch1[program]':program, 'LessonSearch1[teacher]':teacher, 'LessonSearch1[dateRange]': dateRange, 'LessonSearch1[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch1[showAll]': (showAll | 0), 'LessonSearch1[lessonStatus]': lessonStatus });
         var url = "<?=Url::to(['lesson/index-new']);?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});
         bulkAction.setAction();
@@ -228,13 +230,13 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         var program = $("input[name*='LessonSearch1[program]").val();
         var teacher = $("input[name*='LessonSearch1[teacher]").val();
         var dateRange = $("input[name*='LessonSearch1[dateRange]").val();
-        var params = $.param({'LessonSearch1[student]':student, 'LessonSearch1[program]':program, 'LessonSearch1[teacher]':teacher, 'LessonSearch1[dateRange]': dateRange, 'LessonSearch1[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch1[showAll]': (showAll | 0), 'LessonSearch1[status]': '' });
+        var lessonStatus = $("select[name*='LessonSearch1[lessonStatus]").val();
+        var params = $.param({'LessonSearch1[student]':student, 'LessonSearch1[program]':program, 'LessonSearch1[teacher]':teacher, 'LessonSearch1[dateRange]': dateRange, 'LessonSearch1[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch1[showAll]': (showAll | 0), 'LessonSearch1[lessonStatus]': lessonStatus });
         var url = "<?=Url::to(['lesson/index-new']);?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });
 
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
-        debugger;
         var dateRange = $("#lessonsearch1-daterange").val();
         if (!$.isEmptyObject(dateRange)) {
             $("#lessonsearch1-daterange").val('').trigger('change');
