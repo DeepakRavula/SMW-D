@@ -87,7 +87,9 @@ class LessonReschedule extends Model
                 ->all();
             foreach ($enrolments as $enrolment) {
                 $groupLessonModel = new GroupLesson();
-                $groupLessonModel = clone $oldLesson->groupLesson;
+                $groupLessonModel->dueDate = $oldLesson->groupLesson->dueDate;
+                $groupLessonModel->isDeleted = false;
+                $groupLessonModel->enrolmentId = $enrolment->id;
                 $groupLessonModel->lessonId = $rescheduledLesson->id;
                 $groupLessonModel->save();
             }
