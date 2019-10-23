@@ -243,4 +243,255 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         }
     });
 
+    $(document).off('click', '#substitute-teacher').on('click', '#substitute-teacher', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons to substitute teacher").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ ids: lessonIds });
+            $.ajax({
+                url    : '<?=Url::to(['teacher-substitute1/index'])?>?' +params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#teacher-substitute-modal').modal('show');
+                        $('#teacher-substitute-modal .modal-dialog').css({'width': '1000px'});
+                        $('#teacher-substitute-content').html(response.data);
+                    } else {
+                        $('#index-error-notification').html("Choose lessons with same teacher").fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+            return false;
+        }
+    });
+
+    $(document).off('click', '#lesson-discount').on('click', '#lesson-discount', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons to edit discount").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'LessonDiscount[ids]': lessonIds });
+            $.ajax({
+                url    : '<?=Url::to(['private-lesson/apply-discount'])?>?' +params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                    } else {
+                        if (response.message) {
+                            $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                        }
+                    }
+                }
+            });
+            return false;
+        }
+    });
+
+    $(document).off('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]', function () {
+        bulkAction.setAction();
+        return false;
+    });
+
+    var bulkAction = {
+        setAction: function() {
+            var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+            if ($.isEmptyObject(lessonIds)) {
+                $('#substitute-teacher').addClass('multiselect-disable');
+                $('#lesson-discount').addClass('multiselect-disable');
+                $('#lesson-delete').addClass('multiselect-disable');
+                $('#lesson-duration-edit').addClass('multiselect-disable');
+                $('#lesson-classroom-edit').addClass('multiselect-disable');
+                $('#email-multi-customer').addClass('multiselect-disable');
+                $('#lesson-unschedule').addClass('multiselect-disable');
+                $('#lesson-reschedule').removeClass('multiselect-disable');
+            } else {
+                $('#substitute-teacher').removeClass('multiselect-disable');
+                $('#lesson-discount').removeClass('multiselect-disable');
+                $('#lesson-delete').removeClass('multiselect-disable');
+                $('#lesson-duration-edit').removeClass('multiselect-disable');
+                $('#lesson-classroom-edit').removeClass('multiselect-disable');
+                $('#email-multi-customer').removeClass('multiselect-disable');
+                $('#lesson-unschedule').removeClass('multiselect-disable');
+                $('#lesson-reschedule').removeClass('multiselect-disable');
+            }
+            return false;
+        }
+    };
+
+    $(document).off('click', '#lesson-delete').on('click', '#lesson-delete', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons to delete").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
+            bootbox.confirm({
+                message: "Are you sure you want to delete this lesson?",
+                callback: function(result) {
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url    : '<?=Url::to(['private-lesson/delete'])?>?' +params,
+                            type   : 'post',
+                            success: function(response)
+                            {
+                                if (response.status) {
+                                    if (response.message) {
+                                        $('#index-success-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                        $.pjax.reload({container: "#lesson-index", replace: false, async: false, timeout: 6000});
+                                    }
+                                } else {
+                                    if (response.message) {
+                                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        return false;
+    });
+    $(document).off('click', '#lesson-duration-edit').on('click', '#lesson-duration-edit', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons to edit duration").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
+                        $.ajax({
+                            url    : '<?=Url::to(['private-lesson/edit-duration'])?>?' +params,
+                            type   : 'post',
+                            success: function(response)
+                            {
+                                if (response.status) {
+                                        $('#modal-content').html(response.data);
+                                        $('#popup-modal').modal('show');
+                                    }
+
+                                else {
+                                    if (response.message) {
+                                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                    }
+                                }
+                            }
+                        });
+
+        }
+        return false;
+    });
+
+     $(document).off('click', '#lesson-classroom-edit').on('click', '#lesson-classroom-edit', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'EditClassroom[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['private-lesson/edit-classroom'])?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        return false;
+    });
+
+   $(document).off('click', '#email-multi-customer').on('click', '#email-multi-customer', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if (!$.isEmptyObject(lessonIds)) {
+            var params = $.param({ 'EmailMultiCustomer[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['email-multi-customer/email-multi-customer'])?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        } else {
+            $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();
+        }
+        return false;
+    });
+
+    $(document).off('click', '#lesson-unschedule').on('click', '#lesson-unschedule', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if (!$.isEmptyObject(lessonIds)) {
+            var params = $.param({ 'UnscheduleLesson[lessonIds]': lessonIds, 'UnscheduleLesson[isBulk]': true});
+            $('#menu-shown').hide();
+               bootbox.confirm({
+                message: "Are you sure you want to unschedule?",
+                callback: function(result) {
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                        url    : '<?=Url::to(['unscheduled-lesson/reason-to-unschedule'])?>?' +params,
+                        type   : 'get',
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                $('#modal-content').html(response.data);
+                                $('#popup-modal').modal('show');
+                                }
+                        }
+                    });                  
+        }
+                }
+               });
+        } else {
+            $('#index-error-notification').text('Select Any Lessons').fadeIn().delay(5000).fadeOut();
+        }
+        return false;
+    });
+
+    $(document).off('click', '#lesson-reschedule').on('click', '#lesson-reschedule', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'PrivateLesson[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['private-lesson/bulk-reschedule'])?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        return false;
+    });
+
 </script>
