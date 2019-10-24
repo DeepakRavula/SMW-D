@@ -33,9 +33,9 @@ use kartik\grid\GridView;
 	<?php else : ?>
 	<dd><?= Yii::$app->formatter->asDate($model->endDateTime);?></dd>
 	<?php endif;?>
+	</dl>
     <dt><strong>Schedule</strong></dt>
-    <dd>
-    <div class="private-lesson-index">
+   
     <?php
     $columns = [	
 	[
@@ -45,8 +45,7 @@ use kartik\grid\GridView;
 	],
     ];
     ?>
-    <div class="grid-row-open">
-    <?php yii\widgets\Pjax::begin(['id' => 'enrolment-lesson-index', 'timeout' => 6000,]); ?>
+ 
 <?= GridView::widget([
 	    'dataProvider' => $lessonDataProvider,
 	    'options' => ['id' => 'student-lesson-grid'],
@@ -56,7 +55,7 @@ use kartik\grid\GridView;
 		    return ['data-url' => $url];
 		},
 		'options' => ['class' => 'col-md-12'],
-	    'tableOptions' => ['class' => 'table table-condensed'],
+	    'tableOptions' => ['class' => ''],
 	    'headerRowOptions' => ['class' => 'bg-light-gray'],
 	    'summary' => false,
 	    'emptyText' => false,
@@ -64,11 +63,6 @@ use kartik\grid\GridView;
 	]);
 
 	?>
-	<?php yii\widgets\Pjax::end(); ?>
-    </div>
-</div>
-   </dd>
-</dl>
 <script>
     $(document).ready(function () {
         setTimeout(function(){
