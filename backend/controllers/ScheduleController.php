@@ -71,6 +71,7 @@ class ScheduleController extends BaseController
      */
     public function actionIndex()
     {
+        
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $currentDate = Carbon::now();
         $searchModel = new ScheduleSearch();
