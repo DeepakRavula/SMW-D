@@ -31,6 +31,7 @@ class m191023_162555_fix_group_lessons_error extends Migration
             foreach ($lesson->enrolments as $enrolment) {
              $groupLesson = GroupLesson::findOne(['lessonId' => $lesson->id, 'enrolmentId' => $enrolment->id]);
              if(!$groupLesson) {
+                print_r("\nLesson:".$lesson->id."Enrolment".$enrolment->id);
                 $groupLessonModel = new GroupLesson();
                 $groupLessonModel->dueDate = $lesson->dueDate;
                 $groupLessonModel->enrolmentId = $enrolment->id;
