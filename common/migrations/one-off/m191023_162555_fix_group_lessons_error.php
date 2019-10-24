@@ -25,6 +25,7 @@ class m191023_162555_fix_group_lessons_error extends Migration
         $query = Lesson::find()
                 ->isConfirmed()
                 ->notDeleted()
+                ->notCancelled()
                 ->location([1,4,9,14,15,16,17,18,19,20,21]);
         $groupLessons = $query->groupLessons()->all();
         foreach ($groupLessons as $lesson) {
