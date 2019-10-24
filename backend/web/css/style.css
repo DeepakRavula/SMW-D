@@ -260,6 +260,11 @@ dl {
       text-align:right;
       width:100px;
   }
+  .group-enrolment dd{
+    text-align:left;
+    width:100px;
+
+  }
    .m-l-22
     {
         margin-left:22px;
@@ -297,10 +302,17 @@ dl {
 }
 .royalty dd{
    float:right;
-   margin-right:500px;
+   margin-right:400px;
    line-height:0.75;
    margin-top:-12px;
 }
+.group-enrolment dd{
+    float:left;
+    margin-right:500px;
+    margin-left: 130px;
+    line-height:0.75;
+    margin-top:-12px;
+ }
 }
 .lesson-colorcode{
     width: 15px; 
