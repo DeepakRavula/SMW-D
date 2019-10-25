@@ -8,7 +8,10 @@ use kartik\grid\GridView;
 ?>
 <?php if ($model->course->program->isPrivate()) : ?>
 <?php endif;?>
-<dl class="dl-horizontal royalty">
+<strong> Enrolment Details</strong>
+<br/>
+<br/>
+<dl class = "group-enrolment">
 <dt>Student :</dt>
     <dd>
     <?= $model->student->fullName ?? null; ?>
@@ -22,11 +25,11 @@ use kartik\grid\GridView;
     <dt>Teacher :</dt>
     <dd> <?= $recentCourseSchedule->teacher->publicIdentity ?></dd>
     <dt>Time :</dt>
-	<dd><?= Yii::$app->formatter->asTime($model->courseSchedule->fromTime);?></dd>
+	<dd>     <?= Yii::$app->formatter->asTime($model->courseSchedule->fromTime);?>   </dd>
 	<dt>Duration :</dt>
-	<dd><?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
+	<dd>    <?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?> </dd>
     <dt>Start Date :</dt>
-	<dd><?= Yii::$app->formatter->asDate($model->course->startDate);?></dd>
+	<dd>    <?= Yii::$app->formatter->asDate($model->course->startDate);?>  </dd>
 	<dt>End Date :</dt>
 	<?php if($model->course->program->isGroup()) : ?>
 	<dd><?= Yii::$app->formatter->asDate($model->endDateTime);?></dd>
@@ -34,6 +37,7 @@ use kartik\grid\GridView;
 	<dd><?= Yii::$app->formatter->asDate($model->endDateTime);?></dd>
 	<?php endif;?>
 	</dl>
+	<br/>
     <dt><strong>Schedule</strong></dt>
    
     <?php
@@ -45,28 +49,24 @@ use kartik\grid\GridView;
 	],
     ];
     ?>
- 
+<div class = "enrolment-details-lesson-list">
 <?= GridView::widget([
 	    'dataProvider' => $lessonDataProvider,
-	    'options' => ['id' => 'student-lesson-grid'],
-	    'rowOptions' => function ($model, $key, $index, $grid) {
-		    $url = Url::to(['lesson/view', 'id' => $model->id]);
-
-		    return ['data-url' => $url];
-		},
-		'options' => ['class' => 'col-md-12'],
-	    'tableOptions' => ['class' => ''],
-	    'headerRowOptions' => ['class' => 'bg-light-gray'],
+	    'options' => ['id' => 'student-lesson-grid', 'class' => ''],
+	    'tableOptions' => ['id' => 'table-enrolment-print-view'],
 	    'summary' => false,
 	    'emptyText' => false,
 	    'columns' => $columns,
 	]);
 
 	?>
+	</div>
 <script>
     $(document).ready(function () {
         setTimeout(function(){
             window.print();
 }, 1500)
     });
+	$("table#table-enrolment-print-view").removeClass();
+	$("table#table-enrolment-print-view").addClass('table-condensed');
 </script>

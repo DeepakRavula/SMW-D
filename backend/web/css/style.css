@@ -248,9 +248,9 @@ dl {
 @media (min-width: 768px) {
   .dl-invoice-summary dt {
     text-align: left;
-        float:left;
-        line-height:1.5;
-        font-weight:normal;
+    float:left;
+    line-height:1.5;
+    font-weight:normal;
   }
   .dl-invoice-summary dd{
 	text-align: right;
@@ -260,11 +260,18 @@ dl {
       text-align:right;
       width:100px;
   }
-  .group-enrolment dd{
-    text-align:left;
-    width:100px;
-
-  }
+  .group-enrolment dd {
+    text-align: left;
+    line-height: 1.5;
+    width: 500px;
+}
+ .group-enrolment dt {
+    text-align: left;
+    float: left;
+    line-height: 1.5;
+    font-weight: normal;
+    width: 100px;
+}
    .m-l-22
     {
         margin-left:22px;
@@ -306,13 +313,18 @@ dl {
    line-height:0.75;
    margin-top:-12px;
 }
-.group-enrolment dd{
-    float:left;
-    margin-right:500px;
-    margin-left: 130px;
-    line-height:0.75;
-    margin-top:-12px;
- }
+.group-enrolment dd {
+    text-align: left;
+    line-height: 1.5;
+    width: 500px;
+}
+ .group-enrolment dt {
+    text-align: left;
+    float: left;
+    line-height: 1.5;
+    font-weight: normal;
+    width: 100px;
+}
 }
 .lesson-colorcode{
     width: 15px; 
