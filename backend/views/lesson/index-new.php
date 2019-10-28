@@ -335,7 +335,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                     if(result) {
                         $('.bootbox').modal('hide');
                         $.ajax({
-                            url    : '<?=Url::to(['private-lesson/delete'])?>?' +params,
+                            url    : '<?=Url::to(['private-lesson1/delete'])?>?' +params,
                             type   : 'post',
                             success: function(response)
                             {
