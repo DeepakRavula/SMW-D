@@ -35,8 +35,10 @@ use common\models\InvoicePayment;
 use backend\models\search\PaymentFormLessonSearch;
 use backend\models\search\PaymentFormGroupLessonSearch;
 use common\models\CustomerStatement;
+use common\models\Enrolment;
 use common\models\log\CustomerStatementLog;
 use common\models\log\LogActivity;
+use common\models\CourseSchedule;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -56,7 +58,7 @@ class PrintController extends BaseController
                             'time-voucher', 'customer-invoice', 'account-view', 
                             'royalty', 'royalty-free', 'tax-collected', 'user', 
                             'customer-items-print', 'proforma-invoice','payment',
-                            'receipt', 'sales-and-payment', 'customer-statement', 'all-locations', 'accounts-receivable'
+                            'receipt', 'sales-and-payment', 'customer-statement', 'all-locations', 'accounts-receivable','group-enrolment',
                         ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
@@ -771,6 +773,51 @@ class PrintController extends BaseController
         $this->layout = '/print';
         return $this->render('/report/account-receivable/_print', [
                 'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionGroupEnrolment($id)
+    {
+        $model = Enrolment::findOne($id);
+        $scheduleHistoryDataProvider = new ActiveDataProvider([
+            'query' => CourseSchedule::find()
+            ->andWhere(['courseId' => $model->courseId]),
+        ]);
+	    $lessonCount = Lesson::find()
+			->andWhere(['courseId' => $model->course->id])
+            ->notDeleted()
+            ->scheduledOrRescheduled()
+            ->notCompleted()
+            ->count();
+        $query = Lesson::find()
+        ->andWhere(['lesson.courseId' => $model->course->id])
+        ->scheduledOrRescheduled()
+        ->isConfirmed()
+        ->notDeleted()
+        ->notCompleted();
+        if ($model->course->isPrivate()) {
+            $query->orderBy([
+                'lesson.dueDate' => SORT_ASC,
+                'lesson.date' => SORT_ASC      
+                ]);
+        } else {
+            $query->joinWith(['groupLesson' => function ($query) use ($id) {
+                $query->enrolment($id)
+                ->notDeleted();
+            }])
+                ->orderBy([
+                'group_lesson.dueDate' => SORT_ASC,
+                'lesson.date' => SORT_ASC      
+                ]);
+        }
+	    $lessonDataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+        $this->layout = '/print';
+        return $this->render('/enrolment/_print', [
+            'model' => $model,
+            'lessonDataProvider' => $lessonDataProvider,
+            'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider,
         ]);
     }
 }

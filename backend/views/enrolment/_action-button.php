@@ -7,6 +7,7 @@ use yii\helpers\Url;
     <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
     <ul class="dropdown-menu dropdown-menu-right">
         <li><a id="receive-payments" href="#">Receive Payment</a></li>
+        
         <?php if ($model->course->program->isPrivate()) : ?>
         <li><a class="enrolment-delete" id="enrolment-delete-" href="<?= Url::to(['enrolment/delete', 'id' => $model->id]);?>">Delete</a></li>
         <?php if (Yii::$app->user->can('administrator')) : ?>
@@ -15,6 +16,7 @@ use yii\helpers\Url;
         <?php endif; ?>
         <?php if ($model->course->program->isGroup()) : ?>
         <li><a id="group-enrolment-delete" href="#">Delete</a></li>
+        <li><a id="enrolment-view-print" href="#">Print</a></li>
         <?php endif; ?>
     </ul>
 </div>
@@ -53,4 +55,10 @@ use yii\helpers\Url;
         });
         return false;
     });
+
+    $(document).on("click", "#enrolment-view-print", function () {
+        var url = '<?php echo Url::to(['print/group-enrolment','id' => $model->id]); ?>';
+        window.open(url, '_blank');
+    });
+
 </script>
