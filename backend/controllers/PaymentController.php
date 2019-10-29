@@ -415,7 +415,13 @@ class PaymentController extends BaseController
             if (round($payment->amount, 2) !== 0.00) {
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $payment->on(Payment::EVENT_AFTER_INSERT, [new PaymentLog(), 'create'], ['loggedUser' => $loggedUser]);
-                $payment->save();
+                if (!$payment->save()) {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($payment),
+                    ]; 
+                return $response;
+                }
             }
             $model->paymentId = $payment->id;
             $model->save();
