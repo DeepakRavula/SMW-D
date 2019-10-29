@@ -12,6 +12,10 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
+
+<div id="index-success-notification" style="display:none;" class="alert-success alert fade in"></div>
+<div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+
 <div id="loader" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
