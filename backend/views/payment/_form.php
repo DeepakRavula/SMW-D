@@ -234,8 +234,9 @@ var updatePayment = {
                         $('#popup-modal').modal('hide'); 
                     }
                 } else {
-                    $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $(document).trigger("modal-error", response);
+                    $('#modal-save').attr('disabled', false)
+                    $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                 }
                 modal.enableButtons();
             }
@@ -257,4 +258,10 @@ var updatePayment = {
 
         updatePayment.calcAmountNeeded();
     });
+    $(document).on('modal-error', function (event, params) {
+        if (params.message) {
+            $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+        }
+        return false;
+    });	
 </script>
