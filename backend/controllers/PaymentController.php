@@ -32,6 +32,7 @@ use yii\helpers\Url;
 use common\models\User;
 use common\models\log\PaymentLog;
 use yii\helpers\ArrayHelper;
+use Carbon\Carbon;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -226,10 +227,21 @@ class PaymentController extends BaseController
         ]);
         if ($payment->validate()) {
             if (Yii::$app->request->isPost) {
+                $oldPaymentDate = Carbon::parse($payment->date)->format('Y-m-d');
+                $oldPaymentDateStart = Carbon::parse($payment->date)->format('Y-m-01');
+                $oldPaymentDateEnd = Carbon::parse($payment->date)->format('Y-m-t');
                 $model->load(Yii::$app->request->get());
                 $payment->load(Yii::$app->request->post());
                 $model->load(Yii::$app->request->post());
                 $payment->amount = $model->amount;
+                $newPaymentDate = Carbon::parse($payment->date)->format('Y-m-d');                   
+                    if ($oldPaymentDate != $newPaymentDate && !($newPaymentDate >= $oldPaymentDateStart && $newPaymentDate <= $oldPaymentDateEnd)) {
+                        $response = [
+                            'status' => false,
+                            'message' => 'You cannot alter the payment date to another month'
+                        ];
+                        return $response;
+                    } else {
                 $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
                 if (round($payment->amount, 2) > 0.00) {
                     $payment->save();
@@ -240,7 +252,7 @@ class PaymentController extends BaseController
                 $response = [
                     'status' => true
                 ];
-            } else {
+            } } else {
                 $data = $this->renderAjax('_form', [
                     'model' => $model,
                     'paymentModel' => $payment,
@@ -254,7 +266,7 @@ class PaymentController extends BaseController
                     'data' => $data
                 ];
             }
-        } else {
+        }        else {
             $response = [
                 'status' => false,
                 'message' => current($payment->getErrors())
@@ -403,7 +415,13 @@ class PaymentController extends BaseController
             if (round($payment->amount, 2) !== 0.00) {
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $payment->on(Payment::EVENT_AFTER_INSERT, [new PaymentLog(), 'create'], ['loggedUser' => $loggedUser]);
-                $payment->save();
+                if (!$payment->save()) {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($payment),
+                    ]; 
+                return $response;
+                }
             }
             $model->paymentId = $payment->id;
             $model->save();

@@ -16,7 +16,7 @@ class PaymentLog extends Log
     {
         $PaymentModel       = $event->sender;
         $loggedUser         = end($event->data);
-        $data               = Payment::find(['id' => $PaymentModel->id])->asArray()->one();
+        $data               = Payment::findOne($PaymentModel->id);
         $index       = $PaymentModel->user->publicIdentity;
         $path        = Url::to(['/user/view','UserSearch[role_name]' => 'customer', 'id' => $PaymentModel->user_id]);
         $message            = $loggedUser->publicIdentity.' Added new payment of $'.$PaymentModel->amount.' for {{'.$index.'}}';

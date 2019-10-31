@@ -457,4 +457,4 @@ use yii\bootstrap\Html;
         return false;
     });
 
-</script>
+  </script>
