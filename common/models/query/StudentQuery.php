@@ -82,6 +82,7 @@ class StudentQuery extends ActiveQuery
                         ->notDeleted();
             }])
             ->andWhere(['NOT', ['studentId' => null]])
+            ->andWhere(['>=', 'DATE(enrolment.endDateTime)', (new \DateTime())->format('Y-m-d')])
             ->isConfirmed();
         }]);
 
