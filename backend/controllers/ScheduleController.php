@@ -246,7 +246,7 @@ class ScheduleController extends BaseController
         $unavailability = TeacherUnavailability::find()
             ->andWhere(['teacherId' => $availability->teacher->id])
             ->overlap($date)
-            ->all();
+            ->one();
         return $unavailability;
     }
 
