@@ -1093,6 +1093,7 @@ class User extends ActiveRecord implements IdentityInterface
             }])
             ->joinWith(['enrolment' => function($query) use ($id) {
                 $query->notDeleted()
+                ->andWhere(['>=','enrolment.endDateTime', (new \DateTime())->format('Y-m-d')])
                     ->isConfirmed()
                     ->customer($id);
             }])
