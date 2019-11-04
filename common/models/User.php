@@ -1070,7 +1070,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
         $groupLessonSearchModel->userId = $id;
-        $groupLessonsQuery = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
+        $groupLessonsQuery = $groupLessonSearchModel->search($groupLessonSearchModel);
         $groupLessonsOwingAmount =  $groupLessonsQuery->orderBy(['lesson.date' => SORT_ASC])
                                     ->sum("group_lesson.balance");
         $lessonsDue = $this->getPrivateLessonsDue($id) + $groupLessonsOwingAmount;
