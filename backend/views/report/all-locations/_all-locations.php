@@ -41,9 +41,9 @@ use kartik\grid\GridView;
                 },
             ],
             [
-            'label' => 'Active Students',
+            'label' => 'Active Enrolments',
             'value' => function ($data) use ($searchModel) {
-                return !empty($data->getActiveStudentsCount($searchModel->fromDate, $searchModel->toDate)) ? $data->getActiveStudentsCount($searchModel->fromDate, $searchModel->toDate) : 0;
+                return !empty($data->getActiveEnrolmentsCount($searchModel->fromDate, $searchModel->toDate)) ? $data->getActiveEnrolmentsCount($searchModel->fromDate, $searchModel->toDate) : 0;
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],

@@ -229,6 +229,24 @@ class Location extends \yii\db\ActiveRecord
             ->count();
         return $activeStudentsCount;
     }
+
+    public function getActiveEnrolmentsCount($fromDate, $toDate)
+    {
+        $locationId = $this->id;
+        $activeEnrolmentsCount =   Enrolment::find()
+        ->joinWith(['course' => function ($query) use ($locationId, $fromDate, $toDate) {
+            $query->location($locationId)
+                    ->confirmed()
+                    ->notDeleted();
+        }])
+        ->andWhere(['<=', 'DATE(course.startDate)', (new \DateTime($fromDate))->format('Y-m-d')])
+        ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime($toDate))->format('Y-m-d')])
+        ->notDeleted()
+        ->isConfirmed()
+        ->isRegular()
+        ->count();
+        return $activeEnrolmentsCount;
+    }
     
     public function getRevenue($fromDate, $toDate)
     {
