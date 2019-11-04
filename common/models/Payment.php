@@ -75,7 +75,8 @@ class Payment extends ActiveRecord
     {
         return [
             [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
-            [['date'], 'validateDate', 'on' => [self::SCENARIO_DEFAULT]],
+            [['date'], 'validateDateOnEdit', 'on' => [self::SCENARIO_EDIT]],
+            [['date'], 'validateDateOnCreate', 'on' => [self::SCENARIO_DEFAULT]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
@@ -118,16 +119,25 @@ class Payment extends ActiveRecord
         }
     }
 
-    public function validateDate($attributes)
+    public function validateDateOnEdit($attributes)
     {
         $paymentDate = Carbon::parse($this->date)->format('Y-m-d');
         $currentDateStart = Carbon::now()->format('Y-m-01');
         $currentDateEnd = Carbon::now()->format('Y-m-t');
-        if (!($paymentDate >= $currentDateStart && $paymentDate <= $currentDateEnd)){
-            $this->addError($attributes, "Payment Date cannot be set prior to first day of current month");
-       }
+        if (!($paymentDate >= $currentDateStart && $paymentDate <= $currentDateEnd)) {
+            $this->addError($attributes, "Can't change tha payment month");
+        }
     }
 
+    public function validateDateOnCreate($attributes)
+    {
+        $paymentDate = Carbon::parse($this->date)->format('Y-m-d');
+        $currentDateStart = Carbon::now()->format('Y-m-01');
+        $currentDateEnd = Carbon::now()->format('Y-m-t');
+        if (!($paymentDate >= $currentDateStart)) {
+            $this->addError($attributes, "Payment Date cannot be set prior to first day of current month");
+        }
+    }
 
     public function validateOnApplyCredit($attributes)
     {
