@@ -21,6 +21,7 @@ use common\models\log\LogObject;
 use common\models\log\Log;
 use common\models\Payment;
 use Carbon\Carbon;
+use backend\models\search\PaymentFormGroupLessonSearch;
 
 /**
  * User model.
@@ -1067,40 +1068,11 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getLessonsDue($id)
     {
-        $invoicedLessonsQuery = GroupLesson::find()
-            ->joinWith(['invoiceItemLessons' => function($query) {
-                $query->andWhere(['NOT',['invoice_item_lesson.id' => null]]);
-                $query->joinWith(['invoiceLineItem ili' => function($query) {
-                    $query->notDeleted()
-                    ->joinWith(['invoice in' => function($query) {
-                        $query->notDeleted();
-                    }]);
-                }]);
-            }])
-            ->joinWith(['invoiceItemsEnrolment' => function($query) {
-                $query->joinWith(['lineItem' => function($query) {
-                    $query->notDeleted()
-                    ->joinWith(['invoice' => function($query) {
-                        $query->notDeleted();
-                    }]);
-                }]);
-            }]);
-        $groupLessonsOwingAmount = GroupLesson::find()
-            ->joinWith(['lesson' => function($query) {
-                $query->notDeleted()
-                    ->isConfirmed()
-                    ->notCanceled();
-            }])
-            ->joinWith(['enrolment' => function($query) use ($id) {
-                $query->notDeleted()
-                    ->isConfirmed()
-                    ->customer($id);
-            }])
-            ->leftJoin(['invoiced_lesson' => $invoicedLessonsQuery], 'group_lesson.id = invoiced_lesson.id')
-            ->andWhere(['invoiced_lesson.id' => null])
-            ->dueLessons()
-            ->andWhere(['>', 'group_lesson.balance', 0.09])
-            ->sum("group_lesson.balance");
+        $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
+        $groupLessonSearchModel->userId = $id;
+        $groupLessonsQuery = $groupLessonSearchModel->search($groupLessonSearchModel);
+        $groupLessonsOwingAmount =  $groupLessonsQuery->orderBy(['lesson.date' => SORT_ASC])
+                                    ->sum("group_lesson.balance");
         $lessonsDue = $this->getPrivateLessonsDue($id) + $groupLessonsOwingAmount;
         return $lessonsDue;
     }

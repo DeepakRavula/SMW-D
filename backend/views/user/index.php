@@ -54,7 +54,7 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                 'value' => function ($data) {
                     return !empty($data->userProfile->firstname) ? $data->userProfile->firstname : null;
                 },
-                'contentOptions' => ['style' => 'width:15%'],
+                'contentOptions' => ['style' => 'width:12%'],
             ],
             [
                 'attribute' => 'lastname',
@@ -62,18 +62,19 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                 'value' => function ($data) {
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
-                'contentOptions' => ['style' => 'width:15%'],
+                'contentOptions' => ['style' => 'width:12%'],
             ],
         ];
+        array_push($columns,[
+            'attribute' => 'email',
+            'label' => 'Email',
+            'value' => function ($data) {
+                return !empty($data->primaryEmail->email) ? $data->primaryEmail->email : null;
+            },
+            'contentOptions' => ['style' => 'width:25%'],
+        ]);
         if ($roleName == User::ROLE_TEACHER){
-            array_push($columns,[
-                'attribute' => 'email',
-                'label' => 'Email',
-                'value' => function ($data) {
-                    return !empty($data->primaryEmail->email) ? $data->primaryEmail->email : null;
-                },
-                'contentOptions' => ['style' => 'width:15%'],
-            ],
+            array_push($columns,
             [
                 'attribute' => 'phone',
                 'label' => 'Phone',
@@ -91,7 +92,7 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                     'value' => function ($data) {
                         return !empty($data->student) ? $data->getStudentsList() : null;
                     },
-                    'contentOptions' => ['style' => 'width:30%']
+                    'contentOptions' => ['style' => 'width:26%']
                 ], 
                 [
                     'attribute' => 'status',
