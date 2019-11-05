@@ -232,19 +232,26 @@ class Location extends \yii\db\ActiveRecord
 
     public function getActiveEnrolmentsCount($fromDate, $toDate)
     {
-        $locationId = $this->id;
-        $activeEnrolmentsCount =   Enrolment::find()
-        ->joinWith(['course' => function ($query) use ($locationId, $fromDate, $toDate) {
-            $query->location($locationId)
-                    ->confirmed()
-                    ->notDeleted();
+
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        if (!$fromDate && !$toDate) {
+            $fromDate = $currentDate;
+            $toDate = $currentDate;
+        }
+        $activeEnrolmentsCount =  Enrolment::find()
+            ->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
+            $query->joinWith(['lessons' => function ($query) {
+                $query->andWhere(['NOT', ['lesson.id' => null]]);
+            }])
+                ->location($this->id)
+                ->overlap(Carbon::parse($fromDate)->format('Y-m-d'), Carbon::parse($toDate)->format('Y-m-d'))
+                ->regular()
+                ->confirmed()
+                ->notDeleted();
         }])
-        ->andWhere(['<=', 'DATE(course.startDate)', (new \DateTime($fromDate))->format('Y-m-d')])
-        ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime($toDate))->format('Y-m-d')])
-        ->notDeleted()
-        ->isConfirmed()
-        ->isRegular()
+        ->groupBy('course.id')
         ->count();
+
         return $activeEnrolmentsCount;
     }
     
