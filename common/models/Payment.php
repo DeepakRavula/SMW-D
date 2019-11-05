@@ -74,10 +74,7 @@ class Payment extends ActiveRecord
     {
         if(!(Yii::$app->user->identity->isAdmin())) {
             return [[['date'], 'validateDateOnCreate', 'on' => [self::SCENARIO_DEFAULT]],
-            [['date'], 'validateDateOnEdit', 'on' => [self::SCENARIO_EDIT]]];
-
-        }
-        return [
+            [['date'], 'validateDateOnEdit', 'on' => [self::SCENARIO_EDIT]],
             [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
@@ -88,8 +85,23 @@ class Payment extends ActiveRecord
                 'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId', 'createdByUserId', 
                 'updatedByUserId', 'updatedOn', 'createdOn', 'balance'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
-                self::SCENARIO_CREDIT_USED_EDIT]],   
-        ];
+                self::SCENARIO_CREDIT_USED_EDIT]], ];
+
+        } else {
+            return [
+                [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
+                [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
+                [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
+                [['amount'], 'required'],
+                [['amount'], 'number'],
+                [['paymentAmount'], 'number'],
+                [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
+                    'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId', 'createdByUserId', 
+                    'updatedByUserId', 'updatedOn', 'createdOn', 'balance'], 'safe'],
+                ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
+                    self::SCENARIO_CREDIT_USED_EDIT]],   
+            ];
+        }
     }
    
     public function validateOnDelete($attributes)
