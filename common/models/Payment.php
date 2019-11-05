@@ -15,7 +15,6 @@ use backend\models\PaymentForm;
 use common\models\Invoice;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
-use common\models\Payment;
 
 /**
  * This is the model class for table "payments".
@@ -73,10 +72,12 @@ class Payment extends ActiveRecord
      */
     public function rules()
     {
+        if(!(Yii::$app->user->identity->isAdmin())) {
+            return [[['date'], 'validateDateOnCreate', 'on' => [self::SCENARIO_DEFAULT]]];
+        }
         return [
             [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
             [['date'], 'validateDateOnEdit', 'on' => [self::SCENARIO_EDIT]],
-            [['date'], 'validateDateOnCreate', 'on' => [self::SCENARIO_DEFAULT]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
@@ -133,7 +134,6 @@ class Payment extends ActiveRecord
     {
         $paymentDate = Carbon::parse($this->date)->format('Y-m-d');
         $currentDateStart = Carbon::now()->format('Y-m-01');
-        $currentDateEnd = Carbon::now()->format('Y-m-t');
         if (!($paymentDate >= $currentDateStart)) {
             $this->addError($attributes, "Payment Date cannot be set prior to first day of current month");
         }
