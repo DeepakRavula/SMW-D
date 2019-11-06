@@ -72,8 +72,9 @@ class Payment extends ActiveRecord
      */
     public function rules()
     {
-        if(!(Yii::$app->user->identity->isAdmin())) {
-            return [[['date'], 'validateDateOnCreate', 'on' => [self::SCENARIO_DEFAULT]],
+        $rules = [];
+        if (!(Yii::$app->user->identity->isAdmin())) {
+            $rules =  [[['date'], 'validateDateOnCreate', 'on' => [self::SCENARIO_DEFAULT]],
             [['date'], 'validateDateOnEdit', 'on' => [self::SCENARIO_EDIT]],
             [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
@@ -88,7 +89,7 @@ class Payment extends ActiveRecord
                 self::SCENARIO_CREDIT_USED_EDIT]], ];
 
         } else {
-            return [
+            $rules = [
                 [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
                 [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
                 [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
@@ -102,6 +103,7 @@ class Payment extends ActiveRecord
                     self::SCENARIO_CREDIT_USED_EDIT]],   
             ];
         }
+        return $rules;
     }
    
     public function validateOnDelete($attributes)
