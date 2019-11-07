@@ -20,7 +20,7 @@ use yii\widgets\Pjax;
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>
-<div class="grid-row-open p-10">
+<div class="grid-row-open">
     <?php Pjax::begin(['id' => 'lesson-index', 'timeout' => 25000]);?>
     <?php $columns = [
     [
@@ -140,7 +140,6 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     array_shift($columns);
 }
 ?>
-    <div class="box">
     <?=KartikGridView::widget([
     'dataProvider' => $dataProvider,
     'options' => ['id' => 'lesson-index-1'],
@@ -158,10 +157,8 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     'toolbar' => [
         ['content' =>  $this->render('_action-menu', [
             'searchModel' => $searchModel]),
-             'options' => ['title' =>'Edit',]
         ],
         ['content' =>  $this->render('_show-all-button-new', ['searchModel' => $searchModel]),
-            'options' => ['title' =>'Filter',]
         ],
         '{export}',
         '{toggleData}'
@@ -174,7 +171,6 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         'heading' => 'Private Lessons'
     ],
 ]);?>
-	</div>
 	<?php Pjax::end();?>
 
 <?php Modal::begin([
