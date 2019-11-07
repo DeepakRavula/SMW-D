@@ -235,7 +235,7 @@ class PaymentController extends BaseController
                 $model->load(Yii::$app->request->post());
                 $payment->amount = $model->amount;
                 $newPaymentDate = Carbon::parse($payment->date)->format('Y-m-d');                   
-                    if ($oldPaymentDate != $newPaymentDate && !($newPaymentDate >= $oldPaymentDateStart && $newPaymentDate <= $oldPaymentDateEnd)) {
+                    if ($oldPaymentDate != $newPaymentDate && !($newPaymentDate >= $oldPaymentDateStart && $newPaymentDate <= $oldPaymentDateEnd) && !(Yii::$app->user->identity->isAdmin())) {
                         $response = [
                             'status' => false,
                             'message' => 'You cannot alter the payment date to another month'
@@ -252,7 +252,8 @@ class PaymentController extends BaseController
                 $response = [
                     'status' => true
                 ];
-            } } else {
+                } 
+            } else {
                 $data = $this->renderAjax('_form', [
                     'model' => $model,
                     'paymentModel' => $payment,

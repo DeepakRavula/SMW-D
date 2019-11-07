@@ -15,7 +15,6 @@ use backend\models\PaymentForm;
 use common\models\Invoice;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
-use common\models\Payment;
 
 /**
  * This is the model class for table "payments".
@@ -73,9 +72,10 @@ class Payment extends ActiveRecord
      */
     public function rules()
     {
-        return [
+        $rules = [];
+        if (!(Yii::$app->user->identity->isAdmin())) {
+            $rules =  [[['date'], 'validateDateOnCreate', 'on' => [self::SCENARIO_DEFAULT]],
             [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
-            [['date'], 'validateDate', 'on' => [self::SCENARIO_DEFAULT]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
@@ -85,8 +85,24 @@ class Payment extends ActiveRecord
                 'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId', 'createdByUserId', 
                 'updatedByUserId', 'updatedOn', 'createdOn', 'balance'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
-                self::SCENARIO_CREDIT_USED_EDIT]],   
-        ];
+                self::SCENARIO_CREDIT_USED_EDIT]], ];
+
+        } else {
+            $rules = [
+                [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
+                [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
+                [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
+                [['amount'], 'required'],
+                [['amount'], 'number'],
+                [['paymentAmount'], 'number'],
+                [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
+                    'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId', 'createdByUserId', 
+                    'updatedByUserId', 'updatedOn', 'createdOn', 'balance'], 'safe'],
+                ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
+                    self::SCENARIO_CREDIT_USED_EDIT]],   
+            ];
+        }
+        return $rules;
     }
    
     public function validateOnDelete($attributes)
@@ -118,16 +134,24 @@ class Payment extends ActiveRecord
         }
     }
 
-    public function validateDate($attributes)
+    public function validateDateOnEdit($attributes)
     {
         $paymentDate = Carbon::parse($this->date)->format('Y-m-d');
         $currentDateStart = Carbon::now()->format('Y-m-01');
         $currentDateEnd = Carbon::now()->format('Y-m-t');
-        if (!($paymentDate >= $currentDateStart && $paymentDate <= $currentDateEnd)){
-            $this->addError($attributes, "Payment Date cannot be set prior to first day of current month");
-       }
+        if (!($paymentDate >= $currentDateStart && $paymentDate <= $currentDateEnd)) {
+            $this->addError($attributes, "Can't change tha payment month");
+        }
     }
 
+    public function validateDateOnCreate($attributes)
+    {
+        $paymentDate = Carbon::parse($this->date)->format('Y-m-d');
+        $currentDateStart = Carbon::now()->format('Y-m-01');
+        if (!($paymentDate >= $currentDateStart)) {
+            $this->addError($attributes, "Payment Date cannot be set prior to first day of current month");
+        }
+    }
 
     public function validateOnApplyCredit($attributes)
     {
