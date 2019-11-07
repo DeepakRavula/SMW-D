@@ -134,16 +134,6 @@ class Payment extends ActiveRecord
         }
     }
 
-    public function validateDateOnEdit($attributes)
-    {
-        $paymentDate = Carbon::parse($this->date)->format('Y-m-d');
-        $currentDateStart = Carbon::now()->format('Y-m-01');
-        $currentDateEnd = Carbon::now()->format('Y-m-t');
-        if (!($paymentDate >= $currentDateStart && $paymentDate <= $currentDateEnd)) {
-            $this->addError($attributes, "Can't change tha payment month");
-        }
-    }
-
     public function validateDateOnCreate($attributes)
     {
         $paymentDate = Carbon::parse($this->date)->format('Y-m-d');
