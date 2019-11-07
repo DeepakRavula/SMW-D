@@ -75,7 +75,6 @@ class Payment extends ActiveRecord
         $rules = [];
         if (!(Yii::$app->user->identity->isAdmin())) {
             $rules =  [[['date'], 'validateDateOnCreate', 'on' => [self::SCENARIO_DEFAULT]],
-            [['date'], 'validateDateOnEdit', 'on' => [self::SCENARIO_EDIT]],
             [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
