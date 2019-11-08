@@ -229,6 +229,31 @@ class Location extends \yii\db\ActiveRecord
             ->count();
         return $activeStudentsCount;
     }
+
+    public function getActiveEnrolmentsCount($fromDate, $toDate)
+    {
+
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        if (!$fromDate && !$toDate) {
+            $fromDate = $currentDate;
+            $toDate = $currentDate;
+        }
+        $activeEnrolmentsCount =  Enrolment::find()
+            ->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
+            $query->joinWith(['lessons' => function ($query) {
+                $query->andWhere(['NOT', ['lesson.id' => null]]);
+            }])
+                ->location($this->id)
+                ->overlap(Carbon::parse($fromDate)->format('Y-m-d'), Carbon::parse($toDate)->format('Y-m-d'))
+                ->regular()
+                ->confirmed()
+                ->notDeleted();
+        }])
+        ->groupBy('course.id')
+        ->count();
+
+        return $activeEnrolmentsCount;
+    }
     
     public function getRevenue($fromDate, $toDate)
     {
