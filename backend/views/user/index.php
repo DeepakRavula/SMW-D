@@ -113,7 +113,7 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
         ?>
         <?= KartikGridView::widget([
             'dataProvider' => $dataProvider,
-            'summary' => "Showing {begin} - {end} of {totalCount} items",
+            'summary' => "sss",
             'emptyText' => false,
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
                 $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
