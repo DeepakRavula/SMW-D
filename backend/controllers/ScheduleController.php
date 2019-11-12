@@ -86,7 +86,7 @@ class ScheduleController extends BaseController
         }
         foreach ($lessonPayments as $lessonPayment) {
             $lessonPaymentAmount += $lessonPayment->amount;
-            print_r("\n Lesson Payment: (". $lessonPayment->id.")".$invoicePayment->amount);
+            print_r("\n Lesson Payment: (". $lessonPayment->id.")".$lessonPayment->amount);
         }
         print_r("\nInvoice Payment Amount ".$invoicePaymentAmount);
         print_r("\n Lesson Payment Amount ".$lessonPaymentAmount);
