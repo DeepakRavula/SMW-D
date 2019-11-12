@@ -78,8 +78,8 @@ class ScheduleController extends BaseController
         $invoicePaymentAmount = 0.00;
         $lessonPaymentAmount = 0.00;
 
-        $invoicePayments = $this->invoicePayments;
-        $lessonPayments = $this->lessonPayments;
+        $invoicePayments = $payment->invoicePayments;
+        $lessonPayments = $payment->lessonPayments;
         foreach ($invoicePayments as $invoicePayment) {
             $invoicePaymentAmount += $invoicePayment->amount;
             print_r("\n Invoice Payment: (". $invoicePayment->id.")".$invoicePayment->amount);
@@ -90,8 +90,7 @@ class ScheduleController extends BaseController
         }
         print_r("\nInvoice Payment Amount ".$invoicePaymentAmount);
         print_r("\n Lesson Payment Amount ".$lessonPaymentAmount);
-        
-
+        die('coming');
         $currentDate = Carbon::now();
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
