@@ -74,23 +74,6 @@ class ScheduleController extends BaseController
     {
         
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $payment = Payment::findOne(71719);
-        $invoicePaymentAmount = 0.00;
-        $lessonPaymentAmount = 0.00;
-
-        $invoicePayments = $payment->invoicePayments;
-        $lessonPayments = $payment->lessonPayments;
-        foreach ($invoicePayments as $invoicePayment) {
-            $invoicePaymentAmount += $invoicePayment->amount;
-            print_r("\n Invoice Payment: (". $invoicePayment->id.")".$invoicePayment->amount);
-        }
-        foreach ($lessonPayments as $lessonPayment) {
-            $lessonPaymentAmount += $lessonPayment->amount;
-            print_r("\n Lesson Payment: (". $lessonPayment->id.")".$lessonPayment->amount);
-        }
-        print_r("\nInvoice Payment Amount ".$invoicePaymentAmount);
-        print_r("\n Lesson Payment Amount ".$lessonPaymentAmount);
-        die('coming');
         $currentDate = Carbon::now();
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
