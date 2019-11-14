@@ -412,6 +412,14 @@ class PaymentController extends BaseController
             if ($model->validate()) {
             $payment->amount = $model->amount;
             $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
+            $currentDateStart = Carbon::now()->format('Y-m-01');
+            if (!(Carbon::parse($payment->date)->format('Y-m-d') >= $currentDateStart)) {
+                $response = [
+                    'status' => false,
+                    'errors' => ['payment-date' => ['0' => 'Payment Date cannot be set prior to the first day of current month']],
+                ]; 
+            return $response;
+            }
             $payment->notes = $model->notes;
             if (round($payment->amount, 2) !== 0.00) {
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
