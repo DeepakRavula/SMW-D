@@ -411,9 +411,9 @@ class PaymentController extends BaseController
             $payment->load($request->post());
             if ($model->validate()) {
             $payment->amount = $model->amount;
-            $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
+            $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $currentDateStart = Carbon::now()->format('Y-m-01');
-            if (!(Carbon::parse($payment->date)->format('Y-m-d') >= $currentDateStart)) {
+            if (!(Carbon::parse($model->date)->format('Y-m-d') >= $currentDateStart)) {
                 $response = [
                     'status' => false,
                     'errors' => ['payment-date' => ['0' => 'Payment Date cannot be set prior to the first day of current month']],
