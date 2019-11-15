@@ -360,6 +360,7 @@ class PaymentController extends BaseController
         $payment = new Payment();
         $currentDate = new \DateTime();
         $payment->date = $currentDate->format('M d, Y');
+        $model->date = $currentDate->format('M d, Y');
         $locationModel = Location::findOne(['slug' => \Yii::$app->location]);
         $locationId = $locationModel->id;
         if (!$request->post()) {
@@ -411,7 +412,8 @@ class PaymentController extends BaseController
             $payment->load($request->post());
             if ($model->validate()) {
             $payment->amount = $model->amount;
-            $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
+            $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $currentDateStart = Carbon::now()->format('Y-m-01');
             $payment->notes = $model->notes;
             if (round($payment->amount, 2) !== 0.00) {
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);

@@ -19,6 +19,7 @@ use yii\base\Model;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
 use common\models\ItemType;
+use Carbon\Carbon;
 
 /**
  * This is the model class for table "course".
@@ -67,7 +68,7 @@ class PaymentForm extends Model
      */
     public function rules()
     {
-        return [
+        $rules = [
             ['amount', 'validateAmount'],
             ['amount', 'match', 'pattern' => '^[0-9]\d*(\.\d+)?$^'],
             [['date', 'amountNeeded', 'canUseInvoiceCredits', 'selectedCreditValue', 'canUsePaymentCredits',
@@ -77,6 +78,21 @@ class PaymentForm extends Model
             [['selectedCreditValue', 'amount', 'invoicePayments', 'lessonPayments', 'lessonIds', 'invoiceIds',
                 'paymentCredits', 'invoiceCredits', 'groupLessonIds', 'groupLessonPayments'], 'validateNegativePayment', 'on' => self::SCENARIO_NEGATIVE_PAYMENT],
         ];
+        if (!(Yii::$app->user->identity->isAdmin())) {
+            array_push($rules, [['date'], 'validateDateOnCreate', 'on' => self::SCENARIO_DEFAULT]);
+        }
+
+        return $rules;
+    }
+
+    
+    public function validateDateOnCreate($attributes)
+    {
+        $paymentDate = Carbon::parse($this->date)->format('Y-m-d');
+        $currentDateStart = Carbon::now()->format('Y-m-01');
+        if (!($paymentDate >= $currentDateStart)) {
+            $this->addError($attributes, "Payment Date cannot be set prior to first day of current month");
+        }
     }
 
     public function validateNegativePayment($attributes)

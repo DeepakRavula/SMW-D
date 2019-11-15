@@ -47,7 +47,7 @@ use yii\bootstrap\Html;
             ])->label('Customer'); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($paymentModel, 'date')->widget(DatePicker::classname(), [
+            <?= $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'value'  => Yii::$app->formatter->asDate($model->date),
                 'dateFormat' => 'php:M d, Y',
                 'options' => [
