@@ -312,6 +312,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             }
         }
         if ($invoiceModel->isInvoice() && $this->isLessonItem()) {
+            if (!$this->invoice->isReversedInvoice()) {
             if ($this->lesson->isPrivate()) {
                 if ($this->lesson->hasCreditUsed($this->enrolment->id)) {
                     $lessonCreditPayments = $this->lesson->getCreditUsedPayment($this->enrolment->id);
@@ -323,6 +324,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                     $this->lesson->unschedule('Invoice Line Item Deleted');
                 }
             }
+        } else {
+
+        }
         }
         $invoiceModel->save();
         return true;
