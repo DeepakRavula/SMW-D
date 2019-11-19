@@ -319,7 +319,7 @@ use yii\bootstrap\Html;
                         modal.renderUrlData(response.dataUrl);
                     } else {
                         $(document).trigger("modal-success", response);
-                        $('#popup-modal').modal('hide'); 
+                        $('#popup-modal').modal('hide');            
                     }
                 } else {
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
