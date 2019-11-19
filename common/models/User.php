@@ -1139,8 +1139,10 @@ class User extends ActiveRecord implements IdentityInterface
         $customerAccount = CustomerAccount::find()
             ->andWhere(['customer_account.customerId' => $this->id])
             ->one();
+            if (!empty($customerAccount)) {
         $customerAccount->balance = $balance;
         $customerAccount->save();
+            }
     }
 
     public function getPrivateLessonsDue($id)

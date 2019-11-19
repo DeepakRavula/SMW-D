@@ -32,23 +32,36 @@ class m191115_055141_fix_affected_payments extends Migration
         $lessonCount = 0;
         $locations = Location::find()->andWhere(['id' => $locationIds])->all();
         foreach ($locations as $location) {
-            $users = User::find()
-            ->customers($location->id)
+            $payments = Payment::find()
             ->notDeleted()
+            ->exceptAutoPayments()
             ->all();
-            foreach ($users as $user) {
-                //Console::output("Processed Payment" . $payment->id, Console::FG_GREEN, Console::BOLD);
-                    // $oldBalance = $payment->balance;
-                    // if ($payment->customer->customerAccount) {
-                    // $payment->save(false);
-                    // }
-                    // $newBalance = $payment->balance;
-                    $balance = $user->getLessonsDue($user->id) + $user->getInvoiceOwingAmountTotal($user->id) - $user->getTotalCredits($user->id);
-                    if (round($balance) !== round($user->customerAccount->balance, 2)) {
-                        print_r("\n Customer:".$user->publicIdentity."(".$user->id.")\t Location: ".$user->userLocation->location->name."\tCalculated Balance:".$balance."\tcustomer account balance:".$user->customerAccount->balance);
+            foreach ($payments as $payment) {
+                $oldBalance = $payment->balance;
+                $payment->save(false);
+                $newBalance = $payment->balance;
+                if (round($oldBalance ,2)!= round($newBalance, 2)) {
+                    if ($payment->user) {
+                        print_r("\n".$payment->id."Customer: ".$payment->user->publicIdentity."(".$payment->user->id.")"."Old Balance:".round($oldBalance, 2)."New Balance:".round($newBalance, 2));
+                    } else{
+                        print_r("\n".$payment->id);
                     }
+                }
                    
             }
+            // $users = User::find()
+            // ->customers($location->id)
+            // ->notDeleted()
+            // ->all();
+            // foreach ($users as $user) {
+            //         $balance = round(($user->getLessonsDue($user->id) + $user->getInvoiceOwingAmountTotal($user->id) - $user->getTotalCredits($user->id)), 2);
+            //         if (round($balance, 2) !== round($user->customerAccount->balance, 2)) {
+            //             print_r("\n Customer:".$user->publicIdentity."(".$user->id.")\t Location: ".$user->userLocation->location->name."\tCalculated Balance:".$balance."\tcustomer account balance:".$user->customerAccount->balance);
+            //         }
+                   
+            // }
+
+        
         }
         Console::endProgress(true);
         Console::output("done.", Console::FG_GREEN, Console::BOLD);
