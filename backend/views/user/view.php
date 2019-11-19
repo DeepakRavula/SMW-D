@@ -549,8 +549,8 @@ foreach ($roleNames as $name => $description) {
     });
 
     $(document).on('modal-next', function(event, params) {
-        debugger;
         $.pjax.reload({container: "#customer-view", replace: false, async: false, timeout: 6000});
+        return true;
     });
 
     $(document).on('modal-success', function(event, params) {
