@@ -548,11 +548,6 @@ foreach ($roleNames as $name => $description) {
         $.pjax.reload({container: '#private-quali-list', replace:false, async: false, timeout: 6000});
     });
 
-    $(document).on('modal-next', function(event, params) {
-        $.pjax.reload({container: "#customer-view", replace: false, async: false, timeout: 6000});
-        return true;
-    });
-
     $(document).on('modal-success', function(event, params) {
         if (params.url) {
             window.location.href = params.url;
