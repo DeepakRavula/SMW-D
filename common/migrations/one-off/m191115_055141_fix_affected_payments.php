@@ -40,9 +40,9 @@ class m191115_055141_fix_affected_payments extends Migration
                 $oldBalance = $payment->balance;
                 $payment->save(false);
                 $newBalance = $payment->balance;
-                if (round($oldBalance ,2)!= round($newBalance, 2)) {
+                if (round($oldBalance)!= round($newBalance)) {
                     if ($payment->user) {
-                        print_r("\n".$payment->id."Customer: ".$payment->user->publicIdentity."(".$payment->user->id.")"."Old Balance:".round($oldBalance, 2)."New Balance:".round($newBalance, 2));
+                        print_r("\n".$payment->id."Customer: ".$payment->user->publicIdentity."(".$payment->user->id."). Location: ".$payment->user->userLocation->location->name."  Old Balance:".round($oldBalance, 2)."New Balance:".round($newBalance, 2));
                     } else{
                         print_r("\n".$payment->id);
                     }
