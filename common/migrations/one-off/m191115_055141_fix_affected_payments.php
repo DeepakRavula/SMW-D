@@ -49,17 +49,17 @@ class m191115_055141_fix_affected_payments extends Migration
                 }
                    
             }
-            // $users = User::find()
-            // ->customers($location->id)
-            // ->notDeleted()
-            // ->all();
-            // foreach ($users as $user) {
-            //         $balance = round(($user->getLessonsDue($user->id) + $user->getInvoiceOwingAmountTotal($user->id) - $user->getTotalCredits($user->id)), 2);
-            //         if (round($balance, 2) !== round($user->customerAccount->balance, 2)) {
-            //             print_r("\n Customer:".$user->publicIdentity."(".$user->id.")\t Location: ".$user->userLocation->location->name."\tCalculated Balance:".$balance."\tcustomer account balance:".$user->customerAccount->balance);
-            //         }
+            $users = User::find()
+            ->customers($location->id)
+            ->notDeleted()
+            ->all();
+            foreach ($users as $user) {
+                    $balance = round(($user->getLessonsDue($user->id) + $user->getInvoiceOwingAmountTotal($user->id) - $user->getTotalCredits($user->id)), 2);
+                    if (round($balance, 2) !== round($user->customerAccount->balance, 2)) {
+                       $user->updateCustomerBalance();
+                    }
                    
-            // }
+            }
 
         
         }
