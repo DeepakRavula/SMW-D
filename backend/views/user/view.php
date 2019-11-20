@@ -440,6 +440,9 @@ foreach ($roleNames as $name => $description) {
 ]);?>
 <?php Modal::end(); ?>
 <?php Pjax::end() ?>
+<?php Pjax::begin([
+    'id' => 'customer-email-phone-pjax'
+]); ?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Email</h4>',
     'id' => 'email-modal',
