@@ -99,7 +99,7 @@ in the amount of <?= $model->amount; ?> via <?= $paymentModel->paymentMethod->na
         $('.modal-save').text('Email');
         $('.modal-save-all').text('Print');
         $('.modal-save-all').show();
-        $('#modal-back').hide();
+        $('#modal-back').hide();                        
         $('.print-statement').hide();
     });
 
