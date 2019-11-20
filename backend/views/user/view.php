@@ -92,6 +92,7 @@ foreach ($roleNames as $name => $description) {
 </div>
 </div>
     <?php endif;?>
+<?php Pjax::end(); ?>
 <div class="row">
     <div class="col-md-6">
         <?php Pjax::begin(['id' => 'user-profile']); ?>
@@ -120,7 +121,7 @@ foreach ($roleNames as $name => $description) {
                 ]); ?>
             <?php Pjax::end() ?> 
         <?php endif;?>
-
+    <?php Pjax::begin(['id' => 'customer-invoice']) ?>
         <?php if ($searchModel->role_name == 'customer'):?>
             <?= $this->render('customer/_invoice', [
                 'invoiceDataProvider' => $invoiceDataProvider,
@@ -135,6 +136,7 @@ foreach ($roleNames as $name => $description) {
                 'userModel' => $model,
             ]); ?>
         <?php endif;?>
+        <?php Pjax::end() ?>
     </div>
     <div class="col-md-6">
         <?php Pjax::begin(['id' => 'user-email']); ?>
@@ -188,6 +190,7 @@ foreach ($roleNames as $name => $description) {
                 ]); ?>
             <?php Pjax::end(); ?>
     </div>
+    <?php Pjax::begin(['id' => 'customer-pl-gl-p', 'timeout' => 6000]) ?>  
     <div class="col-md-12">
             <?= $this->render('customer/_private-lesson-due', [
             'model' => $model,
@@ -203,6 +206,7 @@ foreach ($roleNames as $name => $description) {
             'userModel' => $model,
         ]); ?>
     </div>
+    <?php Pjax::end(); ?>
 </div>
 <?php endif;?>
 
@@ -550,6 +554,10 @@ foreach ($roleNames as $name => $description) {
 
     $(document).on('modal-next', function(event, params) {
         $.pjax.reload({container: "#customer-view", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#customer-invoice", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#customer-ob", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#customer-pl-gl-p", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#customer-lesson-listing", replace: false, async: false, timeout: 6000});
         return true;
     });
 
