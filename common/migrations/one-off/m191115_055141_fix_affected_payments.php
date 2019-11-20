@@ -34,6 +34,7 @@ class m191115_055141_fix_affected_payments extends Migration
         foreach ($locations as $location) {
             $payments = Payment::find()
             ->notDeleted()
+            ->location($location->id)
             ->exceptAutoPayments()
             ->all();
             foreach ($payments as $payment) {
