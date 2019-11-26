@@ -61,16 +61,15 @@ class EnrolmentPaymentFrequencyController extends BaseController
                 'data' => $data,
             ];
         } else {
-              $oldPaymentFrequency = clone $model;
               $model->load($post);  
               $enrolmentPaymentFrequency->load($post);
               $course = $model->course;
-              $effectiveDate = Carbon::parse($enrolmentPaymentFrequency->effectiveDate);
+              $effectiveDate = (new \DateTime($enrolmentPaymentFrequency->effectiveDate))->format('Y-m-01');
               $lastPaymentCycleEndDate = Carbon::parse($effectiveDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
               $courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
               if ($courseEndDate < $lastPaymentCycleEndDate) {
                     $autoRenew = new AutoRenewal();
-                    $autoRenew->renewEnrolment($model->course);       
+                    $autoRenew->renewEnrolment($model->course);   
                 if ($model->save()) {
                     $enrolmentPaymentFrequency->resetPaymentCycle();
             }                              
