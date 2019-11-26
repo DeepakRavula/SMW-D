@@ -69,26 +69,11 @@ class EnrolmentPaymentFrequencyController extends BaseController
               $lastPaymentCycleEndDate = Carbon::parse($effectiveDate)->addMonthsNoOverflow($model->paymentFrequencyId)->format('Y-m-d');
               $courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
               if ($courseEndDate < $lastPaymentCycleEndDate) {
-                if (!$enrolmentPaymentFrequency->isAlreadyPosted) {
-                    $extendEnrolmentData = $this->renderAjax('_form-extend-auto-renewal', [
-                        'model' => $model, 
-                        'enrolmentPaymentFrequency' => $enrolmentPaymentFrequency,
-                    ]);
-                    return [
-                        'status' => false,
-                        'extendEnrolmentData' => $extendEnrolmentData,
-                        
-                    ];
-                } else {
-                if ($enrolmentPaymentFrequency->needToRenewal) {
                     $autoRenew = new AutoRenewal();
-                    $autoRenew->renewEnrolment($model->course);
-                }       
+                    $autoRenew->renewEnrolment($model->course);       
                 if ($model->save()) {
                     $enrolmentPaymentFrequency->resetPaymentCycle();
-            }                        
-                  
-            }       
+            }                              
         } else {
             if ($model->save()) {
                 $enrolmentPaymentFrequency->resetPaymentCycle();
