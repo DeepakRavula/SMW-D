@@ -35,7 +35,7 @@ use yii\jui\DatePicker;
                 'options' => [
                     'class' => 'form-control',
                 ],
-                'dateFormat' => 'php:M, Y',
+                'dateFormat' => 'php:M 01,Y',
                 'clientOptions' => [
                     'changeMonth' => true,
                     'yearRange' => '1500:3000',
@@ -44,8 +44,6 @@ use yii\jui\DatePicker;
             ])->label('Effective Date') ?>
         </div>
     </div>
-    <?php $enrolmentPaymentFrequency->isAlreadyPosted = 0;?>
-    <?= $form->field($enrolmentPaymentFrequency, 'isAlreadyPosted')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 <script type="text/javascript">
     $(document).ready(function() {
