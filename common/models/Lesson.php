@@ -174,7 +174,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax', 'updatedOn', 
-                'createdOn', 'lessonId', 'total', 'paidStatus', 'dueDate'], 'safe'],
+                'createdOn', 'lessonId', 'total', 'paidStatus', 'dueDate','originalDate'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
@@ -888,6 +888,7 @@ class Lesson extends \yii\db\ActiveRecord
         }
         if ($insert) {
             $this->isDeleted = false;
+            $this->originalDate = $this->getOriginalDate();
             $this->isPresent = true;
             if (empty($this->isExploded)) {
                 $this->isExploded = false;
