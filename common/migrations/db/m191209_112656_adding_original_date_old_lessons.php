@@ -34,7 +34,7 @@ class m191209_112656_adding_original_date_old_lessons extends Migration
         foreach ($locations as $location) {
             $lessons = Lesson::find()
             ->location([$location->id])
-            ->andwhere(['>', 'lesson.id' 512026])
+            ->andwhere(['>', 'lesson.id', 512026])
             ->all();
             foreach ($lessons as $lesson) {
                 $lesson->updateAttributes(['originalDate' => $lesson->getOriginalDate()]);
