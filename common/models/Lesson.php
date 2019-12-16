@@ -979,6 +979,7 @@ class Lesson extends \yii\db\ActiveRecord
                 $this->customer->updateCustomerBalance();
             }
         }
+        $this->updateAttributes(['originalDate' => $this->getOriginalDate()]);
         return parent::afterSave($insert, $changedAttributes);
     }
 

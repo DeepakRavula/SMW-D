@@ -539,6 +539,7 @@ class Course extends \yii\db\ActiveRecord
             'teacherId' => $this->teacherId,
             'status' => $status,
             'date' => $day->format('Y-m-d H:i:s'),
+            'originalDate' => $day->format('Y-m-d H:i:s'),
             'duration' => $this->recentCourseSchedule->duration,
             'isConfirmed' => $isConfirmed,
             'dueDate' => $day->format('Y-m-d')
