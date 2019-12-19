@@ -246,7 +246,7 @@ class ScheduleController extends BaseController
         $unavailability = TeacherUnavailability::find()
             ->andWhere(['teacherId' => $availability->teacher->id])
             ->overlap($date)
-            ->one();
+            ->all();
         return $unavailability;
     }
 
@@ -254,7 +254,8 @@ class ScheduleController extends BaseController
     {
         $events = [];
         foreach ($teachersAvailabilities as $teachersAvailability) {
-            $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
+            $unavailabilities = $this->getTeacherUnavailability($teachersAvailability, $date);
+            foreach ($unavailabilities as $unavailability){
             if (!empty($unavailability)) {
                 if (empty($unavailability->fromDateTime) && empty($unavailability->toDateTime) || $unavailability->fromDateTime === 
                     $teachersAvailability->from_time && $unavailability->toDateTime === $teachersAvailability->to_time) {
@@ -262,8 +263,10 @@ class ScheduleController extends BaseController
                 } else {
                     $events = array_merge($events, $this->getAvailabilityEvents($teachersAvailability, $unavailability, $date));
                 }
+        
             } else {
                 $events[] = $this->getRegularAvailability($teachersAvailability, $date);
+            }
             }
         }
         return $events;
