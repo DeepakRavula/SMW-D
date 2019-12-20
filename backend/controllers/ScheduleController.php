@@ -255,21 +255,21 @@ class ScheduleController extends BaseController
         $events = [];
         foreach ($teachersAvailabilities as $teachersAvailability) {
             $unavailabilities = $this->getTeacherUnavailability($teachersAvailability, $date);
-            foreach ($unavailabilities as $unavailability){
-                if (!empty($unavailability)) {
-                    if (empty($unavailability->fromDateTime) && empty($unavailability->toDateTime) || $unavailability->fromDateTime === 
-                        $teachersAvailability->from_time && $unavailability->toDateTime === $teachersAvailability->to_time) {
-                        continue;
-                    } else {
+                if (!empty($unavailabilities)) {
+                    foreach ($unavailabilities as $unavailability) {
+                        if (empty($unavailability->fromDateTime) && empty($unavailability->toDateTime) || $unavailability->fromDateTime === 
+                            $teachersAvailability->from_time && $unavailability->toDateTime === $teachersAvailability->to_time) {
+                            continue;
+                            } else {
                         $events = array_merge($events, $this->getAvailabilityEvents($teachersAvailability, $unavailability, $date));
+                        }
+
                     }
-            
                 } else {
-                    $events[] = $this->getRegularAvailability($teachersAvailability, $date);
+            $events[] = $this->getRegularAvailability($teachersAvailability, $date);
                 }
-            }
         }
-        return $events;
+    return $events;
     }
 
     public function getAvailabilityEvents($teachersAvailability, $unavailability, $date)
