@@ -15,7 +15,7 @@ use kartik\datetime\DateTimePicker;
  $validationUrl = Url::to(['teacher-unavailability/validate', 'id' => $model->id]);
             if ($model->isNewRecord) {
                 $url = Url::to(['teacher-unavailability/create', 'id' => $teacher->id]);
-                $validationUrl = Url::to(['teacher-unavailability/validate']);
+                $validationUrl = Url::to(['teacher-unavailability/validate', 'teacherId' => $teacher->id]);
             }
         $form = ActiveForm::begin([
         'id' => 'modal-form',

@@ -30,4 +30,29 @@ class TeacherUnavailabilityQuery extends ActiveQuery
             ]
         ]);
     }
+
+    public function overlapwithtime($fromTime, $toTime)
+    {
+         $this->andWhere(['OR',
+        [
+            'between', 'fromDateTime',$fromTime,
+            $toTime
+        ],
+        [
+            'between', 'toDateTime',$fromTime,
+            $toTime
+        ],
+        [
+            'AND',
+            [
+                '<', 'fromDateTime', $fromTime
+            ],
+            [
+                '>', 'toDateTime', $toTime
+            ]
+
+        ]
+    ]);
+        return $this;
+    }
 }
