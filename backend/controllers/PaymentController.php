@@ -441,6 +441,7 @@ class PaymentController extends BaseController
                 'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
                 'searchModel' => $searchModel
             ]);
+            Yii::$app->session->set('model', $model);
             $url = null;
             if ($model->prId) {
                 $pr = ProformaInvoice::findOne($model->prId);

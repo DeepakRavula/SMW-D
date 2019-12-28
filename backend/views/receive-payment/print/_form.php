@@ -78,11 +78,7 @@ in the amount of <?= $model->amount; ?> via <?= $paymentModel->paymentMethod->na
 
     <?php ActiveForm::end(); ?>
     <?php 
-        $url = Url::to(['print/receipt',  'PaymentForm[userId]' => $model->userId, 
-            'PaymentForm[invoiceCredits]' => $model->invoiceCredits, 'PaymentForm[paymentCredits]' => $model->paymentCredits,
-            'PaymentForm[invoicePayments]' => $model->invoicePayments, 'PaymentForm[lessonPayments]' => $model->lessonPayments, 
-            'PaymentForm[groupLessonPayments]' => $model->groupLessonPayments, 'PaymentForm[amount]' => $model->amount, 
-            'PaymentForm[paymentId]' => $model->paymentId]); 
+        $url = Url::to(['print/receipt']); 
     ?>
 
 <script>
