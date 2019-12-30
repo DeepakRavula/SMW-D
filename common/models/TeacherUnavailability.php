@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\components\validators\lesson\conflict\TeacherUnavailabilityValidator;
 use common\models\query\TeacherUnavailabilityQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -47,7 +48,9 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
             [['teacherId'], 'integer'],
             [['reason', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
             ['toDateTime', 'validateToDateTime'],
-            [['fromDateTime', 'toDateTime'], 'required']
+            [['fromDateTime', 'toDateTime'], 'required'],
+            [['fromDateTime'], TeacherUnavailabilityValidator::className()],
+            [['toDateTime'], TeacherUnavailabilityValidator::className()],
         ];
     }
 
