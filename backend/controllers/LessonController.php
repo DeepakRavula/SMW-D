@@ -36,6 +36,7 @@ use common\models\LessonConfirm;
 use common\models\LessonOwing;
 use common\models\UnscheduleLesson;
 use backend\models\search\LessonSearch1;
+use Carbon\Carbon;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -119,13 +120,27 @@ class LessonController extends BaseController
 
     public function actionIndexNew()
     {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $searchModel = new LessonSearch1();
         $request = Yii::$app->request;
         $dataProvider = $searchModel->search($request->queryParams);
         $dataProvider->pagination->pageSize = 200;
+        $lessonQuery = Lesson::find()
+        ->isConfirmed()
+        ->notDeleted()
+        ->location($locationId)
+        ->activePrivateLessons()
+        ->joinWith(['privateLesson'])
+        ->notCanceled();
+        $firstLesson = $lessonQuery->orderBy(['lesson.date' => SORT_ASC])->one();
+        $lastLesson = $lessonQuery->orderBy(['lesson.date' => SORT_DESC])->one();
+        $firstLessonDate = Carbon::parse($firstLesson->date)->format('M d, Y');
+        $lastLessonDate = Carbon::parse($lastLesson->date)->format('M d, Y');
         return $this->render('index-new', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'firstLessonDate' => $firstLessonDate,
+            'lastLessonDate' => $lastLessonDate
         ]);
     }
 

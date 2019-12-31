@@ -8,6 +8,7 @@ use kartik\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
+use Carbon\Carbon;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -30,7 +31,7 @@ use yii\widgets\Pjax;
     [
         'label' => 'Date',
         'attribute' => 'dateRange',
-        'filter' => '<div class="input-group drp-container">' . DateRangePicker::widget([
+        'filter' => DateRangePicker::widget([
             'model' => $searchModel,
             'convertFormat' => true,
             'initRangeExpr' => true,
@@ -42,6 +43,7 @@ use yii\widgets\Pjax;
             'pluginOptions' => [
                 'autoApply' => true,
                 'ranges' => [
+                    Yii::t('kvdrp', 'All') => ["moment('<?= $firstLessonDate ?>')", "moment('<?= $lastLessonDate ?>')"],
                     Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
                     Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
                     Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
@@ -52,7 +54,7 @@ use yii\widgets\Pjax;
                 ],
                 'opens' => 'right',
             ],
-        ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
+        ]) ,
         'value' => function ($data) {
             $date = Yii::$app->formatter->asDate($data->date);
             $lessonTime = (new \DateTime($data->date))->format('H:i:s');

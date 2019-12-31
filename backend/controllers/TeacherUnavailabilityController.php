@@ -96,16 +96,18 @@ class TeacherUnavailabilityController extends BaseController
         ]);
         $model->teacherId = $teacher->id;
         if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
             $model->fromDateTime = (new \DateTime($model->fromDateTime))->format('Y-m-d H:i:s');
             $model->toDateTime = (new \DateTime($model->toDateTime))->format('Y-m-d H:i:s');
             if ($model->save()) {
                 return [
                     'status' => true
                 ];
+            }
             } else {
                 return [
                     'status' => false,
-                    'errors' => $model->getErrors(),
+                    'errors' => ActiveForm::validate($model)
                 ];
             }
         } else {
@@ -116,15 +118,18 @@ class TeacherUnavailabilityController extends BaseController
         }
     }
 
-    public function actionValidate($id = null) {
+    public function actionValidate($id = null, $teacherId = null) {
         $model = new TeacherUnavailability();
         if(!empty($id)) {
             $model = TeacherUnavailability::findOne(['id' => $id]);
         } 
         $request = Yii::$app->request;
+        
         if ($model->load($request->post())) {
+            $model->teacherId = $teacherId;
             return  ActiveForm::validate($model);
         }
+        //return true;
     }
 
     /**

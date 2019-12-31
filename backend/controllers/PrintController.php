@@ -567,9 +567,8 @@ class PrintController extends BaseController
 
     public function actionReceipt()
     {
-        $model  = new PaymentForm();
-        $request = Yii::$app->request;
-        if ($model->load($request->get())) {
+        $model = Yii::$app->session->get('model');
+        if ($model) {
             $customer =  User::findOne(['id' => $model->userId]);
             $searchModel  =  new ProformaInvoiceSearch();
             $searchModel->showCheckBox = false;
