@@ -228,6 +228,12 @@ class Invoice extends \yii\db\ActiveRecord
                 ->viaTable('invoice_reverse', ['reversedInvoiceId' => 'id']);
     }
 
+    public function getReturnedInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'reversedInvoiceId'])
+                ->viaTable('invoice_reverse', ['invoiceId' => 'id']);
+    }
+
     public function getReverseInvoice()
     {
         return $this->hasOne(InvoiceReverse::className(), ['reversedInvoiceId' => 'id']);
