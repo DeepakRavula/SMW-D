@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use common\models\User;
 use backend\models\search\InvoiceSearch;
 use yii\widgets\Pjax;
+use common\models\Invoice;
+use common\models\InvoiceReverse;
 
 ?>
 <?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
@@ -34,6 +36,9 @@ use yii\widgets\Pjax;
     <?php endif; ?>
     <?php if (!empty($model->reversedInvoice)) : ?>
         <span class="return-invoice m-r-10"></span>
+    <?php endif; ?>
+    <?php if ($model->isCanceled): ?>
+            <?= Html::a('Returned '.$model->returnedInvoice->getInvoiceNumber(), ['invoice/view', 'id' => $model->returnedInvoice->id]); ?>
     <?php endif; ?>
 <?php endif; ?>
 <?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
