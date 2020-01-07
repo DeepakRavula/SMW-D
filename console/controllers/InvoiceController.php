@@ -52,7 +52,7 @@ class InvoiceController extends Controller
             }
         }
         foreach ($privateLessons as $lesson) {
-            if (!$lesson->hasInvoice()) {
+            if (!$lesson->hasInvoice() && $lesson->programRate > 0.0000) {
                 $lesson->createPrivateLessonInvoice();
             }
         }
