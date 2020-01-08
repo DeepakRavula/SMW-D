@@ -375,11 +375,33 @@ class PaymentController extends BaseController
         $searchModel->load(Yii::$app->request->get());
         $model->userId = $searchModel->userId;
         $payment->user_id = $searchModel->userId;
+        $model->load(Yii::$app->request->get());
+        if ($searchModel->isWalkin()) {
+            $lessonLineItemsDataProvider = new ArrayDataProvider([
+                'allModels' => [],
+                'pagination' => false
+            ]);
+            $groupLessonLineItemsDataProvider = new ArrayDataProvider([
+                'allModels' => [],
+                'pagination' => false
+            ]);
+            $invoicesQuery = Invoice::find()
+                            ->andWhere(['id' => $searchModel->invoiceId]);
+            $invoiceLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $invoicesQuery,
+                'pagination' => false 
+                ]);  
+            $creditDataProvider = new ArrayDataProvider([
+                'allModels' => [],
+                'pagination' => false
+            ]);      
+
+        } else {
         $groupLessonsQuery = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
         $groupLessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
         $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
-        $model->load(Yii::$app->request->get());
+        
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
             'pagination' => false
@@ -406,6 +428,7 @@ class PaymentController extends BaseController
             'pagination' => false 
         ]);
         $creditDataProvider = $payment->getAvailableCredit($searchModel->userId);
+        }
         if ($request->post()) {
             $model->load($request->post());
             $payment->load(Yii::$app->request->get());
