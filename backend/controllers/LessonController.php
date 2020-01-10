@@ -9,7 +9,7 @@ use common\models\Enrolment;
 use common\models\Course;
 use common\models\LessonReschedule;
 use yii\data\ActiveDataProvider;
-use backend\models\search\LessonSearch;
+use backend\models\search\LessonSearchOld;
 use yii\base\Model;
 use common\models\Location;
 use common\models\log\LogHistory;
@@ -35,7 +35,7 @@ use yii\helpers\ArrayHelper;
 use common\models\LessonConfirm;
 use common\models\LessonOwing;
 use common\models\UnscheduleLesson;
-use backend\models\search\LessonSearch1;
+use backend\models\search\LessonSearch;
 use Carbon\Carbon;
 
 /**
@@ -88,9 +88,9 @@ class LessonController extends BaseController
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndexOld()
     {
-        $searchModel = new LessonSearch();
+        $searchModel = new LessonSearchOld();
         $request = Yii::$app->request;
         $dataProvider = $searchModel->search($request->queryParams);
         $dataProvider->pagination->pageSize = 200;
@@ -118,10 +118,10 @@ class LessonController extends BaseController
         ]);
     }
 
-    public function actionIndexNew()
+    public function actionIndex()
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $searchModel = new LessonSearch1();
+        $searchModel = new LessonSearch();
         $request = Yii::$app->request;
         $dataProvider = $searchModel->search($request->queryParams);
         $dataProvider->pagination->pageSize = 200;

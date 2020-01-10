@@ -147,7 +147,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     'options' => ['id' => 'lesson-index-1'],
     'filterModel' => $searchModel,
     'summary' => "Showing {begin} - {end} of {totalCount} items",
-    'filterUrl' => Url::to(['lesson/index-new', 'LessonSearch1[type]' => true, 'LessonSearch1[showAll]' => $searchModel->showAll]),
+    'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
 
@@ -185,17 +185,17 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 
 <script>
       $(document).ready(function () {
-        $("input[name*='LessonSearch1[lessonStatus]").addClass('lesson-status');
-        var showAll = $('#lessonsearch1-showall').is(":checked");
+        $("input[name*='LessonSearch[lessonStatus]").addClass('lesson-status');
+        var showAll = $('#lessonsearch-showall').is(":checked");
         if (showAll == true) {
-        var student = $("input[name*='LessonSearch1[student]").val();
-        var program = $("input[name*='LessonSearch1[program]").val();
-        var teacher = $("input[name*='LessonSearch1[teacher]").val();
-        var dateRange = $("input[name*='LessonSearch1[dateRange]").val();
-        var lessonStatus = $("select[name*='LessonSearch1[lessonStatus]").val();
-        var params = $.param({'LessonSearch1[student]':student, 'LessonSearch1[program]':program, 'LessonSearch1[teacher]':teacher, 'LessonSearch1[dateRange]': dateRange, 'LessonSearch1[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch1[showAll]': (showAll | 0), 'LessonSearch1[lessonStatus]': lessonStatus });
-        var url = "<?=Url::to(['lesson/index-new']);?>?"+params;
-        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});
+        var student = $("input[name*='LessonSearch[student]").val();
+        var program = $("input[name*='LessonSearch[program]").val();
+        var teacher = $("input[name*='LessonSearch[teacher]").val();
+        var dateRange = $("input[name*='LessonSearch[dateRange]").val();
+        var lessonStatus = $("select[name*='LessonSearch[lessonStatus]").val();
+        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[lessonStatus]': lessonStatus });
+        var url = "<?=Url::to(['lesson/index']);?>?"+params;
+        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  
         bulkAction.setAction();
         }
     });
@@ -226,20 +226,20 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         return false;
     });
 
-    $(document).off('change', '#lessonsearch1-showall').on('change', '#lessonsearch1-showall', function(){
+    $(document).off('change', '#lessonsearch-showall').on('change', '#lessonsearch-showall', function(){
         var showAll = $(this).is(":checked");
-        var student = $("input[name*='LessonSearch1[student]").val();
-        var program = $("input[name*='LessonSearch1[program]").val();
-        var teacher = $("input[name*='LessonSearch1[teacher]").val();
-        var dateRange = $("input[name*='LessonSearch1[dateRange]").val();
-        var lessonStatus = $("select[name*='LessonSearch1[lessonStatus]").val();
-        var params = $.param({'LessonSearch1[student]':student, 'LessonSearch1[program]':program, 'LessonSearch1[teacher]':teacher, 'LessonSearch1[dateRange]': dateRange, 'LessonSearch1[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch1[showAll]': (showAll | 0), 'LessonSearch1[lessonStatus]': lessonStatus });
-        var url = "<?=Url::to(['lesson/index-new']);?>?"+params;
+        var student = $("input[name*='LessonSearch[student]").val();
+        var program = $("input[name*='LessonSearch[program]").val();
+        var teacher = $("input[name*='LessonSearch[teacher]").val();
+        var dateRange = $("input[name*='LessonSearch[dateRange]").val();
+        var lessonStatus = $("select[name*='LessonSearch[lessonStatus]").val();
+        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[lessonStatus]': lessonStatus });
+        var url = "<?=Url::to(['lesson/index']);?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });
 
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
-        var dateRange = $("#lessonsearch1-daterange").val();
+        var dateRange = $("#lessonsearch-daterange").val();
         if (!$.isEmptyObject(dateRange)) {
             $("#lessonsearch1-daterange").val('').trigger('change');
         }
@@ -252,7 +252,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         } else {
             var params = $.param({ ids: lessonIds });
             $.ajax({
-                url    : '<?=Url::to(['teacher-substitute1/index'])?>?' +params,
+                url    : '<?=Url::to(['teacher-substitute/index'])?>?' +params,
                 type   : 'get',
                 success: function(response)
                 {
@@ -337,7 +337,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                     if(result) {
                         $('.bootbox').modal('hide');
                         $.ajax({
-                            url    : '<?=Url::to(['private-lesson1/delete'])?>?' +params,
+                            url    : '<?=Url::to(['private-lesson/delete'])?>?' +params,
                             type   : 'post',
                             success: function(response)
                             {
