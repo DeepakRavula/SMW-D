@@ -39,6 +39,7 @@ use backend\models\search\LessonSearch1;
 use Carbon\Carbon;
 use common\components\queue\EnrolmentConfirm;
 use common\components\queue\LessonConfirm as QueueLessonConfirm;
+use common\components\queue\MakeLessonAsRoot;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -706,6 +707,10 @@ class LessonController extends BaseController
             foreach ($lessons as $lesson) {
                 $lesson->makeAsRoot();
             }
+            Yii::$app->queue->push(new MakeLessonAsRoot([
+                'userId' => Yii::$app->user->id,
+                'courseId' => $courseModel->id
+            ]));
         }
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;

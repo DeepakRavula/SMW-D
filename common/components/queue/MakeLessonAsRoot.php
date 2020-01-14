@@ -15,7 +15,7 @@ use yii\queue\RetryableJobInterface;
 /**
  * Class OderNotification.
  */
-class LessonConfirm extends BaseObject implements RetryableJobInterface
+class MakeLessonAsRoot extends BaseObject implements RetryableJobInterface
 {
     public $courseId;
     public $userId;
@@ -35,11 +35,8 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
         foreach ($lessons as $lesson) {
-            $lesson->isConfirmed = true;
-            $lesson->save();
-            $lesson->setDiscount();
+            $lesson->makeAsRoot();
         }
-        Lesson::triggerPusher();
         return true;
     }
     /**
