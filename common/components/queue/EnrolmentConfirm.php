@@ -40,6 +40,7 @@ class EnrolmentConfirm extends BaseObject implements RetryableJobInterface
         );
         $enrolmentModel->customer->updateCustomerBalance();
         $enrolmentModel->setDueDate();
+        $enrolmentModel->triggerPusher();
         return true;
     }
     /**

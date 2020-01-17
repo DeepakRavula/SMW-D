@@ -1227,4 +1227,19 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         return true;
     }
+
+    public function triggerPusher()
+    {
+        $options = [
+            'cluster' => env('PUSHER_CLUSTER'),
+            'encrypted' => true
+        ];
+        $pusher = new \Pusher\Pusher(
+            env('PUSHER_KEY'),
+            env('PUSHER_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+        return $pusher->trigger('enrolment', 'lesson-confirm', $this->id);
+    }
 }
