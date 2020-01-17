@@ -194,7 +194,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     'options' => ['id' => 'lesson-index-1'],
     'filterModel' => $searchModel,
     'summary' => "Showing {begin} - {end} of {totalCount} items",
-    'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
+    'filterUrl' => Url::to(['lesson/index-old', 'LessonSearchOld[type]' => true, 'LessonSearchOld[showAll]' => $searchModel->showAll]),
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
 
@@ -226,14 +226,14 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 
 <script>
     $(document).ready(function () {
-        var showAll = $('#lessonsearch-showall').is(":checked");
+        var showAll = $('#lessonsearchold-showall').is(":checked");
         if(showAll == true){
-        var student = $("input[name*='LessonSearch[student]").val();
-        var program = $("input[name*='LessonSearch[program]").val();
-        var teacher = $("input[name*='LessonSearch[teacher]").val();
-        var dateRange = $("input[name*='LessonSearch[dateRange]").val();
-        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
-        var url = "<?=Url::to(['lesson/index']);?>?"+params;
+        var student = $("input[name*='LessonSearchOld[student]").val();
+        var program = $("input[name*='LessonSearchOld[program]").val();
+        var teacher = $("input[name*='LessonSearchOld[teacher]").val();
+        var dateRange = $("input[name*='LessonSearchOld[dateRange]").val();
+        var params = $.param({'LessonSearchOld[student]':student, 'LessonSearchOld[program]':program, 'LessonSearchOld[teacher]':teacher, 'LessonSearchOld[dateRange]': dateRange, 'LessonSearchOld[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearchOld[showAll]': (showAll | 0), 'LessonSearchOld[status]': '' });
+        var url = "<?=Url::to(['lesson/index-old']);?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});
         bulkAction.setAction();
         }
@@ -246,7 +246,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         } else {
             var params = $.param({ ids: lessonIds });
             $.ajax({
-                url    : '<?=Url::to(['teacher-substitute/index'])?>?' +params,
+                url    : '<?=Url::to(['teacher-substitute1/index'])?>?' +params,
                 type   : 'get',
                 success: function(response)
                 {
@@ -402,21 +402,21 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         return false;
     });
 
-    $(document).off('change', '#lessonsearch-showall').on('change', '#lessonsearch-showall', function(){
+    $(document).off('change', '#lessonsearchold-showall').on('change', '#lessonsearchold-showall', function(){
         var showAll = $(this).is(":checked");
-        var student = $("input[name*='LessonSearch[student]").val();
-        var program = $("input[name*='LessonSearch[program]").val();
-        var teacher = $("input[name*='LessonSearch[teacher]").val();
-        var dateRange = $("input[name*='LessonSearch[dateRange]").val();
-        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
-        var url = "<?=Url::to(['lesson/index']);?>?"+params;
+        var student = $("input[name*='LessonSearchOld[student]").val();
+        var program = $("input[name*='LessonSearchOld[program]").val();
+        var teacher = $("input[name*='LessonSearchOld[teacher]").val();
+        var dateRange = $("input[name*='LessonSearchOld[dateRange]").val();
+        var params = $.param({'LessonSearchOld[student]':student, 'LessonSearchOld[program]':program, 'LessonSearchOld[teacher]':teacher, 'LessonSearchOld[dateRange]': dateRange, 'LessonSearchOld[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearchOld[showAll]': (showAll | 0), 'LessonSearchOld[status]': '' });
+        var url = "<?=Url::to(['lesson/index-old']);?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });
 
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
-        var dateRange = $("#lessonsearch-daterange").val();
+        var dateRange = $("#lessonsearchold-daterange").val();
         if (!$.isEmptyObject(dateRange)) {
-            $("#lessonsearch-daterange").val('').trigger('change');
+            $("#lessonsearchold-daterange").val('').trigger('change');
         }
     });
 

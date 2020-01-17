@@ -192,7 +192,7 @@ class TeacherSubstitute1Controller extends BaseController
         } else {
             $response = [
                 'status' => true,
-                'url' => Url::to(['/lesson/index-new', 'LessonSearch1[type]' => true, 'LessonSearch1[ids]' => $lessonIds])
+                'url' => Url::to(['/lesson/index-old', 'LessonSearchOld[type]' => true, 'LessonSearchOld[ids]' => $lessonIds])
             ];
         }
         return $response;
