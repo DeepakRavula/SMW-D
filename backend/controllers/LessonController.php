@@ -688,6 +688,7 @@ class LessonController extends BaseController
                 ->andWhere(['courseId' => $courseModel->id])
                 ->notConfirmed()
                 ->orderBy(['lesson.date' => SORT_ASC])
+                ->groupBy('lesson.id')
                 ->limit(12)
                 ->all();
         }
