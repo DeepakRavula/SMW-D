@@ -61,6 +61,12 @@ class LessonSearch extends Lesson
         return Model::scenarios();
     }
 
+    public function attributeLabels()
+    {
+        return [
+           'showAll' => 'Show Past Lessons'
+        ];
+    }
     /**
      * Creates data provider instance with search query applied.
      *
