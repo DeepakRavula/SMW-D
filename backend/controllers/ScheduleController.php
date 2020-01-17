@@ -171,7 +171,11 @@ class ScheduleController extends BaseController
         $query = User::find()
             ->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
                 $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
+            }])
+            ->joinWith(['userProfile' => function ($query) {
+                $query->orderBy(['user_profile.firstname' => SORT_ASC]);
             }]);
+            
         if ($showAll && empty($teacherId) && empty($programId)) {
             $availableUserQuery = User::find()
                 ->joinWith(['availabilities' => function ($query) use ($formatedDay) {
