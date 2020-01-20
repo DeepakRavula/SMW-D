@@ -33,11 +33,11 @@ $this->params['action-button'] = $this->render('_action-button', [
 </div>
 
 <?php $logContent = $this->render('log/index', [
-	'logDataProvider' => $logDataProvider,
+    'logDataProvider' => $logDataProvider,
 ]); ?>
 
 <div class='row'>
-    <div class= 'col-md-12'>
+    <div class='col-md-12'>
         <?php LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
             'boxTools' => false,
@@ -45,16 +45,16 @@ $this->params['action-button'] = $this->render('_action-button', [
             'withBorder' => true,
         ]) ?>
 
-    
-        <?php echo $this->render('_lessons', [
-                'model' => $model,
-                'lessonDataProvider' => $lessonDataProvider,
-                'lessonCount' => $lessonCount
-            ]);
- ?>
 
-        <div class="more-lesson pull-right" id = "admin-login" style = "display:none">
-            <a class = "see-more" href = "">Show More</a>
+        <?php echo $this->render('_lessons', [
+            'model' => $model,
+            'lessonDataProvider' => $lessonDataProvider,
+            'lessonCount' => $lessonCount
+        ]);
+        ?>
+
+        <div class="more-lesson pull-right" id="admin-login" style="display:none">
+            <a class="see-more" href="">Show More</a>
         </div>
 
         <?php LteBox::end() ?>
@@ -62,23 +62,40 @@ $this->params['action-button'] = $this->render('_action-button', [
 </div>
 
 <?php LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => false,
-	'title' => 'History',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'boxTools' => false,
+    'title' => 'History',
+    'withBorder' => true,
 ]) ?>
 
 <?= $this->render('log/index', [
-	'logDataProvider' => $logDataProvider,
+    'logDataProvider' => $logDataProvider,
 ]); ?>
 
 <?php LteBox::end() ?>
 
+<script src="https://js.pusher.com/4.2/pusher.min.js"></script>
 <script>
-    $(document).on('click', '.enrolment-delete', function () {
+    var pusher = new Pusher('<?= env('PUSHER_KEY') ?>', {
+        cluster: '<?= env('PUSHER_CLUSTER') ?>',
+        encrypted: true
+    });
+
+    var channel = pusher.subscribe('enrolment');
+    var enrolmentId = "<?= $model->id; ?>";
+    channel.bind('lesson-confirm', function(data) {
+        if (data == enrolmentId) {
+            $.pjax.reload({
+                container: "#enrolment-lesson-index",
+                timeout: 4000
+            });
+        }
+        return false;
+    });
+    $(document).on('click', '.enrolment-delete', function() {
         bootbox.confirm({
             message: "Are you sure you want to delete this enrolment?",
-            callback: function (result) {
+            callback: function(result) {
                 if (result) {
                     $('#enrolment-view-loader').show();
                     $('.bootbox').modal('hide');
@@ -86,8 +103,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                         url: '<?= Url::to(['enrolment/delete', 'id' => $model->id]); ?>',
                         dataType: "json",
                         data: $(this).serialize(),
-                        success: function (response)
-                        {
+                        success: function(response) {
                             $('#enrolment-view-loader').hide();
                             if (response.status) {
                                 window.location.href = response.url;
@@ -102,15 +118,13 @@ $this->params['action-button'] = $this->render('_action-button', [
         return false;
     });
 
-    $(document).on('click', '.enrolment-full-delete', function () {
+    $(document).on('click', '.enrolment-full-delete', function() {
         $.ajax({
             url: '<?= Url::to(['enrolment/full-delete', 'id' => $model->id]); ?>',
             type: 'get',
             dataType: "json",
-            success: function (response)
-            {
-                if (response.status)
-                {
+            success: function(response) {
+                if (response.status) {
                     $('#popup-modal').modal('show');
                     $('#modal-content').html(response.data);
                 }
@@ -119,46 +133,88 @@ $this->params['action-button'] = $this->render('_action-button', [
         return false;
     });
 
-    $(document).on('click', '.enrolment-edit', function () {
+    $(document).on('click', '.enrolment-edit', function() {
         $.ajax({
             url: '<?= Url::to(['enrolment/update', 'id' => $model->id]); ?>',
             type: 'get',
             dataType: "json",
-            success: function (response)
-            {
-                if (response.status)
-                {
+            success: function(response) {
+                if (response.status) {
                     $('#popup-modal').modal('show');
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Edit</h4>');
                     $('.modal-save').show();
                     $('.modal-save').text('Next');
                     $('#modal-content').html(response.data);
-                    $('#popup-modal .modal-dialog').css({'width': '500px'});
+                    $('#popup-modal .modal-dialog').css({
+                        'width': '500px'
+                    });
                 }
             }
         });
     });
 
     var paymentFrequency = {
-        onEditableSuccess: function () {
+        onEditableSuccess: function() {
             var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
-            $.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
+            $.pjax.reload({
+                url: url,
+                container: "#enrolment-view",
+                replace: false,
+                async: false,
+                timeout: 4000
+            });
             if ($('#enrolment-payment-frequency').length > 0) {
-            $.pjax.reload({url: url, container: "#enrolment-payment-frequency", replace: false, async: false, timeout: 4000});
+                $.pjax.reload({
+                    url: url,
+                    container: "#enrolment-payment-frequency",
+                    replace: false,
+                    async: false,
+                    timeout: 4000
+                });
             }
             if ($('#enrolment-pfi').length > 0) {
-            $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
+                $.pjax.reload({
+                    url: url,
+                    container: "#enrolment-pfi",
+                    replace: false,
+                    async: false,
+                    timeout: 4000
+                });
             }
-            $.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
-            $.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
-            $.pjax.reload({url: url, container: "#enrolment-lesson-index", replace: false, async: false, timeout: 4000});
+            $.pjax.reload({
+                url: url,
+                container: "#enrolment-log",
+                replace: false,
+                async: false,
+                timeout: 4000
+            });
+            $.pjax.reload({
+                url: url,
+                container: "#lesson-schedule",
+                replace: false,
+                async: false,
+                timeout: 4000
+            });
+            $.pjax.reload({
+                url: url,
+                container: "#enrolment-lesson-index",
+                replace: false,
+                async: false,
+                timeout: 4000
+            });
             if ($('#payment-cycle-listing').length > 0) {
-                $.pjax.reload({url: url, container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
+                $.pjax.reload({
+                    url: url,
+                    container: "#payment-cycle-listing",
+                    replace: false,
+                    async: false,
+                    timeout: 4000
+                });
             }
         }
     };
 
-    $(document).on('modal-success', function (event, params) {
+    $(document).on('modal-success', function(event, params) {
         if (params.url) {
             window.location.href = params.url;
         } else {
@@ -166,14 +222,14 @@ $this->params['action-button'] = $this->render('_action-button', [
         }
         return false;
     });
-    
-    $(document).ready(function () {
+
+    $(document).ready(function() {
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
             var private = <?= $model->course->program->isPrivate() | 0; ?>;
             if (private) {
                 $(".more-lesson").show();
-                var url = '<?= Url::to(['lesson/index', 'LessonSearch[studentId]' => $model->student->id, 'LessonSearch[programId]' => $model->program->id, 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON, 'LessonSearch[student]' => $model->student->fullName, 'LessonSearch[isSeeMore]'=> true]); ?>';
+                var url = '<?= Url::to(['lesson/index', 'LessonSearch[studentId]' => $model->student->id, 'LessonSearch[programId]' => $model->program->id, 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON, 'LessonSearch[student]' => $model->student->fullName, 'LessonSearch[isSeeMore]' => true]); ?>';
                 $('.see-more').attr("href", url);
             }
         } else {
