@@ -12,6 +12,7 @@ use common\models\discount\LessonDiscount;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\data\ArrayDataProvider;
 use Carbon\Carbon;
+
 /**
  * This is the model class for table "enrolment".
  *
@@ -23,7 +24,7 @@ use Carbon\Carbon;
 class Enrolment extends \yii\db\ActiveRecord
 {
     use Invoiceable;
-    
+
     public $studentIds;
     public $endDate;
     public $toEmailAddress;
@@ -34,7 +35,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public $enrolmentCount;
     public $userName;
     public $applyFullDiscount;
-    
+
     const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const AUTO_RENEWAL_STATE_ENABLED = 'enabled';
     const AUTO_RENEWAL_STATE_DISABLED = 'disabled';
@@ -79,8 +80,8 @@ class Enrolment extends \yii\db\ActiveRecord
                 'updatedByAttribute' => 'updatedByUserId'
             ],
             'audittrail' => [
-                'class' => AuditTrailBehavior::className(), 
-                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'class' => AuditTrailBehavior::className(),
+                'consoleUserId' => self::CONSOLE_USER_ID,
                 'attributeOutput' => [
                     'last_checked' => 'datetime',
                 ],
@@ -96,9 +97,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
-            [['paymentFrequencyId', 'isDeleted', 'isConfirmed', 'createdAt',
-                'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt', 'createdByUserId', 
-                'updatedByUserId', 'endDateTime'], 'safe'],
+            [[
+                'paymentFrequencyId', 'isDeleted', 'isConfirmed', 'createdAt',
+                'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt', 'createdByUserId',
+                'updatedByUserId', 'endDateTime'
+            ], 'safe'],
             ['courseId', 'validateOnEdit', 'on' => self::SCENARIO_EDIT],
             ['endDateTime', 'validateOnAdjustment', 'on' => self::SCENARIO_GROUP_ENROLMENT_ENDDATE_ADJUSTMENT]
         ];
@@ -145,7 +148,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getCourseSchedule()
     {
         return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
-            ->orderBy(['course_schedule.id' => SORT_DESC])    
+            ->orderBy(['course_schedule.id' => SORT_DESC])
             ->via('course');
     }
     public function getPaymentsFrequency()
@@ -206,10 +209,10 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         if ($this->course->program->isGroup()) {
             $enrolment = Enrolment::findOne($this->id);
-            if(Carbon::parse($this->endDateTime) > Carbon::parse($enrolment->endDateTime)) {
+            if (Carbon::parse($this->endDateTime) > Carbon::parse($enrolment->endDateTime)) {
                 $this->addError($attribute, "You can't extend group enrolments");
+            }
         }
-    }
     }
 
     public function getCustomer()
@@ -270,42 +273,42 @@ class Enrolment extends \yii\db\ActiveRecord
             ->orderBy(['payment_cycle.startDate' => SORT_ASC])
             ->onCondition(['payment_cycle.isDeleted' => false]);
     }
-    
+
     public function getCourseProgramRate()
     {
         return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'courseId']);
     }
-    
+
     public function getCourseProgramRates()
     {
         return $this->hasMany(CourseProgramRate::className(), ['courseId' => 'courseId']);
     }
-    
+
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])
             ->viaTable('course', ['id' => 'courseId']);
     }
-    
+
     public function hasProFormaInvoice()
     {
         return !empty($this->proFormaInvoice);
     }
-    
+
     public function getPrivateLessonProFormaInvoices()
     {
         return $this->hasMany(Invoice::className(), ['id' => 'invoice_id'])
             ->via('privateLessonLineItems')
             ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
     }
-    
+
     public function getPaymentCycleLessons()
     {
         return $this->hasMany(PaymentCycleLesson::className(), ['lessonId' => 'id'])
             ->via('lessons')
             ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
-    
+
     public function getLineItemPaymentCycleLessons()
     {
         return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id'])
@@ -330,24 +333,24 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return !empty($this->getInvoice($lessonId));
     }
-    
+
     public function canDeleted()
     {
         $completedLessons = Lesson::find()
             ->notDeleted()
             ->joinWith(['course' => function ($query) {
-                $query->joinWith(['enrolment' =>function ($query) {
+                $query->joinWith(['enrolment' => function ($query) {
                     $query->andWhere(['enrolment.id' => $this->id]);
                 }])
-                ->notDeleted()
-                ->confirmed();
+                    ->notDeleted()
+                    ->confirmed();
             }])
             ->isConfirmed()
             ->andWhere(['<=', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
             ->exists();
         return empty($completedLessons) ? true : false;
     }
-    
+
     public function getInvoice($lessonId)
     {
         $enrolmentId = $this->id;
@@ -362,16 +365,20 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
             ->via('invoiceItemsEnrolment')
-            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_GROUP_LESSON,
-                'invoice_line_item.isDeleted' => false]);
+            ->onCondition([
+                'invoice_line_item.item_type_id' => ItemType::TYPE_GROUP_LESSON,
+                'invoice_line_item.isDeleted' => false
+            ]);
     }
-    
+
     public function getPrivateLessonLineItems()
     {
         return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
             ->via('lineItemPaymentCycleLessons')
-            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
-                'invoice_line_item.isDeleted' => false]);
+            ->onCondition([
+                'invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
+                'invoice_line_item.isDeleted' => false
+            ]);
     }
 
     public function getInvoiceItemsEnrolment()
@@ -384,7 +391,8 @@ class Enrolment extends \yii\db\ActiveRecord
         $currentPaymentCycle = PaymentCycle::find()
             ->andWhere(['enrolmentId' => $this->id])
             ->notDeleted()
-            ->andWhere(['AND',
+            ->andWhere([
+                'AND',
                 ['<=', 'startDate', (new \DateTime($date))->format('Y-m-d')],
                 ['>=', 'endDate', (new \DateTime($date))->format('Y-m-d')]
             ])
@@ -410,33 +418,45 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getLessons()
     {
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
-                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
-                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
-                        Lesson::STATUS_UNSCHEDULED]]);
+            ->onCondition([
+                'lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                'lesson.status' => [
+                    Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                    Lesson::STATUS_UNSCHEDULED
+                ]
+            ]);
     }
 
     public function getLessonsByDate()
     {
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
-                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
-                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
-                        Lesson::STATUS_UNSCHEDULED]])
-                ->orderBy(['lesson.date' => SORT_ASC]);
+            ->onCondition([
+                'lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                'lesson.status' => [
+                    Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                    Lesson::STATUS_UNSCHEDULED
+                ]
+            ])
+            ->orderBy(['lesson.date' => SORT_ASC]);
     }
 
     public function getLastLesson()
     {
         return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
-                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
-                        Lesson::STATUS_UNSCHEDULED]])
-                ->orderBy(['lesson.date' => SORT_DESC]);
+            ->onCondition([
+                'lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                'lesson.status' => [
+                    Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                    Lesson::STATUS_UNSCHEDULED
+                ]
+            ])
+            ->orderBy(['lesson.date' => SORT_DESC]);
     }
 
     public function getFirstPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-                ->orderBy(['startDate' => SORT_ASC]);
+            ->orderBy(['startDate' => SORT_ASC]);
     }
 
     public function getFirstUnInvoicedProFormaPaymentCycle()
@@ -453,11 +473,11 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getCourseCount()
     {
         return Lesson::find()
-                ->isConfirmed()
-                ->notDeleted()
-                ->notCanceled()
-                ->andWhere(['courseId' => $this->courseId])
-                ->count('id');
+            ->isConfirmed()
+            ->notDeleted()
+            ->notCanceled()
+            ->andWhere(['courseId' => $this->courseId])
+            ->count('id');
     }
 
     public function getFirstUnPaidPaymentCycle()
@@ -497,7 +517,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
         return $models;
     }
-    
+
     public function getUnPaidPaymentCycles()
     {
         $models = [];
@@ -512,37 +532,37 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function getGroupDiscountValue()
     {
-        return $this->groupDiscount ? $this->groupDiscount->discountType == EnrolmentDiscount::VALUE_TYPE_DOLLAR ? '$' . $this->groupDiscount->discount : 
+        return $this->groupDiscount ? $this->groupDiscount->discountType == EnrolmentDiscount::VALUE_TYPE_DOLLAR ? '$' . $this->groupDiscount->discount :
             $this->groupDiscount->discount . '%' : 'Not set';
     }
 
     public function getlastPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-                ->orderBy(['endDate' => SORT_DESC])
-                ->onCondition(['payment_cycle.isDeleted' => false]);
+            ->orderBy(['endDate' => SORT_DESC])
+            ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function isMonthlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::LENGTH_MONTHLY;
+        return (int) $this->paymentFrequency === (int) PaymentFrequency::LENGTH_MONTHLY;
     }
 
     public function isQuaterlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::LENGTH_QUARTERLY;
+        return (int) $this->paymentFrequency === (int) PaymentFrequency::LENGTH_QUARTERLY;
     }
 
     public function isHalfYearlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::LENGTH_HALFYEARLY;
+        return (int) $this->paymentFrequency === (int) PaymentFrequency::LENGTH_HALFYEARLY;
     }
 
     public function isAnnualPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
+        return (int) $this->paymentFrequency === (int) PaymentFrequency::LENGTH_FULL;
     }
-    
+
     public function isExpiring($daysCount)
     {
         $isExpiring = false;
@@ -577,16 +597,17 @@ class Enrolment extends \yii\db\ActiveRecord
             }
             if ($this->isExtra() || $this->course->program->isGroup()) {
                 $this->isAutoRenew = false;
-            } 
-            
+            }
         }
         return parent::beforeSave($insert);
     }
-    
+
     public function afterSave($insert, $changedAttributes)
     {
-        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate))
-            || (!$insert) || $this->isExtra()) {
+        if (
+            $this->course->program->isGroup() || (!empty($this->rescheduleBeginDate))
+            || (!$insert) || $this->isExtra()
+        ) {
             return parent::afterSave($insert, $changedAttributes);
         }
         $interval = new \DateInterval('P1D');
@@ -594,11 +615,11 @@ class Enrolment extends \yii\db\ActiveRecord
         $end = new \DateTime($this->course->endDate);
         $lessonsCount   =   $this->course->lessonsCount;
         $period = new \DatePeriod($start, $interval, $end);
-        $this->generateLessonsByCount($start,$lessonsCount);
+        $this->generateLessonsByCount($start, $lessonsCount);
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function generateLessonsByCount($startDate,$lessonsCount,$isConfirmed = null)
+    public function generateLessonsByCount($startDate, $lessonsCount, $isConfirmed = null)
     {
         if (!$isConfirmed) {
             $isConfirmed = false;
@@ -607,9 +628,9 @@ class Enrolment extends \yii\db\ActiveRecord
         $dayList = Course::getWeekdaysList();
         $weekday = $dayList[$startDate->format('N')];
         for ($x = 1; $x <= $lessonsCount; $x++) {
-           $lastLessonDate = $day->format('Y-m-d H:i:s');
-           $this->course->createLesson($day, $isConfirmed);  
-           $day = $day->add(new DateInterval('P7D'));
+            $lastLessonDate = $day->format('Y-m-d H:i:s');
+            $this->course->createLesson($day, $isConfirmed);
+            $day = $day->add(new DateInterval('P7D'));
             if ($this->course->isProfessionalDevelopmentDay($day)) {
                 $day = $day->add(new DateInterval('P7D'));
             }
@@ -636,33 +657,25 @@ class Enrolment extends \yii\db\ActiveRecord
         return true;
     }
 
-    public static function getPaymentFrequencies()
-    {
-        return [
-            self::STATUS_COMPLETED => Yii::t('common', 'Completed'),
-            self::STATUS_SCHEDULED => Yii::t('common', 'Scheduled'),
-        ];
-    }
-    
     public function getPaymentFrequency()
     {
         $paymentFrequency = null;
         switch ($this->paymentFrequencyId) {
             case PaymentFrequency::LENGTH_FULL:
                 $paymentFrequency = 'Annually';
-            break;
+                break;
             case PaymentFrequency::LENGTH_HALFYEARLY:
                 $paymentFrequency = 'Semi-Annually';
-            break;
+                break;
             case PaymentFrequency::LENGTH_QUARTERLY:
                 $paymentFrequency = 'Quarterly';
-            break;
+                break;
             case PaymentFrequency::LENGTH_MONTHLY:
                 $paymentFrequency = 'Monthly';
-            break;
+                break;
             case PaymentFrequency::LENGTH_EVERY_TWO_MONTH:
                 $paymentFrequency = 'Bi-Monthly';
-            break;
+                break;
             case PaymentFrequency::LENGTH_EVERY_FOUR_MONTH:
                 $paymentFrequency = 'Every Four Month';
                 break;
@@ -687,7 +700,7 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         return $paymentFrequency;
     }
-    
+
 
     public function deleteUnPaidPaymentCycles()
     {
@@ -725,7 +738,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->andWhere(['enrolmentId' => $this->id])
                 ->andWhere(['between', 'startDate', $startDate, $priorDate])
                 ->all();
-                
+
             foreach ($paymentCycles as $paymentCycle) {
                 $startDate = new \DateTime($paymentCycle->startDate);
                 $endDate = new \DateTime($paymentCycle->endDate);
@@ -744,7 +757,7 @@ class Enrolment extends \yii\db\ActiveRecord
             ->notCanceled()
             ->andWhere(['courseId' => $this->course->id])
             ->all();
-        
+
         foreach ($lessons as $lesson) {
             if ($lesson->hasPaymentRequest()) {
                 $lesson->paymentRequest->delete();
@@ -755,6 +768,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetPaymentCycle()
     {
+        $endDate = new \DateTime();
         if ($this->firstUnpaidPaymentCycle) {
             $startDate = new \DateTime($this->firstUnpaidPaymentCycle->startDate);
             $enrolmentLastPaymentCycleEndDate = new \DateTime($this->course->endDate);
@@ -769,7 +783,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $paymentCycle->enrolmentId = $this->id;
                 $paymentCycle->startDate   = $startDate->format('Y-m-d');
                 $endDate = $startDate->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
-            
+
                 $paymentCycle->id          = null;
                 $paymentCycle->isNewRecord = true;
                 $paymentCycle->endDate     = $endDate->format('Y-m-d');
@@ -791,7 +805,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function setPaymentCycle($startDate)
     {
         if (!$this->hasPaymentCycles()) {
-        if ((new \DateTime($startDate))->format('Y-m-1') > (new \DateTime($this->course->startDate))->format('Y-m-1')) {
+            if ((new \DateTime($startDate))->format('Y-m-1') > (new \DateTime($this->course->startDate))->format('Y-m-1')) {
                 $paymentCycle              = new PaymentCycle();
                 $paymentCycle->enrolmentId = $this->id;
                 $paymentCycle->startDate   = (new \DateTime($this->course->startDate))->format('Y-m-1');
@@ -800,8 +814,8 @@ class Enrolment extends \yii\db\ActiveRecord
                 $endDate = (new \DateTime($startDate))->format('Y-m-1');
                 $paymentCycle->endDate     =  (new \DateTime($endDate))->modify('Last day of last month')->format('Y-m-d');
                 $paymentCycle->save();
-        }
-       
+            }
+
             $enrolmentStartDate      = new \DateTime($startDate);
             $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
             for ($i = 0; $i <= (int) 24 / $this->paymentsFrequency->frequencyLength; $i++) {
@@ -833,12 +847,12 @@ class Enrolment extends \yii\db\ActiveRecord
             ->isConfirmed()
             ->notCanceled()
             ->all();
-        foreach ($lessons as $lesson){
+        foreach ($lessons as $lesson) {
             if ($lesson->paymentCycle) {
-            $firstLessonDate = $lesson->paymentCycle->firstLesson->getOriginalDate(); 
-            $dueDate = carbon::parse($firstLessonDate)->modify('first day of previous month');
-            $dueDate = carbon::parse($dueDate)->modify('+ 14 day')->format('Y-m-d');
-            $lesson->updateAttributes(['dueDate' => $dueDate]); 
+                $firstLessonDate = $lesson->paymentCycle->firstLesson->getOriginalDate();
+                $dueDate = carbon::parse($firstLessonDate)->modify('first day of previous month');
+                $dueDate = carbon::parse($dueDate)->modify('+ 14 day')->format('Y-m-d');
+                $lesson->updateAttributes(['dueDate' => $dueDate]);
             }
         }
         return true;
@@ -847,10 +861,10 @@ class Enrolment extends \yii\db\ActiveRecord
     public function hasExplodedLesson()
     {
         $lessonSplits = Lesson::find()
-                    ->split()
-                    ->unscheduled()
-                    ->enrolment($this->id)
-                    ->all();
+            ->split()
+            ->unscheduled()
+            ->enrolment($this->id)
+            ->all();
 
         return !empty($lessonSplits);
     }
@@ -862,11 +876,11 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function getEnrolmentAmount()
     {
-       $programRate = $this->course->courseProgramRate->programRate;
-       $duration = $this->course->getDuration();
-       $totalAmount = $programRate * $duration * $this->paymentFrequencyId * 4;
-    return $totalAmount;
-}
+        $programRate = $this->course->courseProgramRate->programRate;
+        $duration = $this->course->getDuration();
+        $totalAmount = $programRate * $duration * $this->paymentFrequencyId * 4;
+        return $totalAmount;
+    }
 
     public function setStatus()
     {
@@ -926,7 +940,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->paymentsFrequency->frequencyLength == 1 ? 'pays every month'
             : 'pays every ' . $this->paymentsFrequency->frequencyLength . 'month';
     }
-    
+
     public function getPayment()
     {
         if (!$this->isExtra()) {
@@ -949,7 +963,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getCustomerRecurringPaymentEnrolment()
     {
         return $this->hasOne(CustomerRecurringPaymentEnrolment::className(), ['enrolmentId' => 'id'])
-                ->onCondition(['customer_recurring_payment_enrolment.isDeleted' => false]);
+            ->onCondition(['customer_recurring_payment_enrolment.isDeleted' => false]);
     }
 
 
@@ -973,7 +987,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $period = new \DatePeriod($start, $interval, $end);
         $this->generateLessons($period, true);
         $extendedLessons = Lesson::find()->andWhere(['courseId' => $this->course->id])->between($start, $end)->all();
-        foreach($extendedLessons as $extendedLesson) {
+        foreach ($extendedLessons as $extendedLesson) {
             $extendedLesson->setDiscount();
             $extendedLesson->makeAsRoot();
         }
@@ -1001,7 +1015,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->notCompleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->joinWith(['privateLesson' => function($query) {
+                ->joinWith(['privateLesson' => function ($query) {
                     $query->andWhere(['>', 'private_lesson.balance', 0]);
                 }])
                 ->all();
@@ -1091,8 +1105,8 @@ class Enrolment extends \yii\db\ActiveRecord
                 'action' => 'will be modified',
                 'date_range' => 'within ' . $dateRange,
                 'class' => $classes[$i]
-            ]; 
-        }   
+            ];
+        }
         return new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
@@ -1118,9 +1132,9 @@ class Enrolment extends \yii\db\ActiveRecord
     public function deleteWithTransactionalData()
     {
         $lessons = Lesson::find()
-                ->andWhere(['courseId' => $this->courseId])
-                ->isConfirmed()
-                ->all();
+            ->andWhere(['courseId' => $this->courseId])
+            ->isConfirmed()
+            ->all();
         foreach ($this->paymentCycles as $paymentCycle) {
             if ($paymentCycle->hasProformaInvoice()) {
                 $pfi = $paymentCycle->proFormaInvoice;
@@ -1212,5 +1226,20 @@ class Enrolment extends \yii\db\ActiveRecord
             $autoRenewalPaymentCycle->save();
         }
         return true;
+    }
+
+    public function triggerPusher()
+    {
+        $options = [
+            'cluster' => env('PUSHER_CLUSTER'),
+            'encrypted' => true
+        ];
+        $pusher = new \Pusher\Pusher(
+            env('PUSHER_KEY'),
+            env('PUSHER_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+        return $pusher->trigger('enrolment', 'lesson-confirm', $this->id);
     }
 }

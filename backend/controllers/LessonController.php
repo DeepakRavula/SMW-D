@@ -37,6 +37,9 @@ use common\models\LessonOwing;
 use common\models\UnscheduleLesson;
 use backend\models\search\LessonSearch;
 use Carbon\Carbon;
+use common\components\queue\EnrolmentConfirm;
+use common\components\queue\LessonConfirm as QueueLessonConfirm;
+use common\components\queue\MakeLessonAsRoot;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -54,33 +57,36 @@ class LessonController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify-classroom', 'merge', 'update-field',
+                'only' => [
+                    'modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
-                    'payment', 'substitute','update','unschedule', 'credit-transfer',
+                    'payment', 'substitute', 'update', 'unschedule', 'credit-transfer',
                     'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict', 'edit-due-date',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
-                   'application/json' => Response::FORMAT_JSON,
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
                         'actions' => [
-                            'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
-							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
-							'fetch-conflict', 'confirm', 'invoice', 'modify-classroom',
+                            'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price', ' edit-tax',
+                            'fetch-duration', 'edit-classroom', 'update', 'update-field', 'review',
+                            'fetch-conflict', 'confirm', 'invoice', 'modify-classroom',
                             'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index', 'edit-due-date', 'index-new',
                             'index-old'
                         ],
-                        'roles' => ['managePrivateLessons', 
-							'manageGroupLessons'],
+                        'roles' => [
+                            'managePrivateLessons',
+                            'manageGroupLessons'
+                        ],
                     ],
                 ],
-            ],  
+            ],
         ];
     }
 
@@ -104,12 +110,12 @@ class LessonController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $lessonOwingList = LessonOwing::find()->all();
-        foreach($lessonOwingList as $lessonOwing) {
+        foreach ($lessonOwingList as $lessonOwing) {
             $lessonOwingIds[] = $lessonOwing->lessonId;
         }
         $lessons = Lesson::find()
-                ->location($locationId)
-                ->andWhere(['lesson.id' => $lessonOwingIds]); 
+            ->location($locationId)
+            ->andWhere(['lesson.id' => $lessonOwingIds]);
         $dataProvider = new ActiveDataProvider([
             'query' => $lessons,
             'pagination' => false,
@@ -127,12 +133,12 @@ class LessonController extends BaseController
         $dataProvider = $searchModel->search($request->queryParams);
         $dataProvider->pagination->pageSize = 200;
         $lessonQuery = Lesson::find()
-        ->isConfirmed()
-        ->notDeleted()
-        ->location($locationId)
-        ->activePrivateLessons()
-        ->joinWith(['privateLesson'])
-        ->notCanceled();
+            ->isConfirmed()
+            ->notDeleted()
+            ->location($locationId)
+            ->activePrivateLessons()
+            ->joinWith(['privateLesson'])
+            ->notCanceled();
         $firstLesson = $lessonQuery->orderBy(['lesson.date' => SORT_ASC])->one();
         $lastLesson = $lessonQuery->orderBy(['lesson.date' => SORT_DESC])->one();
         $firstLessonDate = Carbon::parse($firstLesson->date)->format('M d, Y');
@@ -158,8 +164,8 @@ class LessonController extends BaseController
         $model = $this->findModel($id);
         $enrolment = Enrolment::findOne(['courseId' => $model->courseId]);
         $notes = Note::find()
-                ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
-                ->orderBy(['createdOn' => SORT_DESC]);
+            ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
+            ->orderBy(['createdOn' => SORT_DESC]);
 
         $noteDataProvider = new ActiveDataProvider([
             'query' => $notes,
@@ -175,11 +181,11 @@ class LessonController extends BaseController
                     $query->joinWith(['lessons' => function ($query) use ($id) {
                         $query->andWhere(['lesson.id' => $id]);
                     }])
-                    ->confirmed()
-                    ->notDeleted();
+                        ->confirmed()
+                        ->notDeleted();
                 }])
-                ->notDeleted()
-                ->isConfirmed();
+                    ->notDeleted()
+                    ->isConfirmed();
             }])
             ->location($locationId);
 
@@ -189,14 +195,14 @@ class LessonController extends BaseController
         $payments = LessonPayment::find()
             ->joinWith(['payment' => function ($query) {
                 $query->notDeleted();
-        }])
-        ->andWhere(['lesson_payment.lessonId' => $id])
-        ->notDeleted();
+            }])
+            ->andWhere(['lesson_payment.lessonId' => $id])
+            ->notDeleted();
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments
         ]);
         $logDataProvider = new ActiveDataProvider([
-            'query' => LogHistory::find()->lesson($id) 
+            'query' => LogHistory::find()->lesson($id)
         ]);
 
         return $this->render('view', [
@@ -225,7 +231,7 @@ class LessonController extends BaseController
             }
         }
     }
-    
+
     public function actionFetchDuration($id)
     {
         $model = $this->findModel($id);
@@ -248,13 +254,13 @@ class LessonController extends BaseController
             'model' => $model,
         ]);
         if ($request->post()) {
-            if($model->load($request->post()) && $model->save()) {
+            if ($model->load($request->post()) && $model->save()) {
                 Lesson::triggerPusher();
                 return [
                     'status' => true
                 ];
             } else {
-            return [
+                return [
                     'status' => false,
                     'errors' => ActiveForm::validate($model),
                 ];
@@ -271,12 +277,12 @@ class LessonController extends BaseController
     {
         $model = $this->findModel($id);
         $oldDate = $model->date;
-        $model->date =Yii::$app->formatter->asDateTime($model->date);
-        $user = User::findOne(['id'=>Yii::$app->user->id]);
+        $model->date = Yii::$app->formatter->asDateTime($model->date);
+        $user = User::findOne(['id' => Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
         $model->on(
             Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-                [new LessonReschedule(), 'reschedule'],
+            [new LessonReschedule(), 'reschedule'],
             ['oldAttrtibutes' => $model->getOldAttributes()]
         );
         $data = $this->renderAjax('_form', [
@@ -409,7 +415,7 @@ class LessonController extends BaseController
     {
         foreach ($conflictedLessons as $conflictedLesson) {
             $conflictedLesson->duration = $lesson->duration;
-            if (! empty($lesson->date)) {
+            if (!empty($lesson->date)) {
                 $day = (new \DateTime($lesson->date))->format('N');
                 $lessonDay = (new \DateTime($conflictedLesson->date))->format('N');
                 $time = (new \DateTime($lesson->date))->format('H:i:s');
@@ -429,7 +435,7 @@ class LessonController extends BaseController
             } else {
                 $conflictedLesson->status = Lesson::STATUS_UNSCHEDULED;
             }
-            if (! $conflictedLesson->save()) {
+            if (!$conflictedLesson->save()) {
                 Yii::error('Resolve lesson conflict: ' . \yii\helpers\VarDumper::dumpAsString($conflictedLesson->getErrors()));
             }
         }
@@ -485,16 +491,16 @@ class LessonController extends BaseController
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
             if ($model->rescheduleBeginDate) {
-                $oldLessons = Lesson::find()	
-                    ->andWhere(['courseId' => $courseModel->id])	
-                    ->notDeleted()	
-                    ->isConfirmed()	
-                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])	
-                    ->orderBy(['lesson.date' => SORT_ASC])	
-                    ->all();	
-            $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {	
-                return $element->id;	
-            });
+                $oldLessons = Lesson::find()
+                    ->andWhere(['courseId' => $courseModel->id])
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
+                    ->orderBy(['lesson.date' => SORT_ASC])
+                    ->all();
+                $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
+                    return $element->id;
+                });
                 $oldLessonsRe = Lesson::find()
                     ->andWhere(['courseId' => $courseModel->id])
                     ->notDeleted()
@@ -588,7 +594,7 @@ class LessonController extends BaseController
             'lessonCount' => $lessonCount,
             'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
             'unscheduledLessonCount' => $unscheduledLessonCount,
-            'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider, 
+            'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
             'rescheduledLessonDataProvider' => $rescheduledLessonDataProvider,
             'newTeacherId' => $model->isBulkTeacherChange ? $newTeacherId : null,
         ]);
@@ -658,8 +664,6 @@ class LessonController extends BaseController
 
     public function actionConfirm()
     {
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
         $model = new LessonConfirm();
         $request = Yii::$app->request;
         $model->load($request->get());
@@ -685,10 +689,12 @@ class LessonController extends BaseController
                 ->andWhere(['courseId' => $courseModel->id])
                 ->notConfirmed()
                 ->orderBy(['lesson.date' => SORT_ASC])
+                ->groupBy('lesson.id')
+                ->limit(12)
                 ->all();
         }
         $lesson = end($lessons);
-        
+
         if ($model->rescheduleBeginDate && $model->rescheduleEndDate) {
             $model->confirmBulkReschedule();
         }
@@ -703,19 +709,29 @@ class LessonController extends BaseController
             foreach ($lessons as $lesson) {
                 $lesson->makeAsRoot();
             }
+            Yii::$app->queue->push(new MakeLessonAsRoot([
+                'userId' => Yii::$app->user->id,
+                'courseId' => $courseModel->id
+            ]));
         }
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
             $lesson->setDiscount();
         }
-        Lesson::triggerPusher();
+        Yii::$app->queue->push(new QueueLessonConfirm([
+            'userId' => Yii::$app->user->id,
+            'courseId' => $courseModel->id
+        ]));
         if (!$model->rescheduleBeginDate && !$model->changesFrom && $courseModel->isPrivate()) {
-            $model->confirmEnrolment();
+            Yii::$app->queue->push(new EnrolmentConfirm([
+                'userId' => Yii::$app->user->id,
+                'enrolmentId' => $courseModel->enrolment->id
+            ]));
         }
         if (!$model->courseId) {
             $message = "Future lesson's teacher have been changed successfully";
-            foreach ($model->enrolmentIds as $enrolmentId){
+            foreach ($model->enrolmentIds as $enrolmentId) {
                 $enrolment = Enrolment::findOne($enrolmentId);
                 $enrolment->course->updateDates();
             }
@@ -723,7 +739,7 @@ class LessonController extends BaseController
         } else if ($courseModel->program->isPrivate()) {
             if ($model->rescheduleBeginDate) {
                 $message = 'Future lessons have been changed successfully';
-                $link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
+                $link     = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
             } else {
                 $model->confirmCustomer();
                 return $this->redirect(['/enrolment/view', 'id' => $courseModel->enrolment->id]);
@@ -738,17 +754,7 @@ class LessonController extends BaseController
         ]);
         return $link;
     }
-    
-    public function getRescheduleLessonType($courseModel, $endDate)
-    {
-        $courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
-        $type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;
-        if ($courseEndDate !== $endDate) {
-            $type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;
-        }
-        return $type;
-    }
-    
+
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
@@ -798,10 +804,10 @@ class LessonController extends BaseController
         $payments = LessonPayment::find()
             ->joinWith(['payment' => function ($query) {
                 $query->notDeleted();
-        }])
-        ->andWhere(['lesson_payment.lessonId' => $lessonId, 'lesson_payment.enrolmentId' => $enrolmentId])
-        ->notDeleted();
-       
+            }])
+            ->andWhere(['lesson_payment.lessonId' => $lessonId, 'lesson_payment.enrolmentId' => $enrolmentId])
+            ->notDeleted();
+
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
@@ -842,7 +848,7 @@ class LessonController extends BaseController
             Lesson::triggerPusher();
             return [
                 'status' => true,
-                'message'=>'Lesson unscheduled successfully',
+                'message' => 'Lesson unscheduled successfully',
             ];
         } else {
             return [
@@ -856,19 +862,19 @@ class LessonController extends BaseController
     {
         $request = Yii::$app->request;
         $model = $this->findModel($id);
-       
+
         $data = $this->renderAjax('_edit-due-date', [
             'model' => $model,
         ]);
         if ($request->post()) {
-            if($model->load($request->post())) {
+            if ($model->load($request->post())) {
                 $model->dueDate = (new \DateTime($model->dueDate))->format('Y-m-d');
                 $model->save();
                 return [
                     'status' => true
                 ];
             } else {
-            return [
+                return [
                     'status' => false,
                     'errors' => ActiveForm::validate($model),
                 ];
@@ -897,7 +903,7 @@ class LessonController extends BaseController
             ];
         }
     }
-    
+
     public function actionEditPrice($id)
     {
         $request = Yii::$app->request;
@@ -938,11 +944,11 @@ class LessonController extends BaseController
                 $response = [
                     'status' => true
                 ];
-            } 
+            }
         } else {
             $data = $this->renderAjax('_tax-form', [
                 'model' => $model
-            ]);    
+            ]);
             $response = [
                 'status' => empty(current(ActiveForm::validate($model))),
                 'data' => $data,

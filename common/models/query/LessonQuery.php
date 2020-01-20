@@ -8,6 +8,7 @@ use common\models\Invoice;
 use common\behaviors\ClosureTableQuery;
 use common\models\InvoiceItemPaymentCycleLesson;
 use Carbon\Carbon;
+
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
  *
@@ -16,7 +17,7 @@ use Carbon\Carbon;
 class LessonQuery extends \yii\db\ActiveQuery
 {
     public $type;
-    
+
     public function behaviors()
     {
         return [
@@ -55,45 +56,40 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function notDeleted()
     {
-        $this->andWhere(['lesson.isDeleted' => false]);
-
-        return $this;
+        return $this->andWhere(['lesson.isDeleted' => false]);
     }
 
     public function deleted()
     {
         return $this->andWhere(['lesson.isDeleted' => true]);
     }
-    
+
     public function notConfirmed()
     {
         return $this->andWhere(['lesson.isConfirmed' => false]);
     }
-    
+
     public function studentEnrolment($locationId, $studentId)
     {
-        $this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
+        return $this->joinWith(['course' => function ($query) use ($locationId, $studentId) {
             $query->joinWith(['enrolments' => function ($query) use ($studentId) {
                 $query->andWhere(['enrolment.studentId' => $studentId])
-                                ->isConfirmed()
-                                ->notDeleted();
+                    ->isConfirmed()
+                    ->notDeleted();
             }])
-            ->andWhere(['course.locationId' => $locationId])
-            ->notDeleted();
+                ->andWhere(['course.locationId' => $locationId])
+                ->notDeleted();
         }]);
-        return $this;
     }
 
     public function location($locationId)
     {
-        $this->joinWith(['course' => function ($query) use ($locationId) {
+        return $this->joinWith(['course' => function ($query) use ($locationId) {
             $query->andFilterWhere(['course.locationId' => $locationId])
                 ->notDeleted();
         }]);
-
-        return $this;
     }
-    
+
     public function split()
     {
         return $this->andWhere(['lesson.isExploded' => true]);
@@ -103,16 +99,16 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson.isExploded' => true])
             ->joinWith(['lessonSplitUsage' => function ($query) {
-            $query->andFilterWhere(['lesson_split_usage.id' => null]);
-        }]);
+                $query->andFilterWhere(['lesson_split_usage.id' => null]);
+            }]);
     }
 
     public function mergedSplit()
     {
         return $this->andWhere(['lesson.isExploded' => true])
             ->joinWith(['lessonSplitUsage' => function ($query) {
-            $query->andWhere(['NOT', ['lesson_split_usage.id' => null]]);
-        }]);
+                $query->andWhere(['NOT', ['lesson_split_usage.id' => null]]);
+            }]);
     }
 
     public function unscheduled()
@@ -131,7 +127,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_RESCHEDULED]]);
     }
-    
+
     public function student($id)
     {
         return $this->joinWith(['enrolments' => function ($query) use ($id) {
@@ -151,11 +147,11 @@ class LessonQuery extends \yii\db\ActiveQuery
             $query->andWhere(['NOT', ['enrolment.id' => null]]);
         }]);
     }
-    
+
     public function invoicableLessons()
     {
         return $this->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_CANCELED]])
-                ->isConfirmed();
+            ->isConfirmed();
     }
 
     public function unInvoiced()
@@ -165,7 +161,7 @@ class LessonQuery extends \yii\db\ActiveQuery
                 $query->joinWith(['invoice' => function ($query) {
                     $query->andWhere(['OR', ['invoice.id' => null], ['invoice.isDeleted' => true], ['invoice.isVoid' => true]]);
                 }])
-                ->andWhere(['OR', ['invoice_line_item.id' => null], ['invoice_line_item.isDeleted' => true]]);
+                    ->andWhere(['OR', ['invoice_line_item.id' => null], ['invoice_line_item.isDeleted' => true]]);
             }]);
         }]);
     }
@@ -182,12 +178,10 @@ class LessonQuery extends \yii\db\ActiveQuery
             ->notDeleted()
             ->privateLessons()
             ->invoiced();
-        $query = Lesson::find()
+        return Lesson::find()
             ->from(['completed_lesson' => $completedLessons])
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'completed_lesson.id = invoiced_lesson.id')
             ->andWhere(['invoiced_lesson.id' => null]);
-
-        return $query;
     }
 
     public function invoiced()
@@ -197,7 +191,7 @@ class LessonQuery extends \yii\db\ActiveQuery
                 $query->joinWith(['invoice' => function ($query) {
                     $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE]);
                 }])
-                ->andWhere(['invoice_line_item.isDeleted' => false]);
+                    ->andWhere(['invoice_line_item.isDeleted' => false]);
             }]);
         }]);
     }
@@ -213,13 +207,11 @@ class LessonQuery extends \yii\db\ActiveQuery
             )
             ->andWhere(['iipcl2.paymentCycleLessonId' => null]);
 
-        $this->joinWith('paymentCycleLesson')
+        return $this->joinWith('paymentCycleLesson')
             ->leftJoin(['iipcl' => $iipcl], 'iipcl.paymentCycleLessonId = payment_cycle_lesson.id')
             ->join('LEFT JOIN', 'invoice_line_item', 'invoice_line_item.id = iipcl.invoiceLineItemId')
             ->join('LEFT JOIN', 'invoice', 'invoice.id = invoice_line_item.invoice_id')
             ->andWhere(['OR', ['invoice.id' => null], ['invoice.isDeleted' => true]]);
-
-        return $this;
     }
 
     public function program($programId)
@@ -228,50 +220,44 @@ class LessonQuery extends \yii\db\ActiveQuery
             $query->joinWith(['program' => function ($query) use ($programId) {
                 $query->andWhere(['program.id' => $programId]);
             }])
-            ->notDeleted();
+                ->notDeleted();
         }]);
     }
 
     public function privateLessons()
     {
-        $this->joinWith(['course' => function ($query) {
+        return $this->joinWith(['course' => function ($query) {
             $query->joinWith(['program' => function ($query) {
                 $query->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
             }])
-            ->notDeleted();
+                ->notDeleted();
         }]);
-
-        return $this;
     }
 
     public function activePrivateLessons()
     {
-        $this->joinWith(['course' => function ($query) {
+        return $this->joinWith(['course' => function ($query) {
             $query->joinWith(['program' => function ($query) {
                 $query->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
             }])
-            ->notDeleted();
+                ->notDeleted();
         }]);
-
-        return $this;
     }
 
     public function groupLessons()
     {
-        $this->joinWith(['course' => function ($query) {
+        return $this->joinWith(['course' => function ($query) {
             $query->joinWith(['program' => function ($query) {
                 $query->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
             }])
-            ->notDeleted();
+                ->notDeleted();
         }]);
-
-        return $this;
     }
 
     public function completed()
     {
         return $this->scheduledOrRescheduled()
-                ->andWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
+            ->andWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
     }
 
     public function statusScheduled()
@@ -281,19 +267,15 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function scheduled()
     {
-        $this->andFilterWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
-             ->statusScheduled();
-
-        return $this;
+        return $this->andFilterWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+            ->statusScheduled();
     }
 
     public function canceled()
     {
-        $this->andFilterWhere(['lesson.status' => Lesson::STATUS_CANCELED]);
-
-        return $this;
+        return $this->andFilterWhere(['lesson.status' => Lesson::STATUS_CANCELED]);
     }
-    
+
     public function notCanceled()
     {
         return $this->andFilterWhere(['NOT', ['lesson.status' => Lesson::STATUS_CANCELED]]);
@@ -321,19 +303,17 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function studentLessons($locationId, $studentId)
     {
-        $this->studentEnrolment($locationId, $studentId)
+        return $this->studentEnrolment($locationId, $studentId)
             ->scheduledOrRescheduled()
             ->notDeleted();
-        return $this;
     }
 
     public function teacherLessons($locationId, $teacherId)
     {
-        $this->scheduledOrRescheduled()
+        return $this->scheduledOrRescheduled()
             ->andWhere(['lesson.teacherId' => $teacherId])
             ->location($locationId)
             ->notDeleted();
-        return $this;
     }
 
     public function isConfirmed()
@@ -348,13 +328,12 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function enrolled()
     {
-        $this->joinWith(['course' => function ($query) {
+        return $this->joinWith(['course' => function ($query) {
             $query->joinWith(['enrolment' => function ($query) {
                 $query->isConfirmed();
             }])
-            ->notDeleted();
+                ->notDeleted();
         }]);
-        return $this;
     }
 
     public function enrolment($enrolmentId)
@@ -363,66 +342,67 @@ class LessonQuery extends \yii\db\ActiveQuery
             $query->joinWith(['enrolments' => function ($query) use ($enrolmentId) {
                 $query->andWhere(['enrolment.id' => $enrolmentId]);
             }])
-            ->notDeleted();
+                ->notDeleted();
         }]);
     }
 
     public function overlap($date, $fromTime, $toTime)
     {
-        $this->andWhere(['DATE(date)' => $date])
-        ->andWhere(['OR',
+        return $this->andWhere(['DATE(date)' => $date])
+            ->andWhere([
+                'OR',
+                [
+                    'between', 'TIME(lesson.date)', $fromTime, $toTime
+                ],
+                [
+                    'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
+                ],
+                [
+                    'AND',
                     [
-                        'between', 'TIME(lesson.date)', $fromTime, $toTime
+                        '<', 'TIME(lesson.date)', $fromTime
                     ],
                     [
-                        'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
-                    ],
-                    [
-                        'AND',
-                        [
-                                '<', 'TIME(lesson.date)', $fromTime
-                        ],
-                        [
-                                '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
-                        ]
-
+                        '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
                     ]
+
+                ]
             ]);
-        return $this;
     }
 
     public function backToBackOverlap($date, $fromTime, $toTime)
     {
         return $this->andWhere(['DATE(date)' => $date])
-        ->andWhere(['OR',
+            ->andWhere([
+                'OR',
+                [
+                    'between', 'TIME(lesson.date)', $fromTime, $toTime
+                ],
+                [
+                    'between', 'ADDTIME(TIME(lesson.date),lesson.duration)', $fromTime, $toTime
+                ],
+                [
+                    'AND',
                     [
-                        'between', 'TIME(lesson.date)', $fromTime, $toTime
+                        '<', 'TIME(lesson.date)', $fromTime
                     ],
                     [
-                        'between', 'ADDTIME(TIME(lesson.date),lesson.duration)', $fromTime, $toTime
-                    ],
-                    [
-                        'AND',
-                            [
-                                '<', 'TIME(lesson.date)', $fromTime
-                            ],
-                            [
-                                '>', 'ADDTIME(TIME(lesson.date),lesson.duration)', $toTime
-                            ]
+                        '>', 'ADDTIME(TIME(lesson.date),lesson.duration)', $toTime
                     ]
+                ]
             ]);
     }
-    
+
     public function regular()
     {
         return $this->andWhere(['lesson.type' => Lesson::TYPE_REGULAR]);
     }
-    
+
     public function extra()
     {
         return $this->andWhere(['lesson.type' => Lesson::TYPE_EXTRA]);
     }
-    
+
     public function present()
     {
         return $this->andWhere(['lesson.isPresent' => true]);
@@ -432,19 +412,19 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson.isPresent' => false]);
     }
-     
+
     public function paymentCycleLessonExcluded()
     {
         return $this->joinWith(['paymentCycleLesson' => function ($query) {
             $query->andWhere(['payment_cycle_lesson.id' => null]);
         }]);
     }
-    
+
     public function rescheduled()
     {
         return $this->andWhere(['lesson.status' => Lesson::STATUS_RESCHEDULED]);
     }
-    
+
     public function scheduledOrRescheduled()
     {
         return $this->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]]);
@@ -454,7 +434,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]]);
     }
-    
+
     public function date($date)
     {
         return $this->andWhere(['DATE(lesson.date)' => $date]);
@@ -470,7 +450,7 @@ class LessonQuery extends \yii\db\ActiveQuery
             }]);
         }]);
     }
-    
+
     public function notExpired()
     {
         return $this->joinWith(['privateLesson' => function ($query) {
@@ -481,15 +461,17 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function notCompleted()
     {
         return $this->scheduledOrRescheduled()
-                ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
+            ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
     }
 
-    public function teacherAvailability($fromTime, $toTime) {
+    public function teacherAvailability($fromTime, $toTime)
+    {
         return $this->andWhere(['between', 'TIME(lesson.date)', $fromTime, $toTime]);
     }
 
-    public function teacherAvailabilityDay($day) {
-        return $this->andWhere(['=', 'WEEKDAY(lesson.date)', $day-1]);
+    public function teacherAvailabilityDay($day)
+    {
+        return $this->andWhere(['=', 'WEEKDAY(lesson.date)', $day - 1]);
     }
 
     public function exploded()

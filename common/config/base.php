@@ -1,14 +1,22 @@
 <?php
 $config = [
     'name' => 'Arcadia Academy of Music',
-    'vendorPath' => dirname(dirname(__DIR__)).'/vendor',
-    'extensions' => require(__DIR__.'/../../vendor/yiisoft/extensions.php'),
-    'bootstrap' => ['log', 'rollbar'],
+    'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
+    'extensions' => require(__DIR__ . '/../../vendor/yiisoft/extensions.php'),
+    'bootstrap' => ['log', 'rollbar', 'queue'],
     'timeZone' => 'US/Eastern',
     'sourceLanguage' => 'en-US',
     'language' => 'en-US',
     'components' => [
-        
+
+        'queue' => [
+            'class' => \yii\queue\db\Queue::class,
+            'db' => 'db', // DB connection component or its config 
+            'tableName' => '{{%queue}}', // Table name
+            'channel' => 'default', // Queue channel key
+            'mutex' => \yii\mutex\MysqlMutex::class, // Mutex used to sync queries
+        ],
+
         'authManager' => [
             'class' => 'common\components\rbac\DbManager',
             'itemTable' => '{{%rbac_auth_item}}',
@@ -44,8 +52,8 @@ $config = [
             'timeZone' => 'US/Eastern',
             'defaultTimeZone' => 'US/Eastern',
             'numberFormatterOptions' => [
- 			//    NumberFormatter::MIN_FRACTION_DIGITS => 2,
-			//    NumberFormatter::MAX_FRACTION_DIGITS => 2,
+                //    NumberFormatter::MIN_FRACTION_DIGITS => 2,
+                //    NumberFormatter::MAX_FRACTION_DIGITS => 2,
             ]
         ],
 
@@ -67,9 +75,9 @@ $config = [
                 'port' => env('SMTP_PORT'),
                 'encryption' => env('SMTP_ENCRYPTION'),
             ],
-	    'as catchAllEmail' => [
-           'class' => '\common\behaviors\CatchAllEmailBehavior',
-       ],
+            'as catchAllEmail' => [
+                'class' => '\common\behaviors\CatchAllEmailBehavior',
+            ],
         ],
 
         'db' => [
@@ -170,7 +178,7 @@ $config = [
             ],
             require(Yii::getAlias('@storage/config/_urlManager.php'))
         ),
-         'rollbar' => [
+        'rollbar' => [
             'class' => 'baibaratsky\yii\rollbar\Rollbar',
             'accessToken' => env('ROLLBAR_POST_SERVER_ITEM'),
         ],
@@ -190,7 +198,7 @@ $config = [
         'definitions' => [
             'yii\widgets\LinkPager' => [
                 'firstPageLabel' => 'First',
-                'lastPageLabel'  => 'Last', 
+                'lastPageLabel'  => 'Last',
             ]
         ]
     ]

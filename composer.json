@@ -106,7 +106,8 @@
     "friendsofphp/php-cs-fixer": "^2.10",
     "pusher/pusher-php-server": "^3.0",
     "asinfotrack/yii2-audittrail": "^0.8.3",
-    "kartik-v/yii2-field-range": "*"
+    "kartik-v/yii2-field-range": "*",
+    "yiisoft/yii2-queue": "^2.3"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "*",
