@@ -26,10 +26,6 @@ class m200122_151203_fix_customer_spano_payment_details extends Migration
         $lessonPayment = LessonPayment::find()->andWhere(['id' => 363474])->one();
         $lessonPayment->updateAttributes(['lessonId' => $lesson->id]);
         $lesson->creditTransfer($lesson->invoice);
-
-        $cancelledLessons = Lesson::find()
-                            ->all();
-
     }
 
     /**
