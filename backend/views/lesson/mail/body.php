@@ -17,7 +17,7 @@ use common\models\Lesson;
     <tr>
         <?php endif;?>
     <?php if ($model->hasSubstituteByTeacher()) : ?>
-        <?php $teacher = $model->getOriginalTeacher()  ; ?>
+        <?php $teacher = $model->rootLesson->teacher->publicIdentity; ?>
     <tr>
         <td>Original Teacher</td>
         <td><?= $teacher ?></td>

@@ -1024,7 +1024,7 @@ class Lesson extends \yii\db\ActiveRecord
     }
 
     public function hasSubstituteByTeacher() {
-	    if (!empty($this->rootLesson && !$this->bulkRescheduleLesson)) {
+	    if (!empty($this->rootLesson)) {
 	        return  $this->rootLesson->teacherId !== $this->teacherId;
 	    }
 	    return false;
@@ -1690,18 +1690,6 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasMany(LessonDiscount::className(), ['lessonId' => 'id']);
     }   
-    public function getOriginalDate() 
-    {
-        $ancestors = Lesson::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_DESC])->all(); 
-        $ancestors[] = $this;
-        $lessonDate = $this->rootLesson ? $this->rootLesson->date : $this->date ;
-        foreach ($ancestors as $ancestor) {
-            if ($ancestor->bulkRescheduleLesson) {
-                $lessonDate = $ancestor->date;
-            }
-        }
-        return $lessonDate;
-    }
 
     public function getOriginalTeacher() 
     {
