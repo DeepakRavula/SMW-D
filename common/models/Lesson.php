@@ -1691,17 +1691,17 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(LessonDiscount::className(), ['lessonId' => 'id']);
     }   
 
-    public function getOriginalTeacher() 
+    public function getOriginalDate() 
     {
         $ancestors = Lesson::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_DESC])->all(); 
         $ancestors[] = $this;
-        $lessonTeacher = $this->rootLesson ? $this->rootLesson->teacher->publicIdentity : $this->teacher->publicIdentity ;
+        $lessonDate = $this->rootLesson ? $this->rootLesson->date : $this->date ;
         foreach ($ancestors as $ancestor) {
             if ($ancestor->bulkRescheduleLesson) {
-                $lessonTeacher = $ancestor->teacher->publicIdentity;
+                $lessonDate = $ancestor->date;
             }
         }
-        return $lessonTeacher;
+        return $lessonDate;
     }
 
     public function calcLessonPrice() 
