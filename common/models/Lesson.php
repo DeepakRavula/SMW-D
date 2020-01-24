@@ -1690,6 +1690,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasMany(LessonDiscount::className(), ['lessonId' => 'id']);
     }   
+
     public function getOriginalDate() 
     {
         $ancestors = Lesson::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_DESC])->all(); 
@@ -1702,6 +1703,7 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return $lessonDate;
     }
+
     public function calcLessonPrice() 
     {
        $course = Course::findOne($this->course->id);

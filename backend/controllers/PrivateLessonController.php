@@ -474,6 +474,7 @@ class PrivateLessonController extends BaseController
                     $newLesson = clone $oldLesson;
                     $newLesson->isNewRecord = true;
                     $newLesson->id = null;
+                    $newLesson->status = Lesson::STATUS_SCHEDULED;
                     $newLesson->date = $lessonDate->format('Y-m-d H:i:s');
                     $newLesson->save();
                     $oldLesson->cancel();
