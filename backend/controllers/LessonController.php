@@ -705,7 +705,7 @@ class LessonController extends BaseController
                 }
             }
         }
-        if (!$model->rescheduleBeginDate) {
+        if (!$model->rescheduleBeginDate && !$model->enrolmentIds) {
             foreach ($lessons as $lesson) {
                 $lesson->makeAsRoot();
             }
@@ -713,16 +713,18 @@ class LessonController extends BaseController
                 'userId' => Yii::$app->user->id,
                 'courseId' => $courseModel->id
             ]));
-        }
+        }   
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
             $lesson->setDiscount();
         }
-        Yii::$app->queue->push(new QueueLessonConfirm([
-            'userId' => Yii::$app->user->id,
-            'courseId' => $courseModel->id
-        ]));
+        if (!$model->enrolmentIds) {
+            Yii::$app->queue->push(new QueueLessonConfirm([
+                'userId' => Yii::$app->user->id,
+                'courseId' => $courseModel->id
+            ]));
+        }
         if (!$model->rescheduleBeginDate && !$model->changesFrom && $courseModel->isPrivate()) {
             Yii::$app->queue->push(new EnrolmentConfirm([
                 'userId' => Yii::$app->user->id,
