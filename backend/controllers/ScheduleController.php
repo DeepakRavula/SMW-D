@@ -24,6 +24,7 @@ use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
 use backend\models\search\ScheduleSearch;
 use common\models\CustomerRecurringPayment;
+use common\models\Payment;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -71,7 +72,37 @@ class ScheduleController extends BaseController
      */
     public function actionIndex()
     {
-        
+        // $lessonIds = [1060891,1060892];
+        // $doubtedLessons = Lesson::find()->andWhere(['IN', 'id', $lessonIds])->all();
+        // foreach ($doubtedLessons as $doubtedLesson) {
+        //    print_r("\n".$doubtedLesson->getCreditAppliedAmount($doubtedLesson->enrolment->id));
+        // }
+        // die('coming');
+        $courseIds = [3291,8723,3292,5808];
+        $lessons = Lesson::find()
+        ->notDeleted()
+        ->privateLessons()
+        ->isConfirmed()
+        ->andWhere(['IN', 'courseId', $courseIds])
+        ->all();
+        $totalAmountPaid = 0;
+        //print_r($lessons);die('coming');
+        foreach ($lessons as $lesson) {
+            if ($lesson->isCanceled()) {
+                //print_r("\n Root Lesson".$lesson->id."Child Lesson".$lesson->leaf->id."IsDeleted: ".$lesson->leaf->isDeleted."lesson Status: ".$lesson->leaf->status);
+            } else {
+                $lessonPaid = !empty($lesson->getCreditAppliedAmount($lesson->enrolment->id)) ? $lesson->getCreditAppliedAmount($lesson->enrolment->id) : 0; 
+                $totalAmountPaid = $totalAmountPaid + $lessonPaid;
+                if ($lesson->invoice) {
+                    print_r("\n".$lesson->id." IsDeleted: ".$lesson->isDeleted." lesson Status: ".$lesson->status." course: ".$lesson->course->id." amount: (".$lesson->invoice->getInvoiceNumber()));
+
+                } else {
+            print_r("\n".$lesson->id." IsDeleted: ".$lesson->isDeleted." lesson Status: ".$lesson->status." course: ".$lesson->course->id." amount: ".Yii::$app->formatter->asCurrency(round($lesson->privateLesson->total, 2))." Paid: ".Yii::$app->formatter->asCurrency(round($lessonPaid, 2)));
+            }
+        }
+        }
+        print_r("\n Total Amount Paid: ".$totalAmountPaid);
+        die('coming');
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $currentDate = Carbon::now();
         $searchModel = new ScheduleSearch();
