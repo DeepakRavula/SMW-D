@@ -705,14 +705,16 @@ class LessonController extends BaseController
                 }
             }
         }
-        if (!$model->rescheduleBeginDate && !$model->enrolmentIds) {
+        if (!$model->rescheduleBeginDate) {
             foreach ($lessons as $lesson) {
                 $lesson->makeAsRoot();
             }
-            Yii::$app->queue->push(new MakeLessonAsRoot([
-                'userId' => Yii::$app->user->id,
-                'courseId' => $courseModel->id
-            ]));
+            if (!$model->enrolmentIds) {
+                Yii::$app->queue->push(new MakeLessonAsRoot([
+                    'userId' => Yii::$app->user->id,
+                    'courseId' => $courseModel->id
+                ]));
+            }
         }   
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
