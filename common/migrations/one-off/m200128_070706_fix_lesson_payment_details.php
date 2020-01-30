@@ -40,11 +40,11 @@ class m200128_070706_fix_lesson_payment_details extends Migration
            $lessonPayment->isDeleted =  false;
            $lessonPayment->save();
         }
-        print_r('Invoice Payments');
-        foreach ($invoicePayments as $invoicePayment) {
-            $invoicePayment->isDeleted =  false;
-            $invoicePayment->save();
-        }
+        // print_r('Invoice Payments');
+        // foreach ($invoicePayments as $invoicePayment) {
+        //     $invoicePayment->isDeleted =  false;
+        //     $invoicePayment->save();
+        // }
 
         $lessonPayment = LessonPayment::findOne(56998);
         $lessonPayment->lessonId = 1097171;
@@ -56,6 +56,8 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         ->isConfirmed()
         ->andWhere(['IN', 'courseId', $courseIds])
         ->all();
+        $payment->isDeleted = false;
+        $payment->save();
         $totalAmountPaid = 0;
         //print_r($lessons);die('coming');
         // print_r("\nlesson id | Student     | Lesson Date  | invoice     | Paid with  |");
@@ -64,8 +66,7 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         foreach ($lessons as $lesson) {
             $lesson->save();
         }
-        $payment->isDeleted = false;
-        $payment->save();
+       
     }
 
     /**
