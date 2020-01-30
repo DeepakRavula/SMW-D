@@ -1,6 +1,9 @@
 <?php
 
+use common\models\InvoicePayment;
 use common\models\Lesson;
+use common\models\LessonPayment;
+use common\models\Payment;
 use yii\db\Migration;
 use common\models\User;
 
@@ -25,20 +28,44 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         set_time_limit(0);
         ini_set('memory_limit', '-1');
 
-        $cancelledLessons = Lesson::find()
-                            ->canceled()
-                            ->joinWith(['lessonPayment' => function ($query) {
-                                $query->andWhere(['lesson_payment.isDeleted' => false]);
-                            }])
-                            ->isConfirmed()
-                            ->notDeleted()
+        $payment = Payment::findOne(66142);
+        $lessonPayments = LessonPayment::find()
+                            ->andWhere(['paymentId' => $payment->id])
                             ->all();
-        foreach ($cancelledLessons as $cancelledLesson) {
-            print_r("\n".$cancelledLesson->id."  location:".$cancelledLesson->course->location->name);
+        $invoicePayments = InvoicePayment::find()
+                            ->andWhere(['payment_id' => $payment->id])
+                            ->all();
+        print_r('Lesson Payments');
+        foreach ($lessonPayments as $lessonPayment) {
+           $lessonPayment->isDeleted =  false;
+           $lessonPayment->save();
+        }
+        print_r('Invoice Payments');
+        foreach ($invoicePayments as $invoicePayment) {
+            $invoicePayment->isDeleted =  false;
+            $invoicePayment->save();
         }
 
-
-        die('coming');
+        $lessonPayment = LessonPayment::findOne(56998);
+        $lessonPayment->lessonId = 1097171;
+        $lessonPayment->save();
+        $courseIds = [3291,8723,3292,5808];
+        $lessons = Lesson::find()
+        ->notDeleted()
+        ->privateLessons()
+        ->isConfirmed()
+        ->andWhere(['IN', 'courseId', $courseIds])
+        ->all();
+        $totalAmountPaid = 0;
+        //print_r($lessons);die('coming');
+        // print_r("\nlesson id | Student     | Lesson Date  | invoice     | Paid with  |");
+        // print_r("\n----------|-------------|---------------|------------|------------|");
+        // die('coming');
+        foreach ($lessons as $lesson) {
+            $lesson->save();
+        }
+        $payment->isDeleted = false;
+        $payment->save();
     }
 
     /**
