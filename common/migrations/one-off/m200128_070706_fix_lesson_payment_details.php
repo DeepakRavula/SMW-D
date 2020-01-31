@@ -60,6 +60,8 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         foreach ($lessons as $lesson) {
             $lesson->save();
         }
+        $lastLesson = end($lessons);
+        $lastLesson->customer->updateCustomerBalance();
     }
 
     /**
