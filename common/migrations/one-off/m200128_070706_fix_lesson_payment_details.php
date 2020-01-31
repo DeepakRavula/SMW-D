@@ -27,10 +27,11 @@ class m200128_070706_fix_lesson_payment_details extends Migration
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-
+        $cancelledLessonIds = [707248,707252];
         $payment = Payment::findOne(66142);
         $lessonPayments = LessonPayment::find()
                             ->andWhere(['paymentId' => $payment->id])
+                            ->andWhere(['NOT IN', 'lessonId', $cancelledLessonIds])
                             ->all();
         $invoicePayments = InvoicePayment::find()
                             ->andWhere(['payment_id' => $payment->id])
@@ -40,11 +41,11 @@ class m200128_070706_fix_lesson_payment_details extends Migration
            $lessonPayment->isDeleted =  false;
            $lessonPayment->save();
         }
-        // print_r('Invoice Payments');
-        // foreach ($invoicePayments as $invoicePayment) {
-        //     $invoicePayment->isDeleted =  false;
-        //     $invoicePayment->save();
-        // }
+        print_r('Invoice Payments');
+        foreach ($invoicePayments as $invoicePayment) {
+            $invoicePayment->isDeleted =  false;
+            $invoicePayment->save();
+        }
 
         $lessonPayment = LessonPayment::findOne(56998);
         $lessonPayment->lessonId = 1097171;
