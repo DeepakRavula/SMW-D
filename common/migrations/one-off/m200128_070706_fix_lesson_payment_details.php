@@ -36,12 +36,10 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         $invoicePayments = InvoicePayment::find()
                             ->andWhere(['payment_id' => $payment->id])
                             ->all();
-        print_r('Lesson Payments');
         foreach ($lessonPayments as $lessonPayment) {
            $lessonPayment->isDeleted =  false;
            $lessonPayment->save();
         }
-        print_r('Invoice Payments');
         foreach ($invoicePayments as $invoicePayment) {
             $invoicePayment->isDeleted =  false;
             $invoicePayment->save();
@@ -59,15 +57,9 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         ->all();
         $payment->isDeleted = false;
         $payment->save();
-        $totalAmountPaid = 0;
-        //print_r($lessons);die('coming');
-        // print_r("\nlesson id | Student     | Lesson Date  | invoice     | Paid with  |");
-        // print_r("\n----------|-------------|---------------|------------|------------|");
-        // die('coming');
         foreach ($lessons as $lesson) {
             $lesson->save();
         }
-       
     }
 
     /**
