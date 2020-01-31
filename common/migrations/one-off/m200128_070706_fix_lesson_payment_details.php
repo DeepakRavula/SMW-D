@@ -43,8 +43,13 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         foreach ($invoicePayments as $invoicePayment) {
             $invoicePayment->isDeleted =  false;
             $invoicePayment->save();
+            print_r($invoicePayment->id);
         }
-
+        $invoicePaymentTwo = InvoicePayment::findOne(187709);
+        $invoicePaymentTwo->isDeleted = false;
+        $invoicePaymentTwo->save();
+        $invoicePayment->payment->isDeleted = false;
+        $invoicePayment->payment->save();
         $lessonPayment = LessonPayment::findOne(56998);
         $lessonPayment->lessonId = 1097171;
         $lessonPayment->save();
