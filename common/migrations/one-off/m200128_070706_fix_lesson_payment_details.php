@@ -44,18 +44,15 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         foreach ($invoicePayments as $invoicePayment) {
             $invoicePayment->isDeleted =  false;
             $invoicePayment->save();
-            print_r($invoicePayment->id);
         }
       
         $paymentTwo = Payment::findOne(362816);
-        $nextInvoicePayments = InvoicePayment::find()
-        ->andWhere(['payment_id' => $paymentTwo->id])
-        ->all();
-        foreach ($nextInvoicePayments as $nextInvoicePayment) {
-            $nextInvoicePayment->isDeleted =  false;
-            $nextInvoicePayment->save();
-            print_r($nextInvoicePayment->id);
-        }
+        $invoice_payment = InvoicePayment::findOne(['187711']);
+        $invoice_payment->isDeleted = false;
+        $invoice_payment->save();
+        $invoice_payment->payment->isDeleted = false;
+        $invoice_payment->payment->save();
+        $paymentTwo->amount = -7.33;
         $paymentTwo->save();
         $invoice = Invoice::findOne(197393);
         $invoice->save();
