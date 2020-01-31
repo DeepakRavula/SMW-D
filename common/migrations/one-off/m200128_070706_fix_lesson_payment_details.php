@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Invoice;
 use common\models\InvoicePayment;
 use common\models\Lesson;
 use common\models\LessonPayment;
@@ -45,11 +46,19 @@ class m200128_070706_fix_lesson_payment_details extends Migration
             $invoicePayment->save();
             print_r($invoicePayment->id);
         }
-        $invoicePaymentTwo = InvoicePayment::findOne(187709);
-        $invoicePaymentTwo->isDeleted = false;
-        $invoicePaymentTwo->save();
-        $invoicePayment->payment->isDeleted = false;
-        $invoicePayment->payment->save();
+      
+        $paymentTwo = Payment::findOne(362816);
+        $nextInvoicePayments = InvoicePayment::find()
+        ->andWhere(['payment_id' => $paymentTwo->id])
+        ->all();
+        foreach ($nextInvoicePayments as $nextInvoicePayment) {
+            $nextInvoicePayment->isDeleted =  false;
+            $nextInvoicePayment->save();
+            print_r($nextInvoicePayment->id);
+        }
+        $paymentTwo->save();
+        $invoice = Invoice::findOne(197393);
+        $invoice->save();
         $lessonPayment = LessonPayment::findOne(56998);
         $lessonPayment->lessonId = 1097171;
         $lessonPayment->save();
