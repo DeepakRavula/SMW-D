@@ -24,7 +24,6 @@ use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
 use backend\models\search\ScheduleSearch;
 use common\models\CustomerRecurringPayment;
-use common\models\Payment;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -72,6 +71,7 @@ class ScheduleController extends BaseController
      */
     public function actionIndex()
     {
+       
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $currentDate = Carbon::now();
         $searchModel = new ScheduleSearch();
