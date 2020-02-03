@@ -54,10 +54,6 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         $invoice_payment->payment->save();
         $paymentTwo->amount = -7.33;
         $paymentTwo->save();
-        $transferLesson = Lesson::findOne(1060891);
-        $transferLesson->creditTransfer($transferLesson->invoice);
-        $transferLesson1 = Lesson::findOne(1060892);
-        $transferLesson1->creditTransfer($transferLesson1->invoice);
         $invoice = Invoice::findOne(197393);
         $invoice->save();
         $lessonPayment = LessonPayment::findOne(56998);
@@ -75,6 +71,10 @@ class m200128_070706_fix_lesson_payment_details extends Migration
         foreach ($lessons as $lesson) {
             $lesson->save();
         }
+        $transferLesson = Lesson::findOne(1060891);
+        $transferLesson->creditTransfer($transferLesson->invoice);
+        $transferLesson1 = Lesson::findOne(1060892);
+        $transferLesson1->creditTransfer($transferLesson1->invoice);
         $lastLesson = end($lessons);
         $lastLesson->customer->updateCustomerBalance();
     }
