@@ -22,6 +22,7 @@ $schedule->command('invoice/all-expired-lessons')->sendOutputTo('/var/log/smw.'.
 $schedule->command('recurring-payment/update-recurring-payments')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('23:10');
 $schedule->command('recurring-payment/create')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('23:40');
 $schedule->command('tools/backup')->dailyAt('23:59');
+$schedule->command('queue/run')->everyMinute();
 
 
 
