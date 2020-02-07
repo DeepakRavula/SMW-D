@@ -795,6 +795,10 @@ class EnrolmentController extends BaseController
                         $model->shrink();
                     } else if ($lastLessonDate < $newEndDate) {
                         $model->extend();
+                        $courseSchedule = new CourseSchedule();
+                        $course->teacherId = $course->recentCourseSchedule->teacherId;
+                        $courseSchedule->setModel($model->course);
+                        $courseSchedule->save();
                     }
                     $model->setStatus();
                     if ($message) {
