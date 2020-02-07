@@ -536,7 +536,7 @@ class Course extends \yii\db\ActiveRecord
         $status = Lesson::STATUS_SCHEDULED;
         $lesson->setAttributes([
             'courseId' => $this->id,
-            'teacherId' => $this->teacherId,
+            'teacherId' => $this->recentCourseSchedule->teacherId,
             'status' => $status,
             'date' => $day->format('Y-m-d H:i:s'),
             'originalDate' => $day->format('Y-m-d H:i:s'),
