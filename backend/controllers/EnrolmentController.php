@@ -805,9 +805,7 @@ class EnrolmentController extends BaseController
                         $courseSchedule->fromTime = $model->course->recentCourseSchedule->fromTime;
                         $courseSchedule->duration = $model->course->recentCourseSchedule->duration;
                         $courseSchedule->paymentFrequency = $model->paymentFrequencyId;
-                        if (!$courseSchedule->save()) {
-                            print_r($courseSchedule->getErrors());
-                        }
+                        $courseSchedule->save();
                     }
                     $model->setStatus();
                     if ($message) {
