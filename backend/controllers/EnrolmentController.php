@@ -44,6 +44,7 @@ use common\models\CustomerReferralSource;
 use common\models\CourseSchedule;
 use backend\models\GroupCourseForm;
 use common\models\discount\EnrolmentDiscount;
+use common\models\TeacherAvailability;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -795,6 +796,16 @@ class EnrolmentController extends BaseController
                         $model->shrink();
                     } else if ($lastLessonDate < $newEndDate) {
                         $model->extend();
+                        $courseSchedule = new CourseSchedule();
+                        $courseSchedule->courseId = $model->course->id;
+                        $courseSchedule->startDate = Carbon::parse($model->course->recentCourseSchedule->endDate)->modify('+1days')->format('Y-m-d H:i:s');
+                        $courseSchedule->endDate = Carbon::parse($model->endDateTime)->format('Y-m-d H:i:s');
+                        $courseSchedule->teacherId = $model->course->recentCourseSchedule->teacherId;        
+                        $courseSchedule->day = $model->course->recentCourseSchedule->day;
+                        $courseSchedule->fromTime = $model->course->recentCourseSchedule->fromTime;
+                        $courseSchedule->duration = $model->course->recentCourseSchedule->duration;
+                        $courseSchedule->paymentFrequency = $model->paymentFrequencyId;
+                        $courseSchedule->save();
                     }
                     $model->setStatus();
                     if ($message) {
