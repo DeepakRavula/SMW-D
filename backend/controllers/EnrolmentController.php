@@ -799,7 +799,7 @@ class EnrolmentController extends BaseController
                         $courseSchedule = new CourseSchedule();
                         $courseSchedule->courseId = $model->course->id;
                         $courseSchedule->startDate = $model->course->startDate;
-                        $courseSchedule->endDate = $model->endDateTime->format('Y-m-d H:i:s');
+                        $courseSchedule->endDate = Carbon::parse($model->endDateTime)->format('Y-m-d H:i:s');
                         $courseSchedule->teacherId = $model->course->recentCourseSchedule->teacherId;
                         $dayList = TeacherAvailability::getWeekdaysList();
                         $this->day = array_search($model->course->recentCourseSchedule->day, $dayList);
