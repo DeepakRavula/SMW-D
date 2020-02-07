@@ -802,10 +802,10 @@ class EnrolmentController extends BaseController
                         $courseSchedule->endDate = Carbon::parse($model->endDateTime)->format('Y-m-d H:i:s');
                         $courseSchedule->teacherId = $model->course->recentCourseSchedule->teacherId;
                         $dayList = TeacherAvailability::getWeekdaysList();
-                        $this->day = array_search($model->course->recentCourseSchedule->day, $dayList);
-                        $this->fromTime = $model->course->recentCourseSchedule->fromTime;
-                        $this->duration = $model->course->recentCourseSchedule->duration;
-                        $this->paymentFrequency = $model->paymentFrequencyId;
+                        $courseSchedule->day = array_search($model->course->recentCourseSchedule->day, $dayList);
+                        $courseSchedule->fromTime = $model->course->recentCourseSchedule->fromTime;
+                        $courseSchedule->duration = $model->course->recentCourseSchedule->duration;
+                        $courseSchedule->paymentFrequency = $model->paymentFrequencyId;
                     }
                     $model->setStatus();
                     if ($message) {
