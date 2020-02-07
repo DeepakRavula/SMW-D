@@ -798,11 +798,10 @@ class EnrolmentController extends BaseController
                         $model->extend();
                         $courseSchedule = new CourseSchedule();
                         $courseSchedule->courseId = $model->course->id;
-                        $courseSchedule->startDate = $model->course->startDate;
+                        $courseSchedule->startDate = Carbon::parse($model->course->recentCourseSchedule->endDate)->modify('+1days')->format('Y-m-d H:i:s');
                         $courseSchedule->endDate = Carbon::parse($model->endDateTime)->format('Y-m-d H:i:s');
-                        $courseSchedule->teacherId = $model->course->recentCourseSchedule->teacherId;
-                        $dayList = TeacherAvailability::getWeekdaysList();
-                        $courseSchedule->day = array_search($model->course->recentCourseSchedule->day, $dayList);
+                        $courseSchedule->teacherId = $model->course->recentCourseSchedule->teacherId;        
+                        $courseSchedule->day = $model->course->recentCourseSchedule->day;
                         $courseSchedule->fromTime = $model->course->recentCourseSchedule->fromTime;
                         $courseSchedule->duration = $model->course->recentCourseSchedule->duration;
                         $courseSchedule->paymentFrequency = $model->paymentFrequencyId;
