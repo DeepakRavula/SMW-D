@@ -15,6 +15,7 @@ use common\models\Course;
 use common\models\CourseProgramRate;
 use common\models\CourseSchedule;
 use common\models\LessonConfirm;
+use common\models\Location;
 use common\models\TeacherAvailability;
 
 class EnrolmentController extends Controller
@@ -33,7 +34,7 @@ class EnrolmentController extends Controller
     {
         return array_merge(
             parent::options($actionID),
-            $actionID == 'delete' || 'set-lesson-due-date' ? ['id'] : []
+            $actionID == 'delete' || 'set-lesson-due-date' ||'fix-enrolment-lessons' ? ['id'] : []
         );
     }
 
@@ -59,5 +60,39 @@ class EnrolmentController extends Controller
     {
         $model = Enrolment::findOne($this->id);
         return $model->deleteWithTransactionalData();
+    }
+
+    public function actionFixEnrolmentLessons() 
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        $courses = Course::find()
+            ->regular()
+            ->confirmed()
+            ->location($this->id)
+            ->privateProgram()
+            ->notDeleted()
+            ->all();
+            $count = 0;
+        if ($courses) {    
+            foreach ($courses as $course) {
+                if (count($course->courseSchedules) > 1) {
+                $lesson1 = Lesson::find()
+                        ->andWhere(['courseId' => $course->id])
+                        ->andWhere(['<=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                        ->orderBy(['lesson.id' => SORT_DESC])
+                        ->one();
+                $lesson2 = Lesson::find()
+                ->andWhere(['courseId' => $course->id])
+                ->andWhere(['>=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                ->orderBy(['lesson.id' => SORT_ASC])
+                ->one();   
+                print_r("\nCourse:".$course->id."Lesson 1:".$lesson1->id."Teacher id:".$lesson1->teacherId."Lesson 2:".$lesson2->id."Teacher id:".$lesson2->teacherId)
+                
+                } 
+            }
+        }
+
     }
 }
