@@ -24,6 +24,18 @@ class m200210_051042_adding_lesson_teacherid extends Migration
                 'createdByUserId' =>  $this->integer()->notNull(),
             ]);
         }
+
+        $tableSchema1 = Yii::$app->db->schema->getTableSchema('course_schedule_old_teacher');
+        if ($tableSchema1 == null) {
+            $this->createTable('course_schedule_old_teacher', [
+                'id' => $this->primaryKey(),
+                'teacherId' => $this->integer()->notNull(),
+                'courseScheduleId' => $this->integer()->notNull(),
+                'courseId' => $this->integer()->notNull(),
+                'createdOn' => $this->timeStamp()->defaultValue(null),
+                'createdByUserId' =>  $this->integer()->notNull(),
+            ]);
+        }
     }
 
     /**

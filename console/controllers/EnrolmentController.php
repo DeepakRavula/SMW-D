@@ -211,6 +211,11 @@ class EnrolmentController extends Controller
                                         }
 
                                         $recentCourseSchedule = $course->recentCourseSchedule;
+                                        $oldCourseSchedule = new OldCourseSchedule();
+                                        $oldCourseSchedule->teacherId = $recentCourseSchedule->teacherId;
+                                        $oldCourseSchedule->courseId = $recentCourseSchedule->courseId;
+                                        $oldCourseSchedule->createdByUserId = Yii::$app->user->id;
+                                        $oldCourseSchedule->save();
                                         $recentCourseSchedule->teacherId = $lastLessonBeforeAutoRenewal->teacherId;
                                         $recentCourseSchedule->save();
                                         print_r("\nhttps://smw.arcadiamusicacademy.com/admin/" . $location->slug . "/enrolment/view?id=" . $course->enrolment->id);
@@ -290,10 +295,14 @@ class EnrolmentController extends Controller
                                             $lesson->updateAttributes(['teacherId' => $lesson1->teacherId]);
                                           
                                         }
-
                                         $recentCourseSchedule = $course->recentCourseSchedule;
-                                        $recentCourseSchedule->teacherId = $lesson1->teacherId;
-                                        $recentCourseSchedule->save();
+                                        $oldCourseSchedule = new OldCourseSchedule();
+                                        $oldCourseSchedule->teacherId = $recentCourseSchedule->teacherId;
+                                        $oldCourseSchedule->courseId = $recentCourseSchedule->courseId;
+                                        $oldCourseSchedule->createdByUserId = Yii::$app->user->id;
+                                        $oldCourseSchedule->save();
+                                        $recentCourseSchedule->updateAttributes(['teacherId' => $lesson1->teacherId]);
+                                        
                                         print_r("\nhttps://smw.arcadiamusicacademy.com/admin/" . $location->slug . "/enrolment/view?id=" . $course->enrolment->id);
                                     }
                             }
