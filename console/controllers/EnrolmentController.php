@@ -15,6 +15,7 @@ use common\models\Course;
 use common\models\CourseProgramRate;
 use common\models\CourseSchedule;
 use common\models\LessonConfirm;
+use common\models\LessonOldTeacher;
 use common\models\Location;
 use common\models\TeacherAvailability;
 
@@ -34,7 +35,7 @@ class EnrolmentController extends Controller
     {
         return array_merge(
             parent::options($actionID),
-            $actionID == 'delete' || 'set-lesson-due-date' ||'fix-enrolment-lessons' ? ['id'] : []
+            $actionID == 'delete' || 'set-lesson-due-date' ? ['id'] : []
         );
     }
 
@@ -52,8 +53,8 @@ class EnrolmentController extends Controller
             ->all();
         foreach ($courses as $course) {
             $autoRenewal = new AutoRenewal();
-            $autoRenewal->renewEnrolment($course);           
-    }
+            $autoRenewal->renewEnrolment($course);
+        }
     }
 
     public function actionDelete()
@@ -62,37 +63,245 @@ class EnrolmentController extends Controller
         return $model->deleteWithTransactionalData();
     }
 
-    public function actionFixEnrolmentLessons() 
+    public function actionFixEnrolmentLessons()
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-
+        $locationIds = [];
+        $locations = Location::find()->notDeleted()->all();
+        foreach ($locations as $location) {
+            print_r("\n" . $location->name);
+            print_r("\n------------------"); 
         $courses = Course::find()
             ->regular()
             ->confirmed()
-            ->location($this->id)
+            ->location($location->id)
             ->privateProgram()
             ->notDeleted()
             ->all();
-            $count = 0;
-        if ($courses) {    
+        $count = 0;
+        if ($courses) {
             foreach ($courses as $course) {
-                if (count($course->courseSchedules) > 1) {
-                $lesson1 = Lesson::find()
+                if (count($course->courseSchedules) > 2) {
+                    $firstLesson = Lesson::find()
+                        ->andWhere(['courseId' => $course->id])
+                        ->orderBy(['lesson.date' => SORT_ASC])
+                        ->notCanceled()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->notRescheduled()
+                        ->regular()
+                        ->one();
+                    $lesson1 = Lesson::find()
                         ->andWhere(['courseId' => $course->id])
                         ->andWhere(['<=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
                         ->orderBy(['lesson.id' => SORT_DESC])
+                        ->notCanceled()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->notRescheduled()
+                        ->regular()
                         ->one();
-                $lesson2 = Lesson::find()
-                ->andWhere(['courseId' => $course->id])
-                ->andWhere(['>=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
-                ->orderBy(['lesson.id' => SORT_ASC])
-                ->one();   
-                print_r("\nCourse:".$course->id."Lesson 1:".$lesson1->id."Teacher id:".$lesson1->teacherId."Lesson 2:".$lesson2->id."Teacher id:".$lesson2->teacherId)
-                
-                } 
+                    $lesson2 = Lesson::find()
+                        ->andWhere(['courseId' => $course->id])
+                        ->andWhere(['>=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                        ->notCanceled()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->notRescheduled()
+                        ->regular()
+                        ->orderBy(['lesson.id' => SORT_ASC])
+                        ->one();
+                    if ($lesson1 && $lesson2) {
+                        if ($lesson1->teacherId != $lesson2->teacherId && $lesson2->teacherId == $firstLesson->teacherId) {
+                            //print_r("\nCourse:".$course->id."Enrolment:".$course->enrolment->id."Lesson 1:".$lesson1->id."Teacher id:".$lesson1->teacherId."Lesson 2:".$lesson2->id."Teacher id:".$lesson2->teacherId."\n");
+                            print_r("\nhttps://smw.arcadiamusicacademy.com/admin/".$location->slug."/enrolment/view?id=" . $course->enrolment->id);
+                        }
+                    }
+                }
             }
         }
+    }
+    }
 
+    public function actionChangeTeacherForAutoRenewalLessons()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationIds = [4, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+        $locations = Location::find()->notDeleted()->andWhere(['IN', 'location.id', $locationIds])->all();
+        foreach ($locations as $location) {
+            print_r("\n" . $location->name);
+            print_r("\n------------------");
+            $courses = Course::find()
+                ->regular()
+                ->location($location->id)
+                ->confirmed()
+                ->privateProgram()
+                ->notDeleted()
+                ->all();
+            $count = 0;
+            if ($courses) {
+                foreach ($courses as $course) {
+                    if (count($course->courseSchedules) > 2) {
+                        $firstLesson = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->orderBy(['lesson.date' => SORT_ASC])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->one();
+                        $lesson1 = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->andWhere(['<=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                            ->orderBy(['lesson.id' => SORT_DESC])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->one();
+                        $lesson2 = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->andWhere(['>=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->orderBy(['lesson.id' => SORT_ASC])
+                            ->one();
+                        if ($lesson1 && $lesson2) {
+                            if ($lesson1->teacherId != $lesson2->teacherId && $lesson2->teacherId == $firstLesson->teacherId) {
+                                $autoRenewalLessonQuery = Lesson::find()
+                                    ->andWhere(['courseId' => $course->id])
+                                    ->joinWith(['autoRenewalLessons' => function ($query) {
+                                        $query->andWhere(['NOT', ['auto_renewal_lessons.lessonId' => null]]);
+                                    }])
+                                    ->notDeleted()
+                                    ->notCanceled()
+                                    ->notRescheduled()
+                                    ->orderBy(['lesson.id' => SORT_ASC]);
+                                $autoRenewalFirstLesson = $autoRenewalLessonQuery->one();
+                                $lessons = $autoRenewalLessonQuery->all();
+                                if ($autoRenewalFirstLesson) {
+                                    $lastLessonBeforeAutoRenewal = Lesson::find()
+                                        ->andWhere(['courseId' => $course->id])
+                                        ->andWhere(['<', 'DATE(lesson.date)', Carbon::parse($autoRenewalFirstLesson->date)->format('Y-m-d')])
+                                        ->notDeleted()
+                                        ->notCanceled()
+                                        ->notRescheduled()
+                                        ->orderBy(['lesson.date' => SORT_DESC])
+                                        ->one();
+                                    if ($lessons) {
+                                        foreach ($lessons as $lesson) {
+                                            $lessonOldTeacher = new LessonOldTeacher();
+                                            $lessonOldTeacher->lessonId = $lesson->id;
+                                            $lessonOldTeacher->teacherId = $lesson->teacherId;
+                                            $lessonOldTeacher->courseId = $course->id;
+                                            $lessonOldTeacher->enrolmentId = $lesson->enrolment->id;
+                                            $lessonOldTeacher->createdByUserId = Yii::$app->user->id;
+                                            if (!$lessonOldTeacher->save()) {
+                                                print_r($lessonOldTeacher->getErrors());
+                                            }
+                                            $lesson->updateAttributes(['teacherId' => $lastLessonBeforeAutoRenewal->teacherId]);
+                                          
+                                        }
+
+                                        $recentCourseSchedule = $course->recentCourseSchedule;
+                                        $recentCourseSchedule->teacherId = $lastLessonBeforeAutoRenewal->teacherId;
+                                        $recentCourseSchedule->save();
+                                        print_r("\nhttps://smw.arcadiamusicacademy.com/admin/" . $location->slug . "/enrolment/view?id=" . $course->enrolment->id);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function actionChangeTeacherForUserExtendedLessons()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationIds = [4, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+        $locations = Location::find()->notDeleted()->andWhere(['IN', 'location.id', $locationIds])->all();
+        foreach ($locations as $location) {
+            print_r("\n" . $location->name);
+            print_r("\n------------------");
+            $courses = Course::find()
+                ->regular()
+                ->location($location->id)
+                ->confirmed()
+                ->privateProgram()
+                ->notDeleted()
+                ->all();
+            $count = 0;
+            if ($courses) {
+                foreach ($courses as $course) {
+                    if (count($course->courseSchedules) > 2) {
+                        $firstLesson = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->orderBy(['lesson.date' => SORT_ASC])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->one();
+                        $lesson1 = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->andWhere(['<=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                            ->orderBy(['lesson.id' => SORT_DESC])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->one();
+                        $lesson2Query = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->andWhere(['>=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->orderBy(['lesson.id' => SORT_ASC])
+                            ->one();
+                        $lesson2 = $lesson2Query->one();
+                        
+                        if ($lesson1 && $lesson2) {
+                            if ($lesson1->teacherId != $lesson2->teacherId && $lesson2->teacherId == $firstLesson->teacherId) {
+                                $lessons = $lesson2Query->all();
+                               
+                                    if ($lessons) {
+                                        foreach ($lessons as $lesson) {
+                                            $lessonOldTeacher = new LessonOldTeacher();
+                                            $lessonOldTeacher->lessonId = $lesson->id;
+                                            $lessonOldTeacher->teacherId = $lesson->teacherId;
+                                            $lessonOldTeacher->courseId = $course->id;
+                                            $lessonOldTeacher->enrolmentId = $lesson->enrolment->id;
+                                            $lessonOldTeacher->createdByUserId = Yii::$app->user->id;
+                                            $lessonOldTeacher->save();
+                                            $lesson->updateAttributes(['teacherId' => $lesson1->teacherId]);
+                                          
+                                        }
+
+                                        $recentCourseSchedule = $course->recentCourseSchedule;
+                                        $recentCourseSchedule->teacherId = $lesson1->teacherId;
+                                        $recentCourseSchedule->save();
+                                        print_r("\nhttps://smw.arcadiamusicacademy.com/admin/" . $location->slug . "/enrolment/view?id=" . $course->enrolment->id);
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
