@@ -271,8 +271,7 @@ class EnrolmentController extends Controller
                             ->isConfirmed()
                             ->notRescheduled()
                             ->regular()
-                            ->orderBy(['lesson.id' => SORT_ASC])
-                            ->one();
+                            ->orderBy(['lesson.id' => SORT_ASC]);
                         $lesson2 = $lesson2Query->one();
                         
                         if ($lesson1 && $lesson2) {
