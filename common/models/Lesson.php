@@ -1726,4 +1726,9 @@ class Lesson extends \yii\db\ActiveRecord
         }  
     }
     }
+
+    public function getAutoRenewalLessons()
+    {
+        return $this->hasMany(AutoRenewalLessons::className(), ['lessonId' => 'id']);
+    } 
 }
