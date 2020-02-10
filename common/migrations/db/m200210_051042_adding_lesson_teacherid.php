@@ -17,6 +17,7 @@ class m200210_051042_adding_lesson_teacherid extends Migration
             $this->createTable('lesson_old_teacher', [
                 'id' => $this->primaryKey(),
                 'teacherId' => $this->integer()->notNull(),
+                'rate' => $this->decimal(10, 4)->notNull(),
                 'lessonId' => $this->integer()->notNull(),
                 'courseId' => $this->integer()->notNull(),
                 'enrolmentId' => $this->integer()->notNull(),

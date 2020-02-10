@@ -7,29 +7,25 @@ use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 
 /**
- * This is the model class for table "lesson_old_teacher".
+ * This is the model class for table "course_schedule_old_teacher".
  *
  * @property int $id
  * @property int $teacherId
- * @property int $lessonId
+ * @property int $courseScheduleId
  * @property int $courseId
- * @property int $enrolmentId
  * @property string $createdOn
  * @property int $createdByUserId
  */
-class LessonOldTeacher extends \yii\db\ActiveRecord
+class CourseScheduleOldTeacher extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'lesson_old_teacher';
+        return 'course_schedule_old_teacher';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function behaviors()
     {
         return [
@@ -47,12 +43,15 @@ class LessonOldTeacher extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
-            [['teacherId', 'lessonId', 'courseId', 'enrolmentId', 'createdByUserId'], 'required'],
-            [['teacherId', 'lessonId', 'courseId', 'enrolmentId', 'createdByUserId'], 'integer'],
-            [['createdOn', 'rate'], 'safe'],
+            [['teacherId', 'courseScheduleId', 'courseId', 'createdByUserId'], 'required'],
+            [['teacherId', 'courseScheduleId', 'courseId', 'createdByUserId'], 'integer'],
+            [['createdOn'], 'safe'],
         ];
     }
 
@@ -64,9 +63,8 @@ class LessonOldTeacher extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'teacherId' => 'Teacher ID',
-            'lessonId' => 'Lesson ID',
+            'courseScheduleId' => 'Course Schedule ID',
             'courseId' => 'Course ID',
-            'enrolmentId' => 'Enrolment ID',
             'createdOn' => 'Created On',
             'createdByUserId' => 'Created By User ID',
         ];

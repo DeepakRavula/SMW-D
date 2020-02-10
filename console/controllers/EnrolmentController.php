@@ -14,9 +14,11 @@ use yii\console\Controller;
 use common\models\Course;
 use common\models\CourseProgramRate;
 use common\models\CourseSchedule;
+use common\models\CourseScheduleOldTeacher;
 use common\models\LessonConfirm;
 use common\models\LessonOldTeacher;
 use common\models\Location;
+use common\models\Qualification;
 use common\models\TeacherAvailability;
 
 class EnrolmentController extends Controller
@@ -200,6 +202,7 @@ class EnrolmentController extends Controller
                                             $lessonOldTeacher = new LessonOldTeacher();
                                             $lessonOldTeacher->lessonId = $lesson->id;
                                             $lessonOldTeacher->teacherId = $lesson->teacherId;
+                                            $lessonOldTeacher->rate = $lesson->teacherRate;
                                             $lessonOldTeacher->courseId = $course->id;
                                             $lessonOldTeacher->enrolmentId = $lesson->enrolment->id;
                                             $lessonOldTeacher->createdByUserId = Yii::$app->user->id;
@@ -207,15 +210,22 @@ class EnrolmentController extends Controller
                                                 print_r($lessonOldTeacher->getErrors());
                                             }
                                             $lesson->updateAttributes(['teacherId' => $lastLessonBeforeAutoRenewal->teacherId]);
+                                            $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
+                                            'program_id' => $lesson->course->program->id]);
+                                            $teacherRate = !empty($qualification->rate) ? $qualification->rate : 0;
+                                            $lesson->updateAttributes(['teacherRate' => $teacherRate]);
                                           
                                         }
 
                                         $recentCourseSchedule = $course->recentCourseSchedule;
-                                        $oldCourseSchedule = new OldCourseSchedule();
+                                        $oldCourseSchedule = new CourseScheduleOldTeacher();
                                         $oldCourseSchedule->teacherId = $recentCourseSchedule->teacherId;
+                                        $oldCourseSchedule->courseScheduleId = $recentCourseSchedule->id;
                                         $oldCourseSchedule->courseId = $recentCourseSchedule->courseId;
                                         $oldCourseSchedule->createdByUserId = Yii::$app->user->id;
-                                        $oldCourseSchedule->save();
+                                        if (!$oldCourseSchedule->save()) {
+                                            print_r($oldCourseSchedule->getErrors());
+                                        }
                                         $recentCourseSchedule->teacherId = $lastLessonBeforeAutoRenewal->teacherId;
                                         $recentCourseSchedule->save();
                                         print_r("\nhttps://smw.arcadiamusicacademy.com/admin/" . $location->slug . "/enrolment/view?id=" . $course->enrolment->id);
@@ -293,12 +303,17 @@ class EnrolmentController extends Controller
                                             $lessonOldTeacher->createdByUserId = Yii::$app->user->id;
                                             $lessonOldTeacher->save();
                                             $lesson->updateAttributes(['teacherId' => $lesson1->teacherId]);
+                                            $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
+                                            'program_id' => $lesson->course->program->id]);
+                                            $teacherRate = !empty($qualification->rate) ? $qualification->rate : 0;
+                                            $lesson->updateAttributes(['teacherRate' => $teacherRate]);
                                           
                                         }
                                         $recentCourseSchedule = $course->recentCourseSchedule;
-                                        $oldCourseSchedule = new OldCourseSchedule();
+                                        $oldCourseSchedule = new CourseScheduleOldTeacher();
                                         $oldCourseSchedule->teacherId = $recentCourseSchedule->teacherId;
                                         $oldCourseSchedule->courseId = $recentCourseSchedule->courseId;
+                                        $oldCourseSchedule->courseScheduleId = $recentCourseSchedule->id;
                                         $oldCourseSchedule->createdByUserId = Yii::$app->user->id;
                                         $oldCourseSchedule->save();
                                         $recentCourseSchedule->updateAttributes(['teacherId' => $lesson1->teacherId]);
