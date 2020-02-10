@@ -210,10 +210,10 @@ class EnrolmentController extends Controller
                                                 print_r($lessonOldTeacher->getErrors());
                                             }
                                             $lesson->updateAttributes(['teacherId' => $lastLessonBeforeAutoRenewal->teacherId]);
-                                            $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
-                                            'program_id' => $lesson->course->program->id]);
-                                            $teacherRate = !empty($qualification->rate) ? $qualification->rate : 0;
-                                            $lesson->updateAttributes(['teacherRate' => $teacherRate]);
+                                            // $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
+                                            // 'program_id' => $lesson->course->program->id]);
+                                            // $teacherRate = !empty($qualification->rate) ? $qualification->rate : 0;
+                                            // //$lesson->updateAttributes(['teacherRate' => $teacherRate]);
                                           
                                         }
 
