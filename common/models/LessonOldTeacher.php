@@ -50,9 +50,9 @@ class LessonOldTeacher extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['teacherId', 'lessonId', 'courseId', 'enrolmentId', 'createdByUserId'], 'required'],
+            [['teacherId', 'lessonId', 'courseId', 'enrolmentId', 'createdByUserId', 'rate'], 'required'],
             [['teacherId', 'lessonId', 'courseId', 'enrolmentId', 'createdByUserId'], 'integer'],
-            [['createdOn', 'rate'], 'safe'],
+            [['createdOn'], 'safe'],
         ];
     }
 
