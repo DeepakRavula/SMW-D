@@ -327,4 +327,57 @@ class EnrolmentController extends Controller
             }
         }
     }
+
+    public function actionAddCourseScheduleForMissingEnrolments()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationIds = [4, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+        $locations = Location::find()->notDeleted()->andWhere(['IN', 'location.id', $locationIds])->all();
+        foreach ($locations as $location) {
+            print_r("\n" . $location->name);
+            print_r("\n------------------");
+            $courses = Course::find()
+                ->regular()
+                ->location($location->id)
+                ->confirmed()
+                ->privateProgram()
+                ->notDeleted()
+                ->all();
+            $count = 0;
+            if ($courses) {
+                foreach ($courses as $course) {
+                    if (count($course->courseSchedules) > 1 && Carbon::parse($course->recentCourseSchedule->endDate)->format('Y-m-d') < Carbon::parse($course->endDate)->format('Y-m-d')) {
+                        $courseSchedule = new CourseSchedule();
+                        $courseSchedule->courseId = $course->id;
+                        $courseSchedule->day = $course->recentCourseSchedule->day;
+                        $courseSchedule->fromTime = $course->recentCourseSchedule->fromTime;
+                        $oldCourseSchedules = $course->courseSchedules;
+                        if ($oldCourseSchedules) {
+                        $oldCourseSchedule = end($oldCourseSchedules);
+                        $courseSchedule->startDate = Carbon::parse($oldCourseSchedule->endDate)->modify('+1days')->format('Y-m-d H:i:s');
+                        } else {
+                        $courseSchedule->startDate = $course->startDate;
+                        }
+                        $courseSchedule->endDate = Carbon::parse($course->endDate)->format('Y-m-d H:i:s');    
+                        $courseSchedule->teacherId = $course->recentCourseSchedule->teacherId;
+                        if (!$courseSchedule->save()) {
+                            print_r($courseSchedule->getErrors());
+                        }
+                        $oldCourseScheduleEntry = new CourseScheduleOldTeacher();
+                        $oldCourseScheduleEntry->teacherId = $courseSchedule->teacherId;
+                        $oldCourseScheduleEntry->courseId = $courseSchedule->courseId;
+                        $oldCourseScheduleEntry->courseScheduleId = $courseSchedule->id;
+                        $oldCourseScheduleEntry->createdByUserId = Yii::$app->user->id;
+                        $oldCourseScheduleEntry->isAdded = true;
+                        if (!$oldCourseScheduleEntry->save()) {
+                            print_r("\nsssss");
+                            print_r($oldCourseScheduleEntry->getErrors());
+                        }
+                       
+                    }
+                }            
+        }
+    }
+}
 }
