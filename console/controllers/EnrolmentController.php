@@ -351,7 +351,7 @@ class EnrolmentController extends Controller
             $count = 0;
             if ($courses) {
                 foreach ($courses as $course) {
-                    if (Carbon::parse($course->recentCourseSchedule->endDate)->format('Y-m-d') ) {
+                    if (Carbon::parse($course->recentCourseSchedule->endDate)->format('Y-m-d') < Carbon::parse($course->endDate)->format('Y-m-d')) {
                             if (Carbon::parse($course->endDate)->diffInDays(Carbon::parse($course->recentCourseSchedule->endDate)) > 30) {
                         $courseSchedule = new CourseSchedule();
                         $courseSchedule->courseId = $course->id;
