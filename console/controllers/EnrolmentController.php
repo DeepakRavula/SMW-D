@@ -393,7 +393,7 @@ class EnrolmentController extends Controller
                         $oldCourseScheduleEntry->isAdded = false;
                         $recentCourseSchedule->endDate = Carbon::parse($course->endDate)->format('Y-m-d H:i:s');
                         $recentCourseSchedule->save();
-                        $oldCourseSchedule->save();
+                        $oldCourseScheduleEntry->save();
                     }
                     }
                 }            
