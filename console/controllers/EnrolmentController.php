@@ -223,6 +223,8 @@ class EnrolmentController extends Controller
                                         $oldCourseSchedule->courseScheduleId = $recentCourseSchedule->id;
                                         $oldCourseSchedule->courseId = $recentCourseSchedule->courseId;
                                         $oldCourseSchedule->createdByUserId = Yii::$app->user->id;
+                                        $oldCourseSchedule->isAdded = false;
+                                        $oldCourseSchedule->endDate = $recentCourseSchedule->endDate;
                                         if (!$oldCourseSchedule->save()) {
                                             print_r($oldCourseSchedule->getErrors());
                                         }
@@ -315,6 +317,8 @@ class EnrolmentController extends Controller
                                         $oldCourseSchedule->courseId = $recentCourseSchedule->courseId;
                                         $oldCourseSchedule->courseScheduleId = $recentCourseSchedule->id;
                                         $oldCourseSchedule->createdByUserId = Yii::$app->user->id;
+                                        $oldCourseSchedule->endDate = $recentCourseSchedule->endDate;
+                                        $oldCourseSchedule->isAdded = false;
                                         $oldCourseSchedule->save();
                                         $recentCourseSchedule->updateAttributes(['teacherId' => $lesson1->teacherId]);
                                         
@@ -347,11 +351,13 @@ class EnrolmentController extends Controller
             $count = 0;
             if ($courses) {
                 foreach ($courses as $course) {
-                    if (count($course->courseSchedules) > 1 && Carbon::parse($course->recentCourseSchedule->endDate)->format('Y-m-d') < Carbon::parse($course->endDate)->format('Y-m-d')) {
+                    if (Carbon::parse($course->recentCourseSchedule->endDate)->format('Y-m-d') ) {
+                            if (Carbon::parse($course->endDate)->diffInDays(Carbon::parse($course->recentCourseSchedule->endDate)) > 30) {
                         $courseSchedule = new CourseSchedule();
                         $courseSchedule->courseId = $course->id;
                         $courseSchedule->day = $course->recentCourseSchedule->day;
                         $courseSchedule->fromTime = $course->recentCourseSchedule->fromTime;
+                        $courseSchedule->duration = $course->recentCourseSchedule->duration;
                         $oldCourseSchedules = $course->courseSchedules;
                         if ($oldCourseSchedules) {
                         $oldCourseSchedule = end($oldCourseSchedules);
@@ -369,12 +375,26 @@ class EnrolmentController extends Controller
                         $oldCourseScheduleEntry->courseId = $courseSchedule->courseId;
                         $oldCourseScheduleEntry->courseScheduleId = $courseSchedule->id;
                         $oldCourseScheduleEntry->createdByUserId = Yii::$app->user->id;
+                        $oldCourseScheduleEntry->endDate = $courseSchedule->endDate;
                         $oldCourseScheduleEntry->isAdded = true;
                         if (!$oldCourseScheduleEntry->save()) {
                             print_r("\nsssss");
                             print_r($oldCourseScheduleEntry->getErrors());
                         }
                        
+                    } else {
+                        $recentCourseSchedule = $course->recentCourseSchedule;                     
+                        $oldCourseScheduleEntry = new CourseScheduleOldTeacher();
+                        $oldCourseScheduleEntry->teacherId = $recentCourseSchedule->teacherId;
+                        $oldCourseScheduleEntry->courseId = $recentCourseSchedule->courseId;
+                        $oldCourseScheduleEntry->courseScheduleId = $recentCourseSchedule->id;
+                        $oldCourseScheduleEntry->createdByUserId = Yii::$app->user->id;
+                        $oldCourseScheduleEntry->endDate = $recentCourseSchedule->endDate;
+                        $oldCourseScheduleEntry->isAdded = false;
+                        $recentCourseSchedule->endDate = Carbon::parse($course->endDate)->format('Y-m-d H:i:s');
+                        $recentCourseSchedule->save();
+                        $oldCourseSchedule->save();
+                    }
                     }
                 }            
         }

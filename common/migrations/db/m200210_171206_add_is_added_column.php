@@ -14,7 +14,7 @@ class m200210_171206_add_is_added_column extends Migration
     public function safeUp()
     {
         $this->addColumn('course_schedule_old_teacher', 'isAdded',  $this->boolean()->null());
-
+        $this->addColumn('course_schedule_old_teacher', 'endDate',  $this->timestamp()->null());
         $courseSchedulesOldTeacher = CourseScheduleOldTeacher::find()->all();
         foreach ($courseSchedulesOldTeacher as $courseScheduleOldTeacher) {
             $courseScheduleOldTeacher->isAdded = false;

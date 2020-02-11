@@ -49,7 +49,7 @@ class CourseScheduleOldTeacher extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['teacherId', 'courseScheduleId', 'courseId', 'createdByUserId'], 'required'],
+            [['teacherId', 'courseScheduleId', 'courseId', 'createdByUserId', 'endDate'], 'required'],
             [['teacherId', 'courseScheduleId', 'courseId', 'createdByUserId'], 'integer'],
             [['createdOn'], 'safe'],
         ];
