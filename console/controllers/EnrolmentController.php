@@ -246,6 +246,7 @@ class EnrolmentController extends Controller
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $locationIds = [4, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+        $courseIds = [669, 3056, 3286, 3287,3625, 3798, 4101,4247,4493,4776,4914,5559,5613,6838,6909,8054,8091];
         $locations = Location::find()->notDeleted()->andWhere(['IN', 'location.id', $locationIds])->all();
         foreach ($locations as $location) {
             print_r("\n" . $location->name);
@@ -253,6 +254,8 @@ class EnrolmentController extends Controller
             $courses = Course::find()
                 ->regular()
                 ->location($location->id)
+                ->andWhere(['>','DATE(course.endDate)', Carbon::now()->format('Y-m-d')])
+                ->andWhere(['IN', 'course.id', $courseIds])
                 ->confirmed()
                 ->privateProgram()
                 ->notDeleted()
@@ -290,7 +293,6 @@ class EnrolmentController extends Controller
                             ->regular()
                             ->orderBy(['lesson.id' => SORT_ASC]);
                         $lesson2 = $lesson2Query->one();
-                        
                         if ($lesson1 && $lesson2) {
                             if ($lesson1->teacherId != $lesson2->teacherId && $lesson2->teacherId == $firstLesson->teacherId) {
                                 $lessons = $lesson2Query->all();
@@ -345,6 +347,7 @@ class EnrolmentController extends Controller
                 ->regular()
                 ->location($location->id)
                 ->confirmed()
+                ->andWhere(['>','DATE(course.endDate)', Carbon::now()->format('Y-m-d')])
                 ->privateProgram()
                 ->notDeleted()
                 ->all();
