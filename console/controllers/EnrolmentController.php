@@ -73,57 +73,57 @@ class EnrolmentController extends Controller
         $locations = Location::find()->notDeleted()->all();
         foreach ($locations as $location) {
             print_r("\n" . $location->name);
-            print_r("\n------------------"); 
-        $courses = Course::find()
-            ->regular()
-            ->confirmed()
-            ->location($location->id)
-            ->privateProgram()
-            ->notDeleted()
-            ->all();
-        $count = 0;
-        if ($courses) {
-            foreach ($courses as $course) {
-                if (count($course->courseSchedules) > 2) {
-                    $firstLesson = Lesson::find()
-                        ->andWhere(['courseId' => $course->id])
-                        ->orderBy(['lesson.date' => SORT_ASC])
-                        ->notCanceled()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->notRescheduled()
-                        ->regular()
-                        ->one();
-                    $lesson1 = Lesson::find()
-                        ->andWhere(['courseId' => $course->id])
-                        ->andWhere(['<=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
-                        ->orderBy(['lesson.id' => SORT_DESC])
-                        ->notCanceled()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->notRescheduled()
-                        ->regular()
-                        ->one();
-                    $lesson2 = Lesson::find()
-                        ->andWhere(['courseId' => $course->id])
-                        ->andWhere(['>=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
-                        ->notCanceled()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->notRescheduled()
-                        ->regular()
-                        ->orderBy(['lesson.id' => SORT_ASC])
-                        ->one();
-                    if ($lesson1 && $lesson2) {
-                        if ($lesson1->teacherId != $lesson2->teacherId && $lesson2->teacherId == $firstLesson->teacherId) {
-                            //print_r("\nCourse:".$course->id."Enrolment:".$course->enrolment->id."Lesson 1:".$lesson1->id."Teacher id:".$lesson1->teacherId."Lesson 2:".$lesson2->id."Teacher id:".$lesson2->teacherId."\n");
-                            print_r("\nhttps://smw.arcadiamusicacademy.com/admin/".$location->slug."/enrolment/view?id=" . $course->enrolment->id);
+            print_r("\n------------------");
+            $courses = Course::find()
+                ->regular()
+                ->confirmed()
+                ->location($location->id)
+                ->privateProgram()
+                ->notDeleted()
+                ->all();
+            $count = 0;
+            if ($courses) {
+                foreach ($courses as $course) {
+                    if (count($course->courseSchedules) > 2) {
+                        $firstLesson = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->orderBy(['lesson.date' => SORT_ASC])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->one();
+                        $lesson1 = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->andWhere(['<=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                            ->orderBy(['lesson.id' => SORT_DESC])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->one();
+                        $lesson2 = Lesson::find()
+                            ->andWhere(['courseId' => $course->id])
+                            ->andWhere(['>=', 'DATE(lesson.date)', Carbon::parse($course->recentCourseSchedule->startDate)->format('Y-m-d')])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->notRescheduled()
+                            ->regular()
+                            ->orderBy(['lesson.id' => SORT_ASC])
+                            ->one();
+                        if ($lesson1 && $lesson2) {
+                            if ($lesson1->teacherId != $lesson2->teacherId && $lesson2->teacherId == $firstLesson->teacherId) {
+                                //print_r("\nCourse:".$course->id."Enrolment:".$course->enrolment->id."Lesson 1:".$lesson1->id."Teacher id:".$lesson1->teacherId."Lesson 2:".$lesson2->id."Teacher id:".$lesson2->teacherId."\n");
+                                print_r("\nhttps://smw.arcadiamusicacademy.com/admin/" . $location->slug . "/enrolment/view?id=" . $course->enrolment->id);
+                            }
                         }
                     }
                 }
             }
         }
-    }
     }
 
     public function actionChangeTeacherForAutoRenewalLessons()
@@ -214,7 +214,7 @@ class EnrolmentController extends Controller
                                             // 'program_id' => $lesson->course->program->id]);
                                             // $teacherRate = !empty($qualification->rate) ? $qualification->rate : 0;
                                             // //$lesson->updateAttributes(['teacherRate' => $teacherRate]);
-                                          
+
                                         }
 
                                         $recentCourseSchedule = $course->recentCourseSchedule;
@@ -246,7 +246,7 @@ class EnrolmentController extends Controller
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $locationIds = [4, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
-        $courseIds = [669, 3056, 3286, 3287,3625, 3798, 4101,4247,4493,4776,4914,5559,5613,6838,6909,8054,8091];
+        $courseIds = [669, 3056, 3286, 3287, 3625, 3798, 4101, 4247, 4493, 4776, 4914, 5559, 5613, 6838, 6909, 8054, 8091];
         $locations = Location::find()->notDeleted()->andWhere(['IN', 'location.id', $locationIds])->all();
         foreach ($locations as $location) {
             print_r("\n" . $location->name);
@@ -254,7 +254,6 @@ class EnrolmentController extends Controller
             $courses = Course::find()
                 ->regular()
                 ->location($location->id)
-                ->andWhere(['>','DATE(course.endDate)', Carbon::now()->format('Y-m-d')])
                 ->andWhere(['IN', 'course.id', $courseIds])
                 ->confirmed()
                 ->privateProgram()
@@ -296,36 +295,37 @@ class EnrolmentController extends Controller
                         if ($lesson1 && $lesson2) {
                             if ($lesson1->teacherId != $lesson2->teacherId && $lesson2->teacherId == $firstLesson->teacherId) {
                                 $lessons = $lesson2Query->all();
-                               
-                                    if ($lessons) {
-                                        foreach ($lessons as $lesson) {
-                                            $lessonOldTeacher = new LessonOldTeacher();
-                                            $lessonOldTeacher->lessonId = $lesson->id;
-                                            $lessonOldTeacher->teacherId = $lesson->teacherId;
-                                            $lessonOldTeacher->courseId = $course->id;
-                                            $lessonOldTeacher->enrolmentId = $lesson->enrolment->id;
-                                            $lessonOldTeacher->createdByUserId = Yii::$app->user->id;
-                                            $lessonOldTeacher->save();
-                                            $lesson->updateAttributes(['teacherId' => $lesson1->teacherId]);
-                                            $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
-                                            'program_id' => $lesson->course->program->id]);
-                                            $teacherRate = !empty($qualification->rate) ? $qualification->rate : 0;
-                                            $lesson->updateAttributes(['teacherRate' => $teacherRate]);
-                                          
-                                        }
-                                        $recentCourseSchedule = $course->recentCourseSchedule;
-                                        $oldCourseSchedule = new CourseScheduleOldTeacher();
-                                        $oldCourseSchedule->teacherId = $recentCourseSchedule->teacherId;
-                                        $oldCourseSchedule->courseId = $recentCourseSchedule->courseId;
-                                        $oldCourseSchedule->courseScheduleId = $recentCourseSchedule->id;
-                                        $oldCourseSchedule->createdByUserId = Yii::$app->user->id;
-                                        $oldCourseSchedule->endDate = $recentCourseSchedule->endDate;
-                                        $oldCourseSchedule->isAdded = false;
-                                        $oldCourseSchedule->save();
-                                        $recentCourseSchedule->updateAttributes(['teacherId' => $lesson1->teacherId]);
-                                        
-                                        print_r("\nhttps://smw.arcadiamusicacademy.com/admin/" . $location->slug . "/enrolment/view?id=" . $course->enrolment->id);
+
+                                if ($lessons) {
+                                    foreach ($lessons as $lesson) {
+                                        $lessonOldTeacher = new LessonOldTeacher();
+                                        $lessonOldTeacher->lessonId = $lesson->id;
+                                        $lessonOldTeacher->teacherId = $lesson->teacherId;
+                                        $lessonOldTeacher->courseId = $course->id;
+                                        $lessonOldTeacher->enrolmentId = $lesson->enrolment->id;
+                                        $lessonOldTeacher->createdByUserId = Yii::$app->user->id;
+                                        $lessonOldTeacher->save();
+                                        $lesson->updateAttributes(['teacherId' => $lesson1->teacherId]);
+                                        $qualification = Qualification::findOne([
+                                            'teacher_id' => $lesson->teacherId,
+                                            'program_id' => $lesson->course->program->id
+                                        ]);
+                                        $teacherRate = !empty($qualification->rate) ? $qualification->rate : 0;
+                                        $lesson->updateAttributes(['teacherRate' => $teacherRate]);
                                     }
+                                    $recentCourseSchedule = $course->recentCourseSchedule;
+                                    $oldCourseSchedule = new CourseScheduleOldTeacher();
+                                    $oldCourseSchedule->teacherId = $recentCourseSchedule->teacherId;
+                                    $oldCourseSchedule->courseId = $recentCourseSchedule->courseId;
+                                    $oldCourseSchedule->courseScheduleId = $recentCourseSchedule->id;
+                                    $oldCourseSchedule->createdByUserId = Yii::$app->user->id;
+                                    $oldCourseSchedule->endDate = $recentCourseSchedule->endDate;
+                                    $oldCourseSchedule->isAdded = false;
+                                    $oldCourseSchedule->save();
+                                    $recentCourseSchedule->updateAttributes(['teacherId' => $lesson1->teacherId]);
+
+                                    print_r("\nhttps://smw.arcadiamusicacademy.com/admin/" . $location->slug . "/enrolment/view?id=" . $course->enrolment->id);
+                                }
                             }
                         }
                     }
@@ -347,7 +347,7 @@ class EnrolmentController extends Controller
                 ->regular()
                 ->location($location->id)
                 ->confirmed()
-                ->andWhere(['>','DATE(course.endDate)', Carbon::now()->format('Y-m-d')])
+                ->andWhere(['>', 'DATE(course.endDate)', Carbon::now()->format('Y-m-d')])
                 ->privateProgram()
                 ->notDeleted()
                 ->all();
@@ -355,52 +355,51 @@ class EnrolmentController extends Controller
             if ($courses) {
                 foreach ($courses as $course) {
                     if (Carbon::parse($course->recentCourseSchedule->endDate)->format('Y-m-d') < Carbon::parse($course->endDate)->format('Y-m-d')) {
-                            if (Carbon::parse($course->endDate)->diffInDays(Carbon::parse($course->recentCourseSchedule->endDate)) > 30) {
-                        $courseSchedule = new CourseSchedule();
-                        $courseSchedule->courseId = $course->id;
-                        $courseSchedule->day = $course->recentCourseSchedule->day;
-                        $courseSchedule->fromTime = $course->recentCourseSchedule->fromTime;
-                        $courseSchedule->duration = $course->recentCourseSchedule->duration;
-                        $oldCourseSchedules = $course->courseSchedules;
-                        if ($oldCourseSchedules) {
-                        $oldCourseSchedule = end($oldCourseSchedules);
-                        $courseSchedule->startDate = Carbon::parse($oldCourseSchedule->endDate)->modify('+1days')->format('Y-m-d H:i:s');
+                        if (Carbon::parse($course->endDate)->diffInDays(Carbon::parse($course->recentCourseSchedule->endDate)) > 30) {
+                            $courseSchedule = new CourseSchedule();
+                            $courseSchedule->courseId = $course->id;
+                            $courseSchedule->day = $course->recentCourseSchedule->day;
+                            $courseSchedule->fromTime = $course->recentCourseSchedule->fromTime;
+                            $courseSchedule->duration = $course->recentCourseSchedule->duration;
+                            $oldCourseSchedules = $course->courseSchedules;
+                            if ($oldCourseSchedules) {
+                                $oldCourseSchedule = end($oldCourseSchedules);
+                                $courseSchedule->startDate = Carbon::parse($oldCourseSchedule->endDate)->modify('+1days')->format('Y-m-d H:i:s');
+                            } else {
+                                $courseSchedule->startDate = $course->startDate;
+                            }
+                            $courseSchedule->endDate = Carbon::parse($course->endDate)->format('Y-m-d H:i:s');
+                            $courseSchedule->teacherId = $course->recentCourseSchedule->teacherId;
+                            if (!$courseSchedule->save()) {
+                                print_r($courseSchedule->getErrors());
+                            }
+                            $oldCourseScheduleEntry = new CourseScheduleOldTeacher();
+                            $oldCourseScheduleEntry->teacherId = $courseSchedule->teacherId;
+                            $oldCourseScheduleEntry->courseId = $courseSchedule->courseId;
+                            $oldCourseScheduleEntry->courseScheduleId = $courseSchedule->id;
+                            $oldCourseScheduleEntry->createdByUserId = Yii::$app->user->id;
+                            $oldCourseScheduleEntry->endDate = $courseSchedule->endDate;
+                            $oldCourseScheduleEntry->isAdded = true;
+                            if (!$oldCourseScheduleEntry->save()) {
+                                print_r("\nsssss");
+                                print_r($oldCourseScheduleEntry->getErrors());
+                            }
                         } else {
-                        $courseSchedule->startDate = $course->startDate;
+                            $recentCourseSchedule = $course->recentCourseSchedule;
+                            $oldCourseScheduleEntry = new CourseScheduleOldTeacher();
+                            $oldCourseScheduleEntry->teacherId = $recentCourseSchedule->teacherId;
+                            $oldCourseScheduleEntry->courseId = $recentCourseSchedule->courseId;
+                            $oldCourseScheduleEntry->courseScheduleId = $recentCourseSchedule->id;
+                            $oldCourseScheduleEntry->createdByUserId = Yii::$app->user->id;
+                            $oldCourseScheduleEntry->endDate = $recentCourseSchedule->endDate;
+                            $oldCourseScheduleEntry->isAdded = false;
+                            $recentCourseSchedule->endDate = Carbon::parse($course->endDate)->format('Y-m-d H:i:s');
+                            $recentCourseSchedule->save();
+                            $oldCourseScheduleEntry->save();
                         }
-                        $courseSchedule->endDate = Carbon::parse($course->endDate)->format('Y-m-d H:i:s');    
-                        $courseSchedule->teacherId = $course->recentCourseSchedule->teacherId;
-                        if (!$courseSchedule->save()) {
-                            print_r($courseSchedule->getErrors());
-                        }
-                        $oldCourseScheduleEntry = new CourseScheduleOldTeacher();
-                        $oldCourseScheduleEntry->teacherId = $courseSchedule->teacherId;
-                        $oldCourseScheduleEntry->courseId = $courseSchedule->courseId;
-                        $oldCourseScheduleEntry->courseScheduleId = $courseSchedule->id;
-                        $oldCourseScheduleEntry->createdByUserId = Yii::$app->user->id;
-                        $oldCourseScheduleEntry->endDate = $courseSchedule->endDate;
-                        $oldCourseScheduleEntry->isAdded = true;
-                        if (!$oldCourseScheduleEntry->save()) {
-                            print_r("\nsssss");
-                            print_r($oldCourseScheduleEntry->getErrors());
-                        }
-                       
-                    } else {
-                        $recentCourseSchedule = $course->recentCourseSchedule;                     
-                        $oldCourseScheduleEntry = new CourseScheduleOldTeacher();
-                        $oldCourseScheduleEntry->teacherId = $recentCourseSchedule->teacherId;
-                        $oldCourseScheduleEntry->courseId = $recentCourseSchedule->courseId;
-                        $oldCourseScheduleEntry->courseScheduleId = $recentCourseSchedule->id;
-                        $oldCourseScheduleEntry->createdByUserId = Yii::$app->user->id;
-                        $oldCourseScheduleEntry->endDate = $recentCourseSchedule->endDate;
-                        $oldCourseScheduleEntry->isAdded = false;
-                        $recentCourseSchedule->endDate = Carbon::parse($course->endDate)->format('Y-m-d H:i:s');
-                        $recentCourseSchedule->save();
-                        $oldCourseScheduleEntry->save();
                     }
-                    }
-                }            
+                }
+            }
         }
     }
-}
 }
