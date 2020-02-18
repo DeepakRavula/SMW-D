@@ -406,32 +406,71 @@ class EnrolmentController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $courseIds = [3625];
+        $courseIds = [3056,3625,4776, 4914, 5613, 4101];
+        $excludeLessonIds = [1027423,1027424,1027425,1027426,1027464,1027466,1027467,1027468,1027496,1064225];
             $courses = Course::find()
                 ->regular()
                 ->confirmed()
                 ->location(20)
                 ->andWhere(['IN', 'course.id', $courseIds])
-                ->joinWith([''])
                 ->privateProgram()
                 ->all();
             $count = 0;
             if ($courses) {
                 foreach ($courses as $course) {
                     print_r("\nhttps://smw.arcadiamusicacademy.com/admin/north-brampton/enrolment/view?id=" . $course->enrolment->id);
-                    print_r("\n id | enrolmentid | teacherId ");
+                    print_r("\n\n\nProcessing Lessons...");
                     $lessons = Lesson::find()
-                    ->andWhere(['courseId' => $course->id])
-                    ->notCanceled()
-                    ->isConfirmed()
-                    ->regular()
-                    ->invoiced()
-                    ->orderBy(['lesson.id' => SORT_ASC])
-                    ->all();
+                        ->andWhere(['courseId' => $course->id])
+                        ->andWhere(['NOT IN', 'lesson.id', $excludeLessonIds])
+                        ->notCanceled()
+                        ->notRescheduled()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->regular()
+                        ->andWhere(['>=','DATE(lesson.date)',Carbon::parse('2019-09-01')->format('Y-m-d')])
+                        ->andWhere(['<=','DATE(lesson.date)',Carbon::parse('2020-03-01')->format('Y-m-d')])
+                        ->orderBy(['lesson.id' => SORT_ASC])
+                        ->all();
                         foreach ($lessons as $lesson) {
-                            print_r("\n".$lesson->id." | ".Carbon::parse($lesson->date)->format('M d, Y H:i a'). " | ".$lesson->teacher->publicIdentity." | ".$lesson->invoice->getInvoiceNumber()." | ".$lesson->invoice->id."\n");
+                            print_r("\nProcessing Lesson".$lesson->id);
+                            $lesson->updateAttributes(['teacherId' => 5593 ]);                          
                         }
+                        $changedCourseSchedule = CourseScheduleOldTeacher::find()
+                        ->andWhere(['courseId' => $course->id])
+                        ->one();
+                        $courseSchedule = CourseSchedule::findOne($changedCourseSchedule->courseScheduleId);
+                        print_r("\n\n\nAffecting Course Schedule:".$courseSchedule->id);
+                        $courseSchedule->updateAttributes(['teacherId' => $changedCourseSchedule->teacherId]);
+                        
                     }
+                    $lastCourseId = 4247;
+                    $lastCourse = Course::findOne($lastCourseId);
+                    print_r("\nhttps://smw.arcadiamusicacademy.com/admin/north-brampton/enrolment/view?id=" . $lastCourse->enrolment->id);
+                    $lessons = Lesson::find()
+                        ->andWhere(['courseId' => $lastCourse->id])
+                        ->notCanceled()
+                        ->notRescheduled()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->regular()
+                        ->andWhere(['>=','DATE(lesson.date)',Carbon::parse('2019-12-01')->format('Y-m-d')])
+                        ->andWhere(['<=','DATE(lesson.date)',Carbon::parse('2020-03-01')->format('Y-m-d')])
+                        ->orderBy(['lesson.id' => SORT_ASC])
+                        ->all();
+                        foreach ($lessons as $lesson) {
+                            print_r("\nProcessing Lesson".$lesson->id);
+                            $lesson->updateAttributes(['teacherId' => 5585 ]);
+                        }
+                        $changedCourseSchedule = CourseScheduleOldTeacher::find()
+                        ->andWhere(['courseId' => $course->id])
+                        ->one();
+                        $courseSchedule = CourseSchedule::findOne($changedCourseSchedule->courseScheduleId);
+                        print_r("\n\n\nAffecting Course Schedule:".$courseSchedule->id);
+                        $courseSchedule->updateAttributes(['teacherId' => $changedCourseSchedule->teacherId]);
                 }
+
+               
             }
         }
+
