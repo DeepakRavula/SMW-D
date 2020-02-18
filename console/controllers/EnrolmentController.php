@@ -402,4 +402,36 @@ class EnrolmentController extends Controller
             }
         }
     }
-}
+    public function actionFixNorthBramptonEnrolments()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $courseIds = [3625];
+            $courses = Course::find()
+                ->regular()
+                ->confirmed()
+                ->location(20)
+                ->andWhere(['IN', 'course.id', $courseIds])
+                ->joinWith([''])
+                ->privateProgram()
+                ->all();
+            $count = 0;
+            if ($courses) {
+                foreach ($courses as $course) {
+                    print_r("\nhttps://smw.arcadiamusicacademy.com/admin/north-brampton/enrolment/view?id=" . $course->enrolment->id);
+                    print_r("\n id | enrolmentid | teacherId ");
+                    $lessons = Lesson::find()
+                    ->andWhere(['courseId' => $course->id])
+                    ->notCanceled()
+                    ->isConfirmed()
+                    ->regular()
+                    ->invoiced()
+                    ->orderBy(['lesson.id' => SORT_ASC])
+                    ->all();
+                        foreach ($lessons as $lesson) {
+                            print_r("\n".$lesson->id." | ".Carbon::parse($lesson->date)->format('M d, Y H:i a'). " | ".$lesson->teacher->publicIdentity." | ".$lesson->invoice->getInvoiceNumber()." | ".$lesson->invoice->id."\n");
+                        }
+                    }
+                }
+            }
+        }
