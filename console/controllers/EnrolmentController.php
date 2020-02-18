@@ -463,7 +463,7 @@ class EnrolmentController extends Controller
                             $lesson->updateAttributes(['teacherId' => 5585 ]);
                         }
                         $changedCourseSchedule = CourseScheduleOldTeacher::find()
-                        ->andWhere(['courseId' => $course->id])
+                        ->andWhere(['courseId' => $lastCourse->id])
                         ->one();
                         $courseSchedule = CourseSchedule::findOne($changedCourseSchedule->courseScheduleId);
                         print_r("\n\n\nAffecting Course Schedule:".$courseSchedule->id);
