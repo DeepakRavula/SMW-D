@@ -34,8 +34,17 @@ echo GridView::widget([
         ],
         [
             'label' => 'Student Name',
-            'value' => function ($data) {
-                return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
+            'value' => function ($data) use($model) {
+            $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($model->id)
+                    ->one();
+            if ($data->isPrivate()) {
+                $enrolment = $data->enrolment;
+            }
+                return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
             },
         ],
         [
