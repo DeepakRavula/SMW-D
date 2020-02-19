@@ -79,7 +79,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             ],
         ];
         ?>
-    <div class="grid-row-open">
+    <div>
     <?= GridView::widget([
         'dataProvider' => $paymentsDataProvider,
         'id' => 'payment-listing-sales-payment-report',

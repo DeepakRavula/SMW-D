@@ -406,6 +406,10 @@ class Location extends \yii\db\ActiveRecord
             'manageEnrolmentGains',
             'manageEnrolmentLosses',
             'manageInstructionHours',
+            'manageAccountReceivableReport',
+            'managePaymentsReport',
+            'manageSalesAndPayment',
+            'manageRecurringPayment',
         ];
     }
     

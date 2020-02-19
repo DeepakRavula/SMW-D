@@ -126,17 +126,12 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ]
     ];
     ?>
-<div class="grid-row-open">
+<div>
 	<?=
 GridView::widget([
     'dataProvider' => $salesDataProvider,
     'options' => ['class' => 'payment-table'],
-    'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-        
-        $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
-        $data = ['data-url' => $url];
-        return $data;
-    },
+
     'summary' => false,
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
