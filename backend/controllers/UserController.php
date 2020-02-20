@@ -171,12 +171,24 @@ class UserController extends BaseController
 
     protected function getLessonDataProvider($id, $locationId)
     {
+        $enrolments = Enrolment::find()
+                ->joinWith(['student' => function ($query) use ($id) {
+                    $query->andWhere(['customer_id' => $id]);
+                }])
+                ->notDeleted()
+                ->isConfirmed()
+                ->groupBy(['enrolment.id'])
+                ->andWhere(['>=', 'DATE(enrolment.endDateTime)', (new \DateTime())->format('Y-m-d')])
+                ->all();
+        foreach ($enrolments as $enrolment) {
+            $enrolmentIds[] = $enrolment->id;
+        }
         $lessonQuery = Lesson::find()
                 ->location($locationId)
-                ->customer($id)
                 ->scheduledOrRescheduled()
+                ->enrolment($enrolmentIds)
                 ->isConfirmed()
-		        ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
+                ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->notCompleted();
 
