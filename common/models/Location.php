@@ -458,6 +458,10 @@ class Location extends \yii\db\ActiveRecord
 
     public function getLocationDetails($fromDate, $toDate)
     {
+        $activeEnrolmentsCount = 0.00;
+        $revenue =0.00;
+        $locationDebtValueRoyalty = 0.00;
+        $locationDebtValueAdvertisement = 0.00;
         $activeEnrolmentsCount = $this->getActiveEnrolmentsCount($fromDate, $toDate);
         $invoiceTaxTotal = Invoice::find()
             ->andWhere(['location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE])
@@ -483,8 +487,7 @@ class Location extends \yii\db\ActiveRecord
             ->sum('invoice_line_item.amount');
 
         $revenue = $payments - $invoiceTaxTotal - $royaltyPayment;
-        $locationDebtValueRoyalty = 0;
-        $locationDebtValueAdvertisement = 0;
+       
         if (!empty($revenue) && $revenue>0) {
                 $royaltyValue = $this->royalty->value;
                 $locationDebtValueRoyalty = $revenue * (($royaltyValue) / 100);
@@ -505,11 +508,11 @@ class Location extends \yii\db\ActiveRecord
             'locationId' => $this->id,
             'locationName' => $this->name,
             'activeEnrolmentsCount' => $activeEnrolmentsCount,
-            'revenue' => $revenue,
-            'locationDebtValueRoyalty' =>  $locationDebtValueRoyalty,
-            'locationDebtValueAdvertisement' => $locationDebtValueAdvertisement,
-            'subTotal' => $subTotal,
-            'taxAmount' => $taxAmount
+            'revenue' => round($revenue, 2),
+            'locationDebtValueRoyalty' =>  round($locationDebtValueRoyalty, 2),
+            'locationDebtValueAdvertisement' => round($locationDebtValueAdvertisement, 2),
+            'subTotal' => round($subTotal, 2),
+            'taxAmount' => round($taxAmount, 2)
         ];
         return $response;
     }
