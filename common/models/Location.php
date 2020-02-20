@@ -504,6 +504,7 @@ class Location extends \yii\db\ActiveRecord
         ->one();
         $taxPercentage = $taxCode->rate;
         $taxAmount=$subTotal * ($taxPercentage / 100);
+        $total = $subTotal + $taxAmount;
         $response = [
             'locationId' => $this->id,
             'locationName' => $this->name,
@@ -511,7 +512,7 @@ class Location extends \yii\db\ActiveRecord
             'revenue' => round($revenue, 2),
             'locationDebtValueRoyalty' =>  round($locationDebtValueRoyalty, 2),
             'locationDebtValueAdvertisement' => round($locationDebtValueAdvertisement, 2),
-            'subTotal' => round($subTotal, 2),
+            'total' => round($total, 2),
             'taxAmount' => round($taxAmount, 2)
         ];
         return $response;

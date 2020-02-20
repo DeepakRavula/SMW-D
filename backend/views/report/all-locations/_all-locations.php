@@ -87,7 +87,7 @@ use kartik\grid\GridView;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'format' => 'currency',
-            'value' => 'subTotal',
+            'value' => 'total',
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM

@@ -438,7 +438,7 @@ class ReportController extends BaseController
         $dataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['locationId', 'locationName', 'activeEnrolmentsCount', 'revenue', 'locationDebtValueRoyalty',  'locationDebtValueAdvertisement','subTotal', 'taxAmount']
+                'attributes' => ['locationId', 'locationName', 'activeEnrolmentsCount', 'revenue', 'locationDebtValueRoyalty',  'locationDebtValueAdvertisement','total', 'taxAmount']
             ],
             'pagination' => false
         ]);
