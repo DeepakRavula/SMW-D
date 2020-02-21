@@ -732,9 +732,17 @@ class PrintController extends BaseController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-         $location = Location::find()->notDeleted();
-        $dataProvider = new ActiveDataProvider([
-            'query' => $location,
+        $defaultLocation = Location::findOne(1);
+        $locations = Location::find()->notDeleted()->andWhere(['NOT', ['id' => $defaultLocation->id]])->all();
+        foreach ($locations as $location) {
+            $results[] = $location->getLocationDetails($searchModel->fromDate, $searchModel->toDate);
+        }
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['locationId', 'locationName', 'activeEnrolmentsCount', 'revenue', 'locationDebtValueRoyalty',  'locationDebtValueAdvertisement','total', 'taxAmount']
+            ],
+            'pagination' => false
         ]);
         $this->layout = '/print';
         return $this->render('/report/all-locations/_print', [

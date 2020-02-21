@@ -23,11 +23,6 @@ use kartik\grid\GridView;
     <?php Pjax::begin(['id' => 'locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['student/view', 'id' => $model->id]);
-            $data = ['data-url' => $url];
-            return $data;
-        },
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -36,15 +31,11 @@ use kartik\grid\GridView;
         'columns' => [
             [
                 'label' => 'Name',
-                'value' => function ($data) {
-                    return  $data->name;
-                },
+                'value' => 'locationName'
             ],
             [
             'label' => 'Active Enrolments',
-            'value' => function ($data) use ($searchModel) {
-                return !empty($data->getActiveEnrolmentsCount($searchModel->fromDate, $searchModel->toDate)) ? $data->getActiveEnrolmentsCount($searchModel->fromDate, $searchModel->toDate) : 0;
-            },
+            'value' =>  'activeEnrolmentsCount',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
@@ -56,9 +47,7 @@ use kartik\grid\GridView;
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
-            'value' => function ($data) use ($searchModel) {
-                return !empty($data->getRevenue($searchModel->fromDate, $searchModel->toDate)) ? round($data->getRevenue($searchModel->fromDate, $searchModel->toDate), 2) : 0;
-            },
+            'value' => 'revenue',
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM
@@ -68,10 +57,7 @@ use kartik\grid\GridView;
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
-            'value' => function ($data) use ($searchModel) {
-                $royaltyValue = $data->getLocationDebt(LocationDebt::TYPE_ROYALTY, $searchModel->fromDate, $searchModel->toDate);
-                return round($royaltyValue, 2);
-            },
+            'value' => 'locationDebtValueRoyalty',
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM
@@ -81,10 +67,7 @@ use kartik\grid\GridView;
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
-            'value' => function ($data) use ($searchModel) {
-                $advertisementValue = $data->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT, $searchModel->fromDate, $searchModel->toDate);
-                return round($advertisementValue, 2);
-            },
+            'value' => 'locationDebtValueAdvertisement',
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM
@@ -94,10 +77,7 @@ use kartik\grid\GridView;
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
-            'value' => function ($data) use ($searchModel) {
-                $taxAmount = $data->getTaxAmount($searchModel->fromDate, $searchModel->toDate);
-                return round($taxAmount, 2);
-            },
+            'value' => 'taxAmount',
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM
@@ -107,12 +87,7 @@ use kartik\grid\GridView;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'format' => 'currency',
-            'value' => function ($data) use ($searchModel) {
-                $subTotal = $data->SubTotal($searchModel->fromDate, $searchModel->toDate);
-                $taxAmount = $data->getTaxAmount($searchModel->fromDate, $searchModel->toDate);
-                $total = $subTotal + $taxAmount;
-                return round($total, 2);
-            },
+            'value' => 'total',
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM

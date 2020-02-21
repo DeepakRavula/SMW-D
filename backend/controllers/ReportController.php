@@ -17,6 +17,7 @@ use backend\models\search\DiscountSearch;
 use common\models\Location;
 use common\models\User;
 use common\components\controllers\BaseController;
+use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 
 /**
@@ -430,11 +431,17 @@ class ReportController extends BaseController
             $toDate = $currentDate;
         }
         $defaultLocation = Location::findOne(1);
-        $location = Location::find()->notDeleted()->andWhere(['NOT', ['id' => $defaultLocation->id]]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $location,
+        $locations = Location::find()->notDeleted()->andWhere(['NOT', ['id' => $defaultLocation->id]])->all();
+        foreach ($locations as $location) {
+            $results[] = $location->getLocationDetails($searchModel->fromDate, $searchModel->toDate);
+        }
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['locationId', 'locationName', 'activeEnrolmentsCount', 'revenue', 'locationDebtValueRoyalty',  'locationDebtValueAdvertisement','total', 'taxAmount']
+            ],
+            'pagination' => false
         ]);
-
         return $this->render('all-locations/index', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
