@@ -180,17 +180,24 @@ class UserController extends BaseController
                 ->groupBy(['enrolment.id'])
                 ->andWhere(['>=', 'DATE(enrolment.endDateTime)', (new \DateTime())->format('Y-m-d')])
                 ->all();
+        $lessonIds = [];
         foreach ($enrolments as $enrolment) {
-            $enrolmentIds[] = $enrolment->id;
-        }
-        $lessonQuery = Lesson::find()
+            $lessons = Lesson::find()
                 ->location($locationId)
                 ->scheduledOrRescheduled()
-                ->enrolment($enrolmentIds)
+                ->enrolment($enrolment->id)
                 ->isConfirmed()
                 ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
                 ->notDeleted()
-                ->notCompleted();
+                ->notCompleted()
+                ->andWhere(['<=', 'DATE(lesson.date)', (new \DateTime($enrolment->endDateTime))->format('Y-m-d')])
+                ->all();
+            foreach ($lessons as $lesson) {
+                $lessonIds[] = $lesson->id;
+            }
+        }
+        $lessonQuery = Lesson::find()
+        ->andWhere(['IN', 'lesson.id', $lessonIds]);
 
         return new ActiveDataProvider([
             'query' => $lessonQuery,
