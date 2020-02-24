@@ -190,7 +190,7 @@ class UserController extends BaseController
                 ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->notCompleted()
-                ->andWhere(['<=', 'DATE(lesson.date)', (new \DateTime($enrolment->endDateTime))->format('Y-m-d')])
+                ->andWhere(['<', 'DATE(lesson.date)', (new \DateTime($enrolment->endDateTime))->format('Y-m-d')])
                 ->all();
             foreach ($lessons as $lesson) {
                 $lessonIds[] = $lesson->id;
