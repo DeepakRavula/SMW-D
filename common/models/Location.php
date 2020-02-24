@@ -455,4 +455,66 @@ class Location extends \yii\db\ActiveRecord
     {
         return $this->hasOne(LocationPaymentPreference::className(), ['locationId' => 'id']);
     }
+
+    public function getLocationDetails($fromDate, $toDate)
+    {
+        $activeEnrolmentsCount = 0.00;
+        $revenue =0.00;
+        $locationDebtValueRoyalty = 0.00;
+        $locationDebtValueAdvertisement = 0.00;
+        $activeEnrolmentsCount = $this->getActiveEnrolmentsCount($fromDate, $toDate);
+        $invoiceTaxTotal = Invoice::find()
+            ->andWhere(['location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE])
+            ->andWhere(['between', 'date', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
+            ->notDeleted()
+            ->sum('tax');
+
+        $payments = Payment::find()
+            ->exceptAutoPayments()
+            ->exceptGiftCard()
+            ->location($this->id)
+            ->notDeleted()
+            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
+            ->sum('payment.amount');
+
+        $royaltyPayment = InvoiceLineItem::find()
+                ->notDeleted()
+            ->joinWith(['invoice i' => function ($query) {
+                $query->andWhere(['i.location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE]);
+            }])
+            ->andWhere(['between', 'i.date', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
+            ->royaltyFree()
+            ->sum('invoice_line_item.amount');
+
+        $revenue = $payments - $invoiceTaxTotal - $royaltyPayment;
+       
+        if (!empty($revenue) && $revenue>0) {
+                $royaltyValue = $this->royalty->value;
+                $locationDebtValueRoyalty = $revenue * (($royaltyValue) / 100);
+                $advertisementValue = $this->advertisement->value;
+                $locationDebtValueAdvertisement = $revenue * (($advertisementValue) / 100);
+        }
+        $subTotal = $locationDebtValueRoyalty + $locationDebtValueAdvertisement;
+
+        $taxCode = TaxCode::find()
+        ->andWhere(['province_id' => $this->province_id,
+            'tax_type_id' => TaxType::HST
+        ])
+        ->orderBy(['id' => SORT_DESC])
+        ->one();
+        $taxPercentage = $taxCode->rate;
+        $taxAmount=$subTotal * ($taxPercentage / 100);
+        $total = $subTotal + $taxAmount;
+        $response = [
+            'locationId' => $this->id,
+            'locationName' => $this->name,
+            'activeEnrolmentsCount' => $activeEnrolmentsCount,
+            'revenue' => round($revenue, 2),
+            'locationDebtValueRoyalty' =>  round($locationDebtValueRoyalty, 2),
+            'locationDebtValueAdvertisement' => round($locationDebtValueAdvertisement, 2),
+            'total' => round($total, 2),
+            'taxAmount' => round($taxAmount, 2)
+        ];
+        return $response;
+    }
 }
