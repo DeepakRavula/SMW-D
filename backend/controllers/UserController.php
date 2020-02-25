@@ -171,14 +171,33 @@ class UserController extends BaseController
 
     protected function getLessonDataProvider($id, $locationId)
     {
-        $lessonQuery = Lesson::find()
-                ->location($locationId)
-                ->customer($id)
-                ->scheduledOrRescheduled()
-                ->isConfirmed()
-		        ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
+        $enrolments = Enrolment::find()
+                ->joinWith(['student' => function ($query) use ($id) {
+                    $query->andWhere(['customer_id' => $id]);
+                }])
                 ->notDeleted()
-                ->notCompleted();
+                ->isConfirmed()
+                ->groupBy(['enrolment.id'])
+                ->andWhere(['>=', 'DATE(enrolment.endDateTime)', (new \DateTime())->format('Y-m-d')])
+                ->all();
+        $lessonIds = [];
+        foreach ($enrolments as $enrolment) {
+            $lessons = Lesson::find()
+                ->location($locationId)
+                ->scheduledOrRescheduled()
+                ->enrolment($enrolment->id)
+                ->isConfirmed()
+                ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
+                ->notDeleted()
+                ->notCompleted()
+                ->andWhere(['<', 'DATE(lesson.date)', (new \DateTime($enrolment->endDateTime))->format('Y-m-d')])
+                ->all();
+            foreach ($lessons as $lesson) {
+                $lessonIds[] = $lesson->id;
+            }
+        }
+        $lessonQuery = Lesson::find()
+        ->andWhere(['IN', 'lesson.id', $lessonIds]);
 
         return new ActiveDataProvider([
             'query' => $lessonQuery,
@@ -217,8 +236,9 @@ class UserController extends BaseController
             ->notDeleted()
             ->isConfirmed()
             ->isRegular()
+            ->andWhere(['>=', 'DATE(enrolment.endDateTime)', (new \DateTime())->format('Y-m-d')])
             ->groupBy(['enrolment.id'])
-            ->active();
+            ->activeAndfutureEnrolments();
 
         return new ActiveDataProvider([
             'query' => $enrolmentQuery,
