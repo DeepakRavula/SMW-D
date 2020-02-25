@@ -147,7 +147,7 @@ class GroupEnrolmentController extends BaseController
                         $lessons = GroupLesson::find()
                             ->andWhere(['group_lesson.enrolmentId' => $model->id])
                             ->joinWith(['lesson' => function ($query) use($courseEndDate) { 
-                                $query->andWhere(['>', 'lesson.date', Carbon::parse($courseEndDate)->format('Y-m-d')]);
+                                $query->andWhere(['>', 'DATE(lesson.date)', Carbon::parse($courseEndDate)->format('Y-m-d')]);
                             }])
                             ->all();
                         $message = null;
