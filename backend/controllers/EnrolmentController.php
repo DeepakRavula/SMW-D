@@ -295,7 +295,7 @@ class EnrolmentController extends BaseController
                 $groupLesson = new GroupLesson();
                 $groupLesson->lessonId = $lesson->id;
                 $groupLesson->enrolmentId = $enrolmentId;
-                $groupLesson->dueDate = (new \DateTime())->format('Y-m-d');
+                $groupLesson->dueDate = (new \DateTime($enrolmentModel->createdAt))->format('Y-m-d');
                 $groupLesson->save();
             }
             $enrolmentModel->setStatus();
