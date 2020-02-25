@@ -236,6 +236,7 @@ class UserController extends BaseController
             ->notDeleted()
             ->isConfirmed()
             ->isRegular()
+            ->andWhere(['>=', 'DATE(enrolment.endDateTime)', (new \DateTime())->format('Y-m-d')])
             ->groupBy(['enrolment.id'])
             ->activeAndfutureEnrolments();
 
