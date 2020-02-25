@@ -237,7 +237,7 @@ class UserController extends BaseController
             ->isConfirmed()
             ->isRegular()
             ->groupBy(['enrolment.id'])
-            ->active();
+            ->activeAndfutureEnrolments();
 
         return new ActiveDataProvider([
             'query' => $enrolmentQuery,
