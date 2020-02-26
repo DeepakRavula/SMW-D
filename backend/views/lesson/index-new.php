@@ -138,6 +138,16 @@ array_push($columns,
     ]
 );
 
+array_push($columns, [
+    'label' => 'Price',
+    'attribute' => 'price',
+    'contentOptions' => ['class' => 'text-right'],
+    'headerOptions' => ['class' => 'text-right'],
+    'value' => function ($data) {
+        return Yii::$app->formatter->asCurrency($data->privateLesson->total);
+    },
+]);
+
 if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
     array_shift($columns);
 }
