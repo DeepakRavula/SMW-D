@@ -534,10 +534,16 @@ class PrintController extends BaseController
         ]);
         
         $groupLessonPayment = GroupLesson::find()
-            ->joinWith(['lessonPayments' => function ($query) use ($id) {
-                $query->andWhere(['paymentId' => $id])
-            ->notDeleted();
+        ->joinWith(['lesson' => function ($query) use ($id) {
+            $query->joinWith(['allLessonPayments alp' => function ($query) use ($id) {
+                $query->andWhere(['alp.paymentId' => $id, 'alp.isDeleted' => false]);
             }]);
+        }])
+        ->joinWith(['enrolment' => function ($query) use ($id) {
+            $query->joinWith(['lessonPayments lp' => function ($query) use ($id) {
+                $query->andWhere(['lp.paymentId' => $id, 'lp.isDeleted' => false]);
+            }]);
+        }]);
 
         $groupLessonDataProvider = new ActiveDataProvider([
             'query' => $groupLessonPayment,
