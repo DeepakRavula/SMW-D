@@ -63,14 +63,8 @@ echo GridView::widget([
             'attribute' => 'owing',
             'contentOptions' => ['class' => 'text-right dollar'],
             'headerOptions' => ['class' => 'text-right'],
-            'value' => function ($data) use ($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->lesson->courseId])
-                    ->customer($model->id)
-                    ->one();
-                return Yii::$app->formatter->asDecimal($data->lesson->getOwingAmount($enrolment->id));
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal(round($data->total, 2));
             },
             'hAlign' => 'right',
             'pageSummary' => true,
