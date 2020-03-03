@@ -1,4 +1,7 @@
 <?php
+
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
 
 $this->registerCssFile("@web/css/note.css");
