@@ -559,6 +559,8 @@ class UserController extends BaseController
             'customerRecurringPaymentsDataProvider' => $this->getCustomerRecurringPaymentsDataProvider($id),
             'privateLessonDueDataProvider' => $this->getPrivateLessonDueDataProvider($id, $locationId),
             'groupLessonDueDataProvider' => $this->getGroupLessonDueDataProvider($id, $locationId),
+            'privateLessonDataProvider' => $this->getPrivateLessonDataProvider($id, $locationId),
+            'groupLessonDataProvider' => $this->getGroupLessonDataProvider($id, $locationId),
         ]);
     }
 
@@ -878,6 +880,52 @@ class UserController extends BaseController
                 ->orderBy(['group_lesson.dueDate' => SORT_ASC])
                 ->dueLessons()
                 ->notDeleted();
+        return new ActiveDataProvider([
+            'query' => $lessonQuery,
+            'pagination' => false,
+        ]);
+    }
+
+    protected function getPrivateLessonDataProvider($id, $locationId)
+    {
+        $lessonQuery = Lesson::find()
+                ->location($locationId)
+                ->customer($id)
+                ->privatelessons()
+                ->isConfirmed()
+                ->joinWith(['privateLesson' => function($query) {
+                    $query->andWhere(['>', 'private_lesson.balance', 0.00]);
+                }])
+                ->orderBy(['lesson.dueDate' => SORT_ASC, 'lesson.date' => SORT_ASC])
+                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                ->notCanceled()
+                ->notCompleted()
+                ->notDeleted();
+        return new ActiveDataProvider([
+            'query' => $lessonQuery,
+            'pagination' => false,
+        ]);
+    }
+
+    protected function getGroupLessonDataProvider($id, $locationId)
+    {
+        $lessonQuery = GroupLesson::find()
+                ->joinWith(['lesson' => function($query) use ($locationId) {
+                    $query->location($locationId)
+                        ->isConfirmed()
+                        ->orderBy(['lesson.date' => SORT_ASC])
+                        ->notCanceled()
+                        ->notDeleted();
+                }])
+                ->joinWith(['enrolment' => function($query) use ($id) {
+                    $query->notDeleted()
+                        ->isConfirmed()
+                        ->customer($id);
+                }])
+                ->andWhere(['>', 'group_lesson.balance', 0.00])
+                ->orderBy(['group_lesson.dueDate' => SORT_ASC])
+                ->notDeleted();
+
         return new ActiveDataProvider([
             'query' => $lessonQuery,
             'pagination' => false,
