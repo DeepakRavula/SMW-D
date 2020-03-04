@@ -70,6 +70,16 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         <?=$this->render('_total-details', [
     'model' => $model,
 ]);?>
+<?php else : ?>
+    <?=$this->render('note/view', [
+    'model' => new Note(),
+    'noteDataProvider' => $noteDataProvider,
+]); ?>
+        <?php endif;?>
+      
+    </div>
+</div>
+<?php if (!$model->isGroup()): ?>
 <div class="row"> 
 <div class="col-md-6">
         <?=$this->render('payment/view', [
@@ -83,16 +93,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 ]); ?>
 </div>
 </div>
-<?php else : ?>
-    <?=$this->render('note/view', [
-    'model' => new Note(),
-    'noteDataProvider' => $noteDataProvider,
-]); ?>
-        <?php endif;?>
-      
-    </div>
-</div>
-
+<?php endif;?>
 <div class="row">
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
