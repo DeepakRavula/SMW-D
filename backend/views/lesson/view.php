@@ -70,18 +70,34 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         <?=$this->render('_total-details', [
     'model' => $model,
 ]);?>
+<?php else : ?>
+    <?=$this->render('note/view', [
+    'model' => new Note(),
+    'noteDataProvider' => $noteDataProvider,
+]); ?>
         <?php endif;?>
       
     </div>
 </div>
-
+<?php if (!$model->isGroup()): ?>
+<div class="row"> 
+<div class="col-md-6">
+        <?=$this->render('payment/view', [
+    'paymentsDataProvider' => $paymentsDataProvider,
+]);?>
+</div>
+   <div class="col-md-6">
+        <?=$this->render('note/view', [
+    'model' => new Note(),
+    'noteDataProvider' => $noteDataProvider,
+]); ?>
+</div>
+</div>
+<?php endif;?>
 <div class="row">
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
 				<?php
-$paymentContent = $this->render('payment/view', [
-    'paymentsDataProvider' => $paymentsDataProvider,
-]);
 $studentContent = $this->render('student/view', [
     'studentDataProvider' => $studentDataProvider,
     'lessonModel' => $model,
@@ -96,12 +112,6 @@ $logContent = $this->render('log', [
     'logDataProvider' => $logDataProvider,
 ]);
 
-$privateItem = [
-    [
-        'label' => 'Payments',
-        'content' => $paymentContent,
-    ],
-];
 $groupItem = [
     [
         'label' => 'Students',
@@ -110,16 +120,12 @@ $groupItem = [
 ];
 $items = [
     [
-        'label' => 'Comments',
-        'content' => $noteContent,
-    ],
-    [
         'label' => 'History',
         'content' => $logContent,
     ],
 ];
 if (!$model->isGroup()) {
-    $lessonItems = array_merge($privateItem, $items);
+    $lessonItems = $items;
 } else {
     $lessonItems = array_merge($groupItem, $items);
 }
