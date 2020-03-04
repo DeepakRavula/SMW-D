@@ -141,10 +141,10 @@ array_push($columns,
 array_push($columns, [
     'label' => 'Price',
     'attribute' => 'price',
-    'contentOptions' => ['class' => 'text-right'],
+    'contentOptions' => ['class' => 'text-right dollar'],
     'headerOptions' => ['class' => 'text-right'],
     'value' => function ($data) {
-        return Yii::$app->formatter->asCurrency($data->privateLesson->total);
+        return number_format($data->privateLesson->total, 2);
     },
 ]);
 
