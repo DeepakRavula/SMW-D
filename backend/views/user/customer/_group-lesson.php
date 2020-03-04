@@ -59,7 +59,7 @@ echo GridView::widget([
         [
             'label' => 'Status',
             'value' => function ($data) {
-                return $data->getStatus();
+                return $data->lesson->getStatus();
             },
         ],
         [
@@ -68,7 +68,7 @@ echo GridView::widget([
             'contentOptions' => ['class' => 'text-right'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
-                return Yii::$app->formatter->asDecimal(round($data->total, 2));
+                return Yii::$app->formatter->asCurrency(round($data->total, 2));
             },
         ],
         [
@@ -77,13 +77,7 @@ echo GridView::widget([
             'contentOptions' => ['class' => 'text-right'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->lesson->courseId])
-                    ->customer($model->id)
-                    ->one();
-                return Yii::$app->formatter->asCurrency($data->lesson->getOwingAmount($enrolment->id));
+                return Yii::$app->formatter->asCurrency(round($data->balance, 2));
             },
         ],
     ],

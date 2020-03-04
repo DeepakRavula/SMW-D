@@ -915,6 +915,7 @@ class UserController extends BaseController
                         ->isConfirmed()
                         ->orderBy(['lesson.date' => SORT_ASC])
                         ->notCanceled()
+                        ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
                         ->notDeleted();
                 }])
                 ->joinWith(['enrolment' => function($query) use ($id) {
@@ -922,7 +923,6 @@ class UserController extends BaseController
                         ->isConfirmed()
                         ->customer($id);
                 }])
-                ->andWhere(['>', 'group_lesson.balance', 0.00])
                 ->orderBy(['group_lesson.dueDate' => SORT_ASC])
                 ->notDeleted();
 
