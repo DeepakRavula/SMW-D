@@ -374,13 +374,6 @@ foreach ($roleNames as $name => $description) {
                     ],
                 ],
                 [
-                    'label' => 'Lessons',
-                    'content' => $lessonContent,
-                    'options' => [
-                        'id' => 'lesson',
-                    ],
-                ],
-                [
                     'label' => 'Private Lessons',
                     'content' => $privateLessonContent,
                     'options' => [
