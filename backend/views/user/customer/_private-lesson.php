@@ -7,7 +7,7 @@ use common\models\Enrolment;
 
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
-    'id' => 'customer-lesson-listing',
+    'id' => 'customer-private-lesson-listing',
     'timeout' => 6000,
 ]) ?>
 <?php
@@ -34,16 +34,7 @@ echo GridView::widget([
         [
             'label' => 'Student Name',
             'value' => function ($data) use($model) {
-            $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->id)
-                    ->one();
-            if ($data->isPrivate()) {
-                $enrolment = $data->enrolment;
-            }
-                return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
+                return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
             },
         ],
         [
@@ -92,16 +83,7 @@ echo GridView::widget([
             'contentOptions' => ['class' => 'text-right'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($model) {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->id)
-                    ->one();
-                if ($data->isPrivate()) {
-                    $enrolment = $data->enrolment;
-                }
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
             },
         ],
     ],
