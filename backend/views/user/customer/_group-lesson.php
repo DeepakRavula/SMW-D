@@ -46,7 +46,7 @@ echo GridView::widget([
         [
             'label' => 'Date',
             'value' => function ($data) {
-                return $data->lesson->date ? Yii::$app->formatter->asDate($data->lesson->date) : null;
+                return $data->lesson->date ? Yii::$app->formatter->asDate($data->lesson->date) . ' @ ' . Yii::$app->formatter->asTime($data->lesson->date) : null;
             },
         ],
         [
