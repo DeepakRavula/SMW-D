@@ -1,7 +1,19 @@
 <?php
+
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 
+?>
+
+<?php
+LteBox::begin([
+    'type' => LteConst::TYPE_DEFAULT,
+   
+    'title' => 'Payments',
+    'withBorder' => true,
+])
 ?>
 <?php
 $columns = [
@@ -46,5 +58,7 @@ $columns = [
         'columns' => $columns,
     ]);
     ?>
-<?php \yii\widgets\Pjax::end(); ?>	
+    <?php \yii\widgets\Pjax::end(); ?>	
+    <?php LteBox::end() ?>
+
 </div>

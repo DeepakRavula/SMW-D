@@ -99,7 +99,7 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                     'filter'=> UserSearch::balanceStatus(),
                     'label' => 'Balance',
                     'value' => function ($data) {
-                        return round($data->customerAccount->balance, 2);
+                        return number_format(round($data->customerAccount->balance, 2), 2);
                 },
                     'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width:20%'],
                     'hAlign' => 'right',
