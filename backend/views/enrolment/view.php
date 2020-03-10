@@ -91,11 +91,15 @@ $this->params['action-button'] = $this->render('_action-button', [
         if (data == enrolmentId) {
             $.pjax.reload({
                 container: "#enrolment-lesson-index",
-                timeout: 4000
+                timeout: 4000,
+                replace: false,
+                async: false,
             });
             $.pjax.reload({
                 container: "#enable-info",
                 timeout: 4000
+                replace: false,
+                async: false,
             });
         }
         return false;
