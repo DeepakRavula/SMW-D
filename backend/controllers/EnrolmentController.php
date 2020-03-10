@@ -173,14 +173,24 @@ class EnrolmentController extends BaseController
                 ]),
             'pagination' => false,
         ]);
-        
+        $isEnableInfo = false;
+        $notConfirmedLessons = Lesson::find()
+                            ->enrolment($id)
+                            ->notDeleted()
+                            ->notCanceled()
+                            ->notConfirmed()
+                            ->count();
+        if ($notConfirmedLessons > 0) {
+            $isEnableInfo = true;
+        }
         return $this->render('view', [
             'model' => $model,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
             'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider,
-	        'lessonCount' => $lessonCount,
+            'lessonCount' => $lessonCount,
+            'isEnableInfo' => $isEnableInfo,
         ]);
     }
 
