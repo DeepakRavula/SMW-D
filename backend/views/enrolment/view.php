@@ -97,7 +97,7 @@ $this->params['action-button'] = $this->render('_action-button', [
             });
             $.pjax.reload({
                 container: "#enable-info",
-                timeout: 4000
+                timeout: 4000,
                 replace: false,
                 async: false,
             });
