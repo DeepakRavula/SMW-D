@@ -14,8 +14,7 @@ $this->params['label'] = $this->render('_title', [
 $this->params['action-button'] = $this->render('_action-button', [
     'model' => $model,
 ]);
-
-//print_r($isEnableInfo);die('COMING');?>
+?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <div id="group-enrolment-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
@@ -236,7 +235,7 @@ $this->params['action-button'] = $this->render('_action-button', [
     });
 
     $(document).ready(function() {
-        var showEnrolment 
+        var isEnableInfo = '<?= $isEnableInfo; ?>';
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
             var private = <?= $model->course->program->isPrivate() | 0; ?>;
@@ -247,6 +246,9 @@ $this->params['action-button'] = $this->render('_action-button', [
             }
         } else {
             $(".more-lesson").hide();
+        }
+        if (isEnableInfo) {
+            $("#enrolment-in-progress-alert").hide();
         }
     });
 </script>
