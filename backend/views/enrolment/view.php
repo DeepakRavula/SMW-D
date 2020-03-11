@@ -21,7 +21,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="enrolment-enddate-alert" style="display: none;" class="alert-info alert fade in"></div>
 <?php yii\widgets\Pjax::begin(['id' => 'enable-info', 'timeout' => 4000,]); ?>
-<?php if ($isEnableInfo): ?>
+<?php if ($model->isEnableInfo): ?>
 <div id="enrolment-in-progress-alert" class="alert-info alert m-t-25">Enrolment Creation process is still in progress... Kindly wait to take the payment!!!</div>
 <?php endif; ?>
 <?php yii\widgets\Pjax::end(); ?>
@@ -235,7 +235,7 @@ $this->params['action-button'] = $this->render('_action-button', [
     });
 
     $(document).ready(function() {
-        var isEnableInfo = '<?= $isEnableInfo; ?>';
+        var isEnableInfo = '<?= $model->isEnableInfo; ?>';
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
             var private = <?= $model->course->program->isPrivate() | 0; ?>;
