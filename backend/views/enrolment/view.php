@@ -247,7 +247,7 @@ $this->params['action-button'] = $this->render('_action-button', [
         } else {
             $(".more-lesson").hide();
         }
-        if (isEnableInfo) {
+        if (!isEnableInfo) {
             $("#enrolment-in-progress-alert").hide();
         }
     });

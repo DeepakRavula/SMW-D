@@ -339,6 +339,16 @@ foreach ($roleNames as $name => $description) {
                 'lessonDataProvider' => $lessonDataProvider,
             ]);
 
+            $privateLessonContent = $this->render('customer/_private-lesson', [
+                'model' => $model,
+                'privateLessonDataProvider' => $privateLessonDataProvider,
+            ]);
+
+            $groupLessonContent = $this->render('customer/_group-lesson', [
+                'model' => $model,
+                'groupLessonDataProvider' => $groupLessonDataProvider,
+            ]);
+
             $enrolmentContent = $this->render('customer/_enrolment', [
                 'enrolmentDataProvider' => $enrolmentDataProvider,
             ]);
@@ -364,10 +374,17 @@ foreach ($roleNames as $name => $description) {
                     ],
                 ],
                 [
-                    'label' => 'Lessons',
-                    'content' => $lessonContent,
+                    'label' => 'Private Lessons',
+                    'content' => $privateLessonContent,
                     'options' => [
-                        'id' => 'lesson',
+                        'id' => 'private-lesson',
+                    ],
+                ],
+                [
+                    'label' => 'Group Lessons',
+                    'content' => $groupLessonContent,
+                    'options' => [
+                        'id' => 'group-lesson',
                     ],
                 ],
                 [
