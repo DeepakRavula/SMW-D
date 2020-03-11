@@ -15,13 +15,16 @@ $this->params['action-button'] = $this->render('_action-button', [
     'model' => $model,
 ]);
 ?>
-
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <div id="group-enrolment-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="enrolment-enddate-alert" style="display: none;" class="alert-info alert fade in"></div>
-
+<?php yii\widgets\Pjax::begin(['id' => 'enable-info', 'timeout' => 4000,]); ?>
+<?php if ($isEnableInfo): ?>
+<div id="enrolment-in-progress-alert" class="alert-info alert m-t-25">Enrolment Creation process is still in progress... Kindly wait to take the payment!!!</div>
+<?php endif; ?>
+<?php yii\widgets\Pjax::end(); ?>
 <?= $this->render('_view-enrolment', [
     'model' => $model,
     'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider
@@ -87,7 +90,15 @@ $this->params['action-button'] = $this->render('_action-button', [
         if (data == enrolmentId) {
             $.pjax.reload({
                 container: "#enrolment-lesson-index",
-                timeout: 4000
+                timeout: 4000,
+                replace: false,
+                async: false,
+            });
+            $.pjax.reload({
+                container: "#enable-info",
+                timeout: 4000,
+                replace: false,
+                async: false,
             });
         }
         return false;
@@ -224,6 +235,7 @@ $this->params['action-button'] = $this->render('_action-button', [
     });
 
     $(document).ready(function() {
+        var isEnableInfo = '<?= $isEnableInfo; ?>';
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
             var private = <?= $model->course->program->isPrivate() | 0; ?>;
@@ -234,6 +246,9 @@ $this->params['action-button'] = $this->render('_action-button', [
             }
         } else {
             $(".more-lesson").hide();
+        }
+        if (isEnableInfo) {
+            $("#enrolment-in-progress-alert").hide();
         }
     });
 </script>
