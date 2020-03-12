@@ -179,7 +179,8 @@ class EnrolmentController extends BaseController
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
-            'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider,           
+            'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider,   
+            'lessonCount' => $lessonCount,        
         ]);
     }
 
