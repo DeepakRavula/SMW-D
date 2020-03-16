@@ -746,6 +746,7 @@ class LessonController extends BaseController
                 $link     = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
             } else {
                 $model->confirmCustomer();
+                $courseModel->enrolment->updateAttributes(['isEnableInfo' => true]);
                 return $this->redirect(['/enrolment/view', 'id' => $courseModel->enrolment->id]);
             }
         } else {

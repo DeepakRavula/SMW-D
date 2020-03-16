@@ -173,14 +173,14 @@ class EnrolmentController extends BaseController
                 ]),
             'pagination' => false,
         ]);
-        
+      
         return $this->render('view', [
             'model' => $model,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
-            'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider,
-	        'lessonCount' => $lessonCount,
+            'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider,   
+            'lessonCount' => $lessonCount,        
         ]);
     }
 
