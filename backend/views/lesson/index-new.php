@@ -205,7 +205,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         var lessonStatus = $("select[name*='LessonSearch[lessonStatus]").val();
         var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[lessonStatus]': lessonStatus });
         var url = "<?=Url::to(['lesson/index']);?>?"+params;
-        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  
+        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 25000});  
         bulkAction.setAction();
         }
     });
@@ -245,7 +245,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         var lessonStatus = $("select[name*='LessonSearch[lessonStatus]").val();
         var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[lessonStatus]': lessonStatus });
         var url = "<?=Url::to(['lesson/index']);?>?"+params;
-        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
+        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 25000});  //Reload GridView
     });
 
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
@@ -354,7 +354,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                                 if (response.status) {
                                     if (response.message) {
                                         $('#index-success-notification').text(response.message).fadeIn().delay(5000).fadeOut();
-                                        $.pjax.reload({container: "#lesson-index", replace: false, async: false, timeout: 6000});
+                                        $.pjax.reload({container: "#lesson-index", replace: false, async: false, timeout: 25000});
                                     }
                                 } else {
                                     if (response.message) {
