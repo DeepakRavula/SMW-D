@@ -100,7 +100,7 @@ class Enrolment extends \yii\db\ActiveRecord
             [[
                 'paymentFrequencyId', 'isDeleted', 'isConfirmed', 'createdAt',
                 'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt', 'createdByUserId',
-                'updatedByUserId', 'endDateTime'
+                'updatedByUserId', 'endDateTime', 'isEnableInfo',
             ], 'safe'],
             ['courseId', 'validateOnEdit', 'on' => self::SCENARIO_EDIT],
             ['endDateTime', 'validateOnAdjustment', 'on' => self::SCENARIO_GROUP_ENROLMENT_ENDDATE_ADJUSTMENT]
@@ -1240,6 +1240,7 @@ class Enrolment extends \yii\db\ActiveRecord
             env('PUSHER_APP_ID'),
             $options
         );
+        $this->updateAttributes(['isEnableInfo' =>false]);
         return $pusher->trigger('enrolment', 'lesson-confirm', $this->id);
     }
 }
