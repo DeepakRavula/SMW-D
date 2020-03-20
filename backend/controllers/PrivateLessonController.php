@@ -459,20 +459,11 @@ class PrivateLessonController extends BaseController
                        ->notCanceled()
                        ->location($locationId)
                        ->notExpired()
+                       ->scheduledOrRescheduled()
                        ->andWhere(['DATE(lesson.date)' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
                        ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
                        ->all();  
-                $unscheduledAllLessons = Lesson::find()
-                       ->notDeleted()
-                       ->isConfirmed()
-                       ->notCanceled()
-                       ->location($locationId)
-                       ->unscheduled()
-                       ->notExpired()
-                       ->andWhere(['DATE(lesson.date)' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
-                       ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
-                       ->all();
-                if (empty($allLessons) || $unscheduledAllLessons) {     
+                if (empty($allLessons)) {    
                 $oldLessons = Lesson::findAll($privateLessonModel->lessonIds);
                 foreach ($oldLessons as $i => $oldLesson) {
                     $oldLessonDate = $oldLesson->date;
