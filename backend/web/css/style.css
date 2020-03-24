@@ -604,3 +604,10 @@ dl {
 .highlight-expiry {
     color:red;
 }
+.view-scroll {
+    position: relative;
+    max-height: 10%;
+    height: 10%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
