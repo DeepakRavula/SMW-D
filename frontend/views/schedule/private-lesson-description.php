@@ -14,7 +14,7 @@ use common\models\Lesson;
 	}
 </style>
 <?php if ((int)$view === Lesson::CLASS_ROOM_VIEW) : ?>
-	<li><label>Teacher: </label><span><?= $title; ?></span></li>
+	<li><label>Student: </label><span><?= $title; ?></span></li>
 	<li><label>Student Count: </label><span><?= $lesson->course->getEnrolmentsCount(); ?></span></li>
 <?php else : ?>
 	<li><label>Student: </label><span><?= $title; ?></span></li>
