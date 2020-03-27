@@ -45,7 +45,7 @@ $columns = [
         'contentOptions' => ['class' => 'text-right']
     ],
 ]; ?>
-<div>
+<div class = "view-scroll">
 <?php Pjax::begin([
     'id' => 'lesson-payment-listing',
     'timeout' => 6000,

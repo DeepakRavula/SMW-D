@@ -8,10 +8,12 @@ use yii\helpers\Html;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<div class  = "view-scroll">
 <?php echo ListView::widget([
     'dataProvider' =>  $noteDataProvider,
     'itemView' => '_list',
 ]); ?>
+</div>
 <?php $form = ActiveForm::begin([
     'id' => 'lesson-note-form',
 ]); ?>
