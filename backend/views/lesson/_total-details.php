@@ -35,12 +35,12 @@ LteBox::begin([
     <dt class="m-r-10">Tax</dt>
     <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->tax); ?></dd>
     <dt class="m-r-10">Total</dt>
-    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency(round($model->privateLesson->total, 2)); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency(round($model->privateLesson->total ?? 0, 2)); ?></dd>
     <dt class="m-r-10">Paid</dt>
     <dd class = "total-horizontal-dd text-right"><?php $lessonPaid = !empty($model->getCreditAppliedAmount($model->enrolment->id)) ? $model->getCreditAppliedAmount($model->enrolment->id) : 0; ?>
     <?= Yii::$app->formatter->asCurrency(round($lessonPaid, 2)); ?></dd>
     <dt class="m-r-10">Balance</dt>
-    <dd class = "total-horizontal-dd text-right"><?=   (round($model->privateLesson->balance, 2) > 0.00 && round($model->privateLesson->balance, 2) <= 0.09) || (round($model->privateLesson->balance, 2) < 0.00 && round($model->privateLesson->balance, 2) >= -0.09)  ? Yii::$app->formatter->asCurrency(round('0.00', 2)): Yii::$app->formatter->asCurrency(round($model->privateLesson->balance, 2)) ?>
+    <dd class = "total-horizontal-dd text-right"><?=   (round($model->privateLesson->balance ?? 0, 2) > 0.00 && round($model->privateLesson->balance ?? 0, 2) <= 0.09) || (round($model->privateLesson->balance ?? 0, 2) < 0.00 && round($model->privateLesson->balance ?? 0, 2) >= -0.09)  ? Yii::$app->formatter->asCurrency(round('0.00', 2)): Yii::$app->formatter->asCurrency(round($model->privateLesson->balance ?? 0, 2)) ?>
     <?php if ($model->hasInvoice()) : ?>
     <dt class="m-r-10">Invoice</dt>
     <dd class = "total-horizontal-dd text-right">
