@@ -70,7 +70,7 @@ use kartik\grid\GridView;
             'contentOptions' => ['class' => 'text-right'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->privateLesson->total, 2));
+                return Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2));
             },
         ],
         [
@@ -90,9 +90,11 @@ use kartik\grid\GridView;
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
                 if ($data->hasInvoice()) {
-                    $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
+                    $balance = $data->invoice->balance ?? 0;
+                    $owingAmount = $balance > 0.09 ? $balance : 0.00;
                 } else {
-                    $owingAmount = $data->privateLesson->balance > 0.09 ? $data->privateLesson->balance : 0.00;
+                    $balance = $data->privateLesson->balance ?? 0;
+                    $owingAmount = $balance > 0.09 ? $balance : 0.00;
                 }
                 return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
             },

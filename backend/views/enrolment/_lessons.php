@@ -56,7 +56,8 @@ use common\models\GroupLesson;
 		'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) use ($model) {
-		    return Yii::$app->formatter->asCurrency(round($data->isPrivate() ? $data->privateLesson->total : $data->getGroupNetPrice($model), 2));
+	    	$total = $data->privateLesson->total ?? 0;
+    		return Yii::$app->formatter->asCurrency(round($data->isPrivate() ? $total : $data->getGroupNetPrice($model), 2));
 	    },
 	],
 	[
@@ -66,7 +67,7 @@ use common\models\GroupLesson;
         'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) use ($model) {
 			if ($data->isPrivate()) {
-				$owing = $data->privateLesson->balance;
+				$owing = $data->privateLesson->balance ?? 0;
 			} else {
 			    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $model->id]);
 				$owing = $groupLesson->balance;

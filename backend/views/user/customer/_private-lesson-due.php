@@ -64,7 +64,7 @@ echo GridView::widget([
             'contentOptions' => ['class' => 'text-right dollar'],
             'headerOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
-                return Yii::$app->formatter->asDecimal(round($data->privateLesson->balance, 2));
+                return Yii::$app->formatter->asDecimal(round($data->privateLesson->balance ?? 0, 2));
             },
             'hAlign' => 'right',
             'pageSummary' => true,
