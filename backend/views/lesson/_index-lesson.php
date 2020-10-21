@@ -153,7 +153,7 @@ array_push($columns,
         'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
         'value' => function ($data) {
-            return Yii::$app->formatter->asCurrency(round($data->privateLesson->total, 2));
+            return Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2));
         },
     ],
     [
@@ -163,11 +163,12 @@ array_push($columns,
         'filter'=> LessonSearch::owingStatuses(),
         'contentOptions' => function ($data) {
             $highLightClass = 'text-right';
+            $balance = $data->privateLesson->balance ?? 0;
             if ($data->hasInvoice()) {
                 if ($data->invoice->isOwing()) {
                     $highLightClass .= ' danger';
                 }
-            } else if ($data->privateLesson->balance > 0) {
+            } else if ($balance > 0) {
                 $highLightClass .= ' danger';
             }
             return ['class' => $highLightClass];
@@ -175,9 +176,11 @@ array_push($columns,
         'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
         'value' => function ($data) {
             if ($data->hasInvoice()) {
-                $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
+                $balance = $data->invoice->balance ?? 0;
+                $owingAmount = $balance > 0.09 ? $balance : 0.00;
             } else {
-                $owingAmount = $data->privateLesson->balance > 0.09 ? $data->privateLesson->balance : 0.00;
+                $balance = $data->privateLesson->balance ?? 0;
+                $owingAmount = $balance > 0.09 ? $balance : 0.00;
             }
             return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
         },

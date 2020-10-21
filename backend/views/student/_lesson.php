@@ -53,7 +53,7 @@ use common\models\Lesson;
                 'contentOptions' => ['class' => 'text-right'],
                 'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asCurrency($data->privateLesson->total);
+                    return Yii::$app->formatter->asCurrency($data->privateLesson->total ?? 0);
                 },
             ],
             [
@@ -62,7 +62,7 @@ use common\models\Lesson;
                 'contentOptions' => ['class' => 'text-right'],
                 'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asCurrency($data->privateLesson->balance);
+                    return Yii::$app->formatter->asCurrency($data->privateLesson->balance ?? 0);
                 },
             ],
         ];

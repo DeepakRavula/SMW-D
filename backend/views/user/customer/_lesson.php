@@ -84,7 +84,9 @@ echo GridView::widget([
                     ->andWhere(['courseId' => $data->courseId])
                     ->customer($model->id)
                     ->one();
-                return Yii::$app->formatter->asCurrency(round($data->isPrivate() ? $data->privateLesson->total : $data->getGroupNetPrice($enrolment), 2));
+                
+                $total = $data->privateLesson->total ?? 0;
+                return Yii::$app->formatter->asCurrency(round($data->isPrivate() ? $total : $data->getGroupNetPrice($enrolment), 2));
             },
         ],
         [

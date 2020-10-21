@@ -121,7 +121,7 @@ array_push($columns,
                 if ($data->invoice->isOwing()) {
                     $highLightClass .= ' danger';
                 }
-            } else if ($data->privateLesson->balance > 0.09) {
+            } else if (($data->privateLesson->balance ?? 0) > 0.09) {
                 $highLightClass .= ' danger';
             }
             return ['class' => $highLightClass];
@@ -131,7 +131,7 @@ array_push($columns,
             if ($data->hasInvoice()) {
                 $owingAmount = $data->invoice->balance > 0.09 ? 'Owing' : 'Paid';
             } else {
-                $owingAmount = $data->privateLesson->balance > 0.09 ? 'Owing' : 'Paid';
+                $owingAmount = 'Owing';
             }
             return $owingAmount;
         },
@@ -144,7 +144,7 @@ array_push($columns, [
     'contentOptions' => ['class' => 'text-right dollar'],
     'headerOptions' => ['class' => 'text-right'],
     'value' => function ($data) {
-        return number_format($data->privateLesson->total, 2);
+        return number_format($data->privateLesson->total ?? 0, 2);
     },
 ]);
 

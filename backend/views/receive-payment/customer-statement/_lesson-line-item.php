@@ -58,7 +58,7 @@ use yii\bootstrap\ActiveForm;
             'label' => 'Amount',
             'attribute' => 'amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->privateLesson->total, 2));
+                return Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2));
             },
         ]);
 
@@ -68,7 +68,7 @@ use yii\bootstrap\ActiveForm;
             'attribute' => 'balance',
             'label' => 'Balance',
             'value' => function ($data) {
-                return Yii::$app->formatter->asBalance(round($data->privateLesson->balance, 2));
+                return Yii::$app->formatter->asBalance(round($data->privateLesson->balance ?? 0, 2));
             },
         ]);
 
