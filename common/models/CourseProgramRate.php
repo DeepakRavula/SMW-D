@@ -58,4 +58,14 @@ class CourseProgramRate extends \yii\db\ActiveRecord
     {
         return new \common\models\query\CourseProgramRateQuery(get_called_class());
     }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            if (empty($this->applyFullDiscount)) {
+                $this->applyFullDiscount = false;
+            }
+        }
+        return parent::beforeSave($insert);
+    }
 }

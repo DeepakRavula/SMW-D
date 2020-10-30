@@ -90,7 +90,7 @@ class AutoRenewal extends \yii\db\ActiveRecord
     public function renewEnrolment($course)
     {
         $course = Course::findOne($course->id);
-        if ($course->enrolment->isAutoRenew) {
+        if ($course->enrolment->lastPaymentCycle && $course->firstLesson) {
             $lastPaymentCycle = $course->enrolment->lastPaymentCycle;
             $lastPaymentCycleStartDate = new Carbon($lastPaymentCycle->startDate);
             $lastPaymentCycleEndDate = new Carbon($lastPaymentCycle->endDate);
@@ -150,5 +150,6 @@ class AutoRenewal extends \yii\db\ActiveRecord
             } 
             $course->updateDates();
         }
+        return true;
     }
 }

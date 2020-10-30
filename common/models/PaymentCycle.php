@@ -303,6 +303,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $this->isDeleted = false;
+            $this->isPreferredPaymentEnabled = false;
         }
         return parent::beforeSave($insert);
     }

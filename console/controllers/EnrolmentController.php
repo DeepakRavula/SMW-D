@@ -4,6 +4,7 @@ namespace console\controllers;
 
 use Yii;
 use Carbon\Carbon;
+use yii\helpers\Console;
 use common\models\AutoRenewal;
 use common\models\AutoRenewalLessons;
 use common\models\AutoRenewalPaymentCycle;
@@ -46,17 +47,26 @@ class EnrolmentController extends Controller
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $priorDate = (new Carbon())->addDays(Enrolment::AUTO_RENEWAL_DAYS_FROM_END_DATE);
+        Console::startProgress(0, 'Enrolment Auto renewal...');
         $courses = Course::find()
             ->regular()
             ->confirmed()
+            ->joinWith(['enrolment' => function ($query) {
+                $query->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['enrolment.isAutoRenew' => true]);
+            }])
             ->needToRenewal($priorDate)
             ->privateProgram()
             ->notDeleted()
             ->all();
         foreach ($courses as $course) {
+            Console::output("processing: " . $course->id . ' course', Console::FG_GREEN, Console::BOLD);
             $autoRenewal = new AutoRenewal();
             $autoRenewal->renewEnrolment($course);
         }
+        Console::endProgress(true);
+        Console::output("done.", Console::FG_GREEN, Console::BOLD);
     }
 
     public function actionDelete()
