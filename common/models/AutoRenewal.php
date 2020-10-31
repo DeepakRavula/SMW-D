@@ -143,10 +143,9 @@ class AutoRenewal extends \yii\db\ActiveRecord
                     ->subDay(1);
                 $lastPaymentCycle->save();
                 $nextPaymentCycleStartDate = (new Carbon($lastPaymentCycle->endDate))->addDay(1);
-                $autoRenewalId = $autoRenewal->id;
-                $course->enrolment->setAutoRenewalPaymentCycle($nextPaymentCycleStartDate, $autoRenewalId);
+                $course->enrolment->setAutoRenewalPaymentCycle($nextPaymentCycleStartDate, $autoRenewal->id);
             } else {
-                $course->enrolment->setAutoRenewalPaymentCycle($renewalStartDate, $autoRenewalId);
+                $course->enrolment->setAutoRenewalPaymentCycle($renewalStartDate, $autoRenewal->id);
             } 
             $course->updateDates();
         }
