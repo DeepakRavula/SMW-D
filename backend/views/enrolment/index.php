@@ -51,6 +51,13 @@ use kartik\grid\GridView;
         'contentOptions' => ['style' => 'width:20%'],
     ],
     [
+        'attribute' => 'isAutoRenew',
+        'label' => 'Auto Renewal',
+        'value' => function ($data) {
+            return $data->isAutoRenew ? 'Enabled' : 'Disabled';
+        },
+    ],
+    [
         'attribute' => 'startdate',
         'label' => 'Start Date',
         'value' => function ($data) {
