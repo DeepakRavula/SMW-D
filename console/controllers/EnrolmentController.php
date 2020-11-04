@@ -51,6 +51,7 @@ class EnrolmentController extends Controller
         $courses = Course::find()
             ->regular()
             ->confirmed()
+            ->andWhere(['NOT', ['course.id' => 1581]])
             ->joinWith(['enrolment' => function ($query) {
                 $query->notDeleted()
                     ->isConfirmed()
