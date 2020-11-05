@@ -29,7 +29,8 @@ class CourseQuery extends \yii\db\ActiveQuery
     
     public function needToRenewal($priorDate)
     {
-        return $this->andWhere(['<=', 'DATE(course.endDate)', $priorDate->format('Y-m-d')]);
+        $today = new \DateTime();
+        return $this->andWhere(['between', 'DATE(course.endDate)', $today->format('Y-m-d'), $priorDate->format('Y-m-d')]);
     }
 
     /**
