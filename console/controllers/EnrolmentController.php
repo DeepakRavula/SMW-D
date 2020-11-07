@@ -51,7 +51,6 @@ class EnrolmentController extends Controller
         $courses = Course::find()
             ->regular()
             ->confirmed()
-            ->andWhere(['NOT', ['course.id' => 1581]])
             ->joinWith(['enrolment' => function ($query) {
                 $query->notDeleted()
                     ->isConfirmed()
@@ -60,6 +59,7 @@ class EnrolmentController extends Controller
             ->needToRenewal($priorDate)
             ->privateProgram()
             ->notDeleted()
+            ->orderBy(['course.id' => SORT_ASC])
             ->all();
         foreach ($courses as $course) {
             Console::output("processing: " . $course->id . ' course', Console::FG_GREEN, Console::BOLD);
