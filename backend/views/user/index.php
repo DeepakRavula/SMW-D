@@ -29,11 +29,11 @@ foreach ($roles as $name => $description) {
 }
 $roleName = $searchModel->role_name;
 $originalInvoice = Invoice::TYPE_INVOICE;
-$this->title = Yii::t('backend', !isset($role) ? 'User' : $role.'s');
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'f-s-18 add-user']);
-$this->params['show-all'] = $this->render('_button', [
-    'searchModel' => $searchModel
-]);
+//$this->title = Yii::t('backend', !isset($role) ? 'User' : $role.'s');
+//$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'f-s-18 add-user']);
+// $this->params['show-all'] = $this->render('_button', [
+//     'searchModel' => $searchModel
+// ]);
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $user = User::findOne(['id' => Yii::$app->user->id]);
 ?>
@@ -134,6 +134,19 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
             'showPageSummary' => true,
             'columns' => $columns,
         'toolbar' =>  [
+            [
+                'content' => $this->render('_button', [
+                    'searchModel' => $searchModel
+                ])
+            ],
+            [
+                'content' =>
+                    Html::button('<i class="glyphicon glyphicon-plus"></i>', [
+                        'type'=>'button', 
+                        'title'=>Yii::t('backend', 'Add'), 
+                        'class'=>'btn btn-success add-user'
+                    ])
+            ],
             '{export}',
             '{toggleData}'
         ],
@@ -141,7 +154,8 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
             'fontAwesome' => true,
         ],  
         'panel' => [
-                'type' => GridView::TYPE_DEFAULT
+                'type' => GridView::TYPE_DEFAULT,
+                'heading' => Yii::t('backend', !isset($role) ? 'User' : $role.'s')
             ],
         'toggleDataOptions' => ['minCount' => 20],
     ]); ?>

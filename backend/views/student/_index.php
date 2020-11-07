@@ -74,14 +74,27 @@ use yii\helpers\Html;
         ],
     ],
     'toolbar' =>  [
-        '{export}',
-        '{toggleData}'
+    [
+        'content' =>  $this->render('_button', [
+            'searchModel' => $searchModel
+        ]),
+        'options' => ['title' =>'Show All',]
+    ],   
+    '{export}',
+    '{toggleData}',
+    
+    [
+        'content' =>
+        Html::a('<i class="fa fa-print btn btn-default"></i>', '#', ['id' => 'print'])
+        
+    ],
     ],
     'export' => [
         'fontAwesome' => true,
     ],  
     'panel' => [
-            'type' => GridView::TYPE_DEFAULT
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Students'
         ],
     'toggleDataOptions' => ['minCount' => 20],
 ]);

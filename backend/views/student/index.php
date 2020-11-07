@@ -9,11 +9,11 @@ use yii\helpers\Html;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->registerCssFile("@web/css/student/style.css");
-$this->title = 'Students';
-$this->params['action-button'] = Html::a('<i class="fa fa-print f-s-18 m-l-10"></i>', '#', ['id' => 'print']);
-$this->params['show-all'] = $this->render('_button', [
+//$this->title = 'Students';
+//$this->params['action-button'] = Html::a('<i class="fa fa-print f-s-18 m-l-10"></i>', '#', ['id' => 'print']);
+/*$this->params['show-all'] = $this->render('_button', [
     'searchModel' => $searchModel
-]);
+]);*/
 ?> 
 
 <div class="grid-row-open"> 
