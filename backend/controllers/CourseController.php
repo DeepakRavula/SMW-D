@@ -105,6 +105,7 @@ class CourseController extends BaseController
      */
     public function actionView($id)
     {
+        $model = $this->findGroupCourseModel($id);
         $extraCourse = CourseExtra::find()
                 ->andWhere(['courseId' => $id])
                 ->notDeleted()
@@ -133,7 +134,7 @@ class CourseController extends BaseController
         return $this->render(
             'view',
                 [
-                'model' => $this->findModel($id),
+                'model' => $model,
                 'courseId' => $id,
                 'studentDataProvider' => $studentDataProvider,
                 'lessonDataProvider' => $lessonDataProvider,
@@ -301,7 +302,20 @@ class CourseController extends BaseController
      */
     protected function findModel($id)
     {
-        if (($model = Course::findOne($id)) !== null) {
+        $location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
+        if (($model = Course::find()->andWhere(['course.id' => $id])->location($location_id)
+            ->confirmed()->notDeleted()->one()) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    protected function findGroupCourseModel($id)
+    {
+        $location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
+        if (($model = Course::find()->andWhere(['course.id' => $id])->location($location_id)->groupProgram()
+            ->confirmed()->notDeleted()->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
