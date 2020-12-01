@@ -131,7 +131,8 @@ array_push($columns,
             if ($data->hasInvoice()) {
                 $owingAmount = $data->invoice->balance > 0.09 ? 'Owing' : 'Paid';
             } else {
-                $owingAmount = 'Owing';
+                $owingAmount = ($data->privateLesson->balance ?? 0) > 0.09 ? 'Owing' : 'Paid';
+
             }
             return $owingAmount;
         },
