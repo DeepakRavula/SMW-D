@@ -129,7 +129,7 @@ array_push($columns,
         'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
         'value' => function ($data) {
             if ($data->hasInvoice()) {
-                $owingAmount = $data->invoice->balance > 0.09 ? 'Owing' : 'Paid';
+                $owingAmount = $data->privateLesson->balance > 0.09 ? 'Owing' : 'Paid';
             } else {
                 $owingAmount = 'Owing';
             }
