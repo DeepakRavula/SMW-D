@@ -161,6 +161,8 @@ class SignInController extends \yii\web\Controller
      */
     public function actionRequestPasswordReset()
     {
+        return $this->redirect(['user/sign-in']);
+        exit;
         $model = new PasswordResetRequestForm();
         $isEmailSent = false;
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
