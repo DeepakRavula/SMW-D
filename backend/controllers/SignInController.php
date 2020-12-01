@@ -177,6 +177,8 @@ class SignInController extends BaseController
      */
     public function actionRequestPasswordReset()
     {
+        $this->redirect(['site/error']);
+        exit;
         $this->layout = 'base';
         $model = new PasswordResetRequestForm();
         $isEmailSent = false;
