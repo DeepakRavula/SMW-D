@@ -15,7 +15,7 @@ use yii\helpers\Url;
 <?= $this->render('calendar'); ?>
 <?php $this->endContent(); ?>
 <body>
-    <script type="text/javascript" src="https://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <!-- <script type="text/javascript" src="https://assets.freshdesk.com/widget/freshwidget.js"></script>
 <script type="text/javascript">
 	FreshWidget.init("", {
 		"queryString": "&widgetType=popup&helpdesk_ticket[requester]=<?= Html::encode(Yii::$app->user->identity->email); ?>&helpdesk_ticket[subject]=<?= Html::encode($this->title); ?>",
@@ -29,7 +29,7 @@ use yii\helpers\Url;
 		"offset": "-1500px", 
 		"formHeight": "500px", 
 		"url": "https://smw.freshdesk.com"} );
-</script>
+</script> -->
 </body>
 <script type="text/javascript">
 $(document).ready(function(){
