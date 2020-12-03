@@ -1030,7 +1030,9 @@ class Invoice extends \yii\db\ActiveRecord
                         ->setFrom(\Yii::$app->params['robotEmail'])
                         ->setReplyTo($this->location->email)
                         ->setTo($email)
-                        ->setSubject($subject);
+                        ->setSubject($subject)
+                        ->setHeaders(['X-SES-CONFIGURATION-SET' => 'ses-cloudwatch', 'X-SES-MESSAGE-TAGS' => 'receiver_email='.$email]);
+
             }
             Yii::$app->mailer->sendMultiple($content);
             $this->isSent = true;
