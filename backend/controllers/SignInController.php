@@ -177,8 +177,10 @@ class SignInController extends BaseController
      */
     public function actionRequestPasswordReset()
     {
-        return $this->redirect(['site/error']);
-        exit;
+        // return $this->redirect(['site/error']);
+        // exit;
+        // Google captcha verification
+        
         $this->layout = 'base';
         $model = new PasswordResetRequestForm();
         $isEmailSent = false;
@@ -192,18 +194,34 @@ class SignInController extends BaseController
                 }])
                 ->notDeleted()
                 ->one();
+        \Yii::$app->session->remove('captcha-error');
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->sendEmail() && !empty($primaryEmail)) {
-                $isEmailSent = true;
-            } else {
-                $model->addError('email', Yii::t('backend', 'Sorry, we are unable to reset password for email provided'));
+            $captchaSecretCode = '6Le5FPoZAAAAAIVHMoYZmozeJaX7jwSEAntJEWjQ';
+		    $response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$captchaSecretCode."&response=".$_POST['g-recaptcha-response']."&remoteip=".$_SERVER['REMOTE_ADDR']), true);
+            if($response['success'] == true)
+			{
+                \Yii::$app->session->remove('captcha-error');
+                if ($model->sendEmail() && !empty($primaryEmail)) {
+                    $isEmailSent = true;
+                } else {
+                    $model->addError('email', Yii::t('backend', 'Sorry, we are unable to reset password for email provided'));
+                }
+            }else{
+                \Yii::$app->session->set('captcha-error', 'Please verify that you are not a robot.');
+                return $this->render('requestPasswordResetToken', [
+                    'model' => $model,
+                    'isEmailSent' => $isEmailSent,
+                ]);
             }
+        }else{
+            
+            return $this->render('requestPasswordResetToken', [
+                'model' => $model,
+                'isEmailSent' => $isEmailSent,
+            ]);
         }
 
-        return $this->render('requestPasswordResetToken', [
-            'model' => $model,
-            'isEmailSent' => $isEmailSent,
-        ]);
+       
     }
 
     /**

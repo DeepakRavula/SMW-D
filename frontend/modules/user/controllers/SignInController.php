@@ -161,25 +161,40 @@ class SignInController extends \yii\web\Controller
      */
     public function actionRequestPasswordReset()
     {
-        return $this->redirect(['user/sign-in']);
-        exit;
+        // return $this->redirect(['user/sign-in']);
+        // exit;
         $model = new PasswordResetRequestForm();
         $isEmailSent = false;
+        \Yii::$app->session->remove('captcha-error');
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->sendEmail()) {
-                $isEmailSent = true;
-            } else {
-                Yii::$app->session->setFlash('alert', [
-                    'body' => Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
-                    'options' => ['class' => 'alert-danger'],
+            $captchaSecretCode = '6Le5FPoZAAAAAIVHMoYZmozeJaX7jwSEAntJEWjQ';
+		    $response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$captchaSecretCode."&response=".$_POST['g-recaptcha-response']."&remoteip=".$_SERVER['REMOTE_ADDR']), true);
+            if($response['success'] == true)
+			{  
+                \Yii::$app->session->remove('captcha-error');
+                if ($model->sendEmail()) {
+                    $isEmailSent = true;
+                } else {
+                    Yii::$app->session->setFlash('alert', [
+                        'body' => Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
+                        'options' => ['class' => 'alert-danger'],
+                    ]);
+                }
+            }else{
+                \Yii::$app->session->set('captcha-error', 'Please verify that you are not a robot.');
+                return $this->render('requestPasswordResetToken', [
+                    'model' => $model,
+                    'isEmailSent' => $isEmailSent,
                 ]);
             }
-        }
-
-        return $this->render('requestPasswordResetToken', [
+        }else{
+            return $this->render('requestPasswordResetToken', [
                 'model' => $model,
                 'isEmailSent' => $isEmailSent,
-        ]);
+            ]);
+        }
+
+       
     }
 
     /**

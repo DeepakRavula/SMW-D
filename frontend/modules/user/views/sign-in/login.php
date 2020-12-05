@@ -34,11 +34,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </div>
 
-        <!-- <div class="m-t-10 text-right">
+        <div class="m-t-10 text-right">
             <?php echo Yii::t('frontend', '<a href="{link}">Forgot your password?</a>', [
                 'link' => yii\helpers\Url::to(['sign-in/request-password-reset']),
             ]) ?>
-        </div> -->
+        </div>
         <?php ActiveForm::end(); ?>
     </div>
 
