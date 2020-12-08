@@ -42,6 +42,10 @@ use common\models\User;
         <?= $form->field($model, 'isAutoRenew')->checkbox();
         ?>
     </div>
+    <div class="col-md-12">
+        <?= $form->field($model, 'is_online')->checkbox();
+        ?>
+    </div>
     <div id="spinner" class="spinner" style="display:none">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
         <span class="sr-only">Loading...</span>

@@ -41,6 +41,7 @@ use kartik\select2\Select2;
         <?php $list = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
         <?php $model->isNewRecord ? $model->gender = 0: $model->gender = $model->gender ;  ?>
         <?= $form->field($model, 'gender')->radioList($list); ?>
+        <?= $form->field($model, 'note')->textarea(['rows' => '6']) ?>
         </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>

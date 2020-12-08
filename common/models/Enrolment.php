@@ -20,6 +20,7 @@ use Carbon\Carbon;
  * @property string $courseId
  * @property string $studentId
  * @property int $isDeleted
+ * @property bool is_online
  */
 class Enrolment extends \yii\db\ActiveRecord
 {
@@ -99,7 +100,7 @@ class Enrolment extends \yii\db\ActiveRecord
             [['courseId', 'studentId'], 'integer'],
             [[
                 'paymentFrequencyId', 'isDeleted', 'isConfirmed', 'createdAt',
-                'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt', 'createdByUserId',
+                'hasEditable', 'isAutoRenew', 'is_online', 'applyFullDiscount', 'updatedAt', 'createdByUserId',
                 'updatedByUserId', 'endDateTime', 'isEnableInfo',
             ], 'safe'],
             ['courseId', 'validateOnEdit', 'on' => self::SCENARIO_EDIT],
@@ -121,7 +122,8 @@ class Enrolment extends \yii\db\ActiveRecord
             'paymentFrequencyId' => 'Payment Frequency',
             'toEmailAddress' => 'To',
             'showAllEnrolments' => 'Show All',
-            'isAutoRenew' => 'Auto Renew'
+            'isAutoRenew' => 'Auto Renew',
+            'is_online' => 'Online'
         ];
     }
 
