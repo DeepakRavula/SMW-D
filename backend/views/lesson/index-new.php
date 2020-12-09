@@ -93,6 +93,20 @@ use Carbon\Carbon;
     ],     
 ];
 array_push($columns, [
+    'label' => 'Online',
+    'attribute' => 'is_online',
+    'filter' => LessonSearch::lessonClassType(),
+    'filterWidgetOptions' => [
+        'options' => [
+            'id' => 'lesson-online-status',
+        ],
+    ],
+    'value' => function ($data) {
+        $lessonType = ($data->privateLesson->is_online ?? 0) == 0 ? 'No' : 'Yes';
+        return  $lessonType;
+    },
+]);
+array_push($columns, [
     'label' => 'Status',
     'attribute' => 'lessonStatus',
     'filter' => LessonSearch::lessonStatuses(),

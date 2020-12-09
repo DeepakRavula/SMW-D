@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
+use common\models\PrivateLesson;
 use common\models\Invoice;
 use common\models\Location;
 
@@ -218,6 +219,14 @@ class LessonSearch extends Lesson
             Lesson::STATUS_RESCHEDULED => 'Rescheduled',
             Lesson::STATUS_UNSCHEDULED => 'Unscheduled',
             Lesson::STATUS_ABSENT => 'Absent',
+        ];
+    }
+    public static function lessonClassType()
+    {
+        return [
+            PrivateLesson::ONLINE_CLASS => 'Yes',
+            PrivateLesson::IN_CLASS => 'No'
+
         ];
     }
     public static function invoiceStatuses()
