@@ -94,7 +94,7 @@ use Carbon\Carbon;
 ];
 array_push($columns, [
     'label' => 'Online',
-    'attribute' => 'is_online',
+    'attribute' => 'isOnline',
     'filter' => LessonSearch::lessonClassType(),
     'filterWidgetOptions' => [
         'options' => [
@@ -333,6 +333,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                 $('#lesson-delete').addClass('multiselect-disable');
                 $('#lesson-duration-edit').addClass('multiselect-disable');
                 $('#lesson-classroom-edit').addClass('multiselect-disable');
+                $('#lesson-online-edit').addClass('multiselect-disable');
                 $('#email-multi-customer').addClass('multiselect-disable');
                 $('#lesson-unschedule').addClass('multiselect-disable');
                 $('#lesson-reschedule').removeClass('multiselect-disable');
@@ -342,6 +343,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                 $('#lesson-delete').removeClass('multiselect-disable');
                 $('#lesson-duration-edit').removeClass('multiselect-disable');
                 $('#lesson-classroom-edit').removeClass('multiselect-disable');
+                $('#lesson-online-edit').removeClass('multiselect-disable');
                 $('#email-multi-customer').removeClass('multiselect-disable');
                 $('#lesson-unschedule').removeClass('multiselect-disable');
                 $('#lesson-reschedule').removeClass('multiselect-disable');
@@ -417,6 +419,30 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         var params = $.param({ 'EditClassroom[lessonIds]': lessonIds});
                     $.ajax({
                         url    : '<?=Url::to(['private-lesson/edit-classroom'])?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        return false;
+    });
+    $(document).off('click', '#lesson-online-edit').on('click', '#lesson-online-edit', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'PrivateLesson[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['private-lesson/edit-online-type'])?>?' +params,
                         type   : 'post',
                         success: function(response)
                         {

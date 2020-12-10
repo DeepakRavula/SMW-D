@@ -40,6 +40,7 @@ class LessonSearch extends Lesson
     public $programId;
     public $dueDate;
     public $owingStatus;
+    public $isOnline;
     /**
      * {@inheritdoc}
      */
@@ -49,7 +50,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId','studentId', 'programId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll', 'dueDate', 'owingStatus'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll', 'dueDate', 'owingStatus', 'isOnline'], 'safe'],
         ];
     }
     
@@ -172,7 +173,7 @@ class LessonSearch extends Lesson
             $this->toDate = new \DateTime($this->toDate);
             $query->andWhere(['between', 'DATE(lesson.dueDate)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         }
- 
+        
         if ((int) $this->owingStatus === lesson::STATUS_OWING) {
             $query->joinWith(['privateLesson' => function ($query) {
                 $query->andFilterWhere(['>', 'private_lesson.balance', 0.09]);
@@ -181,6 +182,17 @@ class LessonSearch extends Lesson
         if ((int) $this->owingStatus === lesson::STATUS_PAID) {
             $query->joinWith(['privateLesson' => function ($query) {
                 $query->andFilterWhere(['AND', ['>=', 'private_lesson.balance', 0.00], ['<=', 'private_lesson.balance', 0.09]]);
+            }]);
+        }
+        // isOnline
+        if ((int) $this->isOnline === PrivateLesson::ONLINE_CLASS) {
+            $query->joinWith(['privateLesson' => function ($query) {
+                $query->andFilterWhere(['AND', ['=', 'private_lesson.is_online', 1]]);
+            }]);
+        }
+        if ((int) $this->isOnline === PrivateLesson::IN_CLASS) {
+            $query->joinWith(['privateLesson' => function ($query) {
+                $query->andFilterWhere(['AND', ['=', 'private_lesson.is_online', 0]]);
             }]);
         }
         $query->joinWith('teacherProfile');
