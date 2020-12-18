@@ -111,6 +111,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $lessonId;
     public $paymentAmount;
     public $userId;
+    public $isOnline;
 
     /**
      * {@inheritdoc}
@@ -174,7 +175,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax', 'updatedOn', 
-                'createdOn', 'lessonId', 'total', 'paidStatus', 'dueDate'], 'safe'],
+                'createdOn', 'lessonId', 'total', 'paidStatus', 'dueDate','isOnline'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),

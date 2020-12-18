@@ -19,7 +19,7 @@ use common\models\Location;
 <div id="edit-classroom" class="edit-classroom">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['private-lesson/edit-classroom', 'PrivateLesson[lessonIds]' => $model->lessonIds]),
+        'action' => Url::to(['private-lesson/edit-online-type', 'PrivateLesson[lessonIds]' => $model->lessonIds]),
     ]); ?>
        <div class="row">
         <div class="col-md-6">
@@ -28,10 +28,10 @@ use common\models\Location;
             ?>
 
            <div class="radio">
-            <label><input type="radio" name="online" id="make_online" checked>Make Online</label>
+            <label><input type="radio" name="online" id="make_online" value="1" checked>Make Online</label>
            </div>
            <div class="radio">
-            <label><input type="radio" name="online" id="make_inclass">Make In Class </label>
+            <label><input type="radio" name="online" id="make_inclass" value="0">Make In Class </label>
            </div>
     
         </div>

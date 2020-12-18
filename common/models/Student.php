@@ -71,7 +71,7 @@ class Student extends \yii\db\ActiveRecord
         $this->last_name = $model->last_name;
         $this->birth_date = $model->birth_date;
         $this->gender = $model->gender;
-        $this->note = $model->note;
+        $this->note = $model->note?? '';
         return $this;
     }
 

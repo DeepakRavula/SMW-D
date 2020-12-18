@@ -427,23 +427,36 @@ class PrivateLessonController extends BaseController
         $editPrivateLessonModel->load(Yii::$app->request->get());
         //var_dump($editPrivateLessonModel->lessonIds);
         $post = Yii::$app->request->post();
+       
         if ($post) {
-            //$editClassroomModel->setScenario(EditClassroom::SCENARIO_EDIT_CLASSROOM);
-            if ($editPrivateLessonModel->load($post) ) {
-                foreach ($editPrivateLessonModel->lessonIds as $lessonId) {
-                    $model = PrivateLesson::findOne(['lessonId' => $lessonId]);
-                    $model->is_online = 1;
-                    $model->save();
+            
+            if ($editPrivateLessonModel->load(Yii::$app->request->get()) ) {
+                
+                if($post['online'] == 1){
+                    $message = 'Private Lesson Edited To Make Online Class Sucessfully';
+                    foreach ($editPrivateLessonModel->lessonIds as $lessonId) {
+                        $model = PrivateLesson::findOne(['lessonId' => $lessonId, 'is_online' => 0]);
+                        $model->is_online = 1;
+                        $model->save();
+                    }
+                }elseif($post['online'] == 0){
+                    $message = 'Private Lesson Edited To Make In Class Sucessfully';
+                    foreach ($editPrivateLessonModel->lessonIds as $lessonId) {
+                        $model = PrivateLesson::findOne(['lessonId' => $lessonId, 'is_online' => 1]);
+                        $model->is_online = 0;
+                        $model->save();
+                    }
                 }
-                //Lesson::triggerPusher();
+                
+                Lesson::triggerPusher();
                 $response = [
                     'status' => true,
-                    'message' => 'Lesson Classroom Edited Sucessfully',
+                    'message' => $message,
                 ];
             } else {
                 $response = [
                     'status' => false,
-                    'error' => $editClassroomModel->getErrors('lessonIds', 'classroomId'),
+                    'error' => $editPrivateLessonModel->getErrors('lessonIds'),
                 ];
             }
         } else {
