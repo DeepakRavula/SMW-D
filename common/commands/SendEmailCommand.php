@@ -76,7 +76,9 @@ class SendEmailCommand extends Object implements SelfHandlingCommand
         $message->setFrom($command->from);
         $message->setTo($command->to ?: \Yii::$app->params['robotEmail']);
         $message->setSubject($command->subject);
-        $message->setHeaders(['X-SES-CONFIGURATION-SET' => 'ses-cloudwatch', 'X-SES-MESSAGE-TAGS' => 'receiver_email='.$command->to]);
+        $toEmail = str_replace('.','DOT',$command->to);
+	    $toEmail = str_replace('@','AT',$toEmail);
+        $message->setHeaders(['X-SES-CONFIGURATION-SET' => 'ses-cloudwatch', 'X-SES-MESSAGE-TAGS' => 'receiver_email='.$toEmail]);
 
         return $message->send();
     }
