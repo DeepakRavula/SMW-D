@@ -69,7 +69,7 @@ class Course extends \yii\db\ActiveRecord
             'updatedByUserId', 'updatedOn', 'createdOn','isDeleted'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount'], 'safe'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount','is_online'], 'safe'],
             ['endDate', 'validateEndDate'],
         ];
     }
@@ -93,7 +93,8 @@ class Course extends \yii\db\ActiveRecord
             'paymentFrequency' => 'Payment Frequency',
             'rescheduleBeginDate' => 'Reschedule Future Lessons From',
             'rescheduleFromDate' => 'With effects from',
-            'showAllCourses' => 'Show All'
+            'showAllCourses' => 'Show All',
+            'Online' => 'is_online'
         ];
     }
 

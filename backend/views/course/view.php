@@ -37,6 +37,10 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 			<dd><?= $model->teacher->publicIdentity; ?></dd>
 			<dt>Rate</dt>
 			<dd><?= Yii::$app->formatter->asCurrency($model->courseProgramRate->programRate); ?></dd>
+            <dt>Online</dt>
+            <dd>
+            <?= $model->is_online ? "Yes" : 'No' ; ?>
+            </dd>
 		</dl>
 		<?php LteBox::end() ?>
 		</div>
