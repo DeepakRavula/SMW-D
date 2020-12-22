@@ -180,6 +180,10 @@ class SignInController extends \yii\web\Controller
                         'options' => ['class' => 'alert-danger'],
                     ]);
                 }
+                return $this->render('requestPasswordResetToken', [
+                    'model' => $model,
+                    'isEmailSent' => $isEmailSent,
+                ]);
             }else{
                 \Yii::$app->session->set('captcha-error', 'Please verify that you are not a robot.');
                 return $this->render('requestPasswordResetToken', [
