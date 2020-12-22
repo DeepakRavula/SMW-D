@@ -206,6 +206,10 @@ class SignInController extends BaseController
                 } else {
                     $model->addError('email', Yii::t('backend', 'Sorry, we are unable to reset password for email provided'));
                 }
+                return $this->render('requestPasswordResetToken', [
+                    'model' => $model,
+                    'isEmailSent' => $isEmailSent,
+                ]);
             }else{
                 \Yii::$app->session->set('captcha-error', 'Please verify that you are not a robot.');
                 return $this->render('requestPasswordResetToken', [
