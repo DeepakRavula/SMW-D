@@ -1,5 +1,5 @@
 <?php
-
+use backend\models\search\LessonSearch;
 use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
@@ -73,6 +73,16 @@ use common\models\Lesson;
                 },
             ],
         ];
+
+        array_push($columns, [
+            'label' => 'Online',
+            'attribute' => 'isOnline',
+            'filter' => LessonSearch::lessonClassType(),
+            'value' => function ($data) {
+                $lessonType = ($data->is_online ?? 0) == 0 ? 'No' : 'Yes';
+                return  $lessonType;
+            },
+        ]);
 
     ?>
     <div class="grid-row-open">

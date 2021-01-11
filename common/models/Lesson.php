@@ -175,7 +175,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax', 'updatedOn', 
-                'createdOn', 'lessonId', 'total', 'paidStatus', 'dueDate','isOnline'], 'safe'],
+                'createdOn', 'lessonId', 'total', 'paidStatus', 'dueDate','isOnline', 'is_online'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),

@@ -118,7 +118,8 @@ $logContent = $this->render('log', [
         if (params.url) {
             window.location.href = params.url;
         } else {
-            $.pjax.reload({container: '#group-course-student', timeout: 6000, async:false});
+            location.reload()
+            // $.pjax.reload({container: '#group-course-student', timeout: 6000, async:false});
         }
         return false;
     });

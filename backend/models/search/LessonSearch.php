@@ -184,16 +184,12 @@ class LessonSearch extends Lesson
                 $query->andFilterWhere(['AND', ['>=', 'private_lesson.balance', 0.00], ['<=', 'private_lesson.balance', 0.09]]);
             }]);
         }
-        // isOnline
-        if ((int) $this->isOnline === PrivateLesson::ONLINE_CLASS) {
-            $query->joinWith(['privateLesson' => function ($query) {
-                $query->andFilterWhere(['AND', ['=', 'private_lesson.is_online', 1]]);
-            }]);
+        // isOnline filter
+        if (($this->isOnline != NULL) && (int) $this->isOnline === PrivateLesson::ONLINE_CLASS) {
+            $query->andFilterWhere(['AND', ['=', 'lesson.is_online', 1]]);
         }
-        if ((int) $this->isOnline === PrivateLesson::IN_CLASS) {
-            $query->joinWith(['privateLesson' => function ($query) {
-                $query->andFilterWhere(['AND', ['=', 'private_lesson.is_online', 0]]);
-            }]);
+        if (($this->isOnline != NULL) && (int) $this->isOnline === PrivateLesson::IN_CLASS) {
+            $query->andFilterWhere(['AND', ['=', 'lesson.is_online', 0]]);
         }
         $query->joinWith('teacherProfile');
         $dataProvider->setSort([

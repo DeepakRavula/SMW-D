@@ -102,7 +102,7 @@ array_push($columns, [
         ],
     ],
     'value' => function ($data) {
-        $lessonType = ($data->privateLesson->is_online ?? 0) == 0 ? 'No' : 'Yes';
+        $lessonType = ($data->is_online ?? 0) == 0 ? 'No' : 'Yes';
         return  $lessonType;
     },
 ]);
@@ -210,19 +210,25 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 
 <script>
       $(document).ready(function () {
-        $("input[name*='LessonSearch[lessonStatus]").addClass('lesson-status');
-        var showAll = $('#lessonsearch-showall').is(":checked");
-        if (showAll == true) {
-        var student = $("input[name*='LessonSearch[student]").val();
-        var program = $("input[name*='LessonSearch[program]").val();
-        var teacher = $("input[name*='LessonSearch[teacher]").val();
-        var dateRange = $("input[name*='LessonSearch[dateRange]").val();
-        var lessonStatus = $("select[name*='LessonSearch[lessonStatus]").val();
-        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[lessonStatus]': lessonStatus });
-        var url = "<?=Url::to(['lesson/index']);?>?"+params;
-        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 25000});  
-        bulkAction.setAction();
+        
+
+        function initialLoad() {
+            $("input[name*='LessonSearch[lessonStatus]").addClass('lesson-status');
+            var showAll = $('#lessonsearch-showall').is(":checked");
+            if (showAll == true) {
+                var student = $("input[name*='LessonSearch[student]").val();
+                var program = $("input[name*='LessonSearch[program]").val();
+                var teacher = $("input[name*='LessonSearch[teacher]").val();
+                var dateRange = $("input[name*='LessonSearch[dateRange]").val();
+                var lessonStatus = $("select[name*='LessonSearch[lessonStatus]").val();
+                var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[lessonStatus]': lessonStatus });
+                var url = "<?=Url::to(['lesson/index']);?>?"+params;
+                $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 25000});  
+                bulkAction.setAction();
+            }
         }
+
+        initialLoad();
     });
 
     $(document).off('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]', function () {
@@ -232,13 +238,20 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 
     $(document).on('modal-success', function(event, params) {
         if (!$.isEmptyObject(params.url)) {
-            window.location.href = params.url;
+            var dateRange = $("input[name*='LessonSearch[dateRange]").val();
+            var params = $.param({'LessonSearch[dateRange]': dateRange});
+            var url = "<?=Url::to(['lesson/index']);?>?"+params;
+            window.location.href = url;
         } else if(params.status) {
-            $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
-            if (params.message) {
-                $('#popup-modal').modal('hide');
-                $('#index-success-notification').text(params.message).fadeIn().delay(5000).fadeOut();
-            }
+            // $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
+            // if (params.message) {
+            //     $('#popup-modal').modal('hide');
+            //     $('#index-success-notification').text(params.message).fadeIn().delay(5000).fadeOut();
+            // }
+            var dateRange = $("input[name*='LessonSearch[dateRange]").val();
+            var params = $.param({'LessonSearch[dateRange]': dateRange});
+            var url = "<?=Url::to(['lesson/index']);?>?"+params;
+            window.location.href = url;
         }
         return false;
     });

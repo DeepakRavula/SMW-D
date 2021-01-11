@@ -653,7 +653,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 if ($this->course->isProfessionalDevelopmentDay($day)) {
                     continue;
                 }
-                $this->course->createLesson($day, $isConfirmed);
+                $this->course->createLesson($day, $isConfirmed, $this->is_online);
             }
         }
         return true;

@@ -29,7 +29,7 @@ LteBox::begin([
          <dd>  <?=  Html::input('text', 'colorcode', '', ['class' => $model->getClass().' lesson-colorcode','style'=>'background:'.$model->getColorCode().';']); ?></dd>
     <dt>Online</dt>
     <dd>
-     <?= $model->privateLesson->is_online ? "Yes" : 'No' ; ?>
+     <?= $model->is_online ? "Yes" : 'No' ; ?>
     </dd>
    
 </dl>

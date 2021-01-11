@@ -65,7 +65,7 @@ use kartik\select2\Select2;
 		</div>
         
         <div class="col-md-10">
-        <?php echo $form->field($model, 'is_online')->radioList( [0=>'No', 1 => 'Yes'] ); ?>
+        <?php echo $form->field($model, 'is_online')->checkbox(); ?>
         </div>
     
             </div>

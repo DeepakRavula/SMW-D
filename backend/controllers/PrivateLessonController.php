@@ -429,20 +429,19 @@ class PrivateLessonController extends BaseController
         $post = Yii::$app->request->post();
        
         if ($post) {
-            
             if ($editPrivateLessonModel->load(Yii::$app->request->get()) ) {
                 
                 if($post['online'] == 1){
                     $message = 'Private Lesson Edited To Make Online Class Sucessfully';
                     foreach ($editPrivateLessonModel->lessonIds as $lessonId) {
-                        $model = PrivateLesson::findOne(['lessonId' => $lessonId, 'is_online' => 0]);
+                        $model = Lesson::findOne(['id' => $lessonId]);
                         $model->is_online = 1;
                         $model->save();
                     }
                 }elseif($post['online'] == 0){
                     $message = 'Private Lesson Edited To Make In Class Sucessfully';
                     foreach ($editPrivateLessonModel->lessonIds as $lessonId) {
-                        $model = PrivateLesson::findOne(['lessonId' => $lessonId, 'is_online' => 1]);
+                        $model = Lesson::findOne(['id' => $lessonId]);
                         $model->is_online = 0;
                         $model->save();
                     }

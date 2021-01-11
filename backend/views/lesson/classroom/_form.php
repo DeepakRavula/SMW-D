@@ -48,8 +48,9 @@ use common\models\Location;
        
         </div>
         <div class="col-md-5">
-       <?php $model->isOnline = $model->privateLesson->is_online ? 1: 0; ?>
-            <?php echo $form->field($model, 'isOnline')->radioList( [0=>'No', 1 => 'Yes'] ); ?>
+       <?php $model->isOnline = $model->is_online ? 1: 0; ?>
+            <?= $form->field($model, 'isOnline')->checkbox();
+        ?>
         </div>
     <div class="clearfix"></div>
 	<?php ActiveForm::end(); ?>
