@@ -9,7 +9,6 @@ namespace common\models;
  * @property string $lessonId
  * @property string $expiryDate
  * @property int $isElgible
- * @property bool $is_online
 
  */
 class PrivateLesson extends \yii\db\ActiveRecord
@@ -37,7 +36,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
         return [
             [['lessonId'], 'required'],
             [['lessonId'], 'integer'],
-            [['expiryDate', 'total', 'balance', 'lessonIds', 'bulkRescheduleDate', 'is_online'], 'safe'],
+            [['expiryDate', 'total', 'balance', 'lessonIds', 'bulkRescheduleDate'], 'safe'],
         ];
     }
 
