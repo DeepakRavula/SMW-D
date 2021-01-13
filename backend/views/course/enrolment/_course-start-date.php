@@ -50,6 +50,11 @@ use yii\jui\DatePicker;
         ?>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-8">
+        <?php echo $form->field($model, 'isOnline')->checkbox(); ?>
+        </div>
+    </div>
 </div>
 
 <?php ActiveForm::end(); ?>

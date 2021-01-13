@@ -64,6 +64,7 @@ class EnrolmentForm extends Model
     public $description;
 
     public $paymentCycleStartDate;
+    public $isOnline;
     /**
      * {@inheritdoc}
      */
@@ -73,6 +74,7 @@ class EnrolmentForm extends Model
             [['programId', 'paymentFrequency', 'duration', 'startDate', 'programRate'],
                 'safe'],
             [['fromTime', 'day', 'teacherId', 'isReverse'], 'safe'],
+            [['isOnline'], 'safe'],
             [['programId', 'paymentFrequency', 'duration', 'programRate','lessonsCount'],
                 'required', 'on' => self::SCENARIO_BASIC],
             [['enrolmentDiscount', 'pfDiscount'], 'safe'],

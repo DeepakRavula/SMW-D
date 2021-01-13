@@ -63,5 +63,9 @@ LteBox::begin([
             <?= $model->student->customer->publicIdentity ?? null; ?>
         </a>
     </dd>
+    <dt>Online</dt>
+    <dd>
+    <?= $model->is_online ? "Yes" : 'No' ; ?>
+    </dd>
 </dl>
 <?php LteBox::end()?>

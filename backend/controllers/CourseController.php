@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Course;
+use common\models\CourseGroup;
 use common\models\log\CourseLog;
 use common\models\Lesson;
 use common\models\ExtraLesson;
@@ -56,7 +57,7 @@ class CourseController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['fetch-teacher-availability', 'fetch-lessons', 
-                    'fetch-group', 'change', 'teachers', 'create-enrolment-basic',
+                    'fetch-group', 'change', 'teachers', 'create-enrolment-basic','edit-online-type',
                     'create-enrolment-detail', 'create-enrolment-date-detail', 'group-course-delete'
                 ],
                 'formats' => [
@@ -70,7 +71,7 @@ class CourseController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'fetch-teacher-availability',
                             'course-date', 'create', 'update', 'delete', 'teachers',
-                            'fetch-group', 'change', 'create-enrolment-basic',
+                            'fetch-group', 'change', 'create-enrolment-basic', 'edit-online-type',
                             'create-enrolment-detail', 'create-enrolment-date-detail', 'group-course-delete'
                         ],
                         'roles' => ['manageGroupLessons'],
@@ -675,5 +676,64 @@ class CourseController extends BaseController
             ];
         }
     return $response;
+    }
+
+    public function actionEditOnlineType()
+    {
+        //var_dump(Yii::$app->request->get());
+        $editGroupLessonModel = new CourseGroup();
+        $editGroupLessonModel->load(Yii::$app->request->get());
+        $post = Yii::$app->request->post();
+       
+        if ($post) {
+            
+            if ($editGroupLessonModel->load(Yii::$app->request->get()) ) {
+                
+                if($post['online'] == 1){
+                    $message = 'Group Lesson Edited To Make Online Class Sucessfully';
+                    foreach ($editGroupLessonModel->lessonIds as $lessonId) {
+                        $model = Lesson::findOne(['id' => $lessonId]);
+                        $model->is_online = 1;
+                        $model->save();
+                    }
+                }elseif($post['online'] == 0){
+                    $message = 'Group Lesson Edited To Make In Class Sucessfully';
+                    foreach ($editGroupLessonModel->lessonIds as $lessonId) {
+                        $model = Lesson::findOne(['id' => $lessonId]);
+                        $model->is_online = 0;
+                        $model->save();
+                    }
+                }
+                
+                Lesson::triggerPusher();
+                $response = [
+                    'status' => true,
+                    'message' => $message,
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'error' => $editGroupLessonModel->getErrors('lessonIds'),
+                ];
+            }
+        } else {
+            //$editClassroomModel->setScenario(EditClassroom::SCENARIO_BEFORE_EDIT_CLASSROOM);
+            if ($editGroupLessonModel->lessonIds) {
+                $data = $this->renderAjax('_form-edit-online-type', [
+                    'model' => $editGroupLessonModel,
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $data,
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'error' => $editGroupLessonModel->getErrors('lessonIds'),
+                ];
+            }
+        }
+
+        return $response;
     }
 }

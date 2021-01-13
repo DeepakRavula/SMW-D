@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 use common\models\Lesson;
+use backend\models\search\LessonSearch;
 
 ?>
 
@@ -74,6 +75,16 @@ $form = ActiveForm::begin([
                 },
             ],
         ];
+
+        array_push($columns, [
+            'label' => 'Online',
+            'attribute' => 'isOnline',
+            'filter' => LessonSearch::lessonClassType(),
+            'value' => function ($data) {
+                $lessonType = ($data->is_online ?? 0) == 0 ? 'No' : 'Yes';
+                return  $lessonType;
+            },
+        ]);
 
     ?>
     <div class="grid-row-open">

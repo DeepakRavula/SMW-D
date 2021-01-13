@@ -17,6 +17,7 @@ use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
  * @property string $last_name
  * @property string $birth_date
  * @property int $customer_id
+ * @property string note
  */
 class Student extends \yii\db\ActiveRecord
 {
@@ -56,6 +57,7 @@ class Student extends \yii\db\ActiveRecord
             ['studentId', 'required', 'on' => self::SCENARIO_MERGE],
             [['first_name', 'last_name'], 'string', 'min' => 1, 'max' => 30],
             [['first_name', 'last_name'], 'trim'],
+            [['note'], 'string', 'min' => 3, 'max' => 255],
             [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'M d,Y', 'message' => 'Date format shoule be in M d,Y format',
                 'except' => [self::SCENARIO_MERGE, self::SCENARIO_CUSTOMER_MERGE]],
@@ -69,6 +71,7 @@ class Student extends \yii\db\ActiveRecord
         $this->last_name = $model->last_name;
         $this->birth_date = $model->birth_date;
         $this->gender = $model->gender;
+        $this->note = $model->note?? '';
         return $this;
     }
 
@@ -116,7 +119,8 @@ class Student extends \yii\db\ActiveRecord
             'birth_date' => 'Birth Date',
             'customer_id' => 'Customer Name',
             'showAllStudents' => 'Show All',
-            'gender' => 'Gender'
+            'gender' => 'Gender',
+            'note' => 'Notes'
         ];
     }
 

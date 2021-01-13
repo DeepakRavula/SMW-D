@@ -10,6 +10,8 @@ use common\models\Location;
 use common\models\Student;
 use common\models\UserProfile;
 use common\models\GroupLesson;
+use backend\models\search\LessonSearch;
+
 ?>
 
 
@@ -75,7 +77,18 @@ use common\models\GroupLesson;
 		    return $owing ? Yii::$app->formatter->asBalance($owing) : null;
 	    },
 	],
-    ];
+	];
+	
+	array_push($columns, [
+		'label' => 'Online',
+		'attribute' => 'isOnline',
+		'filter' => LessonSearch::lessonClassType(),
+		'value' => function ($data) {
+			$lessonType = ($data->is_online ?? 0) == 0 ? 'No' : 'Yes';
+			return  $lessonType;
+		},
+	]);
+	
     ?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-lesson-index', 'timeout' => 6000,]); ?>

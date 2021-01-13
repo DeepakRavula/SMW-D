@@ -388,6 +388,7 @@ class ScheduleController extends BaseController
                 'className' => $class,
                 'backgroundColor' => $backgroundColor,
                 'description' => $description,
+                'isOnline' => $lesson->is_online 
             ];
         }
         unset($lesson);

@@ -69,7 +69,7 @@ class Course extends \yii\db\ActiveRecord
             'updatedByUserId', 'updatedOn', 'createdOn','isDeleted'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount'], 'safe'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount','is_online'], 'safe'],
             ['endDate', 'validateEndDate'],
         ];
     }
@@ -93,7 +93,8 @@ class Course extends \yii\db\ActiveRecord
             'paymentFrequency' => 'Payment Frequency',
             'rescheduleBeginDate' => 'Reschedule Future Lessons From',
             'rescheduleFromDate' => 'With effects from',
-            'showAllCourses' => 'Show All'
+            'showAllCourses' => 'Show All',
+            'Online' => 'is_online'
         ];
     }
 
@@ -161,6 +162,7 @@ class Course extends \yii\db\ActiveRecord
         $this->teacherId = $model->teacherId;
         $this->programRate = $model->programRate;
         $this->lessonsCount = $model->lessonsCount;
+        $this->is_online = $model->isOnline;
         return $this;
     }
     
@@ -518,16 +520,17 @@ class Course extends \yii\db\ActiveRecord
                         'TIME(date)' => $time
                     ])
                     ->count();
-                
                 $checkLimit = $lessonCount < $lessonLimit;
                 if ($checkDay && $checkLimit) {
-                    $this->createLesson($day);
+                    $this->createLesson($day, null);
                 }
             }
         }
     }
-    
-    public function createLesson($day, $isConfirmed = null)
+    /**
+     * This function creates lesson records in lesson table
+     */
+    public function createLesson($day, $isConfirmed = null, $isOnline = null)
     {
         if (!$isConfirmed) {
             $isConfirmed = false;
@@ -542,12 +545,13 @@ class Course extends \yii\db\ActiveRecord
             'originalDate' => $day->format('Y-m-d H:i:s'),
             'duration' => $this->recentCourseSchedule->duration,
             'isConfirmed' => $isConfirmed,
-            'dueDate' => $day->format('Y-m-d')
+            'dueDate' => $day->format('Y-m-d'),
+            'is_online' => $isOnline ? $isOnline : $this->is_online
         ]);
         $lesson->save();
     }
 
-    public function createAutoRenewalLesson($day)
+    public function createAutoRenewalLesson($day, $isOnline = 0)
     {
         $lesson = new Lesson();
         $status = Lesson::STATUS_SCHEDULED;
@@ -558,7 +562,8 @@ class Course extends \yii\db\ActiveRecord
             'date' => $day->format('Y-m-d H:i:s'),
             'duration' => $this->recentCourseSchedule->duration,
             'isConfirmed' => true,
-            'dueDate' => $day->format('Y-m-d')
+            'dueDate' => $day->format('Y-m-d'),
+            'is_online' => $isOnline
         ]);
         $lesson->save();
         $lesson->makeAsRoot();
