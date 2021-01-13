@@ -1068,13 +1068,18 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getLessonsDue($id)
     {
+        $groupLessonsOwingAmount = $this->getGroupLessonOwingAmount($id);
+        $lessonsDue = $this->getPrivateLessonsDue($id) + $groupLessonsOwingAmount;
+        return $lessonsDue;
+    }
+
+    public function getGroupLessonOwingAmount($id) {
         $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
         $groupLessonSearchModel->userId = $id;
         $groupLessonsQuery = $groupLessonSearchModel->search($groupLessonSearchModel);
         $groupLessonsOwingAmount =  $groupLessonsQuery->orderBy(['lesson.date' => SORT_ASC])
                                     ->sum("group_lesson.balance");
-        $lessonsDue = $this->getPrivateLessonsDue($id) + $groupLessonsOwingAmount;
-        return $lessonsDue;
+        return $groupLessonsOwingAmount;
     }
 
     public function getInvoiceOwingAmountTotal($id)
