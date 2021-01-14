@@ -9,12 +9,17 @@ namespace common\models;
  * @property string $lessonId
  * @property string $expiryDate
  * @property int $isElgible
+
  */
 class PrivateLesson extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
+    const ONLINE_CLASS = 1;
+    const IN_CLASS = 0;
+
+
     public $bulkRescheduleDate;
 
     public static function tableName()
@@ -67,7 +72,8 @@ class PrivateLesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
-    
+   
+
     public function split()
     {
         $model = $this->lesson;

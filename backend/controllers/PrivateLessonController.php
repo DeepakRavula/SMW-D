@@ -40,7 +40,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule'
+                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -54,7 +54,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule'
+                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -415,6 +415,63 @@ class PrivateLessonController extends BaseController
                 $response = [
                     'status' => false,
                     'error' => $editClassroomModel->getErrors('lessonIds'),
+                ];
+            }
+        }
+        return $response;
+    }
+    public function actionEditOnlineType()
+    {
+        //var_dump(Yii::$app->request->get());
+        $editPrivateLessonModel = new PrivateLesson();
+        $editPrivateLessonModel->load(Yii::$app->request->get());
+        //var_dump($editPrivateLessonModel->lessonIds);
+        $post = Yii::$app->request->post();
+       
+        if ($post) {
+            if ($editPrivateLessonModel->load(Yii::$app->request->get()) ) {
+                
+                if($post['online'] == 1){
+                    $message = 'Private Lesson Edited To Make Online Class Sucessfully';
+                    foreach ($editPrivateLessonModel->lessonIds as $lessonId) {
+                        $model = Lesson::findOne(['id' => $lessonId]);
+                        $model->is_online = 1;
+                        $model->save();
+                    }
+                }elseif($post['online'] == 0){
+                    $message = 'Private Lesson Edited To Make In Class Sucessfully';
+                    foreach ($editPrivateLessonModel->lessonIds as $lessonId) {
+                        $model = Lesson::findOne(['id' => $lessonId]);
+                        $model->is_online = 0;
+                        $model->save();
+                    }
+                }
+                
+                Lesson::triggerPusher();
+                $response = [
+                    'status' => true,
+                    'message' => $message,
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'error' => $editPrivateLessonModel->getErrors('lessonIds'),
+                ];
+            }
+        } else {
+            //$editClassroomModel->setScenario(EditClassroom::SCENARIO_BEFORE_EDIT_CLASSROOM);
+            if ($editPrivateLessonModel->lessonIds) {
+                $data = $this->renderAjax('_form-edit-online-type', [
+                    'model' => $editPrivateLessonModel,
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $data,
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'error' => $editPrivateLessonModel->getErrors('lessonIds'),
                 ];
             }
         }
