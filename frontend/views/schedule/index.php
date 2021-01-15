@@ -112,6 +112,7 @@ $this->title = 'Schedule ';
                     maxTime = value.toTime;
                 }
             });
+            console.log(availabilitites, "aaaa")
             $('#calendar').fullCalendar('destroy');
             $('#calendar').unbind().removeData().fullCalendar({
                 nowIndicator: true,
@@ -151,7 +152,10 @@ $this->title = 'Schedule ';
                             return event.description;
                         }
                     });
-                }
+                    if(event.icon){          
+                        element.find(".fc-title").append("<i class='fa fa-"+event.icon+"' style='margin-left:5px'></i>");
+                    }
+                },
             });
             
             $('.fc-today-button').click(function(){
