@@ -23,6 +23,15 @@ use Carbon\Carbon;
 use common\components\controllers\FrontendBaseController;
 use Carbon\CarbonInterval;
 use League\Period\Period;
+use yii\helpers\Url;
+use common\models\Location;
+use common\models\Enrolment;
+use common\models\Student;
+use common\models\LessonPayment;
+use common\models\Note;
+use yii\data\ActiveDataProvider;
+use common\models\log\LogHistory;
+
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -43,7 +52,7 @@ class ScheduleController extends FrontendBaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index'],
+                        'actions' => ['index', 'view'],
                         'roles' => ['staffmember'],
                     ],
                 ],
@@ -293,6 +302,8 @@ class ScheduleController extends FrontendBaseController
                 'className' => $class,
                 'backgroundColor' => $backgroundColor,
                 'description' => $description,
+                'icon' => $lesson->is_online == 1 ? 'laptop' : '',
+                'url' => Url::to(['/schedule/view?id=' . $lesson->id])
             ];
         }
         unset($lesson);
@@ -314,5 +325,82 @@ class ScheduleController extends FrontendBaseController
             'end'        => $end->format('Y-m-d H:i:s'),
             'rendering'  => 'background',
         ];
+    }
+
+    public function actionView($id) {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model = $this->findModel($id);
+        $enrolment = Enrolment::findOne(['courseId' => $model->courseId]);
+        $notes = Note::find()
+            ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
+            ->orderBy(['createdOn' => SORT_DESC]);
+
+        $noteDataProvider = new ActiveDataProvider([
+            'query' => $notes,
+        ]);
+
+        $groupLessonStudents = Student::find()
+            ->notDeleted()
+            ->joinWith(['enrolments' => function ($query) use ($id) {
+                $query->joinWith(['course' => function ($query) use ($id) {
+                    $query->joinWith(['program' => function ($query) use ($id) {
+                        $query->group();
+                    }]);
+                    $query->joinWith(['lessons' => function ($query) use ($id) {
+                        $query->andWhere(['lesson.id' => $id]);
+                    }])
+                        ->confirmed()
+                        ->notDeleted();
+                }])
+                    ->notDeleted()
+                    ->isConfirmed();
+            }])
+            ->location($locationId);
+
+        $studentDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonStudents,
+        ]);
+        $payments = LessonPayment::find()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted();
+            }])
+            ->andWhere(['lesson_payment.lessonId' => $id])
+            ->notDeleted();
+        $paymentsDataProvider = new ActiveDataProvider([
+            'query' => $payments
+        ]);
+        $logDataProvider = new ActiveDataProvider([
+            'query' => LogHistory::find()->lesson($id)
+        ]);
+
+        return $this->render('view', [
+            'model' => $model,
+            'noteDataProvider' => $noteDataProvider,
+            'studentDataProvider' => $studentDataProvider,
+            'paymentsDataProvider' => $paymentsDataProvider,
+            'logDataProvider' => $logDataProvider,
+        ]);
+    }
+
+    protected function findModel($id)
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model = Lesson::find()->location($locationId)
+            ->notDeleted()
+            ->andWhere(['lesson.id' => $id])->one();
+        if ($model !== null) {
+            if ($model->leaf) {
+                if (!$model->leaf->isCanceled()) {
+                    $this->redirect(['lesson/view', 'id' => $model->leaf->id]);
+                } else {
+                    throw new NotFoundHttpException('The requested page does not exist.');
+                }
+            } else if ($model->isCanceled()) {
+                throw new NotFoundHttpException('The requested page does not exist.');
+            }
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }
