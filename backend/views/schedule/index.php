@@ -439,10 +439,14 @@ var schedule = {
     }, 
 
     modifyEventRender : function (event, element) {
-        if (event.isOwing && event.isOnline == 0) {
-          element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-dollar"></i></div>');
-        } else {
-            element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-dollar"></i><i class="fa fa-laptop" style="margin-left:3px"></i></div>');
+        if (event.isOwing && event.isOnline == 1) {
+          element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-dollar"></i><i class="fa fa-laptop" style="margin-left:3px"></i></div>');
+        } else if(event.isOwing && event.isOnline == 0) {
+            element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-dollar"></i></div>');
+        }else{
+            if(event.isOnline){
+                element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-laptop" style="margin-left:3px"></i></div>');
+            }
         }
         element.poshytip({
             className: 'tip-yellowsimple',
