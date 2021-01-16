@@ -24,5 +24,7 @@ LteBox::begin([
     <dd>
      <?= $model->is_online == 1 ? "Yes" : 'No' ; ?>
     </dd>
+    <dt>&nbsp;</dt>
+    <dd></dd>
 </dl>
 <?php LteBox::end() ?>
