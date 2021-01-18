@@ -43,7 +43,7 @@ use Carbon\Carbon;
             'pluginOptions' => [
                 'autoApply' => true,
                 'ranges' => [
-                    Yii::t('kvdrp', 'All') => ["moment('<?= $firstLessonDate ?>')", "moment('<?= $lastLessonDate ?>')"],
+                    Yii::t('kvdrp', 'All') => ["moment('<?= $firstLessonDate ?>', 'MMM D,YYYY').format('MMM D, YYYY')", "moment('<?= $lastLessonDate ?>', 'MMM D,YYYY').format('MMM D, YYYY')"],
                     Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
                     Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
                     Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
