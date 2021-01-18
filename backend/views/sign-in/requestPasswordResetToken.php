@@ -9,6 +9,7 @@ use yii\widgets\ActiveForm;
 $this->title = Yii::t('frontend', 'Request password reset');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <div class="login-box">
     <div class="login-logo">
         <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">  
@@ -25,6 +26,15 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="body">
                 <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form']); ?>
                     <?php echo $form->field($model, 'email') ?>
+                    <div style="background-color: #f8f8f8;">
+                        <div class="g-recaptcha captcha-style" data-sitekey="6Le5FPoZAAAAAKH2yl9BjAe8dOMGKE2allr9Ra_a"></div>
+                        <?php 
+                                        if (\Yii::$app->session->get('captcha-error')) {
+                                    ?>
+                                    <p class="captcha-error" style="color:red;"><?php echo \Yii::$app->session->get('captcha-error'); ?></p>
+                
+                                    <?php } ?>
+                    </div>
                     <div class="form-group">
                         <?php echo Html::submitButton('Send', [
                             'class' => 'btn btn-info btn-flat btn-block',
@@ -36,6 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'link' => yii\helpers\Url::to(['sign-in/login']),
                         ]) ?>
                     </div>
+                   
                 <?php ActiveForm::end(); ?>
         </div>
     </div>

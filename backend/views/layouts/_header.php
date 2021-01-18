@@ -52,11 +52,12 @@ $bundle = BackendAsset::register($this);
                                 <i class="fa fa-newspaper-o" aria-hidden="true"></i>
                             </a>
                         </li>
-                        <li class="notifications-menu" data-toggle="tooltip" data-original-title="Help" data-placement="bottom">
+                        <!-- FreshWidget disabled --> 
+                        <!-- <li class="notifications-menu" data-toggle="tooltip" data-original-title="Help" data-placement="bottom">
                             <a href="" onclick="FreshWidget.show(); return false;">
                                 <i class="fa fa-support"></i>
                             </a>
-                        </li>
+                        </li> -->
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="user-menu">
