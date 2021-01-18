@@ -133,31 +133,36 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
             'filterModel' => $searchModel,
             'showPageSummary' => true,
             'columns' => $columns,
-        'toolbar' =>  [
-            [
-                'content' => $this->render('_button', [
-                    'searchModel' => $searchModel
-                ])
-            ],
-            [
-                'content' =>
-                    Html::button('<i class="glyphicon glyphicon-plus"></i>', [
-                        'type'=>'button', 
-                        'title'=>Yii::t('backend', 'Add'), 
-                        'class'=>'btn btn-success add-user'
+            'toolbar' =>  [
+                [
+                    'content' =>
+                        Html::button('<i class="glyphicon glyphicon-plus"></i>', [
+                            'type'=>'button', 
+                            'title'=>Yii::t('backend', 'Add'), 
+                            'class'=>'btn btn-success add-user'
+                        ])
+                ],
+                [
+                    'content' => $this->render('_button', [
+                        'searchModel' => $searchModel
                     ])
+                ],
+                '{export}',
+                '{toggleData}',
+                [
+                    'content' => $this->render('_button-print', [
+                        'searchModel' => $searchModel
+                    ])
+                ],
             ],
-            '{export}',
-            '{toggleData}'
-        ],
-        'export' => [
-            'fontAwesome' => true,
-        ],  
-        'panel' => [
-                'type' => GridView::TYPE_DEFAULT,
-                'heading' => Yii::t('backend', !isset($role) ? 'User' : $role.'s')
-            ],
-        'toggleDataOptions' => ['minCount' => 20],
+            'export' => [
+                'fontAwesome' => true,
+            ],  
+            'panel' => [
+                    'type' => GridView::TYPE_DEFAULT,
+                    'heading' => Yii::t('backend', !isset($role) ? 'User' : $role.'s')
+                ],
+            'toggleDataOptions' => ['minCount' => 20],
     ]); ?>
 <?php yii\widgets\Pjax::end(); ?>
 </div>

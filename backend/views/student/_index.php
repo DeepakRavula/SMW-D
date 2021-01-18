@@ -74,18 +74,16 @@ use yii\helpers\Html;
         ],
     ],
     'toolbar' =>  [
-    [
-        'content' =>  $this->render('_button', [
-            'searchModel' => $searchModel
-        ]),
-        'options' => ['title' =>'Show All',]
-    ],   
+        [
+            'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+            'options' => ['title' =>'Filter',]
+        ],  
     '{export}',
     '{toggleData}',
     
     [
         'content' =>
-        Html::a('<i class="fa fa-print btn btn-default"></i>', '#', ['id' => 'print'])
+        Html::a('<i class="fa fa-print btn btn-default btn-lg"></i>', '#', ['id' => 'print'])
         
     ],
     ],
