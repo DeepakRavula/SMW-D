@@ -22,7 +22,7 @@ $form = ActiveForm::begin([
         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter fa-1x"></i>&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
             <li>
-		<?= $form->field($searchModel, 'showAll')->checkbox(['data-pjax' => true]); ?>
+		<?= $form->field($searchModel, 'showAll')->label(false)->checkbox(['label' => 'Show Inactive Items','data-pjax' => true]); ?>
         </li>
         </ul>
     </div>

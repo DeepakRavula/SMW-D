@@ -187,7 +187,7 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
 $(document).ready(function(){
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
-   $("#usersearch-showall").on("change", function() {
+    $(document).off('change', "#usersearch-showall").on('change', "#usersearch-showall", function(){
         var showAll = $(this).is(":checked");
         var role_name= "<?=$roleName?>";
         var firstname_search = $("input[name*='UserSearch[firstname]").val();
