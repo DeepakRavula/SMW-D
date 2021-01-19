@@ -1,14 +1,9 @@
 <?php
 
 use common\models\Program;
-use backend\models\search\ProgramSearch;
-use yii\bootstrap\Tabs;
-use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use yii\helpers\Html;
-use yii\grid\GridView;
-use yii\widgets\Pjax;
-$this->title = 'Programs';
+
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-program']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
