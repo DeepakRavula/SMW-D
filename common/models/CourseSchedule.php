@@ -23,6 +23,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public $programRate;
     public $discount;
     public $isAutoRenew;
+    public $isOnline;
 
 
     /**
@@ -114,6 +115,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
             $enrolmentModel->studentId = $this->studentId;
             $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
             $enrolmentModel->isAutoRenew =  $this->isAutoRenew;
+            $enrolmentModel->is_online   = $this->isOnline ? 1 : 0;
             $enrolmentModel->save();
         }
         return parent::afterSave($insert, $changedAttributes);
@@ -126,6 +128,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         $this->fromTime = $model->fromTime;
         $this->duration = $model->duration;
         $this->paymentFrequency = $model->paymentFrequency;
+        $this->isOnline = $model->isOnline;
         return $this;
     }
 

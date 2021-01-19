@@ -37,6 +37,10 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 			<dd><?= $model->teacher->publicIdentity; ?></dd>
 			<dt>Rate</dt>
 			<dd><?= Yii::$app->formatter->asCurrency($model->courseProgramRate->programRate); ?></dd>
+            <dt>Online</dt>
+            <dd>
+            <?= $model->is_online ? "Yes" : 'No' ; ?>
+            </dd>
 		</dl>
 		<?php LteBox::end() ?>
 		</div>
@@ -114,7 +118,8 @@ $logContent = $this->render('log', [
         if (params.url) {
             window.location.href = params.url;
         } else {
-            $.pjax.reload({container: '#group-course-student', timeout: 6000, async:false});
+            location.reload()
+            // $.pjax.reload({container: '#group-course-student', timeout: 6000, async:false});
         }
         return false;
     });

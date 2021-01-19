@@ -91,8 +91,17 @@ use common\models\Location;
         if ($.isEmptyObject(selectedDate)) {
             selectedDate = $('#coursereschedule-datetochangeschedule').val();
         }
+        let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        let formattedDate = selectedDate;
+        if (isFirefox) {
+            formattedDate = selectedDate.split(" ");
+            formattedDate = formattedDate[1] + '-' + (Number(months.indexOf(formattedDate[0])) + 1)
+        }
+        
+       
         var options = {
-            'date' : selectedDate,
+            'date' : formattedDate,
             'renderId' : '#bulk-reschedule-calendar',
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
