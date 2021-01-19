@@ -29,11 +29,6 @@ foreach ($roles as $name => $description) {
 }
 $roleName = $searchModel->role_name;
 $originalInvoice = Invoice::TYPE_INVOICE;
-//$this->title = Yii::t('backend', !isset($role) ? 'User' : $role.'s');
-//$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'f-s-18 add-user']);
-// $this->params['show-all'] = $this->render('_button', [
-//     'searchModel' => $searchModel
-// ]);
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $user = User::findOne(['id' => Yii::$app->user->id]);
 ?>
@@ -150,9 +145,7 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                 '{export}',
                 '{toggleData}',
                 [
-                    'content' => $this->render('_button-print', [
-                        'searchModel' => $searchModel
-                    ])
+                    'content' => Html::a('<i class="fa fa-print btn btn-default btn-lg"></i>', '#', ['id' => 'user-print'])
                 ],
             ],
             'export' => [
@@ -206,4 +199,12 @@ $(document).ready(function(){
         $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
     });
 });
+$("#user-print").on("click", function() {
+    <?php if ($searchModel->role_name === User::ROLE_CUSTOMER) { ?>
+            var url = '<?php echo Url::to(['print/user?UserSearch%5Brole_name%5D=customer']); ?>';
+      <?php  } else if ($searchModel->role_name === User::ROLE_TEACHER) { ?>
+            var url = '<?php echo Url::to(['print/user?UserSearch%5Brole_name%5D=teacher']); ?>';
+      <?php   } ?>
+        window.open(url,'_blank');
+    });
 </script>
