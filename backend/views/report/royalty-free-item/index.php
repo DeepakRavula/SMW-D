@@ -6,10 +6,6 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Royalty Free Items';
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']);
-
 ?>
 <div class="form-group form-inline">
 <?php echo $this->render('_search', ['model' => $searchModel]); ?>

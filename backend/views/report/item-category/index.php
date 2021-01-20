@@ -5,12 +5,6 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Items Sold by Category';
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class'=> 'btn btn-box-tool']);
-$this->params['show-all'] = $this->render('_button', [
-    'model' => $searchModel
-    ]);
 ?>
 
 <div class="payments-index p-10">
