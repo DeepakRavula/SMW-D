@@ -50,6 +50,9 @@ use kartik\time\TimePicker;
                 'data' => $enrolledPrograms,
                 'options' => ['placeholder' => 'Select program', 'id' => 'lesson-program']
             ])->label('Program - <a id="show-all">Click to show all</a>'); ?>
+
+<?= $form->field($model, 'is_online')->checkbox(); ?>
+
         </div>
     	<div class="col-md-4 lesson-teacher">
         <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -62,6 +65,7 @@ use kartik\time\TimePicker;
             'publicIdentity'
         );
         ?>
+
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
@@ -77,6 +81,7 @@ use kartik\time\TimePicker;
                 ]
             ]);
         ?>
+
         </div>
         <div class="col-md-2 lesson-duration">
             <?php
