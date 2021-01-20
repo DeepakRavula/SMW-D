@@ -65,6 +65,19 @@ $lastRole = end($roles);
                 }
             },
         'columns' => $columns,
+        'toolbar' =>  [
+            [
+                'content' =>
+                    Html::a('<i class="fa fa-plus"></i>', '#', [
+                        'class' => 'btn btn-success new-program'
+                    ]),
+                'options' => ['title' =>'Add',
+                              'class' => 'btn-group mr-2']
+                ],
+            ['content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+            'options' => ['title' =>'Filter',]
+               ],
+        ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
             'heading' => 'Programs'

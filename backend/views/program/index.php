@@ -3,11 +3,6 @@
 use common\models\Program;
 use yii\helpers\Url;
 use yii\helpers\Html;
-
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-program']);
-$this->params['show-all'] = $this->render('_button', [
-	'searchModel' => $searchModel
- ]);
 ?>
 <div class="m-b-10">
 </div>
@@ -26,7 +21,7 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 <?php echo Html::hiddenInput('name',Program::TYPE_PRIVATE_PROGRAM,array('id'=>'program-type')); ?>
 <script>
-	$(document).on('click', '.action-button,#program-listing  tbody > tr', function () {
+	$(document).on('click', '.new-program,#program-listing  tbody > tr', function () {
 	    var type=$('#program-type').val();
             var programId = $(this).data('key');
             if (!programId) {
@@ -74,7 +69,7 @@ $this->params['show-all'] = $this->render('_button', [
             $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
             return false;
        });
-       $("#programsearch-showallprograms").on("change", function () {
+       $(document).off('change', '#programsearch-showallprograms').on('change', '#programsearch-showallprograms', function(){
            var showAllPrograms = $(this).is(":checked");
            var type=$('#program-type').val();
            var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});

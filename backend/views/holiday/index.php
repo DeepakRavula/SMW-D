@@ -2,17 +2,15 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\GridView;
 use yii\bootstrap\Modal;
-use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\HolidaySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Holidays';
 ?>
-<?php $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['id' => 'add-holiday']);?>
  <?php Modal::begin([
         'header' => '<h4 class="m-0">Holiday</h4>',
         'id' => 'holiday-modal',
@@ -23,7 +21,7 @@ $this->title = 'Holidays';
 <?php yii\widgets\Pjax::begin([
     'id' => 'holiday-listing'
 ]); ?>
-    <?php echo AdminLteGridView::widget([
+    <?= KartikGridView::widget([
         'id' => 'holiday-grid',
         'dataProvider' => $dataProvider,
         'summary' => false,
@@ -39,6 +37,16 @@ $this->title = 'Holidays';
                 },
             ],
             'description'
+        ],
+        'toolbar' => [
+            ['content' => Html::a('<i class="fa fa-plus"></i>', '#', [
+                'class' => 'btn btn-success', 'id' => 'add-holiday'
+            ]),'options' => ['title' =>'Add',
+            'class' => 'btn-group mr-2']],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Holidays'
         ],
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>

@@ -4,10 +4,12 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\User;
 use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
 
 use kartik\date\DatePickerAsset;
+use kartik\grid\GridView;
 
 DatePickerAsset::register($this);
 
@@ -17,8 +19,13 @@ $this->title = 'Locations';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a('<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>', ['create'], ['class' => 'add-location']);
-$this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
+$toolbar = [];
+if ($lastRole->name === User::ROLE_ADMINISTRATOR ) {
+    $toolbar [] = ['content' => Html::a('<i class="fa fa-plus"></i>', '#', [
+        'class' => 'btn btn-success add-location'
+    ]),'options' => ['title' =>'Add',
+    'class' => 'btn-group mr-2']];
+}
 ?>
 <?php Modal::begin([
         'header' => '<h4 class="m-0">Location</h4>',
@@ -30,7 +37,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 <?php Pjax::begin([
     'id' => 'location-listing',
 ]); ?>
-    <?php echo AdminLteGridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -52,6 +59,11 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
             ],
             'address',
             'email',
+        ],
+        'toolbar' => $toolbar,
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Locations'
         ],
     ]); ?>
 <?php Pjax::end(); ?>
