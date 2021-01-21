@@ -92,11 +92,16 @@ use common\models\Location;
             selectedDate = $('#coursereschedule-datetochangeschedule').val();
         }
         let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        let isSafari = navigator.userAgent.toLowerCase().indexOf('safari') > -1;
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         let formattedDate = selectedDate;
+        console.log(isFirefox, isSafari)
         if (isFirefox) {
             formattedDate = selectedDate.split(" ");
             formattedDate = formattedDate[1] + '-' + (Number(months.indexOf(formattedDate[0])) + 1)
+        } else if (isSafari) {
+            formattedDate = selectedDate.split(" ");
+            formattedDate = new Date(formattedDate[1], (Number(months.indexOf(formattedDate[0])) + 1), 0) 
         }
         
        
