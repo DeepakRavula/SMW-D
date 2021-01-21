@@ -115,19 +115,20 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
     ?>
 <?= $this->render('_calendar'); ?>
 <script>
-$(document).ready(function(){
- $("#coursesearch-showallcourses").on("change", function() {
+
+$(document).off('change', '#coursesearch-showallcourses').on('change', '#coursesearch-showallcourses', function() {
      var showAllCourses = $(this).is(":checked");
      var url = "<?php echo Url::to(['course/index']); ?>?CourseSearch[query]=" + "<?php echo $searchModel->query; ?>&CourseSearch[showAllCourses]=" + (showAllCourses | 0);
      $.pjax.reload({url:url,container:"#group-courses",replace:false,  timeout: 4000});  //Reload GridView
  });
- $(document).on('click', '.group-course-create', function () {
- $('#group-course-create-modal').modal('show');
- $('#group-course-create-modal .modal-dialog').css({'width': '400px'});
- $('#step-2').hide();
- $('#step-1').show();
-			return false;
-    });
+ $(document).ready(function(){
+    $(document).on('click', '.group-course-create', function () {
+    $('#group-course-create-modal').modal('show');
+    $('#group-course-create-modal .modal-dialog').css({'width': '400px'});
+    $('#step-2').hide();
+    $('#step-1').show();
+                return false;
+        });
     
 });
  </script>
