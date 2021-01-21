@@ -29,11 +29,6 @@ foreach ($roles as $name => $description) {
 }
 $roleName = $searchModel->role_name;
 $originalInvoice = Invoice::TYPE_INVOICE;
-$this->title = Yii::t('backend', !isset($role) ? 'User' : $role.'s');
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'f-s-18 add-user']);
-$this->params['show-all'] = $this->render('_button', [
-    'searchModel' => $searchModel
-]);
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $user = User::findOne(['id' => Yii::$app->user->id]);
 ?>
@@ -133,17 +128,34 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
             'filterModel' => $searchModel,
             'showPageSummary' => true,
             'columns' => $columns,
-        'toolbar' =>  [
-            '{export}',
-            '{toggleData}'
-        ],
-        'export' => [
-            'fontAwesome' => true,
-        ],  
-        'panel' => [
-                'type' => GridView::TYPE_DEFAULT
+            'toolbar' =>  [
+                [
+                    'content' =>
+                        Html::button('<i class="glyphicon glyphicon-plus"></i>', [
+                            'type'=>'button', 
+                            'title'=>Yii::t('backend', 'Add'), 
+                            'class'=>'btn btn-success add-user'
+                        ])
+                ],
+                [
+                    'content' => $this->render('_button', [
+                        'searchModel' => $searchModel
+                    ])
+                ],
+                '{export}',
+                '{toggleData}',
+                [
+                    'content' => Html::a('<i class="fa fa-print btn btn-default btn-lg"></i>', '#', ['id' => 'user-print'])
+                ],
             ],
-        'toggleDataOptions' => ['minCount' => 20],
+            'export' => [
+                'fontAwesome' => true,
+            ],  
+            'panel' => [
+                    'type' => GridView::TYPE_DEFAULT,
+                    'heading' => Yii::t('backend', !isset($role) ? 'User' : $role.'s')
+                ],
+            'toggleDataOptions' => ['minCount' => 20],
     ]); ?>
 <?php yii\widgets\Pjax::end(); ?>
 </div>
@@ -175,7 +187,7 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
 $(document).ready(function(){
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
-   $("#usersearch-showall").on("change", function() {
+    $(document).off('change', "#usersearch-showall").on('change', "#usersearch-showall", function(){
         var showAll = $(this).is(":checked");
         var role_name= "<?=$roleName?>";
         var firstname_search = $("input[name*='UserSearch[firstname]").val();
@@ -187,4 +199,12 @@ $(document).ready(function(){
         $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
     });
 });
+$("#user-print").on("click", function() {
+    <?php if ($searchModel->role_name === User::ROLE_CUSTOMER) { ?>
+            var url = '<?php echo Url::to(['print/user?UserSearch%5Brole_name%5D=customer']); ?>';
+      <?php  } else if ($searchModel->role_name === User::ROLE_TEACHER) { ?>
+            var url = '<?php echo Url::to(['print/user?UserSearch%5Brole_name%5D=teacher']); ?>';
+      <?php   } ?>
+        window.open(url,'_blank');
+    });
 </script>
