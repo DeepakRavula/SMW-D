@@ -7,8 +7,6 @@ use yii\helpers\Html;
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
-$this->title = 'Discount Report';
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']);
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates

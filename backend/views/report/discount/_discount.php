@@ -1,6 +1,8 @@
 <?php
 
+use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
+use yii\helpers\Html;
 
 ?>
     <?php
@@ -128,7 +130,7 @@ use kartik\grid\GridView;
         ];
     ?>
 
-    <?= GridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -145,4 +147,11 @@ use kartik\grid\GridView;
             ],
         ],
         'columns' => $columns,
+        'toolbar' => [
+            ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Discount Report'
+        ],
     ]); ?>

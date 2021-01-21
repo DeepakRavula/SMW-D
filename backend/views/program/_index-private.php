@@ -1,14 +1,11 @@
 <?php
 
-use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\bootstrap\ButtonGroup;
-use yii\bootstrap\ActiveForm;
 use common\models\Program;
-use yii\grid\GridView;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 use yii\helpers\Html;
-use insolita\wgadminlte\LteBox;
-use insolita\wgadminlte\LteConst;
 use backend\models\search\ProgramSearch;
 
 /* @var $this yii\web\View */
@@ -56,7 +53,7 @@ $lastRole = end($roles);
             ]);
     ?>
     <?php
-    echo GridView::widget([
+    echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model) use ($searchModel) {
                 if ($searchModel->showAllPrograms) {
@@ -68,6 +65,23 @@ $lastRole = end($roles);
                 }
             },
         'columns' => $columns,
+        'toolbar' =>  [
+            [
+                'content' =>
+                    Html::a('<i class="fa fa-plus"></i>', '#', [
+                        'class' => 'btn btn-success new-program'
+                    ]),
+                'options' => ['title' =>'Add',
+                              'class' => 'btn-group mr-2']
+                ],
+            ['content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+            'options' => ['title' =>'Filter',]
+               ],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Programs'
+        ],
     ]);
     ?>
 <?php Pjax::end(); ?>

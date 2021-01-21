@@ -2,23 +2,20 @@
 
 use yii\helpers\Html;
 use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
 use common\models\Classroom;
+use kartik\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Classrooms';
-
-$addButton = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', '#', ['class' => 'f-s-18', 'id' => 'add-classroom']);
-$this->params['action-button'] = $addButton;
 ?>
 <?php yii\widgets\Pjax::begin([
     'id' => 'classroom-listing'
 ]); ?>
 <div class="grid-row-open">
-    <?php echo AdminLteGridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['classroom/view', 'id' => $model->id]);
@@ -32,6 +29,20 @@ $this->params['action-button'] = $addButton;
         'columns' => [
             'name',
             'description',
+        ],
+        'toolbar' =>  [
+            [
+            'content' =>
+                Html::a('<i class="fa fa-plus"></i>', '#', [
+                    'class' => 'btn btn-success', 'id' => 'add-classroom',
+                ]),
+            'options' => ['title' =>'Add',
+                          'class' => 'btn-group mr-2']
+            ],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Classrooms'
         ],
     ]); ?>
 </div>

@@ -37,7 +37,7 @@ use kartik\grid\GridView;
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
-            'heading' => '<h3 class = "f-s-20"> Accounts Receivable </h3>',
+            'heading' => 'Accounts Receivable',
         ],
         'showPageSummary' => true,
         'columns' => [

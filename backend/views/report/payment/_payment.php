@@ -9,6 +9,7 @@ use common\models\Location;
 use common\models\PaymentMethod;
 use common\models\Payment;
 use backend\assets\CustomGridAsset;
+use common\components\gridView\KartikGridView;
 
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
@@ -222,7 +223,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ?>
     <?php endif; ?>
     
-    <?= GridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -238,4 +239,14 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             ],
         ],
         'columns' => $columns,
+        'toolbar' => [
+            ['content' => $this->render('_button', [
+                'model' => $searchModel
+                ])],
+            ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Payments'
+        ],
     ]); ?>

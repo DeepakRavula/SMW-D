@@ -1,7 +1,6 @@
 <?php
 
-use yii\grid\GridView;
-use yii\bootstrap\Modal;
+use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use common\components\gridView\KartikGridView;
@@ -10,12 +9,7 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Recurring Payments';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['show-all'] = $this->render('_show-all-button', [
-    'searchModel' => $searchModel,
-]);
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['id' => 'recurring-payment']);
 ?> 
 <div class="recurring-payment-index">  
 <?php Pjax::begin(['id' => 'recurring-payment-listing']); ?>
@@ -88,6 +82,25 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
                 'contentOptions' => ['style' => 'text-align:right'],
                 'headerOptions' => ['style' => 'text-align:right'],
             ],
+        ],
+        'toolbar' =>  [
+            [
+                'content' =>
+                    Html::a('<i class="fa fa-plus"></i>', '#', [
+                        'class' => 'btn btn-success', 'id' => 'recurring-payment'
+                    ]),
+                'options' => ['title' =>'Add',
+                              'class' => 'btn-group mr-2']
+                ],
+            ['content' =>  $this->render('_show-all-button', ['searchModel' => $searchModel]),
+            'options' => ['title' =>'Filter',]
+               ],
+            '{export}',
+            '{toggleData}'
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Recurring Payments'
         ],
     ]); ?>
 <?php Pjax::end(); ?>

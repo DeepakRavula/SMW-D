@@ -6,14 +6,12 @@ use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
 use common\models\Location;
 use common\models\Payment;
-use common\models\User;
+use kartik\grid\GridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Payments';
-$this->params['action-button'] = $this->render('_action-button');
 ?>
 <?php Pjax::begin(['id' => 'payment-listing']); ?>
 
@@ -159,6 +157,15 @@ $columns = [
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
 		'columns' => $columns,
+		'toolbar' => [
+			[
+				'content' => $this->render('_action-button'),
+			],
+		],
+		'panel' => [
+			'type' => GridView::TYPE_DEFAULT,
+			'heading' => 'Payments'
+		],
 	]); ?>
 </div>
 <?php Pjax::end(); ?>
