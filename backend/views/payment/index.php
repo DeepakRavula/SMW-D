@@ -8,6 +8,7 @@ use common\models\Location;
 use common\models\Payment;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -159,7 +160,11 @@ $columns = [
 		'columns' => $columns,
 		'toolbar' => [
 			[
-				'content' => $this->render('_action-button'),
+				'content' =>  Html::button('<i class="fa fa-plus"></i>', [
+                    'class' => 'btn btn-success', 'id' => 'receive-payments'
+                ]),
+            'options' => ['title' =>'Receive Payment',
+                          'class' => 'btn-group mr-2'],
 			],
 		],
 		'panel' => [
@@ -196,6 +201,23 @@ $columns = [
     });
 	$(document).on('modal-delete', function(event, params) {
         $.pjax.reload({container: "#payment-listing", replace: false, timeout: 4000});
+        return false;
+	});
+	
+	$(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
+        alert("sdsd");
+        $.ajax({
+            url    : '<?= Url::to(['payment/receive']); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
         return false;
     });
 </script>
