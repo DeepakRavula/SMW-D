@@ -1,7 +1,9 @@
 <?php
 
+use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
 use yii\helpers\Url;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -37,8 +39,7 @@ $columns = [
 
 ?>
 <div class="grid-row-open">
-    <?php
-    echo GridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $royaltyFreeDataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -58,6 +59,13 @@ $columns = [
             ],
         ],
         'columns' => $columns,
+        'toolbar' => [
+            ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Royalty Free Items'
+        ],
     ]);
 
     ?>

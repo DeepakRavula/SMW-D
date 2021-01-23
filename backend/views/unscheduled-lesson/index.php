@@ -1,26 +1,12 @@
 <?php
 
 use yii\helpers\Url;
-use common\models\Lesson;
-use backend\models\search\LessonSearch;
 use yii\widgets\Pjax;
-use kartik\daterange\DateRangePicker;
-use yii\bootstrap\Modal;
 use common\components\gridView\KartikGridView;
-use yii\helpers\ArrayHelper;
-use common\models\Program;
-use common\models\Location;
-use common\models\UserProfile;
-use common\models\Student;
 use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Unscheduled Lessons';
-$this->params['show-all'] = $this->render('_button', [
-    'searchModel' => $searchModel
-]);
 ?>
 <div class="grid-row-open p-10">
 <?php Pjax::begin([
@@ -99,6 +85,9 @@ $this->params['show-all'] = $this->render('_button', [
 			'headerRowOptions' => ['class' => 'bg-light-gray'],
 			'columns' => $columns,
 			'toolbar' =>  [
+				['content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+				'options' => ['title' =>'Filter',]
+			   	],
 				'{export}',
 				'{toggleData}'
 			],
@@ -106,7 +95,8 @@ $this->params['show-all'] = $this->render('_button', [
 				'fontAwesome' => true,
 			],  
 			'panel' => [
-					'type' => GridView::TYPE_DEFAULT
+					'type' => GridView::TYPE_DEFAULT,
+					'heading' => 'Unscheduled Lessons'
 				],
 			'toggleDataOptions' => ['minCount' => 20],
 		]);

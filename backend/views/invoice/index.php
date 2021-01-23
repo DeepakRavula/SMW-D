@@ -13,13 +13,7 @@ use kartik\daterange\DateRangePicker;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel backend\models\search\InvoiceSearch */
-
-$invoiceAddButton = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['invoice/blank-invoice'], ['class' => '']);
-
-$actionButton = (int) $searchModel->type === Invoice::TYPE_INVOICE ?  $invoiceAddButton : null;
-
-$this->title = (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoices' : 'Invoices';
-$this->params['action-button'] = $actionButton; ?>
+ ?>
 <div class="clearfix"></div>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
@@ -296,6 +290,10 @@ $this->params['action-button'] = $actionButton; ?>
         },
         'columns' => $columns,
         'toolbar' =>  [
+            ['content' => Html::a('<i class="fa fa-plus"></i>', ['invoice/blank-invoice'], [
+                'class' => 'btn btn-success'
+            ]),'options' => ['title' =>'Add',
+            'class' => 'btn-group mr-2']],
             '{export}',
             '{toggleData}'
         ],
@@ -303,7 +301,8 @@ $this->params['action-button'] = $actionButton; ?>
             'fontAwesome' => true,
         ],  
         'panel' => [
-            'type' => GridView::TYPE_DEFAULT
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Invoices'
         ],
         'toggleDataOptions' => ['minCount' => 20],
     ]); ?>

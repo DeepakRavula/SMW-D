@@ -1,7 +1,7 @@
 <?php
 
+use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
-use yii\helpers\Url;
 use yii\helpers\Html;
 use common\models\Location;
 use common\models\Invoice;
@@ -192,7 +192,7 @@ td.kv-group-odd {
 <?php endif; ?>
 
 <div class="box">
-    <?= GridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $taxDataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -207,5 +207,15 @@ td.kv-group-odd {
             ],
         ],
         'columns' => $columns,
+        'toolbar' => [
+            ['content' => $this->render('_button', [
+                'model' => $searchModel
+                ])],
+            ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Tax Collected'
+        ],
     ]); ?>
 </div>
