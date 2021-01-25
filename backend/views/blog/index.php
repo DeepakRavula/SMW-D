@@ -1,22 +1,16 @@
 <?php
 
-use yii\grid\GridView;
-use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use yii\helpers\Html;
-use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Blogs';
-$this->params['breadcrumbs'][] = $this->title;
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-blog']);
 ?> 
 <div class="blog-index">  
 <?php yii\widgets\Pjax::begin(['id' => 'blog-listing']); ?>
-<?php
-echo AdminLteGridView::widget([
+<?= KartikGridView::widget([
     'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -45,12 +39,22 @@ echo AdminLteGridView::widget([
             ],
             'date:date',
         ],
+        'toolbar' => [
+            ['content' => Html::a('<i class="fa fa-plus"></i>', '#', [
+                'class' => 'btn btn-success new-blog'
+            ]),'options' => ['title' =>'Add',
+            'class' => 'btn-group mr-2']],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Blogs'
+        ],
     ]); ?>
 
 <?php yii\widgets\Pjax::end(); ?>
     </div>
   <script>
-        $(document).on('click', '.action-button,#blog-listing  tbody > tr', function () {
+        $(document).on('click', '.new-blog,#blog-listing  tbody > tr', function () {
             var blogId = $(this).data('key');
              if (blogId === undefined) {
                     var customUrl = '<?= Url::to(['blog/create']); ?>';

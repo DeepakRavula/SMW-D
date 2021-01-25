@@ -2,8 +2,10 @@
 
 use kartik\grid\GridView;
 use yii\helpers\Url;
+use yii\helpers\html;
 use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
+use common\components\gridView\KartikGridView;
 use common\models\ItemCategory;
 use common\models\Invoice;
 use common\models\Location;
@@ -295,8 +297,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
     ?>
 <?php endif; ?>
 <div class="grid-row-open">
-	<?=
-GridView::widget([
+	<?= KartikGridView::widget([
     'dataProvider' => $dataProvider,
     'options' => ['class' => 'payment-table'],
     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
@@ -319,6 +320,16 @@ GridView::widget([
         ],
     ],
     'columns' => $columns,
+    'toolbar' => [
+        ['content' => $this->render('_button', [
+            'model' => $searchModel
+            ])],
+        ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
+    ],
+    'panel' => [
+        'type' => GridView::TYPE_DEFAULT,
+        'heading' => 'Items Sold by Category'
+    ],
 ]);
 ?></div>
 

@@ -2,21 +2,25 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
 use common\models\User;
-use yii\bootstrap\Modal;
+use kartik\grid\GridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\TaxCodeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Tax Codes';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), ['create'], ['class' => 'add-taxcode']);
-$this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
+$toolbar = [];
+if ($lastRole->name === User::ROLE_ADMINISTRATOR ) {
+    $toolbar [] = ['content' => Html::a('<i class="fa fa-plus"></i>', '#', [
+        'class' => 'btn btn-success add-taxcode'
+    ]),'options' => ['title' =>'Add',
+    'class' => 'btn-group mr-2']];
+}
 ?>
 <div>
 <?php
@@ -25,7 +29,7 @@ Pjax::Begin([
 ]);
 
 ?>
-    <?php echo AdminLteGridView::widget([
+    <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -56,12 +60,17 @@ Pjax::Begin([
             'start_date:date',
             'code',
         ],
+        'toolbar' =>$toolbar,
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Tax Codes'
+        ],
     ]); ?>
     
 <?php Pjax::end();?>
 </div>
 <script>
-        $(document).on('click', '.action-button, #taxcode-listing  tbody > tr', function () {
+        $(document).on('click', '.add-taxcode, #taxcode-listing  tbody > tr', function () {
             var taxcodeId = $(this).data('key');
             if (taxcodeId === undefined) {
                 var customUrl = '<?= Url::to(['tax-code/create']); ?>';

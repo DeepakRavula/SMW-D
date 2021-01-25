@@ -3,24 +3,31 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\User;
-use common\components\gridView\AdminLteGridView;
 use yii\widgets\Pjax;
-use yii\bootstrap\Modal;
+use kartik\grid\GridView;
+use common\components\gridView\KartikGridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\CitySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Cities';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10 aria-hidden="true"></i>'), '#', ['class' => 'add-city btn-sm']);
-$this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
+// $addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10 aria-hidden="true"></i>'), '#', ['class' => 'add-city btn-sm']);
+// $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
+
+$toolbar = [];
+if ($lastRole->name === User::ROLE_ADMINISTRATOR ) {
+    $toolbar [] = ['content' => Html::a('<i class="fa fa-plus"></i>', '#', [
+        'class' => 'btn btn-success add-city'
+    ]),'options' => ['title' =>'Add',
+    'class' => 'btn-group mr-2']];
+}
 ?>
 <?php yii\widgets\Pjax::begin(['id' => 'city-listing']); ?>
 <div>
-    <?php echo AdminLteGridView::widget([
+    <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'summary' => false,
@@ -43,12 +50,17 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
                 },
             ],
         ],
+        'toolbar' =>  $toolbar,
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Cities'
+        ],
     ]); ?>
 
 </div>
 <?php Pjax::end(); ?>
 <script>
-    $(document).on('click', '.action-button,#city-listing  tbody > tr', function () {
+    $(document).on('click', '.add-city,#city-listing  tbody > tr', function () {
             var cityId = $(this).data('key');
              if (cityId === undefined) {
                     var customUrl = '<?= Url::to(['city/create']); ?>';

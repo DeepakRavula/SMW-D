@@ -1,21 +1,25 @@
 <?php
 
 use yii\helpers\Html;
-use common\components\gridView\AdminLteGridView;
-use yii\bootstrap\Modal;
+use common\components\gridView\KartikGridView;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use common\models\User;
+use kartik\grid\GridView;
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Referral Source';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10 aria-hidden="true"></i>'), '#', ['class' => 'add-referral-sources btn-sm']);
-$this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
-$this->params['breadcrumbs'][] = $this->title;
+$toolbar = [];
+if ($lastRole->name === User::ROLE_ADMINISTRATOR ) {
+    $toolbar [] = ['content' => Html::a('<i class="fa fa-plus"></i>', '#', [
+        'class' => 'btn btn-success add-referral-sources'
+    ]),'options' => ['title' =>'Add',
+    'class' => 'btn-group mr-2']];
+}
 ?> 	
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="referral-sources-index "> 
@@ -23,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'id' => 'referral-sources-listing',
         'timeout' => 6000
     ]); ?>
-    <?php echo AdminLteGridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -32,13 +36,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             'name',
         ],
+        'toolbar' => $toolbar,
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Referral Source'
+        ],
     ]); ?> 
 <?php Pjax::end(); ?>
 </div> 
 
 <script>
 $(document).ready(function () {
-    $(document).on('click', '.action-button,#referral-sources-listing  tbody > tr', function () {
+    $(document).on('click', '.add-referral-sources,#referral-sources-listing  tbody > tr', function () {
             var referralSourceId = $(this).data('key');
              if (referralSourceId === undefined) {
                     var customUrl = '<?= Url::to(['referral-source/create']); ?>';

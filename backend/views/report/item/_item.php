@@ -3,6 +3,8 @@
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use backend\assets\CustomGridAsset;
+use common\components\gridView\KartikGridView;
+use yii\helpers\Html;
 
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
@@ -62,8 +64,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             ],
         ];
         ?>
-        <?=
-        GridView::widget([
+        <?= KartikGridView::widget([
             'dataProvider' => $dataProvider,
             'summary' => false,
             'emptyText' => false,
@@ -79,5 +80,12 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 ],
             ],
             'columns' => $columns,
+            'toolbar' => [
+                ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
+            ],
+            'panel' => [
+                'type' => GridView::TYPE_DEFAULT,
+                'heading' => 'Items'
+            ],
         ]);
         ?>

@@ -254,7 +254,7 @@ class LessonController extends BaseController
             'model' => $model,
         ]);
         if ($request->post()) {
-            $is_Online = $request->post()['Lesson']['isOnline'];
+            $is_Online = isset($request->post()['Lesson']['isOnline']) ? $request->post()['Lesson']['isOnline'] : $request->post()['ExtraLesson']['isOnline'];
             if ($model->load($request->post()) && $model->save()) {
                 if($is_Online == 1){
                         $model = Lesson::findOne(['id' => $id, 'is_online' => 0]);

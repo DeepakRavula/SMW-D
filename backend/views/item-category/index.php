@@ -5,14 +5,11 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Item Categories';
-
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), [''], ['id' => 'create-item-category']);
-$this->params['action-button'] = $addButton;
 ?>
 <div class="item-category-index">
 
@@ -21,12 +18,26 @@ $this->params['action-button'] = $addButton;
     'id' => 'item-category-listing',
     'timeout' => 6000,
 ]) ?>
-    <?php echo AdminLteGridView::widget([
+    <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
         'columns' => [
             'name',
+        ],
+        'toolbar' => [
+            [
+                'content' =>
+                    Html::a('<i class="fa fa-plus"></i>', '#', [
+                        'class' => 'btn btn-success', 'id' => 'create-item-category'
+                    ]),
+                'options' => ['title' =>'Add',
+                'class' => 'btn-group mr-2']
+                ],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Item Categories'
         ],
     ]); ?>
 <?php Pjax::end(); ?>

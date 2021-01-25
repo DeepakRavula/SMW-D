@@ -2,25 +2,20 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use common\components\gridView\AdminLteGridView;
 use yii\bootstrap\Modal;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Group Courses';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>', ['course/create'], ['class' => 'group-course-create']);
-$this->params['show-all'] = $this->render('_button', [
-    'searchModel' => $searchModel
-]);
 ?>
 <div class="clearfix"></div>
     <div class="grid-row-open">  
     <?php yii\widgets\Pjax::begin(['id' => 'group-courses']) ?>
-    <?php echo AdminLteGridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
@@ -88,6 +83,25 @@ $this->params['show-all'] = $this->render('_button', [
                 },
             ],
         ],
+        'toolbar' =>  [
+            [
+            'content' =>
+                Html::a('<i class="fa fa-plus"></i>', ['course/create'], [
+                    'class' => 'btn btn-success group-course-create',
+                ]),
+            'options' => ['title' =>'Add',
+                          'class' => 'btn-group mr-2']
+            ],
+                ['content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+                'options' => ['title' =>'Filter',]
+                ],
+            '{export}',
+            '{toggleData}'
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Group Courses'
+        ],
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
@@ -101,19 +115,20 @@ $this->params['show-all'] = $this->render('_button', [
     ?>
 <?= $this->render('_calendar'); ?>
 <script>
-$(document).ready(function(){
- $("#coursesearch-showallcourses").on("change", function() {
+
+$(document).off('change', '#coursesearch-showallcourses').on('change', '#coursesearch-showallcourses', function() {
      var showAllCourses = $(this).is(":checked");
      var url = "<?php echo Url::to(['course/index']); ?>?CourseSearch[query]=" + "<?php echo $searchModel->query; ?>&CourseSearch[showAllCourses]=" + (showAllCourses | 0);
      $.pjax.reload({url:url,container:"#group-courses",replace:false,  timeout: 4000});  //Reload GridView
  });
- $(document).on('click', '.group-course-create', function () {
- $('#group-course-create-modal').modal('show');
- $('#group-course-create-modal .modal-dialog').css({'width': '400px'});
- $('#step-2').hide();
- $('#step-1').show();
-			return false;
-    });
+ $(document).ready(function(){
+    $(document).on('click', '.group-course-create', function () {
+    $('#group-course-create-modal').modal('show');
+    $('#group-course-create-modal .modal-dialog').css({'width': '400px'});
+    $('#step-2').hide();
+    $('#step-1').show();
+                return false;
+        });
     
 });
  </script>

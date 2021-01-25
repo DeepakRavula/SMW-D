@@ -15,6 +15,7 @@ TimePickerAsset::register($this);
 
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
+<div style="min-height: 836px;background-color: #ecf0f5;z-index: 800;">
 <section class="content-header">
                 <h1>
                                           
@@ -43,6 +44,6 @@ TimePickerAsset::register($this);
     </div>
 </div>
 
-
+</div>
 
 

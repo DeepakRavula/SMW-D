@@ -3,13 +3,12 @@
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Student Birthdays';
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool'])
 ?>
 <div class="form-group form-inline">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -17,8 +16,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
 <div class="clearfix"></div>
 <div class="grid-row-open"> 
 <?php Pjax::begin(['id' => 'birthday-listing']); ?>
-    <?php
-    echo AdminLteGridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -46,6 +44,13 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
                 'value' => 'customer.phoneNumber.number',
             ],
             'customer.email',
+        ],
+        'toolbar' => [
+            ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Student Birthdays'
         ],
     ]);
 

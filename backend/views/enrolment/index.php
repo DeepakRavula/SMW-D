@@ -1,12 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use common\models\Location;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
-use common\models\Program;
-use common\models\Student;
-use common\models\UserProfile;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
 
