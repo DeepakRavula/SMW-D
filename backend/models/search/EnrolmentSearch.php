@@ -149,8 +149,8 @@ class EnrolmentSearch extends Enrolment
     public static function autoRenew()
     {
         return [
-            enrolment::AUTO_RENEWAL_STATE_ENABLED => 'enabled',
-            enrolment::AUTO_RENEWAL_STATE_DISABLED => 'disabled'
+            enrolment::AUTO_RENEWAL_STATE_ENABLED => 'Enabled',
+            enrolment::AUTO_RENEWAL_STATE_DISABLED => 'Disabled'
         ];
     }
 }
