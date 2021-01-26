@@ -53,7 +53,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             ],
             [
                 'label' => 'Subtotal',
-                'value' => function ($data) use ($searchModel) {
+                'value' => function ($data, $key, $index, $widget) use ($searchModel) {
                     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     $amount = 0;
                     $payments = Payment::find()
@@ -69,13 +69,11 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     foreach ($payments as $payment) {
                         $amount += $payment->amount;
                     }
-
-                    return Yii::$app->formatter->asDecimal(round($amount, 2));
+                    $widget->footer =  Yii::$app->formatter->asCurrency($amount);
+                    return Yii::$app->formatter->asCurrency(round($amount, 2));
                 },
-                'contentOptions' => ['class' => 'text-right dollar'],
+                'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
             ],
         ];
         ?>
@@ -86,7 +84,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         'summary' => false,
         'emptyText' => false,
         'options' => ['class' => ''],
-        'showPageSummary' => true,
+        'showFooter' => true,
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
         'pjax' => true,
