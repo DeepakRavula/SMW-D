@@ -84,7 +84,7 @@ use kartik\select2\Select2;
     <?= $form->field($model, 'expiryYear')->dropDownList($year,  ['style' => 'width:80px !important; margin-left:-40px; margin-top:5px','prompt' => 'YEAR'])->label(' ');?>
     </div>
     <div class="col-md-4 ">
-    <?= $form->field($model, 'amount')->textInput(['value' => Yii::$app->formatter->asDecimal($model->amount, 2),
+    <?= $form->field($model, 'amount')->textInput(['value' => round($model->amount, 2),
             'class' => 'text-right form-control', 'disabled' => $disabled])->label('In The Amount Of'); ?>    
     </div>
     </div>

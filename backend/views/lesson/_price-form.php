@@ -26,7 +26,7 @@ use yii\helpers\Url;
         </div>
         <div class="col-xs-4">
             <?= $form->field($model, 'programRate')->textInput([
-                    'value' => Yii::$app->formatter->asDecimal($model->programRate, 2),
+                    'value' => number_format($model->programRate, 2),
                     'class' => 'text-right form-control'
                 ])->label(false); 
             ?>
