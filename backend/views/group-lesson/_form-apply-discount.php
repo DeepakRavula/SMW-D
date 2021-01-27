@@ -32,7 +32,7 @@ use yii\helpers\Url;
                 <label class="off discount-dollar-symbol on-off-symbol">$</label>
             </div>
             <?= $form->field($discount, 'value')->textInput([
-                    'value' => Yii::$app->formatter->asDecimal($discount->value, 2),
+                    'value' => number_format($discount->value, 2),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="on percent dollar-symbol on-off-symbol">%</label>

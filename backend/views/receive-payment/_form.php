@@ -246,21 +246,27 @@ use yii\bootstrap\Html;
                         $(this).find('.credit-amount').val(balance);
                     }
                     var amount = $(this).find('.credit-amount').val();
+                    debugger;
                     amount = amount.match(/\d+\.?\d*/)[0];
                     creditAmount += parseFloat(amount);
                 }
             });
             $('#selected-credit-value').val((creditAmount).toFixed(2));
             $('.credit-selected').text((creditAmount).toFixed(2));
+            $('.credit-selected').digits();
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
+            $(".amount-to-apply").digits();
             var amountReceived = $('#paymentform-amount').val();
             if (!lockTextBox) {
                 var amountReceived = amountNeeded - creditAmount  < 0 ? amountNeeded > 0 ? '0.00' : amountNeeded - creditAmount : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
-            var amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute;
+            var amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - parseFloat(amountToDistribute);
+            amountToCredit = amountTocredit.toString();
+            amountToCredit = amountToCredit.match(/\d+\.?\d*/)[0]
             $('.amount-to-credit').text((amountToCredit).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
+            $("#amount-needed-value").digits();
             if(amountNeeded > 0) {
                 setAmountNeeded = amountNeeded;
             }
@@ -268,6 +274,7 @@ use yii\bootstrap\Html;
                 setAmountNeeded = amountNeeded - creditAmount;
             }
             $('.amount-needed-value').text((setAmountNeeded).toFixed(2));
+            $('.amount-needed-value').digits();
         },
         setAvailableCredits : function() {
             var creditAmount = parseFloat('0.00');
@@ -277,6 +284,7 @@ use yii\bootstrap\Html;
                 creditAmount += parseFloat(balance);
             });
             $('.credit-available').text((creditAmount).toFixed(2));
+            $('.credit-available').digits();
         }
     };
 
@@ -294,6 +302,11 @@ use yii\bootstrap\Html;
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
     });
+    $.fn.digits = function(){ 
+    return this.each(function(){ 
+        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
+    });
+}
 
     $(document).off('click', '.recive-payment-modal-save').on('click', '.recive-payment-modal-save', function () {
         $('#modal-spinner').show();
