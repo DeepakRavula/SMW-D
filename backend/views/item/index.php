@@ -54,9 +54,8 @@ $this->params['show-all'] = $this->render('_button', [
                 'label' => 'Price',
                 'contentOptions' => ['class' => 'text-right'],
                 'headerOptions' => ['class' => 'text-right'],
-                'format' => 'currency',
                 'value' => function ($data) {
-                    return !empty($data->price) ? $data->price : '0.00';
+                    return !empty($data->price) ?  Yii::$app->formatter->asCurrency($data->price) : '0.00';
                 },
             ],
             [

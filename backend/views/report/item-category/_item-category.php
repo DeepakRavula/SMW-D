@@ -99,7 +99,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->netPrice);
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'hAlign' => 'right',
         ],
 
@@ -109,13 +109,12 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal(round($data->tax_rate, 2));
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'hAlign' => 'right',
         ],
 
         [
             'label' => 'Total',
-            'format' => ['decimal', 2],
             'value' => function ($data) use ($searchModel) {
                 $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
                 $amount = 0;
@@ -138,12 +137,13 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     $amount += $payment->itemTotal;
                 }
 
-                return Yii::$app->formatter->asDecimal($amount, 2);
+                return Yii::$app->formatter->asCurrency($amount);
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
             'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'pageSummaryFunc' => GridView::F_SUM,
+            'pageSummaryOptions' => ['class' => 'dollar'],
         ]
     ];
     ?>
@@ -187,16 +187,15 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     'mergeColumns' => [[2,4]], // columns to merge in summary
                     'content' => [  
                         // content to show in each summary cell
-                        5 => round($subTotal, 2),
-                        6 => round($taxRate, 2) == 0 ? '0.00' : round($taxRate, 2),
-                        7 => round($itemTotal, 2),
+                        5 => Yii::$app->formatter->asCurrency(round($subTotal, 2)),
+                        6 => Yii::$app->formatter->asCurrency(round($taxRate, 2) == 0 ? '0.00' : round($taxRate, 2)),
+                        7 => Yii::$app->formatter->asCurrency(round($itemTotal, 2)),
                     ],
                     'contentOptions' => [      // content html attributes for each summary cell
                         2 => ['style' => 'text-align:left;font-style:italic'],
                         5 => ['style' => 'text-align:right;font-style:italic'],
                         6 => ['style' => 'text-align:right;font-style:italic'],
                         7 => ['style' => 'text-align:right;font-style:italic'],
-
                     ],
                     // html attributes for group summary row
                     'options' => ['class' => 'success']
@@ -222,15 +221,15 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     ],
                     'contentFormats' => [      // content reformatting for each summary cell
-                        5 => ['format' => 'number', 'decimals' => 2],
-                        6 => ['format' => 'number', 'decimals' => 2],
-                        7 => ['format' => 'number', 'decimals' => 2],
+                        5 => ['format' => 'number', 'decimals' => 2, 'thousandSep'=>','],
+                        6 => ['format' => 'number', 'decimals' => 2, 'thousandSep'=>','],
+                        7 => ['format' => 'number', 'decimals' => 2, 'thousandSep'=>','],
 
                     ],
                     'contentOptions' => [
-                        5 => ['style' => 'text-align:right'],
-                        6 => ['style' => 'text-align:right'],
-                        7 => ['style' => 'text-align:right'],
+                        5 => ['style' => 'text-align:right', 'class' => 'dollar'],
+                        6 => ['style' => 'text-align:right', 'class' => 'dollar'],
+                        7 => ['style' => 'text-align:right', 'class' => 'dollar'],
 
                     ],
                     // html attributes for group summary row
@@ -270,7 +269,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->netPrice);
             },
-            'contentOptions' => ['class' => 'text-right;width: 4%'],
+            'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width: 4%'],
             'hAlign' => 'right',
         ],
 
@@ -280,7 +279,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal(round($data->tax_rate, 2));
             },
-            'contentOptions' => ['class' => 'text-right;width: 4%'],
+            'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width: 4%'],
             'hAlign' => 'right',
         ],
 
@@ -290,7 +289,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->itemTotal);
             },
-            'contentOptions' => ['class' => 'text-right;width: 4%'],
+            'contentOptions' => ['class' => 'text-right dollar', 'style => width: 4%'],
             'hAlign' => 'right',
         ],
     ];
