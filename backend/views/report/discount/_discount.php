@@ -22,10 +22,10 @@ use yii\helpers\Html;
                             9 => GridView::F_SUM,
                         ],
                         'contentFormats' => [
-                            9 => ['format' => 'number', 'decimals' => 2],
+                            9 => ['format' => 'number', 'decimals' => 2, 'thousandSep'=>','],
                         ],
                         'contentOptions' => [
-                            9 => ['style' => 'text-align:right'],
+                            9 => ['style' => 'text-align:right', 'class' => 'dollar'],
                         ],
                         'options' => ['style' => 'font-weight:bold;font-size:14px;']
                     ];
@@ -75,13 +75,12 @@ use yii\helpers\Html;
             ],
             [
                 'label' => 'Enrol($)',
-		'format' => ['decimal', 2],
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
                 'value' => function ($data) {
                     if ($data->multiEnrolmentDiscount) {
                         return $data->multiEnrolmentDiscount->value != 0.00 ?
-                            floatval($data->multiEnrolmentDiscount->value) : null;
+                        Yii::$app->formatter->asCurrency(floatval($data->multiEnrolmentDiscount->value)) : null;
                     }
                 }
             ],
@@ -98,12 +97,11 @@ use yii\helpers\Html;
             ],
             [
                 'label' => 'Item($)',
-		'format' => ['decimal', 2],
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:60px;'],
                 'value' => function ($data) {
                     if ($data->lineItemDiscount) {
-                        return floatval($data->getLineItemDiscountValue());
+                        return Yii::$app->formatter->asCurrency(floatval($data->getLineItemDiscountValue()));
                     }
                 }
             ],
@@ -113,18 +111,18 @@ use yii\helpers\Html;
                 'value' => function ($data) {
                     return floatval($data->discount);
                 },
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:60px;'],
+                'contentOptions' => ['class' => 'text-right dollar', 'style' => 'font-size:14px; width:60px'],
                 'hAlign' => 'right',
+                'pageSummaryOptions' => ['class' => 'dollar'],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
-                'format' => ['decimal', 2],
                 'label' => 'Price',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:60px'],
                 'value' => function ($data) {
-                    return $data->itemTotal;
+                    return Yii::$app->formatter->asCurrency($data->itemTotal);
                 },
             ],
         ];

@@ -36,10 +36,10 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                             2 => GridView::F_SUM,
                         ],
                         'contentFormats' => [
-                            2 => ['format' => 'number', 'decimals' => 2],
+                            2 => ['format' => 'number', 'decimals' => 2,  'thousandSep'=>','],
                         ],
                         'contentOptions' => [
-                            2 => ['style' => 'text-align:right'],
+                            2 => ['style' => 'text-align:right', 'class' => 'dollar'],
                         ],
                         'options' => ['style' => 'font-weight:bold;']
                     ];
@@ -57,10 +57,11 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     return Yii::$app->formatter->asDecimal($data->itemTotal);
                 },
                 'format' => ['decimal', 2],
-                'contentOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right dollar'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
+                'pageSummaryFunc' => GridView::F_SUM,
+                'pageSummaryOptions' => ['class' => 'dollar'],
             ],
         ];
         ?>
