@@ -39,7 +39,7 @@ use yii\helpers\Url;
             <div class="col-xs-1">
             </div>
             <?= $form->field($paymentFrequencyDiscount, 'value')->textInput(['placeholder' => $placeholder,
-                    'value' => number_format($paymentFrequencyDiscount->value, 2),
+                    'value' => number_format(round($paymentFrequencyDiscount->value,0),2,'.',''),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="percent dollar-symbol">%</label>
@@ -55,7 +55,7 @@ use yii\helpers\Url;
             <div class="col-xs-1">
             </div>
             <?= $form->field($customerDiscount, 'value')->textInput(['placeholder' => $placeholder,
-                    'value' => number_format($customerDiscount->value, 2),
+                    'value' => number_format(round($customerDiscount->value,0),2,'.',''),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="percent dollar-symbol">%</label>
@@ -72,7 +72,7 @@ use yii\helpers\Url;
                 <label class="discount-dollar-symbol">$</label>
             </div>
             <?= $form->field($multiEnrolmentDiscount, 'value')->textInput(['placeholder' => $placeholder,
-                    'value' => number_format($multiEnrolmentDiscount->value, 2),
+                    'value' => number_format(round($multiEnrolmentDiscount->value,0),2,'.',''),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
     </div>
@@ -90,7 +90,7 @@ use yii\helpers\Url;
                 <label class="off discount-dollar-symbol on-off-symbol">$</label>
             </div>
             <?= $form->field($lineItemDiscount, 'value')->textInput(['placeholder' => $placeholder,
-                    'value' => number_format($lineItemDiscount->value, 2),
+                    'value' => number_format(round($lineItemDiscount->value,0),2,'.',''),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="on percent dollar-symbol on-off-symbol">%</label>
