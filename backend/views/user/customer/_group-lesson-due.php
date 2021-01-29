@@ -26,7 +26,7 @@ echo GridView::widget([
     'options' => ['class' => 'col-md-12', 'id' => 'lesson-listing-customer-view'],
     'summary' => false,
     'emptyText' => false,
-    'showPageSummary' => true,
+    'showFooter' => true,
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->lessonId]);
         return ['data-url' => $url];
@@ -61,14 +61,14 @@ echo GridView::widget([
         [
             'label' => 'Amount',
             'attribute' => 'owing',
-            'contentOptions' => ['class' => 'text-right dollar'],
+            'contentOptions' => ['class' => 'text-right'],
             'headerOptions' => ['class' => 'text-right'],
-            'value' => function ($data) {
-                return Yii::$app->formatter->asDecimal(round($data->total, 2));
+            'value' => function ($data, $key, $index, $widget) use(&$total) {
+                $total += round($data->total, 2);
+                $widget->footer = Yii::$app->formatter->asCurrency($total);
+                return Yii::$app->formatter->asCurrency(round($data->total, 2));
             },
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
         ],
     ],
 ]);
