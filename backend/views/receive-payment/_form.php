@@ -210,6 +210,8 @@ use yii\bootstrap\Html;
                     if ($.isEmptyObject($(this).find('.payment-amount').val())) {
                         var balance = $(this).find('.invoice-value').text();
                         balance = balance.replace('$', '');
+                        balance = balance.replace(',', '');
+                        balance = balance.match(/\d+\.?\d*/)[0];
                         $(this).find('.payment-amount').val(balance);
                     }
                     var amount = $(this).find('.payment-amount').val();
@@ -261,7 +263,8 @@ use yii\bootstrap\Html;
                 var amountReceived = amountNeeded - creditAmount  < 0 ? amountNeeded > 0 ? '0.00' : amountNeeded - creditAmount : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
-            var amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - parseFloat(amountToDistribute);
+            var amountToCredit = 0.00;
+            amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - parseFloat(amountToDistribute);
             amountToCredit = amountTocredit.toString();
             amountToCredit = amountToCredit.match(/\d+\.?\d*/)[0]
             $('.amount-to-credit').text((amountToCredit).toFixed(2));
