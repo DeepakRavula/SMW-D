@@ -67,7 +67,7 @@ use Carbon\Carbon;
     <?= $form->field($model, 'expiryYear')->dropDownList($year,  ['style' => 'width:80px !important; margin-left: -40px; margin-top:5px'])->label(' ');?>
     </div>
     <div class="col-md-4 ">
-    <?= $form->field($model, 'amount')->textInput(['value' => number_format(round($model->amount,0),2,'.',''),
+    <?= $form->field($model, 'amount')->textInput(['value' => round($model->amount,2),
             'class' => 'text-right form-control'])->label('In The Amount Of'); ?>    
     </div>
     </div>

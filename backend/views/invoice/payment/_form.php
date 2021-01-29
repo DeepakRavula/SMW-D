@@ -44,7 +44,7 @@ use yii\helpers\ArrayHelper;
         <div class="col-md-5">
             <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control','readOnly' => $model->isCreditUsed() ||
                     $model->isCreditApplied(),
-                'value' => number_format(round($model->amount,0),2,'.','')
+                'value' => round($model->amount,2),
             ]);?>
         </div>
    </div>

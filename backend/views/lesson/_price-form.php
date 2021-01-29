@@ -26,7 +26,7 @@ use yii\helpers\Url;
         </div>
         <div class="col-xs-4">
             <?= $form->field($model, 'programRate')->textInput([
-                    'value' => number_format(round($model->programRate,0),2,'.',''),
+                    'value' => round($model->programRate,2),
                     'class' => 'text-right form-control'
                 ])->label(false); 
             ?>

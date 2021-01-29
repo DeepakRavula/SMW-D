@@ -35,7 +35,7 @@ use yii\helpers\Url;
             <div class="col-md-7 text-right">
                 <dt>Price</dt>
                 <dd><?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control', 
-                    'id' => 'amount-line', 'value' => number_format(round($model->amount,0),2,'.','')])->label(false);?></dd>
+                    'id' => 'amount-line', 'value' => round($model->amount,2)])->label(false);?></dd>
             </div>
             <?php if (!$model->isOpeningBalance() && !$model->isLessonCredit()) : ?>
                 <?php if (Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) :?>
