@@ -608,6 +608,7 @@ class PaymentForm extends Model
                     'date' => Yii::$app->formatter->asDate($invoice->date),
                     'number' => $invoice->invoiceNumber,
                     'amount' => Yii::$app->formatter->asCurrency(round($invoice->total, 2)),
+                    'payment' => $invoicePayment['value'],
                     'balance' => (round($invoice->balance, 2) > 0.00 && round($invoice->balance, 2) <= 0.09) ||
                     (round($invoice->balance, 2) < 0.00 && round($invoice->balance, 2) >= -0.09) ?
                     Yii::$app->formatter->asCurrency(round('0.00', 2)) : Yii::$app->formatter->asCurrency(round($invoice->balance, 2)),
@@ -617,7 +618,7 @@ class PaymentForm extends Model
         $invoiceLineItemsDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['date', 'number', 'amount', 'balance'],
+                'attributes' => ['date', 'number', 'amount', 'payment','balance'],
             ],
             'pagination' => false,
         ]);
