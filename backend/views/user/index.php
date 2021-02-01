@@ -93,16 +93,14 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
                     'attribute' => 'status',
                     'filter'=> UserSearch::balanceStatus(),
                     'label' => 'Balance',
-                    'value' => function ($data) {
-                        return number_format(round($data->customerAccount->balance, 2), 2);
+                    'value' => function ($data, $key, $index, $widget) use(&$total) {
+                            $total += round($data->customerAccount->balance, 2);
+                            $widget->footer = Yii::$app->formatter->asCurrency($total);
+                            return Yii::$app->formatter->asCurrency(round($data->customerAccount->balance, 2));
                 },
-                    'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width:20%'],
+                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
                     'hAlign' => 'right',
-                    'pageSummary' => true,
-                    'pageSummaryFunc' => GridView::F_SUM
                ]
-    
-            
             );
             }
         ?>
@@ -126,7 +124,7 @@ $user = User::findOne(['id' => Yii::$app->user->id]);
             'tableOptions' => ['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'filterModel' => $searchModel,
-            'showPageSummary' => true,
+            'showFooter' => true,
             'columns' => $columns,
             'toolbar' =>  [
                 [
