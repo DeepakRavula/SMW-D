@@ -47,7 +47,9 @@ use yii\bootstrap\ActiveForm;
 
         array_push($columns, [
             'label' => 'Payment',
-            'value' => 'payment',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency($data['payment']);
+            },
             'headerOptions' => ['class' => 'text-right', 'style' => 'text-align:right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'text-align:right']
         ]);
