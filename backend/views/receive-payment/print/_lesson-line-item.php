@@ -48,8 +48,10 @@ use yii\bootstrap\Html;
         ]);
 
         array_push($columns, [
-            'value' => 'payment',
             'label' => 'Payment',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency($data['payment']);
+            },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
         ]);
