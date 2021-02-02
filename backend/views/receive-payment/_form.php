@@ -359,6 +359,7 @@ use yii\bootstrap\Html;
         if (!$.isEmptyObject(payment)) {
             var balance = $(this).closest('td').prev('td').text();
             balance = balance.replace('$', '');
+            balance = balance.replace(',', '');
             id = id.replace('#', '');
             if ($.isNumeric(payment)) {
                 if (parseFloat(payment) > parseFloat(balance)) {
