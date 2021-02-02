@@ -41,22 +41,22 @@ use yii\bootstrap\ActiveForm;
         array_push($columns, [
             'label' => 'Amount',
             'value' => 'amount',
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right']
+            'headerOptions' => ['class' => 'text-right', 'style' => 'text-align:right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'text-align:right']
         ]);
 
         array_push($columns, [
             'label' => 'Payment',
             'value' => 'payment',
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right']
+            'headerOptions' => ['class' => 'text-right', 'style' => 'text-align:right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'text-align:right']
         ]);
 
         array_push($columns, [
             'value' => 'balance',
             'label' => 'Balance',
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right invoice-value']
+            'headerOptions' => ['class' => 'text-right', 'style' => 'text-align:right'],
+            'contentOptions' => ['class' => 'text-right invoice-value', 'style' => 'text-align:right']
         ]);
     ?>
 

@@ -47,16 +47,16 @@ use yii\bootstrap\ActiveForm;
 
     array_push($columns, [
         'format' => 'currency',
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right credit-value'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'text-align:right'],
+        'contentOptions' => ['class' => 'text-right credit-value', 'style' => 'text-align:right'],
         'label' => 'Amount',
         'value' => 'amount'
     ]);
 
     array_push($columns, [
         'format' => 'currency',
-        'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
-        'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px;text-align:right;'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px;text-align:right'],
         'label' => 'Amount Used',
         'value' => 'amountUsed',
     ]);

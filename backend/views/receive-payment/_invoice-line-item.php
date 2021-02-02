@@ -81,8 +81,8 @@ use yii\bootstrap\ActiveForm;
 
 if ($searchModel->showCheckBox && !$isCreatePfi) {
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
-        'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px;text-align:right'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px;text-align:right'],
         'label' => 'Payment',
         'value' => function ($data) use ($form) {
             return $form->field($data, 'paymentAmount')->textInput([
