@@ -124,14 +124,14 @@ use yii\bootstrap\Html;
     <dl class = "dl-horizontal">
     <?php if($creditDataProvider->totalCount > 0) : ?>
      <dt class = "pull-left receive-payment-text">Available Credits   :   </dt>
-     <dd><span class="pull-right credit-available receive-payment-text-value">0.00</span></dd>
+     <dd><span class="pull-right credit-available receive-payment-text-value dollar">0.00</span></dd>
      <dt class = "pull-left receive-payment-text">Selected Credits    :   </dt>
-     <dd><span class="pull-right credit-selected receive-payment-text-value">0.00</span></dd>
+     <dd><span class="pull-right credit-selected receive-payment-text-value dollar">0.00</span></dd>
     <?php endif;?>
     <dt class = "pull-left receive-payment-text">Amount To Apply     :   </dt>
-    <dd><span class=" pull-right amount-to-apply receive-payment-text-value">0.00</span></dd>
+    <dd><span class=" pull-right amount-to-apply receive-payment-text-value dollar">0.00</span></dd>
     <dt class = "pull-left receive-payment-text">Amount To Credit    :   </dt>
-    <dd><span class=" pull-right amount-to-credit receive-payment-text-value">0.00</span></dd>
+    <dd><span class=" pull-right amount-to-credit receive-payment-text-value dollar">0.00</span></dd>
     </dl>
 </div>
 <?php $prId = $model->prId ?>
@@ -267,8 +267,8 @@ use yii\bootstrap\Html;
             amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - parseFloat(amountToDistribute);
             amountToCredit = amountToCredit.toString();
             amountToCredit = amountToCredit.match(/\d+\.?\d*/)[0]
-            $('.amount-to-credit').text((amountToCredit).toFixed(2));
-            $('#amount-needed-value').val((amountNeeded).toFixed(2));
+            $('.amount-to-credit').text(parseFloat(amountToCredit).toFixed(2));
+            $('#amount-needed-value').val(parseFloat(amountNeeded).toFixed(2));
             $("#amount-needed-value").digits();
             if(amountNeeded > 0) {
                 setAmountNeeded = amountNeeded;
@@ -293,7 +293,7 @@ use yii\bootstrap\Html;
 
     $(document).ready(function () {
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-        var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
+        var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed <span class="amount-needed-value dollar">0.00</span></h4> </div> </div>'; 
         $('#popup-modal .modal-dialog').css({'width': '1300px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('#modal-save').text('Save');
