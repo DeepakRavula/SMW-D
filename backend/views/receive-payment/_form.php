@@ -265,7 +265,7 @@ use yii\bootstrap\Html;
             }
             var amountToCredit = 0.00;
             amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - parseFloat(amountToDistribute);
-            amountToCredit = amountTocredit.toString();
+            amountToCredit = amountToCredit.toString();
             amountToCredit = amountToCredit.match(/\d+\.?\d*/)[0]
             $('.amount-to-credit').text((amountToCredit).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
