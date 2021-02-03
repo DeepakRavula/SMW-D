@@ -69,6 +69,10 @@ echo GridView::widget([
                 return Yii::$app->formatter->asCurrency(round($data->total, 2));
             },
             'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => function($data) use($model) {
+                return  Yii::$app->formatter->asCurrency(round($model->getGroupLessonOwingAmount($model->id), 2));
+            }
         ],
     ],
 ]);

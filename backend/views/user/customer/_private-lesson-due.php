@@ -73,6 +73,10 @@ echo GridView::widget([
                 return Yii::$app->formatter->asDecimal(round($data->privateLesson->balance ?? 0, 2));
             },
             'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => function($data) use($model) {
+                return  Yii::$app->formatter->asCurrency(round($model->getPrivateLessonsDue($model->id), 2));
+            },
             'footer' => Yii::$app->formatter->asCurrency(round($amount ?? 0, 2)),
         ],
     ],
