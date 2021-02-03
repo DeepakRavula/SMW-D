@@ -45,6 +45,12 @@ use common\models\Location;
                 ],
         ]);
         ?>
+       
+        </div>
+        <div class="col-md-5">
+       <?php $model->isOnline = $model->is_online ? 1: 0; ?>
+       <?= $form->field($model, 'is_online')->checkbox();
+        ?>
         </div>
     <div class="clearfix"></div>
 	<?php ActiveForm::end(); ?>

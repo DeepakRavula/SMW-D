@@ -1,12 +1,8 @@
 <?php
 
+use backend\models\search\EnrolmentSearch;
 use yii\helpers\Html;
-use common\models\Location;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
-use common\models\Program;
-use common\models\Student;
-use common\models\UserProfile;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
 
@@ -51,19 +47,28 @@ use kartik\grid\GridView;
         'contentOptions' => ['style' => 'width:20%'],
     ],
     [
-        'attribute' => 'isAutoRenew',
         'label' => 'Auto Renewal',
+        'attribute' => 'isAutoRenewal',
+        'filter' => EnrolmentSearch::autoRenew(),
+        'filterWidgetOptions' => [
+            'options' => [
+                'id' => 'enrolment-auto-renew',
+            ],
+        ],
         'value' => function ($data) {
-            return $data->isAutoRenew ? 'Enabled' : 'Disabled';
+            $autoRenew = ($data->isAutoRenew ?? 0) == 0 ? 'Disabled' : 'Enabled';
+            return $autoRenew;
         },
+        'contentOptions' => ['style' => 'width:6%'],
     ],
+
     [
         'attribute' => 'startdate',
         'label' => 'Start Date',
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->course->startDate);
         },
-        'contentOptions' => ['style' => 'width:20%'],
+        'contentOptions' => ['style' => 'width:17%'],
         'filterType' => KartikGridView::FILTER_DATE_RANGE,
         'filterWidgetOptions' => [
             'id' => 'enrolment-startdate-search',
@@ -95,7 +100,7 @@ use kartik\grid\GridView;
     [
         'label' => 'End Date',
         'attribute' => 'enddate',
-        'contentOptions' => ['style' => 'width:20%'],
+        'contentOptions' => ['style' => 'width:17%'],
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->endDateTime);
         },

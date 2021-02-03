@@ -18,6 +18,12 @@ use kartik\grid\GridView;
     color : black;
     background-color : lightgray;
 }
+<?php $total = 0;
+$activeEnrolments = 0;
+$revenue = 0;
+$royalty = 0;
+$locationDebtValueAdvertisement =0;
+$taxAmount = 0;?>
 </style>
 <div class="clearfix"></div>
     <?php Pjax::begin(['id' => 'locations-listing']); ?>
@@ -27,7 +33,7 @@ use kartik\grid\GridView;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'emptyText' => false,
-        'showPageSummary' => true,
+        'showFooter' =>true,
         'columns' => [
             [
                 'label' => 'Name',
@@ -35,62 +41,71 @@ use kartik\grid\GridView;
             ],
             [
             'label' => 'Active Enrolments',
-            'value' =>  'activeEnrolmentsCount',
+            'value' => function ($data, $key, $index, $widget) use(&$activeEnrolments) {
+                $activeEnrolments += $data['activeEnrolmentsCount'];
+                $widget->footer =  Yii::$app->formatter->asCurrency($activeEnrolments);
+                return   Yii::$app->formatter->asCurrency($data['activeEnrolmentsCount']);
+            },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
         ],
             [
             'label' => 'Revenue',
-            'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
-            'value' => 'revenue',
+            'value' => function ($data, $key, $index, $widget) use(&$revenue) {
+                $revenue += $data['revenue'];
+                $widget->footer =  Yii::$app->formatter->asCurrency($revenue);
+                return   Yii::$app->formatter->asCurrency($data['revenue']);
+            },
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
         ],
             [
             'label' => 'Royalty',
-            'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
-            'value' => 'locationDebtValueRoyalty',
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'value' => function ($data, $key, $index, $widget) use(&$royalty) {
+                $royalty += $data['locationDebtValueRoyalty'];
+                $widget->footer =  Yii::$app->formatter->asCurrency($royalty);
+                return   Yii::$app->formatter->asCurrency($data['locationDebtValueRoyalty']);
+            },
         ],
             [
             'label' => 'Advertisement',
-            'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'value' => 'locationDebtValueAdvertisement',
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'value' => function ($data, $key, $index, $widget) use(&$locationDebtValueAdvertisement) {
+                $locationDebtValueAdvertisement += $data['locationDebtValueAdvertisement'];
+                $widget->footer =  Yii::$app->formatter->asCurrency($locationDebtValueAdvertisement);
+                return   Yii::$app->formatter->asCurrency($data['locationDebtValueAdvertisement']);
+            },
         ],
             [
             'label' => 'HST',
-            'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'value' => 'taxAmount',
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'value' => function ($data, $key, $index, $widget) use(&$taxAmount) {
+                $taxAmount += $data['taxAmount'];
+                $widget->footer =  Yii::$app->formatter->asCurrency($taxAmount);
+                return   Yii::$app->formatter->asCurrency($data['taxAmount']);
+            },
         ],
             [
             'label' => 'Total',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
-            'format' => 'currency',
-            'value' => 'total',
+            'value' => function ($data, $key, $index, $widget) use(&$total) {
+                $total += $data['total'];
+                $widget->footer =  Yii::$app->formatter->asCurrency($total);
+                return   Yii::$app->formatter->asCurrency($data['total']);
+            },
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
         ],
    ],
     'panel' => [

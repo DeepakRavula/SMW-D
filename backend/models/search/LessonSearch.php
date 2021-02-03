@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
+use common\models\PrivateLesson;
 use common\models\Invoice;
 use common\models\Location;
 
@@ -39,6 +40,7 @@ class LessonSearch extends Lesson
     public $programId;
     public $dueDate;
     public $owingStatus;
+    public $isOnline;
     /**
      * {@inheritdoc}
      */
@@ -48,7 +50,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId','studentId', 'programId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll', 'dueDate', 'owingStatus'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll', 'dueDate', 'owingStatus', 'isOnline'], 'safe'],
         ];
     }
     
@@ -171,7 +173,7 @@ class LessonSearch extends Lesson
             $this->toDate = new \DateTime($this->toDate);
             $query->andWhere(['between', 'DATE(lesson.dueDate)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         }
- 
+        
         if ((int) $this->owingStatus === lesson::STATUS_OWING) {
             $query->joinWith(['privateLesson' => function ($query) {
                 $query->andFilterWhere(['>', 'private_lesson.balance', 0.09]);
@@ -181,6 +183,13 @@ class LessonSearch extends Lesson
             $query->joinWith(['privateLesson' => function ($query) {
                 $query->andFilterWhere(['AND', ['>=', 'private_lesson.balance', 0.00], ['<=', 'private_lesson.balance', 0.09]]);
             }]);
+        }
+        // isOnline filter
+        if (($this->isOnline != NULL) && (int) $this->isOnline === PrivateLesson::ONLINE_CLASS) {
+            $query->andFilterWhere(['AND', ['=', 'lesson.is_online', 1]]);
+        }
+        if (($this->isOnline != NULL) && (int) $this->isOnline === PrivateLesson::IN_CLASS) {
+            $query->andFilterWhere(['AND', ['=', 'lesson.is_online', 0]]);
         }
         $query->joinWith('teacherProfile');
         $dataProvider->setSort([
@@ -218,6 +227,14 @@ class LessonSearch extends Lesson
             Lesson::STATUS_RESCHEDULED => 'Rescheduled',
             Lesson::STATUS_UNSCHEDULED => 'Unscheduled',
             Lesson::STATUS_ABSENT => 'Absent',
+        ];
+    }
+    public static function lessonClassType()
+    {
+        return [
+            PrivateLesson::ONLINE_CLASS => 'Yes',
+            PrivateLesson::IN_CLASS => 'No'
+
         ];
     }
     public static function invoiceStatuses()

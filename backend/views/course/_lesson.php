@@ -1,5 +1,5 @@
 <?php
-
+use backend\models\search\LessonSearch;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
@@ -20,6 +20,7 @@ use yii\bootstrap\Modal;
         <button class="btn dropdown-toggle" data-toggle="dropdown">Bulk Action&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="substitute-teacher-group-lesson" href="#">Substitute Teacher</a></li>
+            <li><a id="lesson-online-edit" href="#">Edit Online Type</a></li>
         </ul>
     </div>
      <!-- <a href="#"  title="Add" id="new-lesson" class="add-new-lesson"><i class="fa fa-plus"></i></a> -->
@@ -55,6 +56,16 @@ use yii\bootstrap\Modal;
             },
         ],
     ];
+
+    array_push($columns, [
+        'label' => 'Online',
+        'attribute' => 'isOnline',
+        'filter' => LessonSearch::lessonClassType(),
+        'value' => function ($data) {
+            $lessonType = ($data->is_online ?? 0) == 0 ? 'No' : 'Yes';
+            return  $lessonType;
+        },
+    ]);
      ?>   
     <?php echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
@@ -122,5 +133,30 @@ $(document).on('click', '#substitute-teacher-group-lesson', function(){
             });
             return false;
         }
+    });
+
+
+    $(document).off('click', '#lesson-online-edit').on('click', '#lesson-online-edit', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'CourseGroup[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['course/edit-online-type'])?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                            } else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        return false;
     });
 </script>

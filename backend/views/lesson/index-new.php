@@ -43,7 +43,7 @@ use Carbon\Carbon;
             'pluginOptions' => [
                 'autoApply' => true,
                 'ranges' => [
-                    Yii::t('kvdrp', 'All') => ["moment('<?= $firstLessonDate ?>')", "moment('<?= $lastLessonDate ?>')"],
+                    Yii::t('kvdrp', 'All') => ["moment('<?= $firstLessonDate ?>', 'MMM D,YYYY').format('MMM D, YYYY')", "moment('<?= $lastLessonDate ?>', 'MMM D,YYYY').format('MMM D, YYYY')"],
                     Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
                     Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
                     Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
@@ -92,6 +92,20 @@ use Carbon\Carbon;
         },
     ],     
 ];
+array_push($columns, [
+    'label' => 'Online',
+    'attribute' => 'isOnline',
+    'filter' => LessonSearch::lessonClassType(),
+    'filterWidgetOptions' => [
+        'options' => [
+            'id' => 'lesson-online-status',
+        ],
+    ],
+    'value' => function ($data) {
+        $lessonType = ($data->is_online ?? 0) == 0 ? 'No' : 'Yes';
+        return  $lessonType;
+    },
+]);
 array_push($columns, [
     'label' => 'Status',
     'attribute' => 'lessonStatus',
@@ -196,19 +210,25 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 
 <script>
       $(document).ready(function () {
-        $("input[name*='LessonSearch[lessonStatus]").addClass('lesson-status');
-        var showAll = $('#lessonsearch-showall').is(":checked");
-        if (showAll == true) {
-        var student = $("input[name*='LessonSearch[student]").val();
-        var program = $("input[name*='LessonSearch[program]").val();
-        var teacher = $("input[name*='LessonSearch[teacher]").val();
-        var dateRange = $("input[name*='LessonSearch[dateRange]").val();
-        var lessonStatus = $("select[name*='LessonSearch[lessonStatus]").val();
-        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[lessonStatus]': lessonStatus });
-        var url = "<?=Url::to(['lesson/index']);?>?"+params;
-        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 25000});  
-        bulkAction.setAction();
+        
+
+        function initialLoad() {
+            $("input[name*='LessonSearch[lessonStatus]").addClass('lesson-status');
+            var showAll = $('#lessonsearch-showall').is(":checked");
+            if (showAll == true) {
+                var student = $("input[name*='LessonSearch[student]").val();
+                var program = $("input[name*='LessonSearch[program]").val();
+                var teacher = $("input[name*='LessonSearch[teacher]").val();
+                var dateRange = $("input[name*='LessonSearch[dateRange]").val();
+                var lessonStatus = $("select[name*='LessonSearch[lessonStatus]").val();
+                var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?=Lesson::TYPE_PRIVATE_LESSON?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[lessonStatus]': lessonStatus });
+                var url = "<?=Url::to(['lesson/index']);?>?"+params;
+                $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 25000});  
+                bulkAction.setAction();
+            }
         }
+
+        initialLoad();
     });
 
     $(document).off('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]', function () {
@@ -218,13 +238,20 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
 
     $(document).on('modal-success', function(event, params) {
         if (!$.isEmptyObject(params.url)) {
-            window.location.href = params.url;
+            var dateRange = $("input[name*='LessonSearch[dateRange]").val();
+            var params = $.param({'LessonSearch[dateRange]': dateRange});
+            var url = "<?=Url::to(['lesson/index']);?>?"+params;
+            window.location.href = url;
         } else if(params.status) {
-            $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
-            if (params.message) {
-                $('#popup-modal').modal('hide');
-                $('#index-success-notification').text(params.message).fadeIn().delay(5000).fadeOut();
-            }
+            // $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
+            // if (params.message) {
+            //     $('#popup-modal').modal('hide');
+            //     $('#index-success-notification').text(params.message).fadeIn().delay(5000).fadeOut();
+            // }
+            var dateRange = $("input[name*='LessonSearch[dateRange]").val();
+            var params = $.param({'LessonSearch[dateRange]': dateRange});
+            var url = "<?=Url::to(['lesson/index']);?>?"+params;
+            window.location.href = url;
         }
         return false;
     });
@@ -319,6 +346,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                 $('#lesson-delete').addClass('multiselect-disable');
                 $('#lesson-duration-edit').addClass('multiselect-disable');
                 $('#lesson-classroom-edit').addClass('multiselect-disable');
+                $('#lesson-online-edit').addClass('multiselect-disable');
                 $('#email-multi-customer').addClass('multiselect-disable');
                 $('#lesson-unschedule').addClass('multiselect-disable');
                 $('#lesson-reschedule').removeClass('multiselect-disable');
@@ -328,6 +356,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                 $('#lesson-delete').removeClass('multiselect-disable');
                 $('#lesson-duration-edit').removeClass('multiselect-disable');
                 $('#lesson-classroom-edit').removeClass('multiselect-disable');
+                $('#lesson-online-edit').removeClass('multiselect-disable');
                 $('#email-multi-customer').removeClass('multiselect-disable');
                 $('#lesson-unschedule').removeClass('multiselect-disable');
                 $('#lesson-reschedule').removeClass('multiselect-disable');
@@ -403,6 +432,30 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
         var params = $.param({ 'EditClassroom[lessonIds]': lessonIds});
                     $.ajax({
                         url    : '<?=Url::to(['private-lesson/edit-classroom'])?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        return false;
+    });
+    $(document).off('click', '#lesson-online-edit').on('click', '#lesson-online-edit', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'PrivateLesson[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['private-lesson/edit-online-type'])?>?' +params,
                         type   : 'post',
                         success: function(response)
                         {

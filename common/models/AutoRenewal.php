@@ -122,7 +122,7 @@ class AutoRenewal extends \yii\db\ActiveRecord
                     if ($course->isProfessionalDevelopmentDay($day)) {
                         continue;
                     }
-                    $createdLesson = $course->createAutoRenewalLesson($day);
+                    $createdLesson = $course->createAutoRenewalLesson($day, $course->enrolment->is_online);
                     $autoRenewalLesson = new AutoRenewalLessons();
                     $autoRenewalLesson->autoRenewalId = $autoRenewal->id;
                     $autoRenewalLesson->lessonId = $createdLesson->id;

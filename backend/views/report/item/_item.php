@@ -3,6 +3,8 @@
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use backend\assets\CustomGridAsset;
+use common\components\gridView\KartikGridView;
+use yii\helpers\Html;
 
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
@@ -34,10 +36,10 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                             2 => GridView::F_SUM,
                         ],
                         'contentFormats' => [
-                            2 => ['format' => 'number', 'decimals' => 2],
+                            2 => ['format' => 'number', 'decimals' => 2,  'thousandSep'=>','],
                         ],
                         'contentOptions' => [
-                            2 => ['style' => 'text-align:right'],
+                            2 => ['style' => 'text-align:right', 'class' => 'dollar'],
                         ],
                         'options' => ['style' => 'font-weight:bold;']
                     ];
@@ -55,15 +57,15 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     return Yii::$app->formatter->asDecimal($data->itemTotal);
                 },
                 'format' => ['decimal', 2],
-                'contentOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right dollar'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
+                'pageSummaryFunc' => GridView::F_SUM,
+                'pageSummaryOptions' => ['class' => 'dollar'],
             ],
         ];
         ?>
-        <?=
-        GridView::widget([
+        <?= KartikGridView::widget([
             'dataProvider' => $dataProvider,
             'summary' => false,
             'emptyText' => false,
@@ -79,5 +81,12 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 ],
             ],
             'columns' => $columns,
+            'toolbar' => [
+                ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
+            ],
+            'panel' => [
+                'type' => GridView::TYPE_DEFAULT,
+                'heading' => 'Items'
+            ],
         ]);
         ?>

@@ -27,6 +27,7 @@ class EnrolmentSearch extends Enrolment
     public $startEndDate;
     public $studentView;
     public $studentId;
+    public $isAutoRenewal;
     /**
      * {@inheritdoc}
      */
@@ -35,7 +36,7 @@ class EnrolmentSearch extends Enrolment
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
             [['showAllEnrolments', 'program', 'course', 'student', 'startdate', 'teacher', 'endEndDate',  
-            'startBeginDate', 'startEndDate', 'studentView', 'studentId', 'enddate', 'endBeginDate'], 'safe']
+            'startBeginDate', 'startEndDate', 'studentView', 'studentId', 'enddate', 'endBeginDate', 'isAutoRenewal'], 'safe']
         ];
     }
 
@@ -129,6 +130,13 @@ class EnrolmentSearch extends Enrolment
                     (new \DateTime($this->endBeginDate))->format('Y-m-d'),
                     (new \DateTime($this->endEndDate))->format('Y-m-d')]);
         }
+
+        if ($this->isAutoRenewal === Enrolment::AUTO_RENEWAL_STATE_ENABLED) {
+            $query->andFilterWhere(['AND', ['=', 'enrolment.isAutoRenew', 1]]);
+        }
+        if ($this->isAutoRenewal === Enrolment::AUTO_RENEWAL_STATE_DISABLED) {
+            $query->andFilterWhere(['AND', ['=', 'enrolment.isAutoRenew', 0]]);
+        }
        
         if (!$this->showAllEnrolments) {
             $query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
@@ -136,5 +144,13 @@ class EnrolmentSearch extends Enrolment
                 ->isRegular();
         }
         return $dataProvider;
+    }
+
+    public static function autoRenew()
+    {
+        return [
+            enrolment::AUTO_RENEWAL_STATE_ENABLED => 'Enabled',
+            enrolment::AUTO_RENEWAL_STATE_DISABLED => 'Disabled'
+        ];
     }
 }

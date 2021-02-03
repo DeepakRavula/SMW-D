@@ -17,6 +17,11 @@ class CourseGroup extends \yii\db\ActiveRecord
     const LESSONS_PER_WEEK_COUNT_ONE = 1;
     const LESSONS_PER_WEEK_COUNT_TWO = 2;
     
+    const ONLINE_CLASS = 1;
+    const IN_CLASS = 0;
+
+    public $lessonIds;
+
     /**
      * @inheritdoc
      */
@@ -33,6 +38,7 @@ class CourseGroup extends \yii\db\ActiveRecord
         return [
             [['courseId', 'weeksCount', 'lessonsPerWeekCount'], 'required'],
             [['courseId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
+            [['lessonIds'], 'safe']
         ];
     }
 

@@ -45,7 +45,7 @@ LteBox::begin([
     <dd> <?= $recentCourseSchedule->teacher->publicIdentity ?></dd>
         <?php foreach ($model->courseProgramRates as $courseProgramRate) : ?>
 	<dt>Rate From <?= Yii::$app->formatter->asDate($courseProgramRate->startDate) . ' To ' . Yii::$app->formatter->asDate($courseProgramRate->endDate) ?></dt>
-	<dd><?= $courseProgramRate->programRate; ?></dd>
+	<dd><?= Yii::$app->formatter->asCurrency($courseProgramRate->programRate); ?></dd>
         <?php endforeach; ?>
         <dt>Auto Renewal</dt>
 	<dd><?= $model->isAutoRenew ? "Enabled" : 'Disabled' ; ?></dd>
@@ -62,6 +62,10 @@ LteBox::begin([
                 'id' => $model->student->customer->id]) ?>">
             <?= $model->student->customer->publicIdentity ?? null; ?>
         </a>
+    </dd>
+    <dt>Online</dt>
+    <dd>
+    <?= $model->is_online ? "Yes" : 'No' ; ?>
     </dd>
 </dl>
 <?php LteBox::end()?>

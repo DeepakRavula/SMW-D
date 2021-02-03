@@ -2,28 +2,31 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\GridView;
-use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 use common\models\User;
-use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\ProvinceSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Provinces';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'add-province']);
-$this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
+$toolbar = [];
+if ($lastRole->name === User::ROLE_ADMINISTRATOR ) {
+    $toolbar [] = ['content' => Html::a('<i class="fa fa-plus"></i>', '#', [
+        'class' => 'btn btn-success add-province'
+    ]),'options' => ['title' =>'Add',
+    'class' => 'btn-group mr-2']];
+}
 ?>
 <?php Pjax::begin([
     'id' => 'province-listing'
 ]);?>
 <div>
-    <?php echo AdminLteGridView::widget([
+    <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'summary' => false,
@@ -45,12 +48,17 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
                 },
             ],
         ],
+        'toolbar' => $toolbar,
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Provinces'
+        ],
     ]); ?>
 
 </div>
 <?php Pjax::end(); ?>
 <script>
-        $(document).on('click', '.action-button,#province-listing  tbody > tr', function () {
+        $(document).on('click', '.add-province,#province-listing  tbody > tr', function () {
             $('#popup-modal .modal-dialog').css({'width': '350px'});
             var provinceId = $(this).data('key');
              if (provinceId === undefined) {

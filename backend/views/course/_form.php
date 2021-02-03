@@ -63,6 +63,11 @@ use kartik\select2\Select2;
 		<div class="col-md-10">
 			<?= $form->field($model, 'weeksCount')->textInput()->label('Number Of Weeks'); ?>
 		</div>
+        
+        <div class="col-md-10">
+        <?php echo $form->field($model, 'is_online')->checkbox(); ?>
+        </div>
+    
             </div>
 		<div class="clearfix"></div>
 		<div class="padding-v-md">

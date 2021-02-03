@@ -20,13 +20,19 @@ use common\models\Invoice;
     'id' => 'customer-lesson-listing',
     'timeout' => 6000,
 ]) ?>
+<?php $amount = 0;
+    if (!empty($lessonDueDataProvider->getModels())) {
+        foreach ($lessonDueDataProvider->getModels() as $key => $val) {
+            $amount += $val->privateLesson->balance;
+        }
+    } ?>
 <?php
 echo GridView::widget([
     'dataProvider' => $lessonDueDataProvider,
     'options' => ['class' => 'col-md-12', 'id' => 'lesson-listing-customer-view'],
     'summary' => false,
     'emptyText' => false,
-    'showPageSummary' => true,
+    'showFooter' => true,
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
         return ['data-url' => $url];
@@ -70,7 +76,8 @@ echo GridView::widget([
             'pageSummary' => true,
             'pageSummaryFunc' => function($data) use($model) {
                 return  Yii::$app->formatter->asCurrency(round($model->getPrivateLessonsDue($model->id), 2));
-            }
+            },
+            'footer' => Yii::$app->formatter->asCurrency(round($amount ?? 0, 2)),
         ],
     ],
 ]);
