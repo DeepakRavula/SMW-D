@@ -254,20 +254,7 @@ class LessonController extends BaseController
             'model' => $model,
         ]);
         if ($request->post()) {
-            $is_Online = isset($request->post()['Lesson']['isOnline']) ? $request->post()['Lesson']['isOnline'] : $request->post()['ExtraLesson']['isOnline'];
             if ($model->load($request->post()) && $model->save()) {
-                if($is_Online == 1){
-                        $model = Lesson::findOne(['id' => $id, 'is_online' => 0]);
-                        $model->is_online = 1;
-                        $model->save(); 
-                }elseif($is_Online == 0){
-                        $model = Lesson::findOne(['id' => $id, 'is_online' => 1]);
-                        if(!empty( $model)){
-                            $model->is_online = 0;
-                            $model->save(); 
-                        }
-                        
-                }
                 Lesson::triggerPusher();
                 return [
                     'status' => true
