@@ -265,7 +265,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
         [
             'label' => 'Subtotal',
-            'format' => ['decimal', 2],
+           
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->netPrice);
             },
@@ -275,7 +275,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
         [
             'label' => 'Tax',
-            'format' => ['decimal', 2],
+           
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal(round($data->tax_rate, 2));
             },
@@ -285,7 +285,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
         [
             'label' => 'Total',
-            'format' => ['decimal', 2],
+           
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->itemTotal);
             },
