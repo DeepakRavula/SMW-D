@@ -80,7 +80,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 foreach ($payments as $payment) {
                     $subTotal += $payment->netPrice;
                 }
-                $widget->footer = Yii::$app->formatter->asCurrency($subTotal);
+                $widget->footer = Yii::$app->formatter->asDecimal($subTotal);
                 return Yii::$app->formatter->asCurrency($subTotal);
             },
             'contentOptions' => ['class' => 'text-right'],
@@ -95,8 +95,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 foreach ($payments as $payment) {
                     $tax_rate += $payment->tax_rate;
                 }
-                $widget->footer = Yii::$app->formatter->asCurrency(round($tax_rate, 2));
-                return Yii::$app->formatter->asCurrency(round($tax_rate, 2));
+                $widget->footer = Yii::$app->formatter->asDecimal(round($tax_rate, 2));
+                return Yii::$app->formatter->asDecimal(round($tax_rate, 2));
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
@@ -110,8 +110,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 foreach ($payments as $payment) {
                     $amount += $payment->itemTotal;
                 }
-                $widget->footer = Yii::$app->formatter->asCurrency($amount, 2);
-                return Yii::$app->formatter->asCurrency($amount, 2);
+                $widget->footer = Yii::$app->formatter->asDecimal($amount, 2);
+                return Yii::$app->formatter->asDecimal($amount, 2);
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
