@@ -86,7 +86,7 @@ if ($searchModel->showCheckBox && !$isCreatePfi) {
         'label' => 'Payment',
         'value' => function ($data) use ($form) {
             return $form->field($data, 'paymentAmount')->textInput([
-                'value' => Yii::$app->formatter->asCurrency($data->balance), 
+                'value' => round($data->balance, 2), 
                 'class' => 'form-control text-right payment-amount',
                 'id' => 'invoice-payment-' . $data->id,
                 'invoiceId' => $data->id
