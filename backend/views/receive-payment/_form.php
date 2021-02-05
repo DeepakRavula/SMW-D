@@ -268,6 +268,7 @@ use yii\bootstrap\Html;
             amountToCredit = amountToCredit.toString();
             amountToCredit = amountToCredit.match(/\d+\.?\d*/)[0]
             $('.amount-to-credit').text(parseFloat(amountToCredit).toFixed(2));
+            $('.amount-to-credit').digits();
             $('#amount-needed-value').val(parseFloat(amountNeeded).toFixed(2));
             $("#amount-needed-value").digits();
             if(amountNeeded > 0) {
