@@ -245,10 +245,10 @@ use yii\bootstrap\Html;
                     if ($.isEmptyObject($(this).find('.credit-amount').val())) {
                         var balance = $(this).find('.credit-value').text();
                         balance = balance.replace('$', '');
+                        balance = balance.replace(',', '');
                         $(this).find('.credit-amount').val(balance);
                     }
                     var amount = $(this).find('.credit-amount').val();
-                    debugger;
                     amount = amount.match(/\d+\.?\d*/)[0];
                     creditAmount += parseFloat(amount);
                 }
@@ -284,6 +284,7 @@ use yii\bootstrap\Html;
             $('.credit-items-value').each(function() {
                 var balance = $(this).find('.credit-value').text();
                 balance = balance.replace('$', '');
+                balance = balance.replace(',', '');
                 creditAmount += parseFloat(balance);
             });
             $('.credit-available').text((creditAmount).toFixed(2));
