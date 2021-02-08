@@ -4,7 +4,7 @@ return [
     'components' => [
         'backup' => [
             'class' => 'demi\backup\Component',
-            'backupsFolder' => dirname(dirname(__DIR__)) . '/backups',
+            'backupsFolder' => env('BACK_UP_FOLDER'),
             'backupFilename' => 'Y_m_d-H_i_s',
             'expireTime' => 700000,
         ],
