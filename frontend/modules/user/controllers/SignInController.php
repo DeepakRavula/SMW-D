@@ -74,7 +74,7 @@ class SignInController extends \yii\web\Controller
      */
     public function actionLogin()
     {
-        $this->layout = 'base';
+        
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
