@@ -43,8 +43,8 @@ $taxAmount = 0;?>
             'label' => 'Active Enrolments',
             'value' => function ($data, $key, $index, $widget) use(&$activeEnrolments) {
                 $activeEnrolments += $data['activeEnrolmentsCount'];
-                $widget->footer =  Yii::$app->formatter->asCurrency($activeEnrolments);
-                return   Yii::$app->formatter->asCurrency($data['activeEnrolmentsCount']);
+                $widget->footer =  $activeEnrolments;
+                return   $data['activeEnrolmentsCount'];
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
