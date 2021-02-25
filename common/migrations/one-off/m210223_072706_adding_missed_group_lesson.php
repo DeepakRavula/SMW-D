@@ -28,11 +28,11 @@ class m210223_072706_adding_missed_group_lesson extends Migration
         ->andWhere(['lessonId' => 1585435])
         ->andWhere(['enrolmentId' => 12660])->one();
         if (!$groupLesson){
-            // $groupLesson = new GroupLesson();
-            // $groupLesson->lessonId = 1585438;
-            // $groupLesson->enrolmentId = 12660;
-            // $groupLesson->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
-            // $groupLesson->save(); 
+            $groupLesson = new GroupLesson();
+            $groupLesson->lessonId = 1585438;
+            $groupLesson->enrolmentId = 12660;
+            $groupLesson->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
+            $groupLesson->save(); 
             $groupLesson = new GroupLesson();
             $groupLesson->lessonId = 1585435;
             $groupLesson->enrolmentId = 12660;
