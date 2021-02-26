@@ -23,25 +23,22 @@ class m210223_072706_adding_missed_group_lesson extends Migration
 
     public function safeUp()
     {
-        $lesson = Lesson::findOne(1585438);
+        $lessonIds = [1585438,1585437,1585436,1585435];
+        foreach ($lessonIds as $lessonId) {
+        $lesson = Lesson::findOne($lessonId);
         $groupLesson = GroupLesson::find()
-        ->andWhere(['lessonId' => 1585435])
+        ->andWhere(['lessonId' => $lessonId])
         ->andWhere(['enrolmentId' => 12660])->one();
         if (!$groupLesson){
             $groupLesson = new GroupLesson();
-            $groupLesson->lessonId = 1585438;
-            $groupLesson->enrolmentId = 12660;
-            $groupLesson->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
-            $groupLesson->save(); 
-            $groupLesson = new GroupLesson();
-            $groupLesson->lessonId = 1585435;
+            $groupLesson->lessonId = $lessonId;
             $groupLesson->enrolmentId = 12660;
             $groupLesson->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
             $groupLesson->save(); 
         }   else {
-            echo "lesson is already present";
+            echo "lesson".$lessonId." is already present";
         }
-
+    }
     }
 
     /**
