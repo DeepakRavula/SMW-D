@@ -16,13 +16,6 @@ use common\models\Lesson;
     </tr>
     <tr>
         <?php endif;?>
-    <?php if ($model->hasSubstituteByTeacher()) : ?>
-        <?php $teacher = $model->rootLesson->teacher->publicIdentity; ?>
-    <tr>
-        <td>Original Teacher</td>
-        <td><?= $teacher ?></td>
-    </tr>
-    <?php endif; ?>
     <tr>
         <td>Teacher</td>
         <td><?= $model->teacher->publicIdentity ?>
