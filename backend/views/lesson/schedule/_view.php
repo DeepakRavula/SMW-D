@@ -23,11 +23,6 @@ LteBox::begin([
 ])
 ?>
 <dl class="dl-horizontal">
-    <?php if ($model->hasSubstituteByTeacher()) : ?>
-        <?php $teacher = $model->rootLesson->teacher->publicIdentity; ?>
-        <dt>Original Teacher</dt>
-        <dd><?= $teacher ?></dd>
-    <?php endif; ?>
         <dt>Teacher</dt>
         <dd><a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_TEACHER, 'id' => $model->teacherId]) ?>">
             <?= $model->teacher->publicIdentity ?>
