@@ -440,8 +440,9 @@ class UserController extends BaseController
         ]);
     }
 
-    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate, $summariseReport)
+    protected function getTimeVoucherDataProvider($id, $fromDate = null, $toDate = null, $summariseReport)
     {
+        if ($fromDate && $toDate) {
         $timeVoucher = InvoiceLineItem::find()
             ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($fromDate,$toDate) {
@@ -453,9 +454,22 @@ class UserController extends BaseController
                 ->groupBy('lesson.id');
             }])
            ->orderBy(['invoice.date' => SORT_ASC]);
+        } else  {
+            $timeVoucher = InvoiceLineItem::find()
+            ->notDeleted()
+            ->joinWith(['invoice' => function ($query) use ($fromDate,$toDate) {
+                $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE]);   
+            }])
+            ->joinWith(['lesson' => function ($query) use ($id) {
+                $query->andWhere(['lesson.teacherId' => $id])
+                ->groupBy('lesson.id');
+            }])
+           ->orderBy(['invoice.date' => SORT_ASC]);
+        }
         if($summariseReport) { 
             $timeVoucher->groupBy('invoice.date');
-        }    
+        }   
+
         return new ActiveDataProvider([
             'query' => $timeVoucher,
             'pagination' => false,
@@ -524,7 +538,9 @@ class UserController extends BaseController
         $invoiceSearchModel = new InvoiceSearch();
         $invoiceSearchModel->dateRange = (new \DateTime('previous week monday'))->format('M d,Y') . ' - ' . (new \DateTime('previous week saturday'))->format('M d,Y');
         $invoiceSearchModel->load($request->get());
-        list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
+        if ($invoiceSearchModel->dateRange) {
+            list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
+        }
         return $this->render('view', [
             'isCustomerView' => $searchModel->accountView,
             'minTime' => $minTime,
