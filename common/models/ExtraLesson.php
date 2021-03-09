@@ -124,7 +124,7 @@ class ExtraLesson extends Lesson
     {
         $courseSchedule           = new CourseSchedule();
         $courseSchedule->studentId = $this->studentId;
-        $courseSchedule->paymentFrequency = false;
+        $courseSchedule->paymentFrequency = 0;
         $courseSchedule->courseId = $course->id;
         $courseSchedule->day      = (new \DateTime($this->date))->format('N');
         $courseSchedule->duration = (new \DateTime($this->duration))->format('H:i:s');
