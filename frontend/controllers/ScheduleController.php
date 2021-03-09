@@ -31,6 +31,7 @@ use common\models\LessonPayment;
 use common\models\Note;
 use yii\data\ActiveDataProvider;
 use common\models\log\LogHistory;
+use yii\web\NotFoundHttpException;
 
 
 /**
