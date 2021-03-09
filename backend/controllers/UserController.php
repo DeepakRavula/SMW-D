@@ -347,15 +347,18 @@ class UserController extends BaseController
             }
             $lessonSearch->summariseReport=$lessonSearchModel['summariseReport'];
         }
+       
         $teacherLessons = Lesson::find()
             ->innerJoinWith('enrolment')
             ->location($locationId)
             ->andWhere(['lesson.teacherId' => $id])
             ->notDeleted()
             ->scheduledOrRescheduled()
-            ->isConfirmed()
-            ->between($lessonSearch->fromDate, $lessonSearch->toDate)
-            ->orderBy(['date' => SORT_ASC]);
+            ->isConfirmed();
+         if ($lessonSearch->fromDate && $lessonSearch->toDate) {
+            $teacherLessons->between($lessonSearch->fromDate, $lessonSearch->toDate);
+         }
+            $teacherLessons->orderBy(['date' => SORT_ASC]);
 			if($lessonSearch->summariseReport) {
 				$teacherLessons->groupBy(['DATE(lesson.date)']);
 			} 

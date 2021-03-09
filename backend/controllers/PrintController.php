@@ -152,10 +152,12 @@ class PrintController extends BaseController
         $lessonSearchModel = $request->get('LessonSearch');
         
         if (!empty($lessonSearchModel)) {
+            if ($lessonSearchModel['dateRange']) {
             $lessonSearch->dateRange = $lessonSearchModel['dateRange'];
             list($lessonSearch->fromDate, $lessonSearch->toDate) = explode(' - ', $lessonSearch->dateRange);
             $lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
             $lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
+            }
 	    $lessonSearch->summariseReport=$lessonSearchModel['summariseReport'];
         }
         $teacherLessons = Lesson::find()
@@ -164,11 +166,13 @@ class PrintController extends BaseController
             ->andWhere(['lesson.teacherId' => $model->id])
             ->isConfirmed()
             ->notDeleted()
-            ->scheduledOrRescheduled()
-            ->between($lessonSearch->fromDate, $lessonSearch->toDate)
-            ->orderBy(['date' => SORT_ASC]);
+            ->scheduledOrRescheduled();
+            if ($lessonSearch->fromDate && $lessonSearch->toDate) {
+                $teacherLessons->between($lessonSearch->fromDate, $lessonSearch->toDate);
+            } 
+            $teacherLessons->orderBy(['date' => SORT_ASC]);
             if($lessonSearch->summariseReport) {
-		$teacherLessons->groupBy(['DATE(lesson.date)']);
+		        $teacherLessons->groupBy(['DATE(lesson.date)']);
 			} 
         $teacherLessonDataProvider = new ActiveDataProvider([
             'query' => $teacherLessons,
