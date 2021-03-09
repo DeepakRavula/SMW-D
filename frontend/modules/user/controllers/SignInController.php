@@ -74,6 +74,11 @@ class SignInController extends \yii\web\Controller
      */
     public function actionLogin()
     {
+        
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        
         $model = new LoginForm();
         if (Yii::$app->request->isAjax) {
             $model->load($_POST);

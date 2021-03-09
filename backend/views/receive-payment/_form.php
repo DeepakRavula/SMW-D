@@ -124,14 +124,14 @@ use yii\bootstrap\Html;
     <dl class = "dl-horizontal">
     <?php if($creditDataProvider->totalCount > 0) : ?>
      <dt class = "pull-left receive-payment-text">Available Credits   :   </dt>
-     <dd><span class="pull-right credit-available receive-payment-text-value">0.00</span></dd>
+     <dd><span class="pull-right credit-available receive-payment-text-value dollar">0.00</span></dd>
      <dt class = "pull-left receive-payment-text">Selected Credits    :   </dt>
-     <dd><span class="pull-right credit-selected receive-payment-text-value">0.00</span></dd>
+     <dd><span class="pull-right credit-selected receive-payment-text-value dollar">0.00</span></dd>
     <?php endif;?>
     <dt class = "pull-left receive-payment-text">Amount To Apply     :   </dt>
-    <dd><span class=" pull-right amount-to-apply receive-payment-text-value">0.00</span></dd>
+    <dd><span class=" pull-right amount-to-apply receive-payment-text-value dollar">0.00</span></dd>
     <dt class = "pull-left receive-payment-text">Amount To Credit    :   </dt>
-    <dd><span class=" pull-right amount-to-credit receive-payment-text-value">0.00</span></dd>
+    <dd><span class=" pull-right amount-to-credit receive-payment-text-value dollar">0.00</span></dd>
     </dl>
 </div>
 <?php $prId = $model->prId ?>
@@ -210,6 +210,8 @@ use yii\bootstrap\Html;
                     if ($.isEmptyObject($(this).find('.payment-amount').val())) {
                         var balance = $(this).find('.invoice-value').text();
                         balance = balance.replace('$', '');
+                        balance = balance.replace(',', '');
+                        balance = balance.match(/\d+\.?\d*/)[0];
                         $(this).find('.payment-amount').val(balance);
                     }
                     var amount = $(this).find('.payment-amount').val();
@@ -243,6 +245,7 @@ use yii\bootstrap\Html;
                     if ($.isEmptyObject($(this).find('.credit-amount').val())) {
                         var balance = $(this).find('.credit-value').text();
                         balance = balance.replace('$', '');
+                        balance = balance.replace(',', '');
                         $(this).find('.credit-amount').val(balance);
                     }
                     var amount = $(this).find('.credit-amount').val();
@@ -252,15 +255,22 @@ use yii\bootstrap\Html;
             });
             $('#selected-credit-value').val((creditAmount).toFixed(2));
             $('.credit-selected').text((creditAmount).toFixed(2));
+            $('.credit-selected').digits();
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
+            $(".amount-to-apply").digits();
             var amountReceived = $('#paymentform-amount').val();
             if (!lockTextBox) {
                 var amountReceived = amountNeeded - creditAmount  < 0 ? amountNeeded > 0 ? '0.00' : amountNeeded - creditAmount : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
-            var amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute;
-            $('.amount-to-credit').text((amountToCredit).toFixed(2));
-            $('#amount-needed-value').val((amountNeeded).toFixed(2));
+            var amountToCredit = 0.00;
+            amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - parseFloat(amountToDistribute);
+            amountToCredit = amountToCredit.toString();
+            amountToCredit = amountToCredit.match(/\d+\.?\d*/)[0]
+            $('.amount-to-credit').text(parseFloat(amountToCredit).toFixed(2));
+            $('.amount-to-credit').digits();
+            $('#amount-needed-value').val(parseFloat(amountNeeded).toFixed(2));
+            $("#amount-needed-value").digits();
             if(amountNeeded > 0) {
                 setAmountNeeded = amountNeeded;
             }
@@ -268,21 +278,24 @@ use yii\bootstrap\Html;
                 setAmountNeeded = amountNeeded - creditAmount;
             }
             $('.amount-needed-value').text((setAmountNeeded).toFixed(2));
+            $('.amount-needed-value').digits();
         },
         setAvailableCredits : function() {
             var creditAmount = parseFloat('0.00');
             $('.credit-items-value').each(function() {
                 var balance = $(this).find('.credit-value').text();
                 balance = balance.replace('$', '');
+                balance = balance.replace(',', '');
                 creditAmount += parseFloat(balance);
             });
             $('.credit-available').text((creditAmount).toFixed(2));
+            $('.credit-available').digits();
         }
     };
 
     $(document).ready(function () {
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-        var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
+        var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed <span class="amount-needed-value dollar">0.00</span></h4> </div> </div>'; 
         $('#popup-modal .modal-dialog').css({'width': '1300px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('#modal-save').text('Save');
@@ -294,6 +307,11 @@ use yii\bootstrap\Html;
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
     });
+    $.fn.digits = function(){ 
+    return this.each(function(){ 
+        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
+    });
+}
 
     $(document).off('click', '.recive-payment-modal-save').on('click', '.recive-payment-modal-save', function () {
         $('#modal-spinner').show();
@@ -343,6 +361,7 @@ use yii\bootstrap\Html;
         if (!$.isEmptyObject(payment)) {
             var balance = $(this).closest('td').prev('td').text();
             balance = balance.replace('$', '');
+            balance = balance.replace(',', '');
             id = id.replace('#', '');
             if ($.isNumeric(payment)) {
                 if (parseFloat(payment) > parseFloat(balance)) {

@@ -17,7 +17,7 @@ use insolita\wgadminlte\LteConst;
 </div>
 <div>
     <h4 class = "payment-receipt">This is to acknowledge the receipt of payment from <?= $customer->userProfile->firstname .' '.$customer->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($payment->date); ?> 
-    in the amount of <?= $model->amount; ?> via <?= $payment->paymentMethod->name; ?>. We have distributed it to the items below.
+    in the amount of <?= Yii::$app->formatter->asCurrency($model->amount); ?> via <?= $payment->paymentMethod->name; ?>. We have distributed it to the items below.
     </h4>
 </div>
 <?php endif; ?>

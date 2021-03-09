@@ -5,6 +5,11 @@ use yii\widgets\Pjax;
 use yii\bootstrap\Html;
 
 ?>
+<style>
+td.text-right {
+    text-align:right;
+}
+</style>
 <?php
     $columns = [];
     if ($searchModel->showCheckBox) {
@@ -13,7 +18,7 @@ use yii\bootstrap\Html;
     else{
         $contentWidth   =   "width:650px;";
     }
-
+    
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
         'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
@@ -29,22 +34,22 @@ use yii\bootstrap\Html;
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
-        'contentOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
+        'headerOptions' => ['class' => 'text-right pull-right', 'style' => 'width:20%;text-align:right;'],
+        'contentOptions' => ['class' => 'text-right pull-right', 'style' => 'width:20%;text-align:right;'],
         'label' => 'Amount',
         'value' => 'amount'
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
-        'contentOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:20%;text-align:right;'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:20%;text-align:right;'],
         'label' => 'Payment',
         'value' => 'payment'
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right', 'style' => 'width:20%'],
-        'contentOptions' => ['class' => 'text-right invoice-value', 'style' => 'width:20%'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:20%;text-align:right;'],
+        'contentOptions' => ['class' => 'text-right invoice-value', 'style' => 'width:20%;text-align:right;'],
         'label' => 'Balance',
         'value' => 'balance'
     ]);

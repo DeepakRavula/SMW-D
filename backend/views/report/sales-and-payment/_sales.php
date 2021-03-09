@@ -45,8 +45,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 }
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
-<?php $totalReportValue = ItemCategory::getTotal($salesDataProvider->query->all()); ?>
-		<?php
+<?php $totalReportValue = ItemCategory::getTotal($salesDataProvider->query->all()); 
     function getInvoiceLineItems($data, $searchModel) {
      $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
      $amount = 0;
@@ -75,54 +74,47 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ],
         [
             'label' => 'Subtotal',
-            'format' => ['decimal', 2],
-            'value' => function ($data) use ($searchModel)  {
+            'value' => function ($data, $key, $index, $widget) use ($searchModel)  {
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $subTotal = 0;
                 foreach ($payments as $payment) {
                     $subTotal += $payment->netPrice;
                 }
-                return Yii::$app->formatter->asDecimal($subTotal);
+                $widget->footer = Yii::$app->formatter->asDecimal($subTotal);
+                return Yii::$app->formatter->asCurrency($subTotal);
             },
-            'contentOptions' => ['class' => 'text-right dollar'],
+            'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
         ],
 
         [
             'label' => 'Tax',
-            'format' => ['decimal', 2],
-            'value' => function ($data) use ($searchModel){
+            'value' => function ($data, $key, $index, $widget) use ($searchModel){
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $tax_rate = 0;
                 foreach ($payments as $payment) {
                     $tax_rate += $payment->tax_rate;
                 }
+                $widget->footer = Yii::$app->formatter->asDecimal(round($tax_rate, 2));
                 return Yii::$app->formatter->asDecimal(round($tax_rate, 2));
             },
-            'contentOptions' => ['class' => 'text-right dollar'],
+            'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
         ],
 
         [
             'label' => 'Total',
-            'format' => ['decimal', 2],
-            'value' => function ($data) use ($searchModel) {
+            'value' => function ($data, $key, $index, $widget) use ($searchModel) {
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $amount = 0;
                 foreach ($payments as $payment) {
                     $amount += $payment->itemTotal;
                 }
-
+                $widget->footer = Yii::$app->formatter->asDecimal($amount, 2);
                 return Yii::$app->formatter->asDecimal($amount, 2);
             },
-            'contentOptions' => ['class' => 'text-right dollar'],
+            'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
         ]
     ];
     ?>
@@ -136,7 +128,7 @@ GridView::widget([
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
     'pjax' => true,
-    'showPageSummary' => true,
+    'showFooter' => true,
     'pjaxSettings' => [
         'neverTimeout' => true,
         'options' => [

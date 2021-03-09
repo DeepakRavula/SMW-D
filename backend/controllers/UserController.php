@@ -339,10 +339,12 @@ class UserController extends BaseController
         $lessonSearchModel = $request->get('LessonSearch');
         
         if (!empty($lessonSearchModel)) {
-            $lessonSearch->dateRange = $lessonSearchModel['dateRange'];
-            list($lessonSearch->fromDate, $lessonSearch->toDate) = explode(' - ', $lessonSearch->dateRange);
-            $lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
-            $lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
+            if ($lessonSearchModel['dateRange']) {
+                $lessonSearch->dateRange = $lessonSearchModel['dateRange'];
+                list($lessonSearch->fromDate, $lessonSearch->toDate) = explode(' - ', $lessonSearch->dateRange);
+                $lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
+                $lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
+            }
             $lessonSearch->summariseReport=$lessonSearchModel['summariseReport'];
         }
         $teacherLessons = Lesson::find()

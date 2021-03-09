@@ -5,6 +5,14 @@ use yii\widgets\Pjax;
 use yii\helpers\Html;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
+$total = 0;
+$unusedCredits = 0;
+$prePaidLessonsSum = 0;
+$balance = 0;
+$sum90Plus = 0;
+$sum90Days = 0;
+$sum60days = 0;
+$sum30days = 0;
 ?>
 <style>
 <style>
@@ -39,7 +47,7 @@ use kartik\grid\GridView;
             'type' => GridView::TYPE_DEFAULT,
             'heading' => 'Accounts Receivable',
         ],
-        'showPageSummary' => true,
+        'showFooter' =>true,
         'columns' => [
             [
                 'label' => 'Customer Name',
@@ -50,9 +58,10 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => '0-30',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  $data->getRecentInvoicesBalanceTotal(30) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(30), 2), 2) : '0.00';
+                'value' => function ($data, $key, $index, $widget) use(&$sum30Days) {
+                    $sum30Days += $data->getRecentInvoicesBalanceTotal(30) ? round($data->getRecentInvoicesBalanceTotal(30), 2) : 0;
+                    $widget->footer =  Yii::$app->formatter->asCurrency($sum30Days);
+                    return  $data->getRecentInvoicesBalanceTotal(30) ? Yii::$app->formatter->asCurrency(round($data->getRecentInvoicesBalanceTotal(30), 2)) : '$0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
@@ -62,9 +71,10 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => '31-60',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  $data->getRecentInvoicesBalanceTotal(60) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(60), 2), 2) : '0.00';
+                'value' => function ($data, $key, $index, $widget) use(&$sum60Days) {
+                    $sum60Days += $data->getRecentInvoicesBalanceTotal(60) ? round($data->getRecentInvoicesBalanceTotal(60), 2) : 0;
+                    $widget->footer =  Yii::$app->formatter->asCurrency($sum60Days);
+                    return  $data->getRecentInvoicesBalanceTotal(60) ? Yii::$app->formatter->asCurrency(round($data->getRecentInvoicesBalanceTotal(60), 2)) : '$0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
@@ -73,10 +83,11 @@ use kartik\grid\GridView;
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
-                'label' => '61-90',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  $data->getRecentInvoicesBalanceTotal(90) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(90), 2), 2) : '0.00';
+                'label' => '61-90', 
+                'value' => function ($data, $key, $index, $widget) use(&$sum90Days) {
+                    $sum90Days += $data->getRecentInvoicesBalanceTotal(90) ? round($data->getRecentInvoicesBalanceTotal(90), 2) : 0;
+                    $widget->footer =  Yii::$app->formatter->asCurrency($sum90Days);
+                    return  $data->getRecentInvoicesBalanceTotal(90) ? Yii::$app->formatter->asCurrency(round($data->getRecentInvoicesBalanceTotal(90), 2)) : '$0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
@@ -86,9 +97,10 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => '90+',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  $data->getRecentInvoicesBalanceTotal(91) ? Yii::$app->formatter->asDecimal(round($data->getRecentInvoicesBalanceTotal(91), 2), 2) : '0.00';
+                'value' => function ($data, $key, $index, $widget) use(&$sum90Plus) {
+                    $sum90Plus += $data->getRecentInvoicesBalanceTotal(91) ? round($data->getRecentInvoicesBalanceTotal(91), 2) : 0;
+                    $widget->footer =  Yii::$app->formatter->asCurrency($sum90Plus);
+                    return  $data->getRecentInvoicesBalanceTotal(91) ? Yii::$app->formatter->asCurrency(round($data->getRecentInvoicesBalanceTotal(91), 2)) : '$0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
@@ -98,9 +110,10 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Total',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  $data->getInvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2), 2) : '0.00';
+                'value' => function ($data, $key, $index, $widget) use(&$total) {
+                    $total += $data->getInvoiceOwingAmountTotal($data->id) ? round($data->getInvoiceOwingAmountTotal($data->id), 2) : 0;
+                    $widget->footer =  Yii::$app->formatter->asCurrency($total);
+                    return  $data->getInvoiceOwingAmountTotal($data->id) ? Yii::$app->formatter->asCurrency(round($data->getInvoiceOwingAmountTotal($data->id), 2)) : '$0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
@@ -110,9 +123,10 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Pre-Paid Lessons',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  $data->getPrePaidLessons($data->id) ? Yii::$app->formatter->asDecimal(round($data->getPrePaidLessons($data->id), 2), 2) : '0.00';
+                'value' => function ($data, $key, $index, $widget) use(&$prePaidLessonsSum) {
+                    $prePaidLessonsSum  += $data->getPrePaidLessons($data->id) ? round($data->getPrePaidLessons($data->id), 2) : 0;
+                    $widget->footer =  Yii::$app->formatter->asCurrency($prePaidLessonsSum);
+                    return  $data->getPrePaidLessons($data->id) ? Yii::$app->formatter->asCurrency(round($data->getPrePaidLessons($data->id), 2)) : '$0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right',],
@@ -122,27 +136,25 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Unused Credits',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  $data->getTotalCredits($data->id) ? Yii::$app->formatter->asDecimal(round($data->getTotalCredits($data->id), 2), 2) : '0.00';
+                'value' => function ($data, $key, $index, $widget) use (&$unusedCredits) {
+                    $unusedCredits = $unusedCredits + round($data->getTotalCredits($data->id), 2);
+                    $widget->footer =  Yii::$app->formatter->asCurrency($unusedCredits);
+                    return  $data->getTotalCredits($data->id) ? Yii::$app->formatter->asCurrency(round($data->getTotalCredits($data->id), 2)) : '$0.00';
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right',],
                 'hAlign' => 'right',
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
             ],
             [
                 'label' => 'Balance',
-                'format' => 'currency',
-                'value' => function ($data) {
-                    return  Yii::$app->formatter->asDecimal(round($data->getInvoiceOwingAmountTotal($data->id), 2) - (round($data->getPrePaidLessons($data->id), 2) + round($data->getTotalCredits($data->id), 2)), 2);
+                'value' => function ($data, $key, $index, $widget) use (&$balance) {
+                    $balance += (round($data->getInvoiceOwingAmountTotal($data->id), 2) - (round($data->getPrePaidLessons($data->id), 2) + round($data->getTotalCredits($data->id), 2)));
+                    $widget->footer = Yii::$app->formatter->asCurrency($balance);
+                    return  Yii::$app->formatter->asCurrency(round($data->getInvoiceOwingAmountTotal($data->id), 2) - (round($data->getPrePaidLessons($data->id), 2) + round($data->getTotalCredits($data->id), 2)));
                 },
                 'headerOptions' => ['class' => 'text-right warning', 'style' => 'background-color: lightgray'],
                 'contentOptions' => ['class' => 'text-right', 'class' => 'text-right'],
                 'hAlign' => 'right',
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
             ],
         ],
         'beforeHeader'=>[

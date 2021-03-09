@@ -172,9 +172,11 @@ class LessonConfirm extends Model
             }
         }
         $startDate = Carbon::parse($changesFrom);
-        $endDate = Carbon::parse($lesson->course->endDate);
+        
+       
         if ($lessons) {
             $lessonModel = end($lessons);
+            $endDate = Carbon::parse($lessonModel->course->endDate);
             $this->createCourseSchedule($lessonModel, $startDate, $endDate);
         }
         return true;

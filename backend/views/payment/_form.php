@@ -98,10 +98,10 @@ use yii\bootstrap\Html;
 
     <div class="pull-right">
         <div>
-            <h4 class="pull-right">Amount To Apply $<span class="amount-to-apply">0.00</span></h4>
+            <h4 class="pull-right">Amount To Apply <span class="amount-to-apply dollar">0.00</span></h4>
         </div>
         <div>
-            <h4 class="pull-right">Amount To Credit $<span class="amount-to-credit">0.00</span></h4>
+            <h4 class="pull-right">Amount To Credit <span class="amount-to-credit dollar">0.00</span></h4>
         </div>
     </div>
 
@@ -162,7 +162,10 @@ var updatePayment = {
             }
             $('#paymenteditform-amounttodistribute').val(amountToDistribute);
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
+            $('.amount-to-apply').digits();
             $('.amount-to-credit').text((amountReceived - amountToDistribute).toFixed(2));
+            debugger;
+            $('.amount-to-credit').digits();
             return false;
         }
     };
@@ -172,7 +175,7 @@ var updatePayment = {
         var id = $(this).attr('id');
         if (!$.isEmptyObject(payment)) {
             var balance = $(this).closest('td').prev('td').text();
-            balance = balance.replace('$', '');
+            balance = balance.replace('$', '').replace(/,/g, '');
             id = id.replace('#', '');
             if ($.isNumeric(payment)) {
                 if (parseFloat(payment) > parseFloat(balance)) {
@@ -194,6 +197,12 @@ var updatePayment = {
         updatePayment.calcAmountNeeded();
         return false;
     });
+
+    $.fn.digits = function(){ 
+    return this.each(function(){ 
+        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
+    });
+}
 
     $(document).off('change', '#paymenteditform-amount').on('change', '#paymenteditform-amount', function () {
         updatePayment.calcAmountNeeded();

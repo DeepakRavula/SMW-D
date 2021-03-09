@@ -19,7 +19,7 @@
 <div class="row-fluid invoice-info m-t-10">
 <div>
     <h4 class = "payment-receipt">This is to acknowledge the receipt of payment from <?= $model->userProfile->firstname .' '.$model->userProfile->lastname; ?> on <?= Yii::$app->formatter->asDate($model->date); ?> 
-in the amount of <?= $model->amount; ?> via <?= $model->paymentMethod->name; ?>. We have distributed it to the items below.</h4>
+in the amount of <?= Yii::$app->formatter->asCurrency($model->amount); ?> via <?= $model->paymentMethod->name; ?>. We have distributed it to the items below.</h4>
 </div>
 <?php $lessonCount = $lessonDataProvider->getCount(); ?>
     <?php if ($lessonCount > 0) : ?>

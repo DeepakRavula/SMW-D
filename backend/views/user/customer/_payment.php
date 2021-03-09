@@ -20,9 +20,9 @@ $totalBalance = Payment::find()
 	->notDeleted()
 	->exceptAutoPayments()
 	->sum('balance');
-				
+
 $columns = [
-    [
+	[
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
 		'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
 		'label' => 'Date',
@@ -33,7 +33,7 @@ $columns = [
 			}
 			return null;
 		},
-    ],
+	],
 	[
 		'label' => 'Notes',
 		'value' => function ($data) {
@@ -41,8 +41,8 @@ $columns = [
 		},
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:55%'],
 		'headerOptions' => ['class' => 'text-left', 'style' => 'width:55%'],
-    ],
-    [
+	],
+	[
 		'label' => 'Amount',
 		'value' => function ($data) {
 			$amount = round($data->amount, 2);
@@ -73,22 +73,22 @@ $columns = [
 		'pageSummaryOptions' => ['class' => 'dollar'],
 		'contentOptions' => ['class' => 'text-right dollar', 'style' => 'width:10%'],
 		'headerOptions' => ['class' => 'text-right', 'style' => 'width:10%'],
-    ],
+	],
 ];
 ?>
 
 <?php $boxTools = $this->render('_payment-buttons');	?>
 <?php LteBox::begin([
-        'type' => LteConst::TYPE_DEFAULT,
-        'title' => 'Payments',
-		'withBorder' => true,
-		'boxTools' => $boxTools,
-    ])
-    ?>
+	'type' => LteConst::TYPE_DEFAULT,
+	'title' => 'Payments',
+	'withBorder' => true,
+	'boxTools' => $boxTools,
+])
+?>
 <div class="clearfix"></div>
 <div>
-<?php Pjax::begin(['id' => 'customer-payment-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
-    <?= GridView::widget([
+	<?php Pjax::begin(['id' => 'customer-payment-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
+	<?= GridView::widget([
 		'dataProvider' => $paymentsDataProvider,
 		'options' => ['class' => 'col-md-12'],
 		'summary' => false,
@@ -98,41 +98,45 @@ $columns = [
 		'tableOptions' => ['class' => 'table table-bordered table table-condensed', 'id' => 'payment'],
 		'columns' => $columns,
 	]); ?>
-<?php Pjax::end(); ?>
+	<?php Pjax::end(); ?>
 </div>
-<div class="more-payment pull-right" id = "admin-login" style = "display:none">
-    <a class = "show-more" href = "">Show More</a>
+<div class="more-payment pull-right" id="admin-login" style="display:none">
+	<a class="show-more" href="">Show More</a>
 </div>
 <?php LteBox::end() ?>
 
 <script>
 	$(document).ready(function() {
-	 var payment_count = '<?= $count; ?>' ;
+		var payment_count = '<?= $count; ?>';
 		if (payment_count > 10) {
 			$(".more-payment").show();
-			var customer = "<?= $userModel->userProfile->fullName; ?>" ;
-			var params = $.param({ 'PaymentSearch[customer]': customer, 'PaymentSearch[isDefault]': 0 });
+			var customer = "<?= $userModel->userProfile->fullName; ?>";
+			var params = $.param({
+				'PaymentSearch[customer]': customer,
+				'PaymentSearch[isDefault]': 0
+			});
 			var url = '<?= Url::to(['payment/index']); ?>?' + params;
 			$('.show-more').attr("href", url);
 		}
-	}); 
+	});
 
-	$(document).on('click', '#customer-payment-listing  tbody > tr', function () {
-        var paymentId = $(this).data('key');
-		var params = $.param({'PaymentEditForm[paymentId]': paymentId });
-        var customUrl = '<?= Url::to(['payment/view']); ?>?' +params;
-        $.ajax({
-            url: customUrl,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                if (response.status) {
-                    $('#modal-content').html(response.data);
+	$(document).on('click', '#customer-payment-listing  tbody > tr', function() {
+		var paymentId = $(this).data('key');
+		var params = $.param({
+			'PaymentEditForm[paymentId]': paymentId
+		});
+		var customUrl = '<?= Url::to(['payment/view']); ?>?' + params;
+		$.ajax({
+			url: customUrl,
+			type: 'get',
+			dataType: "json",
+			success: function(response) {
+				if (response.status) {
+					$('#modal-content').html(response.data);
 					$('#popup-modal').modal('show');
-                }
-            }
-        });
-        return false;
-    });
+				}
+			}
+		});
+		return false;
+	});
 </script>
