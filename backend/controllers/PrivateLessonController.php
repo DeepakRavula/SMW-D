@@ -549,7 +549,7 @@ class PrivateLessonController extends BaseController
                            ->location($locationId)
                            ->notExpired()
                            ->scheduledOrRescheduled()
-                           ->andWhere(['between', 'lesson.date', $lessonDate, $lessonToDate])
+                           ->andWhere(['between', 'lesson.date', $lessonDate->format('Y-m-d H:i:s'), $lessonToDate->format('Y-m-d H:i:s')])
                         //    ->between(['lesson.date' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
                            ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
                            ->all();
@@ -557,7 +557,7 @@ class PrivateLessonController extends BaseController
                         $teacheravailability = Lesson::find()
                             // ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
                             // ->andWhere(['DATE(lesson.date)' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
-                            ->andWhere(['between', 'lesson.date', $lessonDate, $lessonToDate])
+                            ->andWhere(['between', 'lesson.date', $lessonDate->format('Y-m-d H:i:s'), $lessonToDate->format('Y-m-d H:i:s')])
                             ->andWhere(['lesson.teacherId' => $oldLesson['teacherId']])->all();
                         if (empty($teacheravailability)) {
                             $newLesson->save();
@@ -571,9 +571,13 @@ class PrivateLessonController extends BaseController
                                 );
                             } 
                             $newLesson->isConfirmed = true;
-                            $newLesson->save();                 
-                            Lesson::triggerPusher();
-                            $resheduled++;
+                            $lessonSaved = $newLesson->save();
+                            if ($lessonSaved) {
+                                Lesson::triggerPusher();
+                                $resheduled++;
+                            } else {
+                                $notresheduled++;
+                            } 
                         } else {
                             $notresheduled++;
                         }    
@@ -586,16 +590,19 @@ class PrivateLessonController extends BaseController
                      $response = [
                         'status' => false,
                         'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
+                        'reshedule' => true
                     ];
                  } else if ($notresheduled == 0) {
                     $response = [
                         'status' => true,
                         'message' => 'Lesson has been rescheduled Sucessfully.',
+                        'reshedule' => true
                     ];
                  } else {
                     $response = [
                         'status' => true,
                         'message' => $resheduled .' lesson has been rescheduled Sucessfully and '. $notresheduled. ' skipped',
+                        'reshedule' => true
                     ];
                  }
 
