@@ -197,19 +197,36 @@ class PrintController extends BaseController
         $invoiceSearchModel = new InvoiceSearch();
         $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
         if ($invoiceSearchModel->load($request->get())) {
-            list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
+            if ($invoiceSearchModel->dateRange) {
+                list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
+            }
         }
-        $timeVoucher = InvoiceLineItem::find()
-                        ->notDeleted()
-            ->joinWith(['invoice' => function ($query) use ($invoiceSearchModel) {
-                $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
-                    ->between((new\DateTime($invoiceSearchModel->fromDate))->format('Y-m-d'), (new\DateTime($invoiceSearchModel->toDate))->format('Y-m-d'));
-            }])
-            ->joinWith(['lesson' => function ($query) use ($model) {
-                $query->andWhere(['lesson.teacherId' => $model->id])
-                ->groupBy('lesson.id');
-            }])
-			->orderBy(['invoice.date' => SORT_ASC]);
+        $fromDate = $invoiceSearchModel->fromDate;
+        $toDate = $invoiceSearchModel->toDate;
+        if ($invoiceSearchModel->fromDate && $invoiceSearchModel->toDate) {
+            $timeVoucher = InvoiceLineItem::find()
+                ->notDeleted()
+                ->joinWith(['invoice' => function ($query) use ($fromDate, $toDate) {
+                    $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+                        ->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));
+                }])
+                ->joinWith(['lesson' => function ($query) use ($id) {
+                    $query->andWhere(['lesson.teacherId' => $id])
+                    ->groupBy('lesson.id');
+                }])
+               ->orderBy(['invoice.date' => SORT_ASC]);
+            } else  {
+                $timeVoucher = InvoiceLineItem::find()
+                ->notDeleted()
+                ->joinWith(['invoice' => function ($query) {
+                    $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE]);   
+                }])
+                ->joinWith(['lesson' => function ($query) use ($id) {
+                    $query->andWhere(['lesson.teacherId' => $id])
+                    ->groupBy('lesson.id');
+                }])
+               ->orderBy(['invoice.date' => SORT_ASC]);
+            }
             
         $timeVoucherDataProvider = new ActiveDataProvider([
             'query' => $timeVoucher,
