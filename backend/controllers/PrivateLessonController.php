@@ -523,8 +523,8 @@ class PrivateLessonController extends BaseController
                 //        ->all();  
                 // if (empty($allLessons)) {    
                 $oldLessons = Lesson::findAll($privateLessonModel->lessonIds);
-                $resheduled = 0;
-                $notresheduled = 0;
+                $noOfResheduledLesson = 0;
+                $noOfNotResheduledLesson = 0;
                 foreach ($oldLessons as $i => $oldLesson) {
                     $oldLessonDate = $oldLesson->date;
                     $hour = (new \DateTime($oldLessonDate))->format('H');
@@ -542,7 +542,7 @@ class PrivateLessonController extends BaseController
                     $newLesson->id = null;
                     $newLesson->status = Lesson::STATUS_SCHEDULED;
                     $newLesson->date = $lessonDate->format('Y-m-d H:i:s');
-                    $checkLessonValidity = Lesson::find()
+                    $checkLessonAvailability = Lesson::find()
                            ->notDeleted()
                            ->isConfirmed()
                            ->notCanceled()
@@ -551,48 +551,40 @@ class PrivateLessonController extends BaseController
                            ->scheduledOrRescheduled()
                            ->andWhere(['between', 'lesson.date', $lessonDate->format('Y-m-d H:i:s'), $lessonToDate->format('Y-m-d H:i:s')])
                         //    ->between(['lesson.date' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
-                           ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
-                           ->all();
-                    if (empty($checkLessonValidity)) {
-                        $teacheravailability = Lesson::find()
-                            // ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
-                            // ->andWhere(['DATE(lesson.date)' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
-                            ->andWhere(['between', 'lesson.date', $lessonDate->format('Y-m-d H:i:s'), $lessonToDate->format('Y-m-d H:i:s')])
-                            ->andWhere(['lesson.teacherId' => $oldLesson['teacherId']])->all();
-                        if (empty($teacheravailability)) {
-                            $newLesson->save();
-                            $oldLesson->cancel();
-                            $oldLesson->rescheduleTo($newLesson);
-                            if ($newLesson->validate()) {
-                                $newLesson->on(
-                                    Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-                                        [new LessonReschedule(), 'reschedule'],
-                                    ['oldAttrtibutes' => $newLesson->getOldAttributes()]
-                                );
-                            } 
-                            $newLesson->isConfirmed = true;
-                            $lessonSaved = $newLesson->save();
-                            if ($lessonSaved) {
-                                Lesson::triggerPusher();
-                                $resheduled++;
-                            } else {
-                                $notresheduled++;
-                            } 
+                            ->andWhere(['lesson.teacherId' => $oldLesson['teacherId']])
+                            ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
+                            ->all();
+                    if (empty($checkLessonAvailability)) {
+                        $newLesson->save();
+                        $oldLesson->cancel();
+                        $oldLesson->rescheduleTo($newLesson);
+                        if ($newLesson->validate()) {
+                            $newLesson->on(
+                                Lesson::EVENT_RESCHEDULE_ATTEMPTED,
+                                    [new LessonReschedule(), 'reschedule'],
+                                ['oldAttrtibutes' => $newLesson->getOldAttributes()]
+                            );
+                        } 
+                        $newLesson->isConfirmed = true;
+                        $lessonSaved = $newLesson->save();
+                        if ($lessonSaved) {
+                            Lesson::triggerPusher();
+                            $noOfResheduledLesson++;
                         } else {
-                            $notresheduled++;
+                            $noOfNotResheduledLesson++;
                         }    
                     } else {
-                        $notresheduled++;
+                        $noOfNotResheduledLesson++;
                     }
                  } 
                  $response = [];
-                 if ($resheduled == 0) {
+                 if ($noOfResheduledLesson == 0) {
                      $response = [
                         'status' => false,
                         'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
                         'reshedule' => true
                     ];
-                 } else if ($notresheduled == 0) {
+                 } else if ($noOfNotResheduledLesson == 0) {
                     $response = [
                         'status' => true,
                         'message' => 'Lesson has been rescheduled Sucessfully.',
@@ -601,7 +593,7 @@ class PrivateLessonController extends BaseController
                  } else {
                     $response = [
                         'status' => true,
-                        'message' => $resheduled .' lesson has been rescheduled Sucessfully and '. $notresheduled. ' skipped',
+                        'message' => $noOfResheduledLesson .' lesson has been rescheduled Sucessfully and '. $noOfNotResheduledLesson. ' skipped',
                         'reshedule' => true
                     ];
                  }
