@@ -51,7 +51,8 @@ use yii\bootstrap\Html;
                 'value'  => Yii::$app->formatter->asDate($model->date),
                 'dateFormat' => 'php:M d, Y',
                 'options' => [
-                    'class' => 'form-control'
+                    'class' => 'form-control',
+                    'readOnly' => true,
                 ],
                 'clientOptions' => [
                     'changeMonth' => true,
