@@ -205,7 +205,6 @@ $columns = [
 	});
 	
 	$(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
-        alert("sdsd");
         $.ajax({
             url    : '<?= Url::to(['payment/receive']); ?>',
             type   : 'get',

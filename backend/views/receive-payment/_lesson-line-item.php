@@ -53,6 +53,9 @@ use yii\bootstrap\ActiveForm;
                 'initRangeExpr' => true,
                 'attribute' => 'dueDateRange',
                 'convertFormat' => true,
+                'options' => [
+                    'readOnly' => true,
+                ],
                 'pluginOptions' => [
                     'autoApply' => true,
                     'ranges' => [
