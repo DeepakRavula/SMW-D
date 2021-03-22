@@ -209,3 +209,18 @@ use yii\bootstrap\ActiveForm;
     ]); ?>
 <?php endif; ?>
 <?php Pjax::end(); ?>
+<script>
+    $(document).off('change', '#paymentformgrouplessonsearch-duedaterange').on('change', '#paymentformgrouplessonsearch-duedaterange', function() {
+        var duedateRange = $('#paymentformgrouplessonsearch-duedaterange').val();
+        var result = duedateRange.split('-');
+        var fromDate = result[0].trim();
+        var toDate = result[1].trim();
+        var checkFromDate =  moment(fromDate).format('Y-m-d');
+        var checkToDate = moment(toDate).format('Y-m-d');
+        if (checkFromDate === 'Invalid date' || checkToDate === 'Invalid date') {
+            $('#paymentformgrouplessonsearch-duedaterange').parent().append('<p class="help-block help-block-error"><div style="color:#dd4b39">Invalid Format</div></p>');
+            $('#paymentformgrouplessonsearch-duedaterange').val("");
+        }
+        return false;
+    });
+</script>
