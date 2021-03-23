@@ -198,7 +198,7 @@ use kartik\switchinput\SwitchInput;
             var programRate = $('#enrolmentform-programrate').val();
             var lessonsCount = $('#enrolmentform-lessonscount').val();
             var options = {
-                duration: duration,
+                duration: moment(moment.duration(duration)._data).format("HH:mm"),
                 programId: programId,
                 programRate: programRate,
                 customerDiscount: customerDiscount,
@@ -211,6 +211,7 @@ use kartik\switchinput\SwitchInput;
                 multiEnrolmentDiscount: options.multiEnrolmentDiscount,
                 rate: options.programRate, customerDiscount : options.customerDiscount,lessonsCount : options.lessonsCount
             });
+            
             $.ajax({
                 url: '<?= Url::to(['student/fetch-rate-calculation']); ?>?' + params,
                 type: 'get',
