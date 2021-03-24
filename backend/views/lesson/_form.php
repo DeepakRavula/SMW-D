@@ -128,4 +128,8 @@ use common\models\Location;
     $(document).on('click', '.glyphicon-remove', function () {
         $('#lesson-date').val('').trigger('change');
     });
+    $(document).off('change', '#course-duration').on('change', '#course-duration', function() {
+        var courseDuration = $('#course-duration').val();
+        $('#course-duration').val(moment(moment.duration(courseDuration)._data).format("HH:mm"));
+    });
 </script>
