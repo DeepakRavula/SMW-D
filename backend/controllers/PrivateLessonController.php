@@ -549,7 +549,7 @@ class PrivateLessonController extends BaseController
                            ->location($locationId)
                            ->notExpired()
                            ->scheduledOrRescheduled()
-                           ->andWhere(['between', 'lesson.date', $lessonDate, $lessonToDate])
+                           ->andWhere(['between', 'lesson.date',$lessonDate->modify('+1 second'), $lessonToDate])
                         //    ->between(['lesson.date' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
                             ->andWhere(['lesson.teacherId' => $oldLesson['teacherId']])
                             ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
