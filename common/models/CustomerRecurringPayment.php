@@ -79,7 +79,6 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
             [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId',  'amount'], 'required'],
             [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
             [['entryDay', 'paymentDay', 'expiryMonth', 'expiryYear', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'isRecurringPaymentEnabled', 'startDate', 'isDeleted', 'nextEntryDay'], 'safe'],
-            [['entryDay', 'expiryDate','startDate'], 'validateDateFormats']
         ];
     }
 
@@ -203,10 +202,4 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
        }
        return parent::beforeSave($insert);
    }
-
-   public function validateDateFormats($attributes)
-   {
-      print_r(new \DateTime($this->startDate));die('coming');
-   }
-
 }
