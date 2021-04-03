@@ -144,7 +144,6 @@ use Carbon\Carbon;
        console.log(formatStartDate)
        if (formatStartDate == 'Invalid Date') {
         $(this).parent().append('<p class="help-block help-block-error show-error-startdate" style="color:#dd4b39">Invalid Format</p>');
-      //  $(this).val("");
        }
     });
 </script> 
