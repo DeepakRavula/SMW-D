@@ -532,16 +532,16 @@ class PrivateLessonController extends BaseController
                     $second = (new \DateTime($oldLessonDate))->format('s');
                     $lessonDate = Carbon::parse($privateLessonModel->bulkRescheduleDate);
                     $lessonDate->setTime($hour, $minute, $second);
-                    
-                    // add duration
-                    $duration = explode(':',$oldLesson['duration']);
-                    $duration = intval($duration[0]) != 0 ? (intval($duration[0]) + intval($duration[1])) : intval($duration[1]);
-                    $lessonToDate = Carbon::parse($lessonDate)->addMinutes($duration); 
+                    $toDate = new \DateTime($lessonDate);
+                    $duration = (new \DateTime($oldLesson['duration']));
+                    $toDate->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
+                    $toDate->modify('-1 second');
+                    $lessonToDate = $toDate->format('Y-m-d H:i:s');
                     $newLesson = clone $oldLesson;
                     $newLesson->isNewRecord = true;
                     $newLesson->id = null;
                     $newLesson->status = Lesson::STATUS_SCHEDULED;
-                    $newLesson->date = $lessonDate->format('Y-m-d H:i:s');
+                    $newLesson->date = $lessonDate;
                     $checkLessonAvailability = Lesson::find()
                            ->notDeleted()
                            ->isConfirmed()
@@ -549,13 +549,13 @@ class PrivateLessonController extends BaseController
                            ->location($locationId)
                            ->notExpired()
                            ->scheduledOrRescheduled()
-                           ->andWhere(['between', 'lesson.date', $lessonDate->format('Y-m-d H:i:s'), $lessonToDate->format('Y-m-d H:i:s')])
+                           ->andWhere(['between', 'lesson.date',$lessonDate->modify('+1 second'), $lessonToDate])
                         //    ->between(['lesson.date' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
                             ->andWhere(['lesson.teacherId' => $oldLesson['teacherId']])
                             ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
                             ->all();
                     if (empty($checkLessonAvailability)) {
-                        $newLesson->save();
+                        $newLesson->save(); 
                         $oldLesson->cancel();
                         $oldLesson->rescheduleTo($newLesson);
                         if ($newLesson->validate()) {
@@ -566,8 +566,7 @@ class PrivateLessonController extends BaseController
                             );
                         } 
                         $newLesson->isConfirmed = true;
-                        $lessonSaved = $newLesson->save();
-                        if ($lessonSaved) {
+                        if ($newLesson->save()) {
                             Lesson::triggerPusher();
                             $noOfResheduledLesson++;
                         } else {
