@@ -79,6 +79,7 @@ class CustomerRecurringPayment extends \yii\db\ActiveRecord
             [['customerId', 'entryDay', 'paymentDay', 'paymentMethodId', 'paymentFrequencyId',  'amount'], 'required'],
             [['customerId', 'paymentMethodId', 'paymentFrequencyId', 'createdByUserId', 'updatedByUserId'], 'integer'],
             [['entryDay', 'paymentDay', 'expiryMonth', 'expiryYear', 'expiryDate', 'createdOn', 'updatedOn', 'amount', 'createdByUserId', 'updatedByUserId', 'isRecurringPaymentEnabled', 'startDate', 'isDeleted', 'nextEntryDay'], 'safe'],
+            [['startDate'], 'date'],
         ];
     }
 
