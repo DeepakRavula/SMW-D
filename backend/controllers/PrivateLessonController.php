@@ -23,6 +23,7 @@ use common\models\discount\LessonDiscount;
 use Carbon\Carbon;
 use common\models\LessonReschedule;
 use common\models\log\LessonLog;
+use common\models\TeacherAvailability;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -510,18 +511,20 @@ class PrivateLessonController extends BaseController
         $post = Yii::$app->request->post();
         if ($post) {
             if ($privateLessonModel->load($post)) {
-                $allLessons = Lesson::find()
-                       ->notDeleted()
-                       ->isConfirmed()
-                       ->notCanceled()
-                       ->location($locationId)
-                       ->notExpired()
-                       ->scheduledOrRescheduled()
-                       ->andWhere(['DATE(lesson.date)' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
-                       ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
-                       ->all();  
-                if (empty($allLessons)) {    
+                // $allLessons = Lesson::find()
+                //        ->notDeleted()
+                //        ->isConfirmed()
+                //        ->notCanceled()
+                //        ->location($locationId)
+                //        ->notExpired()
+                //        ->scheduledOrRescheduled()
+                //        ->andWhere(['DATE(lesson.date)' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
+                //        ->andWhere(['NOT', ['lesson.id' => $privateLessonModel->lessonIds]])
+                //        ->all();  
+                // if (empty($allLessons)) {    
                 $oldLessons = Lesson::findAll($privateLessonModel->lessonIds);
+                $noOfResheduledLesson = 0;
+                $noOfNotResheduledLesson = 0;
                 foreach ($oldLessons as $i => $oldLesson) {
                     $oldLessonDate = $oldLesson->date;
                     $hour = (new \DateTime($oldLessonDate))->format('H');
@@ -529,40 +532,80 @@ class PrivateLessonController extends BaseController
                     $second = (new \DateTime($oldLessonDate))->format('s');
                     $lessonDate = Carbon::parse($privateLessonModel->bulkRescheduleDate);
                     $lessonDate->setTime($hour, $minute, $second);
+                    $toDate = new \DateTime($lessonDate);
+                    $duration = (new \DateTime($oldLesson['duration']));
+                    $toDate->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
+                    $toDate->modify('-1 second');
+                    $lessonToDate = $toDate->format('Y-m-d H:i:s');
                     $newLesson = clone $oldLesson;
                     $newLesson->isNewRecord = true;
                     $newLesson->id = null;
                     $newLesson->status = Lesson::STATUS_SCHEDULED;
-                    $newLesson->date = $lessonDate->format('Y-m-d H:i:s');
-                    $newLesson->save();
-                    $oldLesson->cancel();
-                    $oldLesson->rescheduleTo($newLesson);
-                    if ($newLesson->validate()) {
-                        $newLesson->on(
-                            Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-                                [new LessonReschedule(), 'reschedule'],
-                            ['oldAttrtibutes' => $newLesson->getOldAttributes()]
-                        );
-                    } 
-                    $newLesson->isConfirmed = true;
-                    $newLesson->save();                 
-                    Lesson::triggerPusher();
-                   
+                    $newLesson->date = $lessonDate;
+                    $checkLessonAvailability = Lesson::find()
+                           ->notDeleted()
+                           ->isConfirmed()
+                           ->notCanceled()
+                           ->location($locationId)
+                           ->notExpired()
+                           ->scheduledOrRescheduled()
+                           ->andWhere(['between', 'lesson.date',$lessonDate->modify('+1 second'), $lessonToDate])
+                        //    ->between(['lesson.date' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
+                            ->andWhere(['lesson.teacherId' => $oldLesson['teacherId']])
+                            ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
+                            ->all();
+                    if (empty($checkLessonAvailability)) {
+                        $newLesson->save(); 
+                        $oldLesson->cancel();
+                        $oldLesson->rescheduleTo($newLesson);
+                        if ($newLesson->validate()) {
+                            $newLesson->on(
+                                Lesson::EVENT_RESCHEDULE_ATTEMPTED,
+                                    [new LessonReschedule(), 'reschedule'],
+                                ['oldAttrtibutes' => $newLesson->getOldAttributes()]
+                            );
+                        } 
+                        $newLesson->isConfirmed = true;
+                        if ($newLesson->save()) {
+                            Lesson::triggerPusher();
+                            $noOfResheduledLesson++;
+                        } else {
+                            $noOfNotResheduledLesson++;
+                        }    
+                    } else {
+                        $noOfNotResheduledLesson++;
+                    }
                  } 
-                 $response = [
-                    'status' => true,
-                    'message' => 'Lesson rescheduled Sucessfully',
-                ];
-                } else {
-                    $response = [
+                 $response = [];
+                 if ($noOfResheduledLesson == 0) {
+                     $response = [
                         'status' => false,
                         'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
+                        'reshedule' => true
                     ];
-                }
+                 } else if ($noOfNotResheduledLesson == 0) {
+                    $response = [
+                        'status' => true,
+                        'message' => 'Lesson has been rescheduled Sucessfully.',
+                        'reshedule' => true
+                    ];
+                 } else {
+                    $response = [
+                        'status' => true,
+                        'message' => $noOfResheduledLesson .' lesson has been rescheduled Sucessfully and '. $noOfNotResheduledLesson. ' skipped',
+                        'reshedule' => true
+                    ];
+                 }
+
+                // var_dump($response);exit;
+                // } else {
+                //     $response = [
+                //         'status' => false,
+                //         'error' => 'Lessons can\'t be rescheduled because choosen date already had some lessons.',
+                //     ];
+                // }
             }
-        }
- 
-    else {
+        } else {
             $data = $this->renderAjax('/lesson/_form-bulk-reschedule', [
                 'model' => $privateLessonModel,
             ]);  
@@ -571,7 +614,7 @@ class PrivateLessonController extends BaseController
                 'data' => $data,
             ];     
         }
-    return $response;
-}
+        return $response;
+    }
 }
 

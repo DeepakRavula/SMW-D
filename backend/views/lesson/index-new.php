@@ -244,14 +244,20 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
             window.location.href = url;
         } else if(params.status) {
             // $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
-            // if (params.message) {
-            //     $('#popup-modal').modal('hide');
-            //     $('#index-success-notification').text(params.message).fadeIn().delay(5000).fadeOut();
-            // }
+            if (params.message) {
+                $('#popup-modal').modal('hide');
+                $('#index-success-notification').text(params.message).fadeIn().delay(5000).fadeOut();
+            }
             var dateRange = $("input[name*='LessonSearch[dateRange]").val();
             var params = $.param({'LessonSearch[dateRange]': dateRange});
             var url = "<?=Url::to(['lesson/index']);?>?"+params;
-            window.location.href = url;
+            if (!params.reshedule) {
+                window.location.href = url;
+            } else {
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 4000);
+            }
         }
         return false;
     });
