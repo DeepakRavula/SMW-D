@@ -201,4 +201,17 @@ use kartik\select2\Select2;
             $('#customerrecurringpayment-amount').val((totalAmount).toFixed(2));
         }
     };
+
+    $(document).off('change', '#customerrecurringpayment-startdate').on('change', '#customerrecurringpayment-startdate', function() {
+        $('#customerrecurringpayment-startdate').parent().children('.show-error-startdate').text('');
+       startDate = $(this).val();
+       formatStartDate = moment(startDate)._d;
+       console.log(formatStartDate)
+       if (formatStartDate == 'Invalid Date') {
+        $(this).parent().append('<p class="help-block help-block-error show-error-startdate" style="color:#dd4b39">Invalid Format</p>');
+        $(this).val("");
+       }
+    });
  </script> 
+
+111.53+10(111.53)
