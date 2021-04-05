@@ -39,6 +39,7 @@ use common\models\Payment;
 use common\models\CustomerReferralSource;
 use backend\models\GroupCourseForm;
 use common\models\EnrolmentPaymentFrequency;
+use Exception;
 
 /**
  * CourseController implements the CRUD actions for Course model.
@@ -238,10 +239,7 @@ class CourseController extends BaseController
                 }
             }
         } else {
-            return $this->render('create', [
-                'model' => $model,
-                'courseSchedule' => (empty($courseSchedule)) ? [new CourseSchedule] : $courseSchedule
-            ]);
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
     /**
