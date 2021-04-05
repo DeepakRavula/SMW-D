@@ -98,7 +98,7 @@ $enrolmentDataProvider  = new ActiveDataProvider([
             'customerRecurringPaymentEnrolment' => $customerRecurringPaymentEnrolmentModel,
         ]);
         if ($post) {
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        if ($model->load(Yii::$app->request->post())) {
             if ($model->expiryMonth && $model->expiryYear) {
                 $expiryDate = (new \DateTime())->format('d') . '-' . $model->expiryMonth . '-' . $model->expiryYear;
                 $lastDate = (new \DateTime($expiryDate))->format('t');
