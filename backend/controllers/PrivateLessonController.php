@@ -532,11 +532,13 @@ class PrivateLessonController extends BaseController
                     $second = (new \DateTime($oldLessonDate))->format('s');
                     $lessonDate = Carbon::parse($privateLessonModel->bulkRescheduleDate);
                     $lessonDate->setTime($hour, $minute, $second);
+                    $lessonStartEndDate = $lessonDate->format('Y-m-d');  
+                    $lessonStartTime = $lessonDate->format('H:i:s');    
                     $toDate = new \DateTime($lessonDate);
                     $duration = (new \DateTime($oldLesson['duration']));
                     $toDate->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
                     $toDate->modify('-1 second');
-                    $lessonToDate = $toDate->format('Y-m-d H:i:s');
+                    $lessonToTime = $toDate->format('H:i:s');
                     $newLesson = clone $oldLesson;
                     $newLesson->isNewRecord = true;
                     $newLesson->id = null;
@@ -549,8 +551,7 @@ class PrivateLessonController extends BaseController
                            ->location($locationId)
                            ->notExpired()
                            ->scheduledOrRescheduled()
-                           ->andWhere(['between', 'lesson.date',$lessonDate->modify('+1 second'), $lessonToDate])
-                        //    ->between(['lesson.date' => Carbon::parse($privateLessonModel->bulkRescheduleDate)->format('Y-m-d')])
+                           ->overlap($lessonStartEndDate, $lessonStartTime, $lessonToTime)
                             ->andWhere(['lesson.teacherId' => $oldLesson['teacherId']])
                             ->andWhere(['NOT', ['lesson.id' => $oldLesson['id']]])
                             ->all();
