@@ -323,6 +323,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ['content' => $this->render('_button', [
             'model' => $searchModel
             ])],
+        '{export}',
+        '{toggleData}',
         ['content' => Html::a('<i class="fa fa-print btn-default btn-lg"></i>', '#', ['id' => 'print'])],
     ],
     'panel' => [

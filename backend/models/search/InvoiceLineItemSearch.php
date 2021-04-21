@@ -22,6 +22,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
     public $dateRange;
     private $customerId;
     private $isCustomerReport;
+    public $category;
     
     public function getCustomerId()
     {
@@ -101,6 +102,11 @@ class InvoiceLineItemSearch extends InvoiceLineItem
                     ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
                     ->location($locationId)
                     ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'));
+                    if ($this->category) {
+                        $query->joinWith(['itemCategory' => function ($query) {
+                            $query->andWhere(['item_category.id' => $this->category]);
+                        }]);
+                    }
                 if (!$this->isCustomerReport) {
                     $query->orderBy([
                             'DATE(invoice.date)' => SORT_ASC,
