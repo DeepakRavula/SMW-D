@@ -91,8 +91,13 @@ class InvoiceLineItemSearch extends InvoiceLineItem
             $customerId = null;
         }
         $query = InvoiceLineItem::find()
-                ->notDeleted()
-            ->joinWith(['invoice' => function ($query) use ($locationId, $customerId) {
+                ->notDeleted();
+                if ($this->category) {
+                    $query->joinWith(['itemCategory' => function ($query) {
+                        $query->andWhere(['item_category.id' => $this->category]);
+                    }]);
+                }
+            $query->joinWith(['invoice' => function ($query) use ($locationId, $customerId) {
                 if ($this->isCustomerReport) {
                     $query->andWhere(['invoice.user_id' => $customerId]);
                 }
@@ -102,11 +107,6 @@ class InvoiceLineItemSearch extends InvoiceLineItem
                     ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
                     ->location($locationId)
                     ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'));
-                    if ($this->category) {
-                        $query->joinWith(['itemCategory' => function ($query) {
-                            $query->andWhere(['item_category.id' => $this->category]);
-                        }]);
-                    }
                 if (!$this->isCustomerReport) {
                     $query->orderBy([
                             'DATE(invoice.date)' => SORT_ASC,
