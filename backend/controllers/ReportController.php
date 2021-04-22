@@ -354,7 +354,6 @@ class ReportController extends BaseController
 
     public function actionItemCategory()
     {
-      
         $searchModel                      = new InvoiceLineItemSearch();
         $searchModel->groupByItemCategory = true;
         $searchModel->fromDate            = (new \DateTime())->format('M d,Y');
