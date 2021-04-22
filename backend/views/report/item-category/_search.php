@@ -59,7 +59,6 @@ use yii\web\View;
 
 <script>
     $(document).off('change', '#invoicelineitemsearch-daterange,#invoicelineitemsearch-category').on('change', '#invoicelineitemsearch-daterange,#invoicelineitemsearch-category', function() {
-        alert("sdsd");
         $("#item-category-search-form").submit();
     });
 </script>
