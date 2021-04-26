@@ -140,50 +140,9 @@ class UserSearch extends User
             }]);
         }
         if ((int) $this->status === self::STATUS_CREDIT) {
-            // $invoiceCredits = Invoice::find()
-            //     ->notDeleted()
-            //     ->invoiceCredit($this->id)
-            //     ->sum("invoice.balance"); 
-    
-            // $paymentCredits = Payment::find()
-            //     ->notDeleted()
-            //     ->exceptAutoPayments()
-            //     ->customer($this->id)
-            //     ->credit()
-            //     ->orderBy(['payment.id' => SORT_ASC])
-            //     ->sum("payment.balance"); 
-        
-            // $totalCredits = abs($invoiceCredits) + abs($paymentCredits);
-            
-            // $query->andWhere(['>', $totalCredits, 0.09]);
-            // $query->select(['sum(invoice.balance) as bal', 'sum(payment.balance) as bali']);
-            
-            // $query->select(['sum(invoice.balance) as inbal', 'sum(payment.balance) as paybal'])
-            //         ->joinWith('invoices')
-            //         ->joinWith('payments')
-            //         ->having(['>', 'inbal', 0.9])
-            //         ->orHaving(['>', 'paybal', 0.9]);
-                    $query->select(['sum(invoice.balance) + sum(payment.balance) as total', ])
-                    ->joinWith(['invoices' => function($query) {
-                        $query->andWhere(['invoice.isDeleted' => false])
-                        ->andWhere(['<', 'round(invoice.balancee, 2)', -0.1]);
-                    }])
-                    ->joinWith(['payments' => function($query) {
-                        $query->andWhere(['>', 'payment.balance', 0.09])
-                             ->andWhere(['NOT', ['payment.payment_method_id' => [
-                            PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED
-                        ]]]);
-                    }])
-                    ->andWhere(['>', 'total', 0]);
-                    //->andFilterHaving(['>', 'sum(invoice.balanceee)', 0.9],['>', 'sum(payment.balance)', 0.9]);
-
-                   // ->andWhere(['OR',['>', 'inbal', 0.09], ['>', 'paybal', 0.09]]);
-            //     $query->joinWith(['invoices' => function ($query) {
-            //         $query->having(['>', 'sum(invoice.balance)', 0.09]);
-            // }])
-            //     ->joinWith(['payments' => function ($query) {
-            //         $query->having(['>', 'sum(payment.balance)', 0.09]);
-            // }]);
+            $query->joinWith(['customerAccount' => function ($query) {
+                $query->andFilterWhere(['<', 'customer_account.balance', -0.09]);
+            }]);
         }
         if ($this->firstname) {
             $query->andFilterWhere(['like', 'uf.firstname', $this->firstname]);
