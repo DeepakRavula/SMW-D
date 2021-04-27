@@ -47,6 +47,8 @@ use yii\web\View;
 
             ]);
            ?>
+    </div>
+    <div class="form-group m-t-10">
             <?= $form->field($model, 'category')->widget(Select2::classname(), [
                 'data' => $categories,
                 'options' => ['placeholder' => 'Category'],

@@ -331,6 +331,81 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         'type' => GridView::TYPE_DEFAULT,
         'heading' => 'Items Sold by Category'
     ],
+    'exportConfig'=> [
+        GridView::HTML=>[
+            'label' => 'HTML',
+           
+            'showHeader' => true,
+            'showPageSummary' => true,
+            'showFooter' => true,
+            'showCaption' => true,
+            
+          
+            'mime' => 'application/html',
+           
+        ],
+        GridView::CSV=>[
+            'label' => 'CSV',
+           
+            'showHeader' => true,
+            'showPageSummary' => true,
+            'showFooter' => true,
+            'showCaption' => true,
+            
+          
+            'mime' => 'application/csv',
+           
+        ],
+        GridView::TEXT=>[
+            'label' => 'Text',
+           
+            'showHeader' => true,
+            'showPageSummary' => true,
+            'showFooter' => true,
+            'showCaption' => true,
+            
+          
+            'mime' => 'application/text',
+           
+        ],
+        GridView::EXCEL=>[
+            'label' => 'Excel',
+           
+            'showHeader' => true,
+            'showPageSummary' => true,
+            'showFooter' => true,
+            'showCaption' => true,
+            
+          
+            'mime' => 'application/excel',
+           
+        ],
+        GridView::PDF=>[
+            'label' => 'PDF',
+          
+            'showHeader' => true,
+            'showPageSummary' => true,
+            'showFooter' => true,
+            'showCaption' => true,
+            
+          
+            'mime' => 'application/pdf',
+           
+        ],
+        GridView::JSON=>[
+            'label' => 'JSON',
+           
+            'showHeader' => true,
+            'showPageSummary' => true,
+            'showFooter' => true,
+            'showCaption' => true,
+            
+          
+            'mime' => 'application/json',
+           
+        ],
+      
+    ],
 ]);
 ?></div>
 
