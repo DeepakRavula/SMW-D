@@ -9,7 +9,7 @@ use common\models\UserContact;
 <div id="<?=$phoneNumber->userContactId ?>" class="<?= !empty($phoneNumber->userContact->isPrimary) ? 'primary' : 'not-primary'; ?> user-phone-edit user-contact-list">
 <dl class="dl-horizontal">
 	<dt><?= $phoneNumber->userContact->label->name; ?></dt>
-	<dd><?= $phoneNumber->number; ?> </dd>
+	<dd><?= $phoneNumber->number. " (". $phoneNumber->note.")"; ?> </dd>
 	<dd><?= !empty($phoneNumber->extension) ? 'Ext: ' . $phoneNumber->extension : null; ?></dd>
 </dl>
 </div>

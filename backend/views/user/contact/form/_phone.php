@@ -42,6 +42,7 @@ $form = ActiveForm::begin([
     ])->label('Label');
     ?>
 	<?= $form->field($phoneModel, "extension")->textInput(['maxlength' => true]) ?>
+    <?= $form->field($phoneModel, "note")->textarea(); ?>
 </div>
     <div class="row">
         <div class="col-md-12">

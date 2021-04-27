@@ -9,7 +9,7 @@ use common\models\UserContact;
 <div id="<?= $email->userContactId; ?>" class="<?= !empty($email->userContact->isPrimary) ? 'primary' : 'not-primary'; ?> user-email-edit user-contact-list">
 <dl class="dl-horizontal">
     <dt><?= $email->userContact->label->name; ?></dt>
-	<dd><?= $email->email; ?></dd>
+	<dd><?= $email->email. " (". $email->note.")"; ?></dd>
       
 </dl>
 </div>
