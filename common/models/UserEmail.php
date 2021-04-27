@@ -66,7 +66,7 @@ class UserEmail extends \yii\db\ActiveRecord
             'id' => 'ID',
             'userId' => 'User ID',
             'email' => 'Email',
-            'note' => 'Notes',
+            'note' => 'Note',
             'labelId' => 'Label',
             'isPrimary' => 'Is Primary',
         ];
