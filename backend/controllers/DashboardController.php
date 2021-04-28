@@ -149,7 +149,11 @@ public function behaviors()
                 ->notDeleted()
                 ->location($locationId)
                 ->betweenEndDate($fromDate, $toDate);
+                
             }])
+            ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+            ->isConfirmed()
+            ->isRegular()
             ->groupBy(['course.programId'])
             ->all();
         foreach ($allLossEnrolments as $allLossEnrolment) {
@@ -178,6 +182,9 @@ public function behaviors()
                 ->location($locationId)
                 ->betweenEndDate($fromDate, $toDate);
             }])
+            ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+            ->isConfirmed()
+            ->isRegular()
             ->count();
         $instructionHours = Lesson::find()
             ->between($fromDate, $toDate)
