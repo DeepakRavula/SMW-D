@@ -27,6 +27,11 @@ use yii\bootstrap\Html;
         ->all(), 'id', 'publicIdentity');
 ?>
 <div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+<div class="row">
+<div class="col-md-6">
+<div id="lessonpayment-error-notification" style="display:none;" class="alert-danger alert fade in text-center"></div>
+</div>
+</div>
 <div class="receive-payment-form">
 
     <?php $form = ActiveForm::begin([
@@ -341,6 +346,9 @@ use yii\bootstrap\Html;
                         $('#popup-modal').modal('hide');            
                     }
                 } else {
+                    if (response.errors['paymentform-lessonpayments']) {
+                        $('#lessonpayment-error-notification').html(response.errors['paymentform-lessonpayments']).fadeIn().delay(5000).fadeOut();
+                    }
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $('.recive-payment-modal-save').attr('disabled', true);
                     $(document).trigger("modal-error", response);
