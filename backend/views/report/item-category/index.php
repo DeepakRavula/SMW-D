@@ -17,23 +17,23 @@ use yii\helpers\Url;
 </div>
 
 <script>
-$(document).ready(function(){
-    $("#group-by-method").on("change", function() {
+    $(document).off('change', '#group-by-method').on('change', '#group-by-method', function(){
         var groupByMethod = $(this).is(":checked");
         var dateRange=$('#invoicelineitemsearch-daterange').val();
-        var params = $.param({ 'InvoiceLineItemSearch[dateRange]': dateRange,
+        var category=$('#invoicelineitemsearch-category').val();
+        var params = $.param({ 'InvoiceLineItemSearch[dateRange]': dateRange, 'InvoiceLineItemSearch[category]': category,
             'InvoiceLineItemSearch[groupByMethod]': (groupByMethod | 0) });
         var url = '<?php echo Url::to(['report/item-category']); ?>?' + params;
         $.pjax.reload({url:url,container:"#item-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
-    $("#print").on("click", function() {
+    $(document).off('click', '#print').on('click', '#print', function(){
         var groupByMethod = $("#group-by-method").is(":checked");
         var dateRange=$('#invoicelineitemsearch-daterange').val();
-        var params = $.param({ 'InvoiceLineItemSearch[dateRange]': dateRange,
+        var category=$('#invoicelineitemsearch-category').val();
+        var params = $.param({ 'InvoiceLineItemSearch[dateRange]': dateRange, 'InvoiceLineItemSearch[category]': category,
             'InvoiceLineItemSearch[groupByMethod]': (groupByMethod | 0) });
         var url = '<?php echo Url::to(['item-category/print']); ?>?' + params;
         window.open(url,'_blank');
     });
-});
 </script>
 </script>

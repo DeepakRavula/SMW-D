@@ -1,8 +1,11 @@
 <?php
 
-use yii\helpers\Html;
+use common\models\ItemCategory;
 use yii\bootstrap\ActiveForm;
 use kartik\daterange\DateRangePicker;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
+use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\UserSearch */
@@ -10,6 +13,9 @@ use kartik\daterange\DateRangePicker;
 ?>
 <div class="user-search">
 
+<?php   $categories = ArrayHelper::map(ItemCategory::find()
+                        ->notDeleted()
+                        ->all(), 'id', 'name')?>
     <?php $form = ActiveForm::begin([
         'id' => 'item-category-search-form',
         'action' => ['report/item-category'],
@@ -42,11 +48,19 @@ use kartik\daterange\DateRangePicker;
             ]);
            ?>
     </div>
+    <div class="form-group m-t-10">
+            <?= $form->field($model, 'category')->widget(Select2::classname(), [
+                'data' => $categories,
+                'options' => ['placeholder' => 'Category'],
+                'hashVarLoadPosition' => View::POS_READY
+            ])->label(false)
+            ?>
+    </div>
     <?php ActiveForm::end(); ?>
 </div>
 
 <script>
-    $(document).off('change', '#invoicelineitemsearch-daterange').on('change', '#invoicelineitemsearch-daterange', function() {
+    $(document).off('change', '#invoicelineitemsearch-daterange,#invoicelineitemsearch-category').on('change', '#invoicelineitemsearch-daterange,#invoicelineitemsearch-category', function() {
         $("#item-category-search-form").submit();
     });
 </script>
