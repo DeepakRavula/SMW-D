@@ -45,6 +45,7 @@ $form = ActiveForm::begin([
             ],
         ])->label('Label');
         ?>
+        <?= $form->field($emailModel, "note")->textarea(); ?>
     
 </div>
 	<div class="row pull-right">

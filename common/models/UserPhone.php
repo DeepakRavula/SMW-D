@@ -46,7 +46,7 @@ class UserPhone extends \yii\db\ActiveRecord
             [['number'], 'required'],
             [['userContactId', 'extension'], 'integer'],
             [['number'], 'string', 'max' => 15],
-            [['labelId', 'isDeleted'], 'safe']
+            [['labelId', 'isDeleted', 'note'], 'safe']
         ];
     }
 
@@ -80,6 +80,7 @@ class UserPhone extends \yii\db\ActiveRecord
             'userContactId' => 'User Contact ID',
             'number' => 'Number',
             'extension' => 'Extension',
+            'note' => 'Note'
         ];
     }
 
