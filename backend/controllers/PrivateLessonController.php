@@ -624,6 +624,7 @@ class PrivateLessonController extends BaseController
         $privateLessonModel->load(Yii::$app->request->get());
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $post = Yii::$app->request->post();
+        $lessonIds = [];
         if ($post) {
             if ($privateLessonModel->load($post)) {
                 $lessons = Lesson::find()
@@ -632,7 +633,7 @@ class PrivateLessonController extends BaseController
                 ->notCanceled()
                 ->location($locationId)
                 ->andWhere(['lesson.teacherId' => $privateLessonModel->selectedTeacherId])
-                ->andWhere(['date' => (new \DateTime($privateLessonModel->teacherBulkRescheduleSourceDate))->format('Y-m-d')])
+                ->andWhere(['DATE(lesson.date)' => (new \DateTime($privateLessonModel->teacherBulkRescheduleSourceDate))->format('Y-m-d')])
                 ->all();
         if ($lessons) {
         $endLesson = end($lessons);
@@ -643,12 +644,15 @@ class PrivateLessonController extends BaseController
                     'status' => false,
                     'error' => 'one of the chosen lesson is invoiced. You can\'t reschedule for this lessons',
                 ];
+            } else {
+                $lessonIds[] = $lesson->id;
             }
         } 
                 // if (empty($allLessons)) {    
-                $oldLessons = Lesson::findAll($privateLessonModel->lessonIds);
+                $oldLessons = Lesson::findAll($lessonIds);
                 $noOfResheduledLesson = 0;
                 $noOfNotResheduledLesson = 0;
+                print_r($oldLessons);die('coming');
                 foreach ($oldLessons as $i => $oldLesson) {
                     $oldLessonDate = $oldLesson->date;
                     $hour = (new \DateTime($oldLessonDate))->format('H');
