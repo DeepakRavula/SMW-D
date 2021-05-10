@@ -22,6 +22,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
     public $dateRange;
     private $customerId;
     private $isCustomerReport;
+    public $category;
     
     public function getCustomerId()
     {
@@ -90,8 +91,13 @@ class InvoiceLineItemSearch extends InvoiceLineItem
             $customerId = null;
         }
         $query = InvoiceLineItem::find()
-                ->notDeleted()
-            ->joinWith(['invoice' => function ($query) use ($locationId, $customerId) {
+                ->notDeleted();
+                if ($this->category) {
+                    $query->joinWith(['itemCategory' => function ($query) {
+                        $query->andWhere(['item_category.id' => $this->category]);
+                    }]);
+                }
+            $query->joinWith(['invoice' => function ($query) use ($locationId, $customerId) {
                 if ($this->isCustomerReport) {
                     $query->andWhere(['invoice.user_id' => $customerId]);
                 }

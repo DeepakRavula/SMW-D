@@ -2,13 +2,11 @@
 
 namespace backend\models\search;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
 use common\models\Location;
 use common\models\Invoice;
-use common\models\UserProfile;
 
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -17,6 +15,7 @@ class UserSearch extends User
 {
     const STATUS_ALL = 3;
     const STATUS_OWING = 4;
+    const STATUS_CREDIT = 5;
         
     private $accountView;
     public $role_name;
@@ -136,6 +135,11 @@ class UserSearch extends User
                 $query->andFilterWhere(['>', 'customer_account.balance', 0]);
             }]);
         }
+        if ((int) $this->status === self::STATUS_CREDIT) {
+            $query->joinWith(['customerAccount' => function ($query) {
+                $query->andFilterWhere(['<', 'customer_account.balance', -0.09]);
+            }]);
+        }
         if ($this->firstname) {
             $query->andFilterWhere(['like', 'uf.firstname', $this->firstname]);
         }
@@ -173,6 +177,7 @@ class UserSearch extends User
         return [
             self::STATUS_ALL => 'All',
             self::STATUS_OWING => 'Owing',
+            self::STATUS_CREDIT => 'Credit',
         ];
     }
 }
