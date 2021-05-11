@@ -28,6 +28,9 @@ class PrivateLesson extends \yii\db\ActiveRecord
     }
 
     public $lessonIds;
+    public $teacherBulkRescheduleSourceDate;
+    public $teacherBulkRescheduleDestinationDate;
+    public $selectedTeacherId;
     /**
      * {@inheritdoc}
      */
@@ -36,7 +39,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
         return [
             [['lessonId'], 'required'],
             [['lessonId'], 'integer'],
-            [['expiryDate', 'total', 'balance', 'lessonIds', 'bulkRescheduleDate'], 'safe'],
+            [['expiryDate', 'total', 'balance', 'lessonIds', 'bulkRescheduleDate', 'teacherBulkRescheduleSourceDate', 'teacherBulkRescheduleDestinationDate', 'selectedTeacherId'], 'safe'],
         ];
     }
 
@@ -49,6 +52,8 @@ class PrivateLesson extends \yii\db\ActiveRecord
             'id' => 'ID',
             'lessonId' => 'Lesson ID',
             'expiryDate' => 'Expiry Date',
+            'teacherBulkRescheduleSourceDate' => 'Source Date',
+            'teacherBulkRescheduleDestinationDate' => 'Destination Date'
         ];
     }
 
