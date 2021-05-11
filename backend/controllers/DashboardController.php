@@ -182,7 +182,6 @@ public function behaviors()
                 ->location($locationId)
                 ->betweenEndDate($fromDate, $toDate);
             }])
-            ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
             ->isConfirmed()
             ->isRegular()
             ->count();
