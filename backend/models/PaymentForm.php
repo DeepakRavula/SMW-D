@@ -77,6 +77,7 @@ class PaymentForm extends Model
                 'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id', 'notes'], 'safe', 'on' => self::SCENARIO_DEFAULT],
             [['selectedCreditValue', 'amount', 'invoicePayments', 'lessonPayments', 'lessonIds', 'invoiceIds',
                 'paymentCredits', 'invoiceCredits', 'groupLessonIds', 'groupLessonPayments'], 'validateNegativePayment', 'on' => self::SCENARIO_NEGATIVE_PAYMENT],
+                ['lessonPayments', 'validateLessonPayment'],
         ];
         if (!(Yii::$app->user->identity->isAdmin())) {
             array_push($rules, [['date'], 'validateDateOnCreate', 'on' => self::SCENARIO_DEFAULT]);
@@ -684,5 +685,19 @@ class PaymentForm extends Model
             'pagination' => false,
         ]);
         return $lessonLineItemsDataProvider;
+    }
+
+    public function validateLessonPayment($attribute)
+    {
+        $lessonPayments = $this->lessonPayments;
+        if ($lessonPayments) {
+            foreach ($lessonPayments as $lessonPayment) {
+                $lesson = Lesson::findOne($lessonPayment['id']);
+                if ($lesson->isCanceled()) {
+                    $this->addError($attribute, "One of the choosen lesson is canceled so please cancel the payment and retry");
+                    break;
+                }
+            }
+        }
     }
 }
