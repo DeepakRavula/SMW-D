@@ -151,7 +151,6 @@ public function behaviors()
                 ->betweenEndDate($fromDate, $toDate);
                 
             }])
-            ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
             ->isConfirmed()
             ->isRegular()
             ->groupBy(['course.programId'])
