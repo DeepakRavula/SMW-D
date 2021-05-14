@@ -77,7 +77,11 @@ class CourseController extends BaseController
                         ],
                         'roles' => ['manageGroupLessons'],
                     ],
+                   
                 ],
+                'denyCallback' => function ($rule, $action) {
+                    return $this->redirect('/admin/sign-in/login');
+                }
             ],
         ];
     }

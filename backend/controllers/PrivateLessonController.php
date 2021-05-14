@@ -652,7 +652,6 @@ class PrivateLessonController extends BaseController
                 $oldLessons = Lesson::findAll($lessonIds);
                 $noOfResheduledLesson = 0;
                 $noOfNotResheduledLesson = 0;
-                print_r($oldLessons);die('coming');
                 foreach ($oldLessons as $i => $oldLesson) {
                     $oldLessonDate = $oldLesson->date;
                     $hour = (new \DateTime($oldLessonDate))->format('H');
