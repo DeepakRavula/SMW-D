@@ -657,7 +657,7 @@ class PrivateLessonController extends BaseController
                     $hour = (new \DateTime($oldLessonDate))->format('H');
                     $minute = (new \DateTime($oldLessonDate))->format('i');
                     $second = (new \DateTime($oldLessonDate))->format('s');
-                    $lessonDate = Carbon::parse($privateLessonModel->bulkRescheduleDate);
+                    $lessonDate = Carbon::parse($privateLessonModel->teacherBulkRescheduleDestinationDate);
                     $lessonDate->setTime($hour, $minute, $second);
                     $lessonStartEndDate = $lessonDate->format('Y-m-d');  
                     $lessonStartTime = $lessonDate->format('H:i:s');    
