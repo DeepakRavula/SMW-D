@@ -194,6 +194,19 @@ td.kv-group-odd {
     });
 
     $(document).off('change', '#invoicesearch-daterange').on('change', '#invoicesearch-daterange', function() {
-        $("#time-voucher-search-form").submit();
+        debugger;
+        var invoiceDateRange = $('#invoicesearch-daterange').val();
+        var result = invoiceDateRange.split('-');
+        var fromDate = result[0].trim();
+        var toDate = result[1].trim();
+        var checkFromDate =  moment(fromDate).format('YY-MM-DD');
+        var checkToDate = moment(toDate).format('YY-MM-DD');
+        if (checkFromDate === 'Invalid date' || checkToDate === 'Invalid date') {
+            $('#invoicesearch-daterange').parent().append('<p class="help-block help-block-error"><div style="color:#dd4b39">Invalid Format</div></p>');
+            $('#invoicesearch-daterange').val("");
+        } else {
+            $("#time-voucher-search-form").submit();
+        }
+        return false;
     });
 </script>
