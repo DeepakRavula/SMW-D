@@ -199,8 +199,8 @@ td.kv-group-odd {
         var result = invoiceDateRange.split('-');
         var fromDate = result[0].trim();
         var toDate = result[1].trim();
-        var checkFromDate =  moment(fromDate).format('YY-MM-DD');
-        var checkToDate = moment(toDate).format('YY-MM-DD');
+        var checkFromDate =  moment(fromDate).format('Y-m-d');
+        var checkToDate = moment(toDate).format('Y-m-d');
         if (checkFromDate === 'Invalid date' || checkToDate === 'Invalid date') {
             $('#invoicesearch-daterange').parent().append('<p class="help-block help-block-error"><div style="color:#dd4b39">Invalid Format</div></p>');
             $('#invoicesearch-daterange').val("");
