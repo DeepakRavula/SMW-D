@@ -148,6 +148,9 @@ td.kv-group-odd {
                 'attribute' => 'dateRange',
                 'convertFormat' => true,
                 'initRangeExpr' => true,
+                'options' => [
+                    'readOnly' => true,
+                ],
                 'pluginOptions' => [
                     'autoApply' => true,
                     'ranges' => [
