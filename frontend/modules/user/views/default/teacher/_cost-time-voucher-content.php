@@ -194,7 +194,6 @@ td.kv-group-odd {
     });
 
     $(document).off('change', '#invoicesearch-daterange').on('change', '#invoicesearch-daterange', function() {
-        debugger;
         var invoiceDateRange = $('#invoicesearch-daterange').val();
         var result = invoiceDateRange.split('-');
         var fromDate = result[0].trim();
