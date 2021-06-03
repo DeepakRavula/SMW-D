@@ -1,6 +1,5 @@
 <?php
 
-use common\models\Enrolment;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -9,17 +8,16 @@ use yii\grid\GridView;
 $this->title = $model->id;
 ?>
 <section class="invoice">
-<?php $model = Enrolment::findOne() ?>
     <!-- title row -->
  <?php
    echo $this->render('/print/_header', [
-       'courseModel'=>$model,
-       'userModel'=>$model->teacher,
-       'locationModel'=>$model->teacher->userLocation->location,
+       'courseModel'=>$model->course,
+       'userModel'=>$model->course->teacher,
+       'locationModel'=>$model->course->teacher->userLocation->location,
 ]);
    ?>
     <!-- /.row -->
-<div class="row-fluid p-10">      
+    <div class="row-fluid p-10">      
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
