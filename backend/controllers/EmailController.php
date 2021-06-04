@@ -507,7 +507,7 @@ class EmailController extends BaseController
             ]);
             $data = $this->renderAjax('/mail/_group-enrolment', [
                 'model' => new EmailForm(),
-                'emails' => !empty($user->email) ?$user->email : null,
+                'emails' => !empty($user->email) ? $user->email : null,
                 'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
                 'emailTemplate' => $emailTemplate,
                 'userModel' => $user,

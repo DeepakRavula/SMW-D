@@ -8,7 +8,7 @@ $content = $this->renderAjax('/course/mail-content', [
    'model' => $enrolmentModel,
    'lessonDataProvider' => $lessonDataProvider,
 ]);
-
+$model->to = $emails;
 $data = [];
 if (!empty($userModel)) {
     $data = ArrayHelper::map(UserEmail::find()
