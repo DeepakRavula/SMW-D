@@ -523,8 +523,6 @@ class EmailController extends BaseController
             ->all();
     }
 
-
-
     public function actionLessonBulkEmailSend()
     { 
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
