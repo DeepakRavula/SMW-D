@@ -75,9 +75,7 @@ class EmailController extends BaseController
         $objectId = Yii::$app->request->get('EmailForm')['objectId'];
         $userId = Yii::$app->request->get('EmailForm')['userId'];
         $model = new EmailForm();
-        if ($model->load(Yii::$app->request->post())) {   
-               // print_r($model->to);die('ioi');
-            //  print_r($model->bcc);die("sdsdsdsd");    
+        if ($model->load(Yii::$app->request->post())) { 
             $content = [];
                 $content[] = Yii::$app->mailer->compose('content', [
                     'content' => $model->content,
