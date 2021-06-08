@@ -31,6 +31,7 @@ use backend\models\search\PaymentSearch;
 use common\models\InvoicePayment;
 use backend\models\search\PaymentFormLessonSearch;
 use backend\models\search\PaymentFormGroupLessonSearch;
+use common\components\queue\BulkEmail;
 use common\models\log\CustomerStatementLog;
 use common\models\CustomerStatement;
 use common\models\log\LogActivity;
@@ -48,7 +49,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement'],
+                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -59,7 +60,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement'],
+                        'actions' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -74,7 +75,9 @@ class EmailController extends BaseController
         $objectId = Yii::$app->request->get('EmailForm')['objectId'];
         $userId = Yii::$app->request->get('EmailForm')['userId'];
         $model = new EmailForm();
-        if ($model->load(Yii::$app->request->post())) {       
+        if ($model->load(Yii::$app->request->post())) {   
+               // print_r($model->to);die('ioi');
+            //  print_r($model->bcc);die("sdsdsdsd");    
             $content = [];
                 $content[] = Yii::$app->mailer->compose('content', [
                     'content' => $model->content,
@@ -520,5 +523,30 @@ class EmailController extends BaseController
             ->customer($customerId)
             ->orderBy(['payment.id' => SORT_ASC])
             ->all();
+    }
+
+
+
+    public function actionLessonBulkEmailSend()
+    { 
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $location = Location::findOne(['id' => $locationId]);
+        $objectId = Yii::$app->request->get('EmailForm')['objectId'];
+        $userId = Yii::$app->request->get('EmailForm')['userId'];
+        $model = new EmailForm();
+        if ($model->load(Yii::$app->request->post())) {   
+            foreach ($model->bcc as $emailBcc) {
+                Yii::$app->queue->push(new BulkEmail([
+                    'bcc' => $emailBcc,
+                    'subject' => $model->subject,
+                    'locationEmail' => $location->email,
+                    'content' => $model->content,
+                ]));    
+            }
+            return [
+                'status' => true,
+                'message' => 'Mail has been sent successfully',
+            ];
+        }
     }
 }

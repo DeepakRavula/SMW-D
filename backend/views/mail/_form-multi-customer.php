@@ -13,7 +13,7 @@ use dosamigos\ckeditor\CKEditor;
     <?php $model->content = $content;
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['email/send'])
+        'action' => Url::to(['email/lesson-bulk-email-send'])
     ]);
     ?>
     <?php if (!empty($invoiceId)) : ?>

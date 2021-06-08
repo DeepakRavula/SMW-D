@@ -28,14 +28,19 @@ class CatchAllEmailBehavior extends Behavior
     public function addTestEmail($event) {
 		$model = new EmailForm();
 		$passwordResetModel = new PasswordResetRequestForm();
-		if (env('YII_ENV') === 'dev') {
-			$email = TestEmail::find()->one()->email;
+
+		if (is_a(Yii::$app, 'yii\console\Application')) {
+			return true;
 		} else {
-			if ($model->load(Yii::$app->request->post())) {
-				$email = $model->to;
-			}
-			if ($passwordResetModel->load(Yii::$app->request->post())) {
-				$email = $passwordResetModel->email;
+			if (env('YII_ENV') === 'dev') {
+				$email = TestEmail::find()->one()->email;
+			} else {
+				if ($model->load(Yii::$app->request->post())) {
+					$email = $model->to;
+				}
+				if ($passwordResetModel->load(Yii::$app->request->post())) {
+					$email = $passwordResetModel->email;
+				}
 			}
 		}
 		return $event->message->setTo($email);
