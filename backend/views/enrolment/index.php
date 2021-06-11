@@ -1,263 +1,382 @@
-<?php
-
-use backend\models\search\EnrolmentSearch;
-use yii\helpers\Html;
+<?php 
+use yii\helpers\Json;
 use yii\helpers\Url;
-use common\components\gridView\KartikGridView;
-use kartik\grid\GridView;
-
-/* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\EnrolmentSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+use yii\bootstrap\Tabs;
+use common\models\Holiday;
+use kartik\select2\Select2;
+use common\models\User;
+use yii\helpers\ArrayHelper;
+use common\models\Program;
+use yii\bootstrap\ActiveForm;
+use yii\jui\DatePicker;
 ?>
+<div class="nav-tabs-custom">
+        <?php
 
-<div id="index-success-notification" style="display:none;" class="alert-success alert fade in"></div>
-<div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+        $gridView = $this->render('_enrolment-grid', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
 
-<script src="/plugins/bootbox/bootbox.min.js"></script>
-<?php $columns = [
-    [
-        'class' => '\kartik\grid\CheckboxColumn',
-        'mergeHeader' => false,
-        'contentOptions' => ['style' => 'width:3%'],
-    ],
-    [
-        'attribute' => 'program',
-        'label' => 'Program',
-        'value' => function ($data) {
-            return $data->course->program->name;
-        },
-        'contentOptions' => ['style' => 'width:17%'],
-    ],
-    [
-        'attribute' => 'student',
-        'label' => 'Student',
-        'value' => function ($data) {
-            return $data->student->fullName;
-        },
-        'contentOptions' => ['style' => 'width:20%'],
-    ],
-    [
-        'attribute' => 'teacher',
-        'label' => 'Teacher',
-        'value' => function ($data) {
-            
-            return $data->course->getTeachers();
-        },
-        'contentOptions' => ['style' => 'width:20%'],
-    ],
-    [
-        'label' => 'Auto Renewal',
-        'attribute' => 'isAutoRenewal',
-        'filter' => EnrolmentSearch::autoRenew(),
-        'filterWidgetOptions' => [
-            'options' => [
-                'id' => 'enrolment-auto-renew',
-            ],
-        ],
-        'value' => function ($data) {
-            $autoRenew = ($data->isAutoRenew ?? 0) == 0 ? 'Disabled' : 'Enabled';
-            return $autoRenew;
-        },
-        'contentOptions' => ['style' => 'width:6%'],
-    ],
+        $calendarView = $this->render('_enrolment-calendar',  [
+            'searchModel' => $searchModel,
+           
+        ]);
 
-    [
-        'attribute' => 'startdate',
-        'label' => 'Start Date',
-        'value' => function ($data) {
-            return Yii::$app->formatter->asDate($data->course->startDate);
-        },
-        'contentOptions' => ['style' => 'width:17%'],
-        'filterType' => KartikGridView::FILTER_DATE_RANGE,
-        'filterWidgetOptions' => [
-            'id' => 'enrolment-startdate-search',
-            'convertFormat' => true,
-            'initRangeExpr' => true,
-            'options' => [
-                'readOnly' => true,
-            ],
-            'pluginOptions' => [
-                'autoApply' => true,
-                'allowClear' => true,
-                'ranges' => [
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')",
-                        "moment().endOf('month')"],
-                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')",
-                        "moment().subtract(1, 'month').endOf('month')"],
-                ],
-                'locale' => [
-                    'format' => 'M d, Y',
-                ],
-                'opens' => 'left'
-            ]
-        ]
-    ],
-    [
-        'label' => 'End Date',
-        'attribute' => 'enddate',
-        'contentOptions' => ['style' => 'width:17%'],
-        'value' => function ($data) {
-            return Yii::$app->formatter->asDate($data->endDateTime);
-        },
-        'filterType' => KartikGridView::FILTER_DATE_RANGE,
-        'filterWidgetOptions' => [
-            'id' => 'enrolment-enddate-search',
-            'convertFormat' => true,
-            'initRangeExpr' => true,
-            'options' => [
-                'readOnly' => true,
-            ],
-            'pluginOptions' => [
-                'autoApply' => true,
-                'allowClear' => true,
-                'ranges' => [
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')",
-                        "moment().endOf('month')"],
-                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')",
-                        "moment().subtract(1, 'month').endOf('month')"],
-                ],
-                'locale' => [
-                    'format' => 'M d, Y',
-                ],
-                'opens' => 'left'
-            ]
-        ]
-    ]
-]; ?>
+        ?>
 
-<div class="grid-row-open">
-    <?= KartikGridView::widget([
-        'dataProvider' => $dataProvider,
-        'options' => ['id' => 'enrolment-listing-grid'],
-        'summary' => "Showing {begin} - {end} of {totalCount} items",
-        'emptyText' => false,
-        'toolbar' =>  [
-            [
-            'content' =>
-                Html::button('<i class="fa fa-plus"></i>', [
-                    'class' => 'btn btn-success new-enrol-btn',
-                ]),
-            'options' => ['title' =>'Add',
-                          'class' => 'btn-group mr-2']
-        ],
-            ['content' =>  $this->render('_action-menu'),
-             'options' => ['title' =>'Edit',]
+        <?php echo Tabs::widget([
+            'items' => [
+                [
+                    'label' => 'Enorlments',
+                    'content' => $gridView,
+                    'options' => [
+                            'id' => 'grid-view',
+                        ],
+                ],
+                [
+                    'label' =>'Schedule',
+                    'content' => $calendarView,
+                    'options' => [
+                            'id' => 'calendar-view',
+                        ],
+                ],
             ],
-            ['content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-             'options' => ['title' =>'Filter',]
-            ],
-            '{export}',
-            '{toggleData}'
-        ],
-        'panel' => [
-            'type' => GridView::TYPE_DEFAULT,
-            'heading' => 'Enrolments'
-        ],
-        'toggleDataOptions' => ['minCount' => 20],
-        'filterModel' => $searchModel,
-        'tableOptions' => ['class' => 'table table-bordered table-condensed'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-            $url = Url::to(['enrolment/view', 'id' => $model->id]);
-            $data = ['data-url' => $url];
-            return $data;
-        },
-        'columns' => $columns,
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'enrolment-listing'
-            ]
-        ]
-    ]); ?>
+        ]);?>
 </div>
+<script type="text/javascript">
 
-<script>
-    $(document).off('click', '#enrolment-teacher-change').on('click', '#enrolment-teacher-change', function(){
-        var enrolmentIds = $('#enrolment-listing-grid').yiiGridView('getSelectedRows');
-        if ($.isEmptyObject(enrolmentIds)) {
-            $('#index-error-notification').html("Choose any enrolments to change teacher").fadeIn().delay(5000).fadeOut();
-        } else {
-            var params = $.param({ 'EnrolmentSubstituteTeacher[enrolmentIds]': enrolmentIds });
-            $.ajax({
-                url    : '<?= Url::to(['teacher-substitute/enrolment']) ?>?' + params,
-                type   : 'get',
-                success: function(response)
-                {
-                    if (response.status) {
-                        $('#modal-content').html(response.data);
-                        $('#popup-modal').modal('show');
-                    } else {
-                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
-                    }
-                }
-            });
-        }
-    });
+$(document).ready(function() {
+    var date = Date();
+    schedule.fetchHolidayName(date);
+    schedule.refreshCalendar(moment(date), true);
+});
 
-    $(document).off('change', '#enrolment-listing-grid .select-on-check-all, input[name="selection[]"]').on('change', '#enrolment-listing-grid .select-on-check-all, input[name="selection[]"]', function () {
-        bulkAction.setAction();
-    });
 
-    var bulkAction = {
-        setAction: function() {
-            var enrolmentIds = $('#enrolment-listing-grid').yiiGridView('getSelectedRows');
-            if ($.isEmptyObject(enrolmentIds)) {
-                $('#enrolment-teacher-change').addClass('multiselect-disable');
-            } else {
-                $('#enrolment-teacher-change').removeClass('multiselect-disable');
-            }
-            return false;
-        }
+$(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+    var tab  = e.target.text;
+    var date = $('#schedule-go-to-datepicker').val();
+    if (tab === "Classroom View") {
+        schedule.showclassroomCalendar(moment(date));
+        $('.calendar-filter').hide();
+        $('#show-all').hide();
+    } else {
+        schedule.refreshCalendar(moment(date));
+        $('.calendar-filter').show();
+        $('#show-all').show();
+    }
+    return false;
+});
+
+$(document).off('change', '#program-selector').on('change', '#program-selector', function(){
+    var data = {
+        program: $('#program-selector').val()
     };
+    $.ajax({
+	url: '<?= Url::to(['course/teachers']); ?>',
+	type: 'post',
+	dataType: "json",
+        data: data,
+	success: function (response)
+	{
+            $("#teacher-selector").empty();
+            $("#teacher-selector").select2({
+                placeholder: 'Teacher',
+                allowClear: true,
+                data: response.output,
+                width: '100%',
+                theme: 'krajee'
+            });
+            var date = $('#calendar').fullCalendar('getDate');
+            schedule.refreshCalendar(moment(date));
+	}
+    });
+    return false;
+});
+    
+$(document).off('change', '#teacher-selector').on('change', '#teacher-selector', function(){
+    var date = $('#calendar').fullCalendar('getDate');
+    schedule.refreshCalendar(moment(date));
+    return false;
+});
 
-    $(document).on('click', '.new-enrol-btn', function() {
+$(document).off('change', '#schedule-show-all').on('change', '#schedule-show-all', function(){
+    var date = $('#calendar').fullCalendar('getDate');
+    schedule.refreshCalendar(moment(date));
+});
+
+$(document).off('change', '#schedule-go-to-datepicker').on('change', '#schedule-go-to-datepicker', function(){
+    var date = $('#schedule-go-to-datepicker').val();
+    schedule.fetchHolidayName(moment(date));
+    if ($('.nav-tabs .active').text() === 'Classroom View') {
+        schedule.showclassroomCalendar(moment(date));
+    } else {
+        schedule.refreshCalendar(moment(date));
+    }
+    return false;
+});
+
+var schedule = {
+    fetchHolidayName : function(date) {
+        var params = $.param({ date: moment(date).format('YYYY-MM-DD') });
         $.ajax({
-            url    : '<?= Url::to(['course/create-enrolment-basic', 'studentId' => null, 'isReverse' => true]); ?>',
-            type   : 'get',
+            url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
+            type: 'get',
             dataType: "json",
-            success: function(response)
+            success: function (response)
             {
-                if(response.status)
-                {
-                    $('#modal-content').html(response.data);
-                    $('#popup-modal').modal('show');
-                    $('.modal-save').show();
-                    $('.modal-save').text('Next');
-                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
-                    $('#popup-modal .modal-dialog').css({'width': '600px'});
+                var showAll = $('#schedule-show-all').is(":checked");
+                if ($(".content-header").html(response)) {
+                    if ($('.nav-tabs .active').text() === 'Classroom View') {
+                        $('#show-all').hide();
+                    }
+                    if (showAll) {
+                        $('#schedule-show-all').prop("checked", true);
+                    }
                 }
             }
         });
         return false;
-    });
+    },
 
-    $(document).on('modal-success', function(event, params) {
-        if (params.url) {
-            window.location.href = params.url;
+    showclassroomCalendar : function(date) {
+        var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+        var fromTime = "09:00:00";
+        var toTime   = "17:00:00";
+        var day      = moment(date).day();
+        $.each( locationAvailabilities, function( key, value ) {
+            if (day === 0) {
+                day = 7;
+            }
+            if (day === value.day) {
+                fromTime = value.fromTime;
+                toTime   = value.toTime;
+            }
+        });
+        $('#classroom-calendar').html('');
+        $('#classroom-calendar').unbind().removeData().fullCalendar({
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            header: false,
+            firstDay : 1,
+            nowIndicator: true,
+            contentHeight: "auto",
+            defaultDate: date,
+            titleFormat: 'DD-MMM-YYYY, dddd',
+            defaultView: 'agendaDay',
+            minTime: fromTime,
+            maxTime: toTime,
+            slotDuration: "00:15:00",
+            allDaySlot:false,
+            editable: true,
+            eventDurationEditable: false,
+            resources: {
+                url: '<?= Url::to(['schedule/render-classroom-resources']) ?>',
+                type: 'GET',
+                error: function() {
+                    alert("Resources can't be rendered!");
+                }
+            },
+            resourceRender: function(resourceObj, labelTds, bodyTds,element) {
+            var selector = '#classroom-calendar';
+                schedule.modifyResourceRender(selector);
+                if(resourceObj.description !== "")
+                {
+                labelTds.on('mouseover', function(){
+                $('#classroom-title-description').html(resourceObj.description).fadeIn().delay(500).fadeOut();});
+                labelTds.on('mousemove', function(event){
+                $('#classroom-title-description').css('top', event.pageY + 10);
+                $('#classroom-title-description').css('left', event.pageX + 20);
+                });
+            }
+            },
+            events: {
+                url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
+                type: 'GET',
+                error: function() {
+                    alert("Events can't be rendered!");
+                }
+            },
+            eventRender: function(event, element) {
+                schedule.modifyEventRender(event, element);
+            },
+            eventDrop: function(event) {
+                $('.tip-yellowsimple').hide();
+                schedule.modifyClassroom(event);
+            }
+        });
+    },
+
+    refreshCalendar : function(date, clearFilter) {
+        if (clearFilter) {
+            var programId = null;
+            var teacherId = null;
+        } else {
+            var programId = $('#program-selector').val();
+            var teacherId = $('#teacher-selector').val();
         }
-    });
+        var showAll = $('#schedule-show-all').is(":checked");
+        var params = $.param({ 
+            'ScheduleSearch[date]': moment(date).format('YYYY-MM-DD'),
+            'ScheduleSearch[showAll]': showAll | 0,
+            'ScheduleSearch[programId]': programId,
+            'ScheduleSearch[teacherId]': teacherId 
+        });
+        var minTime = "09:00:00";
+        var maxTime = "17:00:00";
+        var day     = moment(date).day();
+        if (showAll) {
+            var availabilitites = locationAvailabilities;
+        } else {
+            var availabilitites = scheduleVisibilities;
+        }
+        $.each(availabilitites , function( key, value ) {
+            if (day === 0) {
+                day = 7;
+            }
+            if (day === value.day) {
+                minTime = value.fromTime;
+                maxTime = value.toTime;
+            }
+        });
+        $('#calendar').html('');
+        $('#calendar').unbind().removeData().fullCalendar({
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            firstDay : 1,
+            nowIndicator: true,
+            header: false,
+            contentHeight: "auto",
+            defaultDate: date,
+            titleFormat: 'DD-MMM-YYYY, dddd',
+            defaultView: 'agendaDay',
+            minTime: minTime,
+            maxTime: maxTime,
+            slotDuration: "00:15:00",
+            allDaySlot:false,
+            editable: true,
+            droppable: false,
+            resources: {
+                url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
+                type: 'GET',
+                error: function() {
+                    alert("Resources can't be rendered!");
+                }
+            },
+            resourceRender: function() {
+                var selector = '#calendar';
+                schedule.modifyResourceRender(selector);
+            },
+            events: {
+                url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+                type: 'GET',
+                error: function() {
+                    alert("Events can't be rendered!");
+                }
+            },
+            eventRender: function(event, element) {
+                schedule.modifyEventRender(event, element);
+            },
+            eventDrop: function(event) {
+                schedule.eventDrop(event);
+            },
+            eventResize: function(event) {
+                schedule.eventResize(event);
+            }
+        });
+    },
 
-    $(document).on('change', '#enrolmentsearch-showallenrolments', function(){
-        var showAllEnrolments = $(this).is(":checked");
-        var program_search = $("input[name*='EnrolmentSearch[program]").val();
-        var student_search = $("input[name*='EnrolmentSearch[student]").val();
-        var teacher_search = $("input[name*='EnrolmentSearch[teacher]").val();
-        var startDate = $("input[name*='EnrolmentSearch[startdate]").val();
-        var params = $.param({ 'EnrolmentSearch[startdate]' :startDate, 'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),
-            'EnrolmentSearch[program]':program_search,'EnrolmentSearch[student]':student_search,
-            'EnrolmentSearch[teacher]':teacher_search});
-        var url = "<?php echo Url::to(['enrolment/index']); ?>?" + params;
-        $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
-    });
-</script>
+    eventDrop : function(event) {
+        $('.tip-yellowsimple').hide();
+        schedule.modifyLesson(event);
+    },
+    eventResize : function(event) {
+        schedule.modifyLesson(event);
+    },
+    modifyLesson : function(event) {
+        var start = moment(event.start);
+        var end = moment(event.end);
+        var durationSeconds = moment.duration(end.diff(start)).asSeconds();
+        var sendInfo = {
+            'Lesson[teacherId]': event.resourceId,
+            'Lesson[date]': moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+            'Lesson[duration]': moment().startOf('day').seconds(durationSeconds).format('HH:mm:ss')
+        };
+        var params = $.param({ id: event.lessonId });
+        $.ajax({
+            url: '<?= Url::to(['lesson/update']); ?>?' + params,
+            type: 'post',
+            dataType: "json",
+            data: sendInfo,
+            success: function (response)
+            {
+                if (response.status) {
+                    $("#calendar").fullCalendar("refetchEvents");
+                    $('#success-notification').html('Lesson successfully modified!').fadeIn().delay(5000).fadeOut();
+                } else {
+                    $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                    $("#calendar").fullCalendar("refetchEvents");
+                    $(window).scrollTop(0);
+                }
+            }
+        });
+    }, 
+
+    modifyClassroom : function(event) {
+        var params = $.param({
+            id: event.id,
+            classroomId: event.resourceId,
+        });
+        $.ajax({
+            url: '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status) {
+                    $("#classroom-calendar").fullCalendar("refetchEvents");
+                } else {
+                    $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                    $("#classroom-calendar").fullCalendar("refetchEvents");
+                    $(window).scrollTop(0);
+                }
+            }
+        });
+    }, 
+
+    modifyEventRender : function (event, element) {
+        if (event.isOwing && event.isOnline == 1) {
+          element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-dollar"></i><i class="fa fa-laptop" style="margin-left:3px"></i></div>');
+        } else if(event.isOwing && event.isOnline == 0) {
+            element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-dollar"></i></div>');
+        }else{
+            if(event.isOnline){
+                element.find("div.fc-content").prepend('<div class="pull-right" style="margin-right: 15px;margin-top:10px;"><i class="fa fa-laptop" style="margin-left:3px"></i></div>');
+            }
+        }
+        element.poshytip({
+            className: 'tip-yellowsimple',
+            alignTo: 'cursor',
+            alignX: 'center',
+            alignY : 'top',
+            offsetY: 5,
+            followCursor: false,
+            slide: false,
+            content : function() {
+                return event.description;
+            }
+        });
+    }, 
+
+    modifyResourceRender : function (selector) {
+        var resourceCount = $(selector).find('.fc-view .fc-row tr th').length;
+        if(resourceCount <= 8) {
+            $(selector).find('.fc-view .fc-row tr th.fc-resource-cell').css({'width': 'auto'});
+        } else {
+           $(selector).find('.fc-view .fc-row tr th.fc-resource-cell').css({'width': '100px'});
+        }
+        var theadWidth = $(selector).find('.fc-widget-header table thead').width();
+        $(selector).find('table').width(theadWidth);
+    }
+};
+$(document).off('click', '#calendar').on('click', '#calendar', function () {
+    $('#schedule-go-to-datepicker').trigger('blur');
+});
