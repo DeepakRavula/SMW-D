@@ -41,7 +41,7 @@ use kartik\grid\GridView;
         'attribute' => 'teacher',
         'label' => 'Teacher',
         'value' => function ($data) {
-            
+
             return $data->course->getTeachers();
         },
         'contentOptions' => ['style' => 'width:20%'],
@@ -81,14 +81,22 @@ use kartik\grid\GridView;
                 'autoApply' => true,
                 'allowClear' => true,
                 'ranges' => [
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')",
-                        "moment().endOf('month')"],
-                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')",
-                        "moment().subtract(1, 'month').endOf('month')"],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => [
+                        "moment().startOf('day').subtract(6, 'days')",
+                        'moment()'
+                    ],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => [
+                        "moment().startOf('day').subtract(29, 'days')",
+                        'moment()'
+                    ],
+                    Yii::t('kvdrp', 'This Month') => [
+                        "moment().startOf('month')",
+                        "moment().endOf('month')"
+                    ],
+                    Yii::t('kvdrp', 'Last Month') => [
+                        "moment().subtract(1, 'month').startOf('month')",
+                        "moment().subtract(1, 'month').endOf('month')"
+                    ],
                 ],
                 'locale' => [
                     'format' => 'M d, Y',
@@ -116,14 +124,22 @@ use kartik\grid\GridView;
                 'autoApply' => true,
                 'allowClear' => true,
                 'ranges' => [
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')",
-                        "moment().endOf('month')"],
-                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')",
-                        "moment().subtract(1, 'month').endOf('month')"],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => [
+                        "moment().startOf('day').subtract(6, 'days')",
+                        'moment()'
+                    ],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => [
+                        "moment().startOf('day').subtract(29, 'days')",
+                        'moment()'
+                    ],
+                    Yii::t('kvdrp', 'This Month') => [
+                        "moment().startOf('month')",
+                        "moment().endOf('month')"
+                    ],
+                    Yii::t('kvdrp', 'Last Month') => [
+                        "moment().subtract(1, 'month').startOf('month')",
+                        "moment().subtract(1, 'month').endOf('month')"
+                    ],
                 ],
                 'locale' => [
                     'format' => 'M d, Y',
@@ -142,18 +158,22 @@ use kartik\grid\GridView;
         'emptyText' => false,
         'toolbar' =>  [
             [
-            'content' =>
+                'content' =>
                 Html::button('<i class="fa fa-plus"></i>', [
                     'class' => 'btn btn-success new-enrol-btn',
                 ]),
-            'options' => ['title' =>'Add',
-                          'class' => 'btn-group mr-2']
-        ],
-            ['content' =>  $this->render('_action-menu'),
-             'options' => ['title' =>'Edit',]
+                'options' => [
+                    'title' => 'Add',
+                    'class' => 'btn-group mr-2'
+                ]
             ],
-            ['content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-             'options' => ['title' =>'Filter',]
+            [
+                'content' =>  $this->render('_action-menu'),
+                'options' => ['title' => 'Edit',]
+            ],
+            [
+                'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+                'options' => ['title' => 'Filter',]
             ],
             '{export}',
             '{toggleData}'
@@ -183,17 +203,18 @@ use kartik\grid\GridView;
 </div>
 
 <script>
-    $(document).off('click', '#enrolment-teacher-change').on('click', '#enrolment-teacher-change', function(){
+    $(document).off('click', '#enrolment-teacher-change').on('click', '#enrolment-teacher-change', function() {
         var enrolmentIds = $('#enrolment-listing-grid').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(enrolmentIds)) {
             $('#index-error-notification').html("Choose any enrolments to change teacher").fadeIn().delay(5000).fadeOut();
         } else {
-            var params = $.param({ 'EnrolmentSubstituteTeacher[enrolmentIds]': enrolmentIds });
+            var params = $.param({
+                'EnrolmentSubstituteTeacher[enrolmentIds]': enrolmentIds
+            });
             $.ajax({
-                url    : '<?= Url::to(['teacher-substitute/enrolment']) ?>?' + params,
-                type   : 'get',
-                success: function(response)
-                {
+                url: '<?= Url::to(['teacher-substitute/enrolment']) ?>?' + params,
+                type: 'get',
+                success: function(response) {
                     if (response.status) {
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
@@ -205,7 +226,7 @@ use kartik\grid\GridView;
         }
     });
 
-    $(document).off('change', '#enrolment-listing-grid .select-on-check-all, input[name="selection[]"]').on('change', '#enrolment-listing-grid .select-on-check-all, input[name="selection[]"]', function () {
+    $(document).off('change', '#enrolment-listing-grid .select-on-check-all, input[name="selection[]"]').on('change', '#enrolment-listing-grid .select-on-check-all, input[name="selection[]"]', function() {
         bulkAction.setAction();
     });
 
@@ -223,19 +244,19 @@ use kartik\grid\GridView;
 
     $(document).on('click', '.new-enrol-btn', function() {
         $.ajax({
-            url    : '<?= Url::to(['course/create-enrolment-basic', 'studentId' => null, 'isReverse' => true]); ?>',
-            type   : 'get',
+            url: '<?= Url::to(['course/create-enrolment-basic', 'studentId' => null, 'isReverse' => true]); ?>',
+            type: 'get',
             dataType: "json",
-            success: function(response)
-            {
-                if(response.status)
-                {
+            success: function(response) {
+                if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
                     $('.modal-save').show();
                     $('.modal-save').text('Next');
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
-                    $('#popup-modal .modal-dialog').css({'width': '600px'});
+                    $('#popup-modal .modal-dialog').css({
+                        'width': '600px'
+                    });
                 }
             }
         });
@@ -248,16 +269,25 @@ use kartik\grid\GridView;
         }
     });
 
-    $(document).on('change', '#enrolmentsearch-showallenrolments', function(){
+    $(document).on('change', '#enrolmentsearch-showallenrolments', function() {
         var showAllEnrolments = $(this).is(":checked");
         var program_search = $("input[name*='EnrolmentSearch[program]").val();
         var student_search = $("input[name*='EnrolmentSearch[student]").val();
         var teacher_search = $("input[name*='EnrolmentSearch[teacher]").val();
         var startDate = $("input[name*='EnrolmentSearch[startdate]").val();
-        var params = $.param({ 'EnrolmentSearch[startdate]' :startDate, 'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),
-            'EnrolmentSearch[program]':program_search,'EnrolmentSearch[student]':student_search,
-            'EnrolmentSearch[teacher]':teacher_search});
+        var params = $.param({
+            'EnrolmentSearch[startdate]': startDate,
+            'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),
+            'EnrolmentSearch[program]': program_search,
+            'EnrolmentSearch[student]': student_search,
+            'EnrolmentSearch[teacher]': teacher_search
+        });
         var url = "<?php echo Url::to(['enrolment/index']); ?>?" + params;
-        $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
+        $.pjax.reload({
+            url: url,
+            container: "#enrolment-listing",
+            replace: false,
+            timeout: 4000
+        }); //Reload GridView
     });
 </script>

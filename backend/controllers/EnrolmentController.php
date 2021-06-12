@@ -44,6 +44,7 @@ use common\models\CustomerReferralSource;
 use common\models\CourseSchedule;
 use backend\models\GroupCourseForm;
 use common\models\discount\EnrolmentDiscount;
+use common\models\LocationAvailability;
 use common\models\TeacherAvailability;
 
 /**
@@ -104,10 +105,22 @@ class EnrolmentController extends BaseController
     {
         $searchModel = new EnrolmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $scheduleVisibilities = LocationAvailability::find()
+            ->notDeleted()
+            ->location($locationId)
+            ->scheduleVisibilityHours()
+            ->all();
+        $locationAvailabilities = LocationAvailability::find()
+            ->notDeleted()
+            ->location($locationId)
+            ->locationaAvailabilityHours()
+            ->all();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'locationAvailabilities'   => $locationAvailabilities,
+            'scheduleVisibilities'     => $scheduleVisibilities,
         ]);
     }
 
