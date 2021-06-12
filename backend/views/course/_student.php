@@ -14,11 +14,11 @@ use common\models\Enrolment;
 ?>
 
 <div class="pull-right">
-    <a href="#"  title="Add" id="student-enrol" class="add-new-lesson"><i class="fa fa-plus"></i></a>
+    <a href="#" title="Add" id="student-enrol" class="add-new-lesson"><i class="fa fa-plus"></i></a>
 </div>
 <?php Pjax::begin(['id' => 'group-course-student']) ?>
 
-<div class="group-course-student-index"> 
+<div class="group-course-student-index">
     <?php echo GridView::widget([
         'dataProvider' => $studentDataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
@@ -53,8 +53,9 @@ use common\models\Enrolment;
                     return $enrolment->groupDiscountValue;
                 },
             ],
-            ['class' => 'yii\grid\ActionColumn',
-                'template' => '{edit}',
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{edit} {mail} {print}',
                 'buttons' => [
                     'edit' => function ($url, $model) use ($courseModel) {
                         $enrolment = Enrolment::find()
@@ -68,6 +69,32 @@ use common\models\Enrolment;
                             'class' => ['btn-info btn-sm group-enrolment-discount'],
                             'action-url' => $url
                         ]);
+                    },
+                    'mail' => function ($url, $model) use ($courseModel) {
+                        $enrolment = Enrolment::find()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->andWhere(['studentId' => $model->id, 'courseId' => $courseModel->id])
+                            ->one();
+                        $url = Url::to(['email/group-enrolment-detail', 'enrolmentId' => $enrolment->id]);
+                        return Html::a('<i title="Mail" class="fa fa-envelope"></i>', '#', [
+                            'title' => Yii::t('yii', 'Mail'),
+                            'class' => ['btn-info btn-sm group-enrolment-email'],
+                            'action-url' => $url
+                        ]);
+                    },
+                    'print' => function ($url, $model) use ($courseModel) {
+                        $enrolment = Enrolment::find()
+                            ->notDeleted()
+                            ->isConfirmed()
+                            ->andWhere(['studentId' => $model->id, 'courseId' => $courseModel->id])
+                            ->one();
+                        $url = Url::to(['print/group-enrolment', 'id' => $enrolment->id]);
+                        return Html::a('<i title="Print" class="fa fa-print"></i>', '#', [
+                            'title' => Yii::t('yii', 'Print'),
+                            'class' => ['btn-info btn-sm group-enrolment-print'],
+                            'action-url' => $url
+                        ]);
                     }
                 ]
             ]
@@ -77,40 +104,66 @@ use common\models\Enrolment;
 <?php Pjax::end(); ?>
 
 <script>
-    $(document).off('click', '#student-enrol').on('click', '#student-enrol', function () {
+    $(document).off('click', '#student-enrol').on('click', '#student-enrol', function() {
         $.ajax({
-            url    : '<?= Url::to(['enrolment/group', 'GroupCourseForm[courseId]' => $courseModel->id]) ?>',
+            url: '<?= Url::to(['enrolment/group', 'GroupCourseForm[courseId]' => $courseModel->id]) ?>',
             type: 'get',
             dataType: "json",
-            success: function (response)
-            {
+            success: function(response) {
                 if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
                     $('.modal-save').show();
                     $('.modal-save').text('Confirm');
-                    $('#popup-modal .modal-dialog').css({'width': '600px'});
-                } 
+                    $('#popup-modal .modal-dialog').css({
+                        'width': '600px'
+                    });
+                }
             }
         });
         return false;
     });
 
-    $(document).off('click', '.group-enrolment-discount').on('click', '.group-enrolment-discount', function () {
+    $(document).off('click', '.group-enrolment-print').on('click', '.group-enrolment-print', function() {
+        var url = $(this).attr('action-url');
+        window.open(url, '_blank');
+        return false;
+    });
+
+    $(document).off('click', '.group-enrolment-email').on('click', '.group-enrolment-email', function() {
+        $.ajax({
+            url: $(this).attr('action-url'),
+            type: 'get',
+            success: function(response) {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').text('save');
+                    $('#popup-modal .modal-dialog').css({
+                        'width': '600px'
+                    });
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).off('click', '.group-enrolment-discount').on('click', '.group-enrolment-discount', function() {
         var url = $(this).attr('action-url');
         $.ajax({
-            url    : url,
+            url: url,
             type: 'get',
             dataType: "json",
-            success: function (response)
-            {
+            success: function(response) {
                 if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
                     $('.modal-save').show();
                     $('.modal-save').text('save');
-                    $('#popup-modal .modal-dialog').css({'width': '400px'});
-                } 
+                    $('#popup-modal .modal-dialog').css({
+                        'width': '400px'
+                    });
+                }
             }
         });
         return false;

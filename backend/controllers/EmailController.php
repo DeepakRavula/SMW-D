@@ -39,6 +39,7 @@ use common\models\log\LessonLog;
 use common\models\log\InvoiceLog;
 use common\models\log\PaymentLog;
 use common\models\log\ReceivePaymentLog;
+use common\models\CourseSchedule;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -49,7 +50,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement'],
+                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -60,7 +61,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement'],
+                        'actions' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -454,6 +455,65 @@ class EmailController extends BaseController
             'searchModel' => $searchModel,
             'groupLessonSearchModel' => $groupLessonSearchModel,
             'total' =>$total,
+        ]);
+        $post = Yii::$app->request->post();
+        if (!$post) {
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }
+
+    
+    public function actionGroupEnrolmentDetail($enrolmentId) 
+    {
+            $model = Enrolment::findOne($enrolmentId);
+            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_CUSTOMER_STATEMENT]);
+            $user = User::findOne($model->student->customer->id);
+            $scheduleHistoryDataProvider = new ActiveDataProvider([
+                'query' => CourseSchedule::find()
+                ->andWhere(['courseId' => $model->courseId]),
+            ]);
+            $lessonCount = Lesson::find()
+                ->andWhere(['courseId' => $model->course->id])
+                ->notDeleted()
+                ->scheduledOrRescheduled()
+                ->notCompleted()
+                ->count();
+            $query = Lesson::find()
+            ->andWhere(['lesson.courseId' => $model->course->id])
+            ->scheduledOrRescheduled()
+            ->isConfirmed()
+            ->notDeleted()
+            ->notCompleted();
+            if ($model->course->isPrivate()) {
+                $query->orderBy([
+                    'lesson.dueDate' => SORT_ASC,
+                    'lesson.date' => SORT_ASC      
+                    ]);
+            } else {
+                $query->joinWith(['groupLesson' => function ($query) use ($enrolmentId) {
+                    $query->enrolment($enrolmentId)
+                    ->notDeleted();
+                }])
+                    ->orderBy([
+                    'group_lesson.dueDate' => SORT_ASC,
+                    'lesson.date' => SORT_ASC      
+                    ]);
+            }
+            $lessonDataProvider = new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => false,
+            ]);
+            $data = $this->renderAjax('/mail/_group-enrolment', [
+                'model' => new EmailForm(),
+                'emails' => !empty($user->email) ? $user->email : null,
+                'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
+                'emailTemplate' => $emailTemplate,
+                'userModel' => $user,
+                'lessonDataProvider' => $lessonDataProvider,
+                'enrolmentModel' => $model,
         ]);
         $post = Yii::$app->request->post();
         if (!$post) {
