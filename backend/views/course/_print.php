@@ -9,7 +9,7 @@ use yii\grid\GridView;
 $this->title = $model->id;
 ?>
 <section class="invoice">
-<?php $model = Enrolment::findOne() ?>
+
     <!-- title row -->
  <?php
    echo $this->render('/print/_header', [
