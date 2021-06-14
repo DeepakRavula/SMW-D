@@ -17,6 +17,7 @@ use yii\helpers\Url;
         <?php if ($model->course->program->isGroup()) : ?>
         <li><a id="group-enrolment-delete" href="#">Delete</a></li>
         <li><a id="enrolment-view-print" href="#">Print</a></li>
+        <li><a id="enrolment-view-mail" href="#">Mail</a></li>
         <?php endif; ?>
     </ul>
 </div>
@@ -59,6 +60,25 @@ use yii\helpers\Url;
     $(document).on("click", "#enrolment-view-print", function () {
         var url = '<?php echo Url::to(['print/group-enrolment','id' => $model->id]); ?>';
         window.open(url, '_blank');
+    });
+
+    $(document).on("click", "#enrolment-view-mail", function () {
+        var url = '<?php echo Url::to(['email/group-enrolment-detail', 'enrolmentId' => $model->id]); ?>'
+        $.ajax({
+            url: url,
+            type: 'get',
+            success: function(response) {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').text('save');
+                    $('#popup-modal .modal-dialog').css({
+                        'width': '600px'
+                    });
+                }
+            }
+        });
+        return false;
     });
 
 </script>
