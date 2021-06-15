@@ -127,6 +127,9 @@ class GroupLesson extends \yii\db\ActiveRecord
         $this->total = $this->lesson->getGroupNetPrice($this->enrolment);
         $this->balance = $this->total - $this->lesson->getCreditAppliedAmount($this->enrolmentId);
         $this->paidStatus = $this->getStatus();
+        if ($insert) {
+            $this->isDeleted = false;
+        }        
 
         return parent::beforeSave($insert);
     }
