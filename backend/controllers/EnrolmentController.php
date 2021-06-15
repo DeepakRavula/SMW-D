@@ -46,6 +46,7 @@ use backend\models\GroupCourseForm;
 use common\models\discount\EnrolmentDiscount;
 use common\models\LocationAvailability;
 use common\models\TeacherAvailability;
+use common\models\TeacherUnavailability;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -65,7 +66,7 @@ class EnrolmentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update', 'full-delete',
                     'edit-end-date', 'edit-program-rate', 'reschedule', 'update-preferred-payment-status',
-                    'group-confirm', 'group-enrolment-delete', 'group-apply', 'group-preview'
+                    'group-confirm', 'group-enrolment-delete', 'group-apply', 'group-preview', 'render-resources', 'render-day-events'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -80,7 +81,7 @@ class EnrolmentController extends BaseController
                         'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 
                             'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date',
                             'reschedule', 'cancel', 'update-preferred-payment-status', 'group-confirm', 
-                            'group-enrolment-delete', 'group-apply', 'group-preview'
+                            'group-enrolment-delete', 'group-apply', 'group-preview','render-resources', 'render-day-events'
                         ],
                         'roles' => ['manageEnrolments'],
                     ],
@@ -122,6 +123,66 @@ class EnrolmentController extends BaseController
             'locationAvailabilities'   => $locationAvailabilities,
             'scheduleVisibilities'     => $scheduleVisibilities,
         ]);
+    }
+
+    public function actionRenderResources()
+    {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $teacherId = $scheduleRequest['teacherId'];
+        $showAll = $scheduleRequest['showAll'];
+        $programId = $scheduleRequest['programId'];
+        $date = $scheduleRequest['date'];
+        $date       = new \DateTime($date);
+        $formatedDate = $date->format('Y-m-d');
+        $formatedDay = $date->format('N');
+        $resources = [];
+        $query = User::find()
+            ->joinWith(['teacherEnrolments' => function ($query) use ($formatedDate) {
+                $query->andWhere(['>','DATE(enrolment.endDateTime)', $formatedDate]);
+            }])
+            ->joinWith(['userProfile' => function ($query) {
+                $query->orderBy(['user_profile.firstname' => SORT_ASC]);
+            }]);
+            
+        if ($showAll && empty($teacherId) && empty($programId)) {
+            $availableUserQuery = User::find()
+                ->joinWith(['availabilities' => function ($query) use ($formatedDay) {
+                    $query->andWhere(['teacher_availability_day.day' => $formatedDay]);
+                }])
+                ->location($locationId);
+            $query->union($availableUserQuery);
+        }
+        if (!$programId) {
+            $query->location($locationId);
+        }
+        if (!empty($teacherId)) {
+            $query->andWhere(['user.id' => $teacherId])
+                ->location($locationId);
+        } else if (!empty($programId)) {
+            $query->teachers($programId, $locationId);
+        }
+        $teachers = $query->groupBy('user.id')->all();
+        $resources = $this->setResources($teachers);
+        if (empty($resources)) {
+            if (!empty($teacherId)) {
+                $resources[] = [
+                    'id'    => '0',
+                    'title' => 'Teacher not available today'
+                ];
+            } else if (!empty($programId)) {
+                $resources[] = [
+                    'id'    => '0',
+                    'title' => 'No teacher available today for the selected program'
+                ];
+            } else if (empty($teacherId) && empty($programId)) {
+                $resources[] = [
+                    'id'    => '0',
+                    'title' => 'No teacher available today'
+                ];
+            }
+        }
+        return $resources;
     }
 
     /**
@@ -900,5 +961,145 @@ class EnrolmentController extends BaseController
                 'message' => 'Enrolment has been deleted.'
             ];
         }
+    }
+
+    public function setResources($teachers) 
+    {
+        $resources = [];
+        foreach ($teachers as $teacher) {
+            $resources[] = [
+                'id'    => $teacher->id,
+                'title' => $teacher->getPublicIdentity(),
+            ];
+        }
+        return $resources;
+    }
+
+    public function actionRenderDayEvents()
+    {
+        $events = [];
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $teacherId = $scheduleRequest['teacherId'];
+        $showAll = $scheduleRequest['showAll'];
+        $programId = $scheduleRequest['programId'];
+        $date = $scheduleRequest['date'];
+        $date = Carbon::parse($date);
+        $formatedDate = $date->format('Y-m-d');
+        $teachersAvailabilities = $this->getTeacherAvailability($teacherId, $programId, $showAll, $date);
+        $events = $this->getTeacherAvailabilityEvents($teachersAvailabilities, $date);
+        $enrolments = $this->getEnrolments($date, $teacherId);
+        foreach ($enrolments as &$enrolment) {
+            $toTime = new \DateTime($enrolment->endDateTime);
+            $length = explode(':', $enrolment->course->firstLesson->duration);
+            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+            $title = $enrolment->scheduleTitle;
+            $class = $enrolment->class;
+            $backgroundColor = '#000EEE';
+                $description = $this->renderAjax('enrolment-description', [
+                    'title' => $title,
+                    'enrolment' => $enrolment,
+                    'view' => Lesson::TEACHER_VIEW
+                ]);
+
+            $events[] = [
+                'lessonId' => $enrolment->id,
+                'isOwing' => $enrolment->student ? $enrolment->student->customer->customerAccount->balance > 0 ? true:false : null,
+                'resourceId' => $enrolment->course->teacherId,
+                'title' => $title,
+                'start' => $enrolment->endDateTime,
+                'end' => $toTime->format('Y-m-d H:i:s'),
+                'url' => Url::to(['enrolment/view', 'id' => $enrolment->id]),
+                'className' => $class,
+                'backgroundColor' => $backgroundColor,
+                'description' => $description,
+            ];
+        }
+        unset($lesson);
+        return $events;
+    }
+    public function getTeacherAvailability($teacherId, $programId, $showAll, $date)
+    {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $formatedDate = $date->format('Y-m-d');
+        $availabilityQuery = TeacherAvailability::find()
+            ->notDeleted()
+            ->andWhere(['day' => $date->format('N')]);
+        $availabilityQuery->joinWith(['userLocation' => function ($query) use ($teacherId, $programId, $locationId, $showAll, $formatedDate) {
+            if (!$showAll) {
+                $query->joinWith(['user' => function ($query) use ($formatedDate) {
+                    $query->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
+                        $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
+                    }]);
+                }]);
+            }
+            if ($teacherId) {
+                $query->andWhere(['user_location.user_id' => $teacherId]);
+            } else if ($programId) {
+                $query->joinWith(['qualifications'  => function ($query) use ($programId) {
+                    $query->andWhere(['qualification.program_id' => $programId]);
+                }]);
+            }
+            $query->andWhere(['user_location.location_id' => $locationId]);
+        }]);
+        $availabilities = $availabilityQuery->all();
+        return $availabilities;
+    }
+    public function getEnrolments($date, $teacherId = null)
+    {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $query = Enrolment::find()
+            ->location($locationId)
+            ->isConfirmed()
+            ->andWhere(['>','DATE(enrolment.endDateTime)', $date->format('Y-m-d')])
+            ->notDeleted();
+        $enrolments = $query->all();
+        return $enrolments;
+    }
+    public function getTeacherAvailabilityEvents($teachersAvailabilities, $date)
+    {
+        $events = [];
+        foreach ($teachersAvailabilities as $teachersAvailability) {
+            $unavailabilities = $this->getTeacherUnavailability($teachersAvailability, $date);
+                if (!empty($unavailabilities)) {
+                    foreach ($unavailabilities as $unavailability) {
+                        if (empty($unavailability->fromDateTime) && empty($unavailability->toDateTime) || $unavailability->fromDateTime === 
+                            $teachersAvailability->from_time && $unavailability->toDateTime === $teachersAvailability->to_time) {
+                            continue;
+                            } else {
+                        $events = array_merge($events, $this->getAvailabilityEvents($teachersAvailability, $unavailability, $date));
+                        }
+
+                    }
+                } else {
+            $events[] = $this->getRegularAvailability($teachersAvailability, $date);
+                }
+        }
+    return $events;
+    }
+    public function getTeacherUnavailability($teacherAvailability, $date)
+    {
+        $availability = TeacherAvailability::findOne($teacherAvailability->id);
+        $unavailability = TeacherUnavailability::find()
+            ->andWhere(['teacherId' => $availability->teacher->id])
+            ->overlap($date)
+            ->all();
+        return $unavailability;
+    }
+    public function getRegularAvailability($teachersAvailability, $date)
+    {
+        $startTime = Carbon::parse($teachersAvailability->from_time);
+        $start = $date->setTime($startTime->hour, $startTime->minute, $startTime->second);
+        $endTime = Carbon::parse($teachersAvailability->to_time);
+        $end = clone $date;
+        $end = $end->setTime($endTime->hour, $endTime->minute, $endTime->second);
+        $availability = TeacherAvailability::findOne($teachersAvailability->id);
+        return [
+            'resourceId' => $availability->teacher->id,
+            'title'      => '',
+            'start'      => $start->format('Y-m-d H:i:s'),
+            'end'        => $end->format('Y-m-d H:i:s'),
+            'rendering'  => 'background',
+        ];
     }
 }

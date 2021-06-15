@@ -314,7 +314,7 @@ var schedule = {
             editable: true,
             droppable: false,
             resources: {
-                url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
+                url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
                 type: 'GET',
                 error: function() {
                     alert("Resources can't be rendered!");
@@ -325,7 +325,7 @@ var schedule = {
                 schedule.modifyResourceRender(selector);
             },
             events: {
-                url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+                url: '<?= Url::to(['enrolment/render-day-events']) ?>?' + params,
                 type: 'GET',
                 error: function() {
                     alert("Events can't be rendered!");
