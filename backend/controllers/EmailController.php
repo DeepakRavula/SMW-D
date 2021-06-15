@@ -531,9 +531,9 @@ class EmailController extends BaseController
         $userId = Yii::$app->request->get('EmailForm')['userId'];
         $model = new EmailForm();
         if ($model->load(Yii::$app->request->post())) {   
-            foreach ($model->bcc as $emailBcc) {
+            foreach ($model->to as $email) {
                 Yii::$app->queue->push(new BulkEmail([
-                    'bcc' => $emailBcc,
+                    'to' => $email,
                     'subject' => $model->subject,
                     'locationEmail' => $location->email,
                     'content' => $model->content,

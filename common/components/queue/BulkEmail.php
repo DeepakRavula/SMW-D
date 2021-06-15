@@ -14,7 +14,7 @@ class BulkEmail extends BaseObject implements RetryableJobInterface
     public $locationEmail;
     public $content;
     public $subject;
-    public $bcc;
+    public $to;
 
     /**
      * @inheritdoc
@@ -28,7 +28,7 @@ class BulkEmail extends BaseObject implements RetryableJobInterface
         ->setFrom($this->locationEmail)
         ->setReplyTo($this->locationEmail)
         ->setSubject($this->subject)
-        ->setBcc($this->bcc);
+        ->setTo($this->to);
         Yii::$app->mailer->sendMultiple($content);
         
         return true;

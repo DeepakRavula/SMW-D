@@ -5,8 +5,8 @@ use common\models\UserEmail;
 use common\models\Location;
 $location = Location::findOne(['slug' => \Yii::$app->location]);
     $content = "";
-    $model->to = "";
-    $model->bcc = $emails;
+    $model->to = $emails;
+    $model->bcc = "";
     $data = "";
     $bccEmails = $emails;
 ?>

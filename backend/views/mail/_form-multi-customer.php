@@ -22,7 +22,7 @@ use dosamigos\ckeditor\CKEditor;
  
     <div class="row">
         <div class="col-lg-12">
-            <?= $form->field($model, 'bcc')->widget(Select2::classname(), [
+            <?= $form->field($model, 'to')->widget(Select2::classname(), [
                 'data' => !empty($bccEmails) ? $bccEmails :null,
                 'pluginOptions' => [
                     'tags' => true,
