@@ -989,11 +989,12 @@ class EnrolmentController extends BaseController
         $teachersAvailabilities = $this->getTeacherAvailability($teacherId, $programId, $showAll, $date);
         $events = $this->getTeacherAvailabilityEvents($teachersAvailabilities, $date);
         $enrolments = $this->getEnrolments($date, $teacherId);
+     
         foreach ($enrolments as &$enrolment) {
-            $toTime = new \DateTime($enrolment->endDateTime);
-            $length = explode(':', $enrolment->course->firstLesson->duration);
-            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-            $title = $enrolment->scheduleTitle;
+            $toTime = new \DateTime($enrolment->course->recentCourseSchedule->fromTime);
+            $length = explode(':', $enrolment->course->recentCourseSchedule->duration);
+            $toTime->add(new \DateInterval('PT'.$length[0].'H30M'));
+            $title = $enrolment->student->getFullName();
             $class = $enrolment->class;
             $backgroundColor = '#000EEE';
                 $description = $this->renderAjax('enrolment-description', [
@@ -1004,18 +1005,17 @@ class EnrolmentController extends BaseController
 
             $events[] = [
                 'lessonId' => $enrolment->id,
-                'isOwing' => $enrolment->student ? $enrolment->student->customer->customerAccount->balance > 0 ? true:false : null,
                 'resourceId' => $enrolment->course->teacherId,
                 'title' => $title,
-                'start' => $enrolment->endDateTime,
-                'end' => $toTime->format('Y-m-d H:i:s'),
+                'start' => (new \DateTime($enrolment->course->recentCourseSchedule->fromTime))->format('H:i:s'),
+                'end' => $toTime->format('H:i:s'),
                 'url' => Url::to(['enrolment/view', 'id' => $enrolment->id]),
                 'className' => $class,
                 'backgroundColor' => $backgroundColor,
                 'description' => $description,
             ];
         }
-        unset($lesson);
+        unset($enrolment);
         return $events;
     }
     public function getTeacherAvailability($teacherId, $programId, $showAll, $date)
@@ -1026,13 +1026,6 @@ class EnrolmentController extends BaseController
             ->notDeleted()
             ->andWhere(['day' => $date->format('N')]);
         $availabilityQuery->joinWith(['userLocation' => function ($query) use ($teacherId, $programId, $locationId, $showAll, $formatedDate) {
-            if (!$showAll) {
-                $query->joinWith(['user' => function ($query) use ($formatedDate) {
-                    $query->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
-                        $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
-                    }]);
-                }]);
-            }
             if ($teacherId) {
                 $query->andWhere(['user_location.user_id' => $teacherId]);
             } else if ($programId) {
@@ -1049,10 +1042,17 @@ class EnrolmentController extends BaseController
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $query = Enrolment::find()
+        ->joinWith(['course' => function ($query) use ($locationId, $date) {
+            $query->joinWith(['recentCourseSchedule' => function ($query) use ($locationId, $date) {
+                $query->andWhere(['course_schedule.day' => (new \DateTime($date))->format('w')]);
+            }])
             ->location($locationId)
-            ->isConfirmed()
-            ->andWhere(['>','DATE(enrolment.endDateTime)', $date->format('Y-m-d')])
+            ->confirmed()
             ->notDeleted();
+        }])
+        ->notDeleted()
+        ->isConfirmed()
+        ->isRegular();
         $enrolments = $query->all();
         return $enrolments;
     }

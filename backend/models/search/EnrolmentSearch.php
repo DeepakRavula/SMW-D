@@ -29,6 +29,7 @@ class EnrolmentSearch extends Enrolment
     public $studentId;
     public $isAutoRenewal;
     public $goToDate;
+    public $weekDate;
     /**
      * {@inheritdoc}
      */
@@ -37,7 +38,7 @@ class EnrolmentSearch extends Enrolment
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
             [['showAllEnrolments', 'program', 'course', 'student', 'startdate', 'teacher', 'endEndDate',  
-            'startBeginDate', 'startEndDate', 'studentView', 'studentId', 'enddate', 'endBeginDate', 'isAutoRenewal', 'goToDate'], 'safe']
+            'startBeginDate', 'startEndDate', 'studentView', 'studentId', 'enddate', 'endBeginDate', 'isAutoRenewal', 'goToDate', 'weekDate'], 'safe']
         ];
     }
 
