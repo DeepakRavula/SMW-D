@@ -1050,6 +1050,7 @@ class EnrolmentController extends BaseController
             ->confirmed()
             ->notDeleted();
         }])
+        ->activeAndfutureEnrolments()
         ->notDeleted()
         ->isConfirmed()
         ->isRegular();
