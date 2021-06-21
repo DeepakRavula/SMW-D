@@ -112,7 +112,6 @@ use yii\jui\DatePicker;
     var scheduleVisibilities = <?php echo Json::encode($scheduleVisibilities); ?>;
     $(document).ready(function() {
         var date = Date();
-        debugger;
         var date_today = moment(date).format('YYYY-MM-DD');
         $('#select-week-date').val(moment(date_today).day());
         var day_selected = $('#select-week-date').val();
@@ -236,7 +235,6 @@ use yii\jui\DatePicker;
                 'ScheduleSearch[programId]': programId,
                 'ScheduleSearch[teacherId]': teacherId
             });
-         
             var minTime = "09:00:00";
             var maxTime = "17:00:00";
             var day = moment(date).day();

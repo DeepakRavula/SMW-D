@@ -1206,10 +1206,5 @@ class User extends ActiveRecord implements IdentityInterface
         return $customerAccountBalance;
     }
 
-    public function getTeacherEnrolments()
-    {
-        return $this->hasMany(Enrolment::className(), ['courseId' => 'id'])
-            ->onCondition(['enrolment.isDeleted' => false])
-            ->via('courses');
-    }
+
 }

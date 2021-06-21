@@ -138,8 +138,10 @@ class EnrolmentController extends BaseController
         $formatedDay = $date->format('N');
         $resources = [];
         $query = User::find()
-            ->joinWith(['teacherEnrolments' => function ($query) use ($formatedDate) {
-                $query->andWhere(['>','DATE(enrolment.endDateTime)', $formatedDate]);
+                ->joinWith(['courses' => function ($query) use ($locationId, $formatedDate) {
+                    $query->joinWith(['recentCourseSchedule' => function ($query) use ($locationId, $formatedDate) {
+                        $query->andWhere(['course_schedule.day' => (new \DateTime($formatedDate))->format('w')]);
+                    }]);
             }])
             ->joinWith(['userProfile' => function ($query) {
                 $query->orderBy(['user_profile.firstname' => SORT_ASC]);
