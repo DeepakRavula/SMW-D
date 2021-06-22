@@ -995,7 +995,7 @@ class EnrolmentController extends BaseController
         foreach ($enrolments as &$enrolment) {
             $toTime = new \DateTime($enrolment->course->recentCourseSchedule->fromTime);
             $length = explode(':', $enrolment->course->recentCourseSchedule->duration);
-            $toTime->add(new \DateInterval('PT'.$length[0].'H30M'));
+            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
             $title = $enrolment->student->getFullName();
             $class = $enrolment->class;
             $backgroundColor = '#000EEE';
