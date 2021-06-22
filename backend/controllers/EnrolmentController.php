@@ -1007,7 +1007,7 @@ class EnrolmentController extends BaseController
 
             $events[] = [
                 'lessonId' => $enrolment->id,
-                'resourceId' => $enrolment->course->teacherId,
+                'resourceId' => $enrolment->course->recentCourseSchedule->teacherId,
                 'title' => $title,
                 'start' => (new \DateTime($enrolment->course->recentCourseSchedule->fromTime))->format('H:i:s'),
                 'end' => $toTime->format('H:i:s'),
