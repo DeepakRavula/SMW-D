@@ -133,6 +133,8 @@ use yii\jui\DatePicker;
 
 
     $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
+        $('.tv-icon').hide();
+        $('#show-all').hide();
         var date = Date();
         var date_today = moment(date).format('YYYY-MM-DD');
         $('#select-week-date').val(moment(date_today).day());

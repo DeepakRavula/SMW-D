@@ -164,7 +164,7 @@ class EnrolmentController extends BaseController
         } else if (!empty($programId)) {
             $query->teachers($programId, $locationId);
         }
-        $teachers = $query->groupBy('user.id')->all();
+        $teachers = $query->orderBy('user_profile.firstname')->groupBy('user.id')->all();
         $resources = $this->setResources($teachers);
         if (empty($resources)) {
             if (!empty($teacherId)) {
