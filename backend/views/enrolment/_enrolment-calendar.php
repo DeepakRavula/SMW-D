@@ -133,9 +133,23 @@ use yii\jui\DatePicker;
 
 
     $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
-        var tab = e.target.text;
-        var date = $('#select-week-date').val();
-            schedule.refreshCalendar(moment(date));
+        var date = Date();
+        var date_today = moment(date).format('YYYY-MM-DD');
+        $('#select-week-date').val(moment(date_today).day());
+        var day_selected = $('#select-week-date').val();
+        var date_today = moment(date).format('YYYY-MM-DD');
+        day_date_today = moment(date_today).day();
+        var selected_date = "";
+        if (day_date_today == day_selected) {
+            selected_date = Date();
+        } else {
+            days_difference = day_selected - day_date_today;
+            var date = Date();
+            var day_selected = $('#select-week-date').val();
+            var formatted_date = moment(date).format("DD-MM-YYYY");
+            selected_date = moment(formatted_date, "DD-MM-YYYY").add(days_difference, 'days');
+        }
+        schedule.refreshCalendar(moment(selected_date));
             $('.calendar-filter').show();
         return false;
     });
@@ -230,7 +244,7 @@ use yii\jui\DatePicker;
             }
             var showAll = $('#schedule-show-all').is(":checked");
             var params = $.param({
-                'ScheduleSearch[date]': moment(date).format('YYYY-MM-DD'),
+                'ScheduleSearch[date]': date.format('YYYY-MM-DD'),
                 'ScheduleSearch[showAll]': showAll | 0,
                 'ScheduleSearch[programId]': programId,
                 'ScheduleSearch[teacherId]': teacherId
