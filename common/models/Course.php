@@ -560,6 +560,8 @@ class Course extends \yii\db\ActiveRecord
             'dueDate' => $day->format('Y-m-d')
         ]);
         $lesson->save();
+        $lesson->makeAsRoot();
+        $lesson->setDiscount();
         return $lesson;
     }
 

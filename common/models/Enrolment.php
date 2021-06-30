@@ -1189,7 +1189,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->lessonPayment;
     }
 
-    public function setAutoRenewalPaymentCycle($startDate)
+    public function setAutoRenewalPaymentCycle($startDate, $autoRenewalId)
     {
         $enrolmentStartDate      = new \DateTime($startDate);
         $endDate = (new \DateTime($startDate))->format('Y-m-1');
@@ -1207,7 +1207,7 @@ class Enrolment extends \yii\db\ActiveRecord
             $paymentCycle->endDate     = $endDate->format('Y-m-d');
             $paymentCycle->save();
             $autoRenewalPaymentCycle = new AutoRenewalPaymentCycle();
-            $autoRenewalPaymentCycle->autoRenewalId = $paymentCycle->paymentCycleLesson->autoRenewalLessons->autoRenewalId;
+            $autoRenewalPaymentCycle->autoRenewalId = $autoRenewalId;
             $autoRenewalPaymentCycle->paymentCycleId = $paymentCycle->id;
             $autoRenewalPaymentCycle->save();
         }
