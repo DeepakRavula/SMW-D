@@ -1055,7 +1055,8 @@ class EnrolmentController extends BaseController
         ->activeAndfutureEnrolments()
         ->notDeleted()
         ->isConfirmed()
-        ->isRegular();
+        ->isRegular()
+        ->groupBy('enrolment.id');
         $enrolments = $query->all();
         return $enrolments;
     }
