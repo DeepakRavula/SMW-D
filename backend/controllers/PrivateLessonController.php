@@ -41,7 +41,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type', 'teacher-bulk-reschedule',
+                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type', 'teacher-bulk-reschedule','generate-invoice',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -55,7 +55,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type', 'teacher-bulk-reschedule',
+                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type', 'teacher-bulk-reschedule', 'generate-invoice',
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -748,6 +748,53 @@ class PrivateLessonController extends BaseController
                 'status' => true,
                 'data' => $data,
             ];     
+        }
+        return $response;
+    }
+
+    public function actionGenerateInvoice()
+    {
+        $privateLessonModel = new PrivateLesson();
+        $privateLessonModel->load(Yii::$app->request->get());
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $post = Yii::$app->request->post();
+        $lessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->location($locationId)
+                ->andWhere(['lesson.id' => $privateLessonModel->lessonIds])
+                ->all();
+        $noOfInvoicededLesson = 0;
+        $noOfNotInvoicedLesson = 0;
+        foreach ($lessons as $lesson) {
+           if ($lesson->canInvoice()) {
+                if ($lesson->hasInvoice()) {
+                    $invoice = $lesson->invoice;
+                } else {
+                    $invoice = $lesson->createPrivateLessonInvoice();
+                }
+                $noOfInvoicededLesson++;
+           } else {
+                $noOfNotInvoicedLesson++;
+           }
+        }
+        $response = [];
+        if ($noOfNotInvoicedLesson == 0) {
+           $response = [
+               'status' => true,
+               'message' => 'Lesson has been invoiced Sucessfully.',
+           ];
+        } elseif($noOfInvoicededLesson == 0) {
+            $response = [
+                'status' => false,
+                'error' => 'Lesson has not been invoiced bcoz all lessons not completed',
+            ]; 
+        } else {
+           $response = [
+               'status' => true,
+               'message' => $noOfInvoicededLesson .' lesson has been Invoiced Sucessfully and '. $noOfNotInvoicedLesson. ' skipped',
+           ];
         }
         return $response;
     }

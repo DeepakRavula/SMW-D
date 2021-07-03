@@ -356,6 +356,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                 $('#email-multi-customer').addClass('multiselect-disable');
                 $('#lesson-unschedule').addClass('multiselect-disable');
                 $('#lesson-reschedule').removeClass('multiselect-disable');
+                $('#generate-invoice').removeClass('multiselect-disable');
             } else {
                 $('#substitute-teacher').removeClass('multiselect-disable');
                 $('#lesson-discount').removeClass('multiselect-disable');
@@ -366,6 +367,7 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                 $('#email-multi-customer').removeClass('multiselect-disable');
                 $('#lesson-unschedule').removeClass('multiselect-disable');
                 $('#lesson-reschedule').removeClass('multiselect-disable');
+                $('#generate-invoice').removeClass('multiselect-disable');
             }
             return false;
         }
@@ -560,6 +562,26 @@ if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
                                 if (response.error) {
                                     $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
                                 }
+                            }
+                        }
+                    });
+        return false;
+    });
+
+
+    $(document).off('click', '#generate-invoice').on('click', '#generate-invoice', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'PrivateLesson[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?=Url::to(['private-lesson/generate-invoice'])?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {
+                            if (response.message) {
+                                $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                            }
+                            if (response.error) {
+                                $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
                             }
                         }
                     });
