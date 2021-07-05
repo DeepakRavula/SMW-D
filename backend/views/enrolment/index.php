@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
@@ -11,38 +12,38 @@ use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 ?>
 <div class="nav-tabs-custom">
-        <?php
+    <?php
 
-        $gridView = $this->render('_enrolment-grid', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+    $gridView = $this->render('_enrolment-grid', [
+        'searchModel' => $searchModel,
+        'dataProvider' => $dataProvider,
+    ]);
 
-        $calendarView = $this->render('_enrolment-calendar',  [
-            'searchModel' => $searchModel,
-            'locationAvailabilities'   => $locationAvailabilities,
-            'scheduleVisibilities'     => $scheduleVisibilities,
-           
-        ]);
+    // $calendarView = $this->render('_enrolment-calendar',  [
+    //     'searchModel' => $searchModel,
+    //     'locationAvailabilities'   => $locationAvailabilities,
+    //     'scheduleVisibilities'     => $scheduleVisibilities,
 
-        ?>
+    // ]);
 
-        <?php echo Tabs::widget([
-            'items' => [
-                [
-                    'label' => 'Enorlments',
-                    'content' => $gridView,
-                    'options' => [
-                            'id' => 'grid-view',
-                        ],
-                ],
-                [
-                    'label' =>'Schedule',
-                    'content' => $calendarView,
-                    'options' => [
-                            'id' => 'calendar-view',
-                        ],
+    ?>
+
+    <?php echo Tabs::widget([
+        'items' => [
+            [
+                'label' => 'Enorlments',
+                'content' => $gridView,
+                'options' => [
+                    'id' => 'grid-view',
                 ],
             ],
-        ]);?>
+            // [
+            //     'label' =>'Schedule',
+            //     'content' => $calendarView,
+            //     'options' => [
+            //             'id' => 'calendar-view',
+            //         ],
+            // ],
+        ],
+    ]); ?>
 </div>
