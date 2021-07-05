@@ -164,7 +164,6 @@ var updatePayment = {
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             $('.amount-to-apply').digits();
             $('.amount-to-credit').text((amountReceived - amountToDistribute).toFixed(2));
-            debugger;
             $('.amount-to-credit').digits();
             return false;
         }

@@ -173,6 +173,7 @@ class Location extends \yii\db\ActiveRecord
         if ($insert) {
             $this->country_id = 1;
             $this->isDeleted = false;
+            $this->isEnabledCron = false;
         }
        
         return parent::beforeSave($insert);
