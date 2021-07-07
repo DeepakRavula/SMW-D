@@ -791,12 +791,12 @@ class PrivateLessonController extends BaseController
         } elseif($noOfAlreadyInvoicededLesson == 0 && $noOfInvoicededLesson == 0) {
             $response = [
                 'status' => false,
-                'error' => 'Lesson has not been invoiced bcoz all lessons not completed',
+                'error' => 'Selected lesson\'s  have not been invoiced',
             ]; 
         } elseif($noOfAlreadyInvoicededLesson > 0 && $noOfNotInvoicedLesson == 0 && $noOfInvoicededLesson == 0) {
             $response = [
                 'status' => false,
-                'error' => 'Lessons already invoiced',
+                'error' => 'Lesson\'s already invoiced',
             ]; 
         } elseif ($noOfAlreadyInvoicededLesson > 0 && $noOfInvoicededLesson > 0 && $noOfNotInvoicedLesson == 0) {   
             $response = [
