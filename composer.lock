@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "09593d72cb1d54a79e6a81022bc53bbf",
+    "content-hash": "83ee168ac1a56d4dc52b2a86bf45638b",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -4342,6 +4342,7 @@
                 "cron",
                 "schedule"
             ],
+            "abandoned": "dragonmantank/cron-expression",
             "time": "2017-01-23T04:29:33+00:00"
         },
         {
@@ -5201,6 +5202,115 @@
             "time": "2018-02-26T15:55:47+00:00"
         },
         {
+            "name": "symfony/css-selector",
+            "version": "v4.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/css-selector.git",
+                "reference": "c69f1e93aa898fd9fec627ebef467188151c8dc2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/c69f1e93aa898fd9fec627ebef467188151c8dc2",
+                "reference": "c69f1e93aa898fd9fec627ebef467188151c8dc2",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\CssSelector\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jean-François Simon",
+                    "email": "jeanfrancois.simon@sensiolabs.com"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony CssSelector Component",
+            "homepage": "https://symfony.com",
+            "time": "2018-02-03T14:58:37+00:00"
+        },
+        {
+            "name": "symfony/dom-crawler",
+            "version": "v4.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dom-crawler.git",
+                "reference": "26726ddc01601dc9393f2afc3369ce1ca64e4537"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/26726ddc01601dc9393f2afc3369ce1ca64e4537",
+                "reference": "26726ddc01601dc9393f2afc3369ce1ca64e4537",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "symfony/css-selector": "~3.4|~4.0"
+            },
+            "suggest": {
+                "symfony/css-selector": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DomCrawler\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony DomCrawler Component",
+            "homepage": "https://symfony.com",
+            "time": "2018-02-22T10:50:29+00:00"
+        },
+        {
             "name": "symfony/event-dispatcher",
             "version": "v4.0.6",
             "source": {
@@ -5839,6 +5949,7 @@
                 }
             ],
             "description": "Cheat sheet of knowledge you may use in your code",
+            "abandoned": true,
             "time": "2015-02-03T00:33:00+00:00"
         },
         {
@@ -6210,19 +6321,49 @@
         },
         {
             "name": "wbraganca/yii2-dynamicform",
-            "version": "dev-master",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/senguttuvang/yii2-dynamicform",
-                "reference": "master"
+                "url": "https://github.com/wbraganca/yii2-dynamicform.git",
+                "reference": "9b761d708aa6c06c1219e1c2ed321f7cb205b09f"
             },
-            "type": "library",
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wbraganca/yii2-dynamicform/zipball/9b761d708aa6c06c1219e1c2ed321f7cb205b09f",
+                "reference": "9b761d708aa6c06c1219e1c2ed321f7cb205b09f",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/css-selector": "*",
+                "symfony/dom-crawler": "*",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
             "autoload": {
-                "classmap": [
-                    ""
-                ]
+                "psr-4": {
+                    "wbraganca\\dynamicform\\": ""
+                }
             },
-            "time": "2017-06-05T13:38:06+00:00"
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Wanderson Bragança",
+                    "email": "wanderson.wbc@gmail.com"
+                }
+            ],
+            "description": "It is widget to yii2 framework to clone form elements in a nested manner, maintaining accessibility.",
+            "keywords": [
+                "copy DOM element",
+                "extension",
+                "widget",
+                "yii2",
+                "yii2 dynamic form",
+                "yii2-dynamicform"
+            ],
+            "time": "2015-02-25T15:31:24+00:00"
         },
         {
             "name": "wbraganca/yii2-selectivity",
@@ -7383,6 +7524,7 @@
                 "phar",
                 "update"
             ],
+            "abandoned": true,
             "time": "2018-02-27T17:29:10+00:00"
         },
         {
@@ -7434,6 +7576,7 @@
                 "slack",
                 "yarn"
             ],
+            "abandoned": true,
             "time": "2017-11-29T11:03:02+00:00"
         },
         {
@@ -7495,12 +7638,12 @@
             "version": "1.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/facebook/php-webdriver.git",
+                "url": "https://github.com/php-webdriver/php-webdriver-archive.git",
                 "reference": "86b5ca2f67173c9d34340845dd690149c886a605"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/86b5ca2f67173c9d34340845dd690149c886a605",
+                "url": "https://api.github.com/repos/php-webdriver/php-webdriver-archive/zipball/86b5ca2f67173c9d34340845dd690149c886a605",
                 "reference": "86b5ca2f67173c9d34340845dd690149c886a605",
                 "shasum": ""
             },
@@ -7543,6 +7686,7 @@
                 "selenium",
                 "webdriver"
             ],
+            "abandoned": "php-webdriver/webdriver",
             "time": "2017-11-15T11:08:09+00:00"
         },
         {
@@ -7593,6 +7737,7 @@
                 "faker",
                 "fixtures"
             ],
+            "abandoned": true,
             "time": "2017-08-15T16:48:10+00:00"
         },
         {
@@ -8320,6 +8465,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2018-02-01T13:16:43+00:00"
         },
         {
@@ -9179,115 +9325,6 @@
             "time": "2018-01-03T07:38:00+00:00"
         },
         {
-            "name": "symfony/css-selector",
-            "version": "v4.0.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/css-selector.git",
-                "reference": "c69f1e93aa898fd9fec627ebef467188151c8dc2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/c69f1e93aa898fd9fec627ebef467188151c8dc2",
-                "reference": "c69f1e93aa898fd9fec627ebef467188151c8dc2",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\CssSelector\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jean-François Simon",
-                    "email": "jeanfrancois.simon@sensiolabs.com"
-                },
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony CssSelector Component",
-            "homepage": "https://symfony.com",
-            "time": "2018-02-03T14:58:37+00:00"
-        },
-        {
-            "name": "symfony/dom-crawler",
-            "version": "v4.0.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "26726ddc01601dc9393f2afc3369ce1ca64e4537"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/26726ddc01601dc9393f2afc3369ce1ca64e4537",
-                "reference": "26726ddc01601dc9393f2afc3369ce1ca64e4537",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1.3",
-                "symfony/polyfill-mbstring": "~1.0"
-            },
-            "require-dev": {
-                "symfony/css-selector": "~3.4|~4.0"
-            },
-            "suggest": {
-                "symfony/css-selector": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\DomCrawler\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony DomCrawler Component",
-            "homepage": "https://symfony.com",
-            "time": "2018-02-22T10:50:29+00:00"
-        },
-        {
             "name": "symfony/yaml",
             "version": "v4.0.6",
             "source": {
@@ -9390,12 +9427,12 @@
             "version": "1.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "0df1908962e7a3071564e857d86874dad1ef204a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/0df1908962e7a3071564e857d86874dad1ef204a",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/0df1908962e7a3071564e857d86874dad1ef204a",
                 "reference": "0df1908962e7a3071564e857d86874dad1ef204a",
                 "shasum": ""
             },
@@ -9583,7 +9620,6 @@
         "trntv/cheatsheet": 20,
         "kartik-v/yii2-widget-depdrop": 20,
         "kartik-v/yii2-widget-datepicker": 20,
-        "wbraganca/yii2-dynamicform": 20,
         "kartik-v/yii2-grid": 20,
         "kartik-v/yii2-datecontrol": 20,
         "kartik-v/yii2-widget-select2": 20
@@ -9594,5 +9630,6 @@
         "php": ">=5.5.0",
         "ext-intl": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

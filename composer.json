@@ -74,7 +74,7 @@
     "kartik-v/yii2-mpdf": "*",
     "shershennm/yii2-sendgrid": "*",
     "wbraganca/yii2-selectivity": "^1.0",
-    "wbraganca/yii2-dynamicform": "dev-master",
+    "wbraganca/yii2-dynamicform": "*",
     "2amigos/yii2-ckeditor-widget": "~1.0",
     "kartik-v/yii2-widget-datetimepicker": "*",
     "miloschuman/yii2-highcharts-widget": "*",
