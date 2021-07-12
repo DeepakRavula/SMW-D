@@ -57,6 +57,9 @@ class ScheduleController extends FrontendBaseController
                         'roles' => ['staffmember'],
                     ],
                 ],
+                'denyCallback' => function ($rule, $action) {
+                    return $this->redirect('/user/sign-in/login');
+                }
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
