@@ -41,7 +41,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type', 'teacher-bulk-reschedule',
+                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type', 'teacher-bulk-reschedule','generate-invoice',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -55,7 +55,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type', 'teacher-bulk-reschedule',
+                            'apply-discount', 'edit-duration', 'edit-classroom', 'unschedule', 'bulk-reschedule','edit-online-type', 'teacher-bulk-reschedule', 'generate-invoice',
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -748,6 +748,71 @@ class PrivateLessonController extends BaseController
                 'status' => true,
                 'data' => $data,
             ];     
+        }
+        return $response;
+    }
+
+    public function actionGenerateInvoice()
+    {
+        $privateLessonModel = new PrivateLesson();
+        $privateLessonModel->load(Yii::$app->request->get());
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $post = Yii::$app->request->post();
+        $response = [];
+        $lessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->location($locationId)
+                ->andWhere(['lesson.id' => $privateLessonModel->lessonIds])
+                ->all();
+        $noOfInvoicededLesson = 0;
+        $noOfNotInvoicedLesson = 0;
+        $noOfAlreadyInvoicededLesson = 0;
+        foreach ($lessons as $lesson) {
+           if ($lesson->canInvoice()) {
+                if ($lesson->hasInvoice()) {
+                   
+                    $invoice = $lesson->invoice;
+                    $noOfAlreadyInvoicededLesson ++;
+                } else {
+                    $invoice = $lesson->createPrivateLessonInvoice();
+                    $noOfInvoicededLesson++;
+                }
+           } else {
+                $noOfNotInvoicedLesson++;
+           }
+        }
+        if ($noOfAlreadyInvoicededLesson == 0 && $noOfNotInvoicedLesson == 0) {
+           $response = [
+               'status' => true,
+               'message' => 'Lesson has been invoiced Sucessfully.',
+           ];
+        } elseif($noOfAlreadyInvoicededLesson == 0 && $noOfInvoicededLesson == 0) {
+            $response = [
+                'status' => false,
+                'error' => 'Selected lesson\'s  have not been invoiced',
+            ]; 
+        } elseif($noOfAlreadyInvoicededLesson > 0 && $noOfNotInvoicedLesson == 0 && $noOfInvoicededLesson == 0) {
+            $response = [
+                'status' => false,
+                'error' => 'Lesson\'s already invoiced',
+            ]; 
+        } elseif ($noOfAlreadyInvoicededLesson > 0 && $noOfInvoicededLesson > 0 && $noOfNotInvoicedLesson == 0) {   
+            $response = [
+                'status' => true,
+                'message' => $noOfAlreadyInvoicededLesson. ' lesson Already Invoiced and '. $noOfInvoicededLesson .' lesson has been Invoiced Sucessfully',
+            ];
+        } else if ($noOfAlreadyInvoicededLesson > 0 && $noOfNotInvoicedLesson > 0 && $noOfInvoicededLesson == 0) {
+            $response = [
+                'status' => true,
+                'message' => $noOfAlreadyInvoicededLesson. ' lesson Already Invoiced and '. $noOfNotInvoicedLesson. ' skipped',
+            ];
+        }else {
+           $response = [
+               'status' => true,
+               'message' => $noOfAlreadyInvoicededLesson. ' lesson Already Invoiced and '. $noOfInvoicededLesson .' lesson has been Invoiced Sucessfully and '. $noOfNotInvoicedLesson. ' skipped',
+           ];
         }
         return $response;
     }

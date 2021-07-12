@@ -12,6 +12,7 @@
             <li><a class="multiselect-disable" id="email-multi-customer" href="#">Email Selected</a></li>
             <li><a class="multiselect-disable" id="lesson-unschedule" href="#">Unschedule</a></li>
             <li><a class="multiselect-disable" id="lesson-reschedule" href="#">Bulk Reschedule</a></li>
+            <li><a class="multiselect-disable" id="generate-invoice" href="#">Generate Invoice</a></li>
         </ul>
     </div>
 </div>
