@@ -1056,6 +1056,7 @@ class EnrolmentController extends BaseController
         ->notDeleted()
         ->isConfirmed()
         ->isRegular()
+        ->orderBy('enrolment.id')
         ->groupBy('enrolment.id');
         $enrolments = $query->all();
         return $enrolments;
