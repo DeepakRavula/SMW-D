@@ -1046,8 +1046,9 @@ class EnrolmentController extends BaseController
         $query = Enrolment::find()
         ->joinWith(['course' => function ($query) use ($locationId, $date) {
             $query->joinWith(['recentCourseSchedule' => function ($query) use ($locationId, $date) {
-                $query->andWhere(['course_schedule.day' => (new \DateTime($date))->format('w')]);
+                
             }])
+            ->andWhere(['course_schedule.day' => (new \DateTime($date))->format('w')])
             ->location($locationId)
             ->confirmed()
             ->notDeleted();
