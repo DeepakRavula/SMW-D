@@ -157,20 +157,6 @@ use kartik\daterange\DateRangePicker;
                     'value' => function ($data) {
                         return $data->getInvoiceNumber();
                     },
-			'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(Invoice::find()->invoice()
-			->location($locationId)->orderBy(['invoice_number' => SORT_ASC])
-                ->all(), 'id', 'invoiceNumber'),
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'proformainvoice',
-            ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],    
-		      
-        ],
-                'filterInputOptions'=>['placeholder'=>'Number'],
                 ],
                 [
 					'attribute' => 'invoiceDateRange',
@@ -238,29 +224,6 @@ use kartik\daterange\DateRangePicker;
 
                         return $options;
                     },
-                ],
-                [
-                    'format' => 'currency',
-                    'value' => function ($data) {
-                        if ((int) $data->type === Invoice::TYPE_INVOICE) {
-                            if ($data->isPaid()) {
-                                return (round($data->total, 2) > 0.00 && round($data->total, 2) <= 0.09) || (round($data->total, 2) < 0.00 && round($data->total, 2) >= -0.09) ? 0.00  : round($data->total, 2) ;
-                            } else {
-                                return (round($data->invoiceBalance, 2) > 0.00 && round($data->invoiceBalance, 2) <= 0.09) || (round($data->invoiceBalance, 2) < 0.00 && round($data->invoiceBalance, 2) >= -0.09) ? 0.00  : round($data->invoiceBalance, 2) ;
-                            }
-                            
-                        }
-                    },
-                    'headerOptions' => ['class' => 'text-right'],
-                    'contentOptions' => function ($data) {
-                        $options = [];
-                        $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'invoice' : 'pro-forma-invoice';
-                        Html::addCssClass($options, 'text-right');
-                        Html::addCssClass($options, $type.'-'.strtolower($data->getStatus()));
-
-                        return $options;
-                    },
-                    'enableSorting' => false,
                 ],
                 [
                     'format' => 'currency',
