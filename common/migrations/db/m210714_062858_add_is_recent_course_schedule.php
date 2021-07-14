@@ -17,9 +17,11 @@ class m210714_062858_add_is_recent_course_schedule extends Migration
         $courses = Course::find()->all();
         foreach($courses as $course) {
             $recentCourseSchedule = $course->recentCourseSchedule;
+            if ($recentCourseSchedule) {
             print_r("\n".$recentCourseSchedule->id);
             $recentCourseSchedule->isRecent = true;
             $recentCourseSchedule->save();
+            }
 
         }
     }
