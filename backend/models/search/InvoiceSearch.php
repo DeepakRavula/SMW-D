@@ -128,7 +128,7 @@ class InvoiceSearch extends Invoice
             }]);   
         }]);
         if ($this->number) {
-		    $query->andFilterWhere(['invoice.id' => $this->number]);
+		    $query->andFilterWhere(['like', 'invoice.invoice_number', trim($this->number)]);
         }
            $query->andFilterWhere(['like', 'user_phone.number', trim($this->phone)]);
         if ($this->customer) {
