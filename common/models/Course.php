@@ -218,7 +218,7 @@ class Course extends \yii\db\ActiveRecord
     public function getRecentCourseSchedule()
     {
         return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
-        ->orderBy(['course_schedule.id' => SORT_DESC]);
+        ->onCondition(['course_schedule.isRecent' => true]);
     }
 
     public function getCurrentCourseSchedule()
