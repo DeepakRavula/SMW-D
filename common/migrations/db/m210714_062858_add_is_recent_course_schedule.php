@@ -13,7 +13,7 @@ class m210714_062858_add_is_recent_course_schedule extends Migration
      */
     public function safeUp()
     {
-        
+        $this->addColumn('course_schedule', 'isRecent',  $this->boolean()->null());
         $courses = Course::find()->all();
         foreach($courses as $course) {
             $recentCourseSchedule = $course->recentCourseSchedule;
