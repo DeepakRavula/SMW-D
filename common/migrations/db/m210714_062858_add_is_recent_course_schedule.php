@@ -16,13 +16,12 @@ class m210714_062858_add_is_recent_course_schedule extends Migration
         $this->addColumn('course_schedule', 'isRecent',  $this->boolean()->null());
         $courses = Course::find()->all();
         foreach($courses as $course) {
-            $recentCourseSchedule = $course->recentCourseSchedule;
+            $recentCourseSchedule = $course->courseScheduleWithMigration;
             if ($recentCourseSchedule) {
-            print_r("\n".$recentCourseSchedule->id);
-            $recentCourseSchedule->isRecent = true;
-            $recentCourseSchedule->save();
+                print_r("\n".$recentCourseSchedule->id);
+                $recentCourseSchedule->isRecent = true;
+                $recentCourseSchedule->save();
             }
-
         }
     }
 
