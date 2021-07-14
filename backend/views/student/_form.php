@@ -30,6 +30,9 @@ use kartik\select2\Select2;
         <?= $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
         <?= $form->field($model, 'birth_date')->widget(DatePicker::className(), [
             'dateFormat' => 'php:M d, Y',
+            'options' => [
+                'readonly' => true,
+            ],
             'clientOptions' => [
                 'defaultDate' => (new \DateTime($model->birth_date))->format('M d, Y'),
                 'changeMonth' => true,

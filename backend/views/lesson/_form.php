@@ -80,7 +80,8 @@ use common\models\Location;
                     'value'  => Yii::$app->formatter->asDate($privateLessonModel->expiryDate),
                     'dateFormat' => 'php:M d, Y',
                     'options' => [
-                        'class' => 'form-control'
+                        'class' => 'form-control',
+                        'readonly' => true,
                     ],
                     'clientOptions' => [
                         'changeMonth' => true,

@@ -6,6 +6,7 @@ use yii\helpers\ArrayHelper;
 use common\models\TaxType;
 use common\models\Province;
 use yii\helpers\Url;
+use yii\jui\DatePicker;
 /* @var $this yii\web\View */
 /* @var $model common\models\TaxCode */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -39,14 +40,14 @@ use yii\helpers\Url;
 		<?php echo $form->field($model, 'rate')->textInput(['maxlength' => true]) ?>
 		</div>
 		<div class="col-xs-4">
-		<?php echo $form->field($model, 'start_date')->widget(\yii\jui\DatePicker::classname(), [
-		'options' => ['class' => 'form-control'],
-		'clientOptions' => [
-		'changeMonth' => true,
-		'changeYear' => true,
-		'yearRange' => '-70:today',
-		],
-		]); ?>
+		<?php echo $form->field($model, 'start_date')->widget(DatePicker::classname(), [
+			'options' => ['class' => 'form-control', 'readOnly' => true,],
+			'clientOptions' => [
+			'changeMonth' => true,
+			'changeYear' => true,
+			'yearRange' => '-70:today',
+			],
+			]); ?>
 		</div>
 	</div>
 </div>

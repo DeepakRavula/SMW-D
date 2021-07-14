@@ -45,12 +45,17 @@ if ($model->isNewRecord) {
 	<div class="col-md-6">
 		<?php echo $form->field($model, 'date')->widget(DatePicker::className(), [
                 'dateFormat' => 'php:M d, Y',
+                'options' => [
+                    'class' => 'form-control',
+                    'readonly' => true,
+                    'placeholder' => 'Select Date'
+                ],
                 'clientOptions' => [
                     'changeMonth' => true,
                     'yearRange' => '1500:3000',
                     'changeYear' => true,
                 ],
-            ])->textInput(['placeholder' => 'Select Date']);?>
+            ]);?>
     </div>
 	<div class="col-md-6">
 		<?=  $form->field($model, 'mark')->textInput(['class' => 'right-align form-control']);?>
