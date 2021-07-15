@@ -66,6 +66,9 @@ use kartik\switchinput\SwitchInput;
         <div class="col-xs-3">
             <?= $form->field($model, 'duration')->widget(TimePicker::classname(), [
                 'hashVarLoadPosition' => View::POS_END,
+                'options' => [
+                    'readOnly' => true,
+                ],
                 'pluginOptions' => [
                     'showMeridian' => false,
                     'defaultTime' => (new \DateTime('00:30'))->format('H:i')

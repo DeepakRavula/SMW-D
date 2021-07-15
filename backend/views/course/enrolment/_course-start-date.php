@@ -21,6 +21,7 @@ use yii\jui\DatePicker;
         <?= $form->field($model, 'startDate')->widget(DatePicker::classname(), [
             'options' => [
                 'class' => 'form-control',
+                'readOnly' => true,
             ],
             'dateFormat' => 'php:M d, Y',
             'clientOptions' => [
@@ -38,6 +39,7 @@ use yii\jui\DatePicker;
         <?= $form->field($model, 'paymentCycleStartDate')->widget(DatePicker::classname(), [
             'options' => [
                 'class' => 'form-control',
+                'readOnly' => true,
             ],
             'dateFormat' => 'php:M d, Y',
             'clientOptions' => [
