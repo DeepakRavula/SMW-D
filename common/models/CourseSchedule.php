@@ -99,7 +99,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         if ($insert) {
             $fromTime = new \DateTime($this->fromTime);
             $this->fromTime = $fromTime->format('H:i:s');
-            $courseSchedules = CourseSchedule::find()->andWhere(['courseId' => $this->courseId]);
+            $courseSchedules = CourseSchedule::find()->andWhere(['courseId' => $this->courseId])->all();
             foreach ($courseSchedules as $courseSchedule) {
                 $courseSchedule->isRecent = false;
                 $courseSchedule->save();
