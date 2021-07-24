@@ -55,7 +55,8 @@ use kartik\select2\Select2;
                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
                 ],
                 'options' => [
-                    'class' => 'duration'
+                    'class' => 'duration',
+                    'readOnly' =>  true,
                 ]
             ]);
             ?>
