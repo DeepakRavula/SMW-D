@@ -117,7 +117,7 @@ function calcGrandTotal($searchModel) {
         ],
         [
             'label' => 'Subtotal',
-            'value' => function ($data, $key, $index, $widget) use ($searchModel, $greatSubTotal)  {
+            'value' => function ($data, $key, $index, $widget) use ($searchModel)  {
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $subTotal = 0;
                 foreach ($payments as $payment) {
@@ -133,7 +133,7 @@ function calcGrandTotal($searchModel) {
 
         [
             'label' => 'Tax',
-            'value' => function ($data, $key, $index, $widget) use ($searchModel, $greatTaxTotal){
+            'value' => function ($data, $key, $index, $widget) use ($searchModel){
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $tax_rate = 0;
                 foreach ($payments as $payment) {
@@ -149,7 +149,7 @@ function calcGrandTotal($searchModel) {
 
         [
             'label' => 'Total',
-            'value' => function ($data, $key, $index, $widget) use ($searchModel, $greatGrandTotal) {
+            'value' => function ($data, $key, $index, $widget) use ($searchModel) {
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $amount = 0;
                 foreach ($payments as $payment) {
