@@ -139,7 +139,7 @@ function calcGrandTotal($searchModel) {
                     $tax_rate += $payment->tax_rate;
                 }
                 $widget->footer = Yii::$app->formatter->asDecimal(round(calcTaxTotal($searchModel), 2));
-                return Yii::$app->formatter->asDecimal(round($greatTaxTotal, 2));
+                return Yii::$app->formatter->asDecimal(round($tax_rate, 2));
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
