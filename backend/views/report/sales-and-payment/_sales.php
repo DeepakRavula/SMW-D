@@ -123,7 +123,7 @@ function calcGrandTotal($searchModel) {
                 foreach ($payments as $payment) {
                     $subTotal += $payment->netPrice;
                 }
-                $widget->footer = Yii::$app->formatter->asCurrency(calcSubTotal($searchModel), 2);
+                $widget->footer = Yii::$app->formatter->asDecimal(calcSubTotal($searchModel), 2);
                 return round($subTotal,2);
             },
             'contentOptions' => ['class' => 'text-right'],
@@ -153,7 +153,7 @@ function calcGrandTotal($searchModel) {
                 foreach ($payments as $payment) {
                     $amount += $payment->itemTotal;
                 }
-               $widget->footer = Yii::$app->formatter->asCurrency(calcGrandTotal($searchModel), 2);
+               $widget->footer = Yii::$app->formatter->asDecimal(calcGrandTotal($searchModel), 2);
                 return Yii::$app->formatter->asDecimal($amount, 2);
             },
             'contentOptions' => ['class' => 'text-right'],
