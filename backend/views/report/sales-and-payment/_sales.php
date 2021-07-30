@@ -46,6 +46,9 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php $totalReportValue = ItemCategory::getTotal($salesDataProvider->query->all()); 
+$greatSubTotal = 0.00;
+$greatTaxTotal = 0.00;
+$greatGrandTotal = 0.00;
     function getInvoiceLineItems($data, $searchModel) {
      $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
      $amount = 0;
@@ -74,13 +77,14 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ],
         [
             'label' => 'Subtotal',
-            'value' => function ($data, $key, $index, $widget) use ($searchModel)  {
+            'value' => function ($data, $key, $index, $widget) use ($searchModel, $greatSubTotal)  {
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $subTotal = 0;
                 foreach ($payments as $payment) {
                     $subTotal += $payment->netPrice;
+                    $greatSubTotal+=$payment->netPrice;
                 }
-                $widget->footer = Yii::$app->formatter->asDecimal($subTotal);
+                $widget->footer = Yii::$app->formatter->asDecimal($greatSubTotal);
                 return Yii::$app->formatter->asCurrency($subTotal);
             },
             'contentOptions' => ['class' => 'text-right'],
@@ -89,14 +93,15 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
         [
             'label' => 'Tax',
-            'value' => function ($data, $key, $index, $widget) use ($searchModel){
+            'value' => function ($data, $key, $index, $widget) use ($searchModel, $greatTaxTotal){
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $tax_rate = 0;
                 foreach ($payments as $payment) {
                     $tax_rate += $payment->tax_rate;
+                    $greatTaxTotal+= $payment->tax_rate;
                 }
                 $widget->footer = Yii::$app->formatter->asDecimal(round($tax_rate, 2));
-                return Yii::$app->formatter->asDecimal(round($tax_rate, 2));
+                return Yii::$app->formatter->asDecimal(round($greatTaxTotal, 2));
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
@@ -104,13 +109,14 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
         [
             'label' => 'Total',
-            'value' => function ($data, $key, $index, $widget) use ($searchModel) {
+            'value' => function ($data, $key, $index, $widget) use ($searchModel, $greatGrandTotal) {
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $amount = 0;
                 foreach ($payments as $payment) {
                     $amount += $payment->itemTotal;
+                    $greatGrandTotal +=$payment->itemTotal;
                 }
-                $widget->footer = Yii::$app->formatter->asDecimal($amount, 2);
+                $widget->footer = Yii::$app->formatter->asDecimal($greatGrandTotal, 2);
                 return Yii::$app->formatter->asDecimal($amount, 2);
             },
             'contentOptions' => ['class' => 'text-right'],

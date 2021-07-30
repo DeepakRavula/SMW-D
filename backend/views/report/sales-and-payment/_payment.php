@@ -43,7 +43,17 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
+<?php $subTotal =0.00; ?>
+<?php
+$subTotal = Payment::find()
+->notDeleted()
+->location($locationId)
+->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'),
+(new \DateTime($searchModel->toDate))->format('Y-m-d')])
+->notDeleted()
+->sum('amount');
 
+?>
         <?php $columns = [
             [
                 'label' => 'Payment Method',
@@ -53,7 +63,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             ],
             [
                 'label' => 'Subtotal',
-                'value' => function ($data, $key, $index, $widget) use ($searchModel) {
+                'value' => function ($data, $key, $index, $widget) use ($searchModel, $subTotal) {
                     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     $amount = 0;
                     $payments = Payment::find()
@@ -69,7 +79,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     foreach ($payments as $payment) {
                         $amount += $payment->amount;
                     }
-                    $widget->footer =  Yii::$app->formatter->asCurrency($amount);
+                    $widget->footer =  Yii::$app->formatter->asCurrency($subTotal);
                     return Yii::$app->formatter->asCurrency(round($amount, 2));
                 },
                 'contentOptions' => ['class' => 'text-right'],
