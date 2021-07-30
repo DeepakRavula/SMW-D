@@ -84,8 +84,11 @@ function calcSubTotal($searchModel) {
    
 }
 function calcGrandTotal($searchModel) {
-    $invoiceLineItems = lineItems($searchModel);
-    $greatGrandTotal = $invoiceLineItems->sum('amount');
+    $greatGrandTotal = 0.00;
+    $invoiceLineItems = lineItems($searchModel)->all();
+    foreach ($invoiceLineItems as $invoiceLineItem) {
+        $greatGrandTotal += $invoiceLineItem->itemTotal;
+    }
     return $greatGrandTotal;
 }
 
