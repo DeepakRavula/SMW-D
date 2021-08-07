@@ -138,9 +138,9 @@ class EnrolmentController extends BaseController
         $formatedDay = $date->format('N');
         $resources = [];
         $query = User::find()
-                ->joinWith(['courses' => function ($query) use ($locationId, $formatedDate) {
-                    $query->joinWith(['recentCourseSchedule' => function ($query) use ($locationId, $formatedDate) {
-                        $query->andWhere(['course_schedule.day' => (new \DateTime($formatedDate))->format('w')]);
+                ->joinWith(['courses' => function ($query) use ($locationId, $formatedDate, $formatedDay) {
+                    $query->joinWith(['recentCourseSchedule' => function ($query) use ($locationId, $formatedDate, $formatedDay) {
+                        $query->andWhere(['course_schedule.day' => $formatedDay]);
                     }]);
             }])
             ->joinWith(['userProfile' => function ($query) {
@@ -1048,7 +1048,7 @@ class EnrolmentController extends BaseController
             $query->joinWith(['recentCourseSchedule' => function ($query) use ($locationId, $date) {
                 
             }])
-            ->andWhere(['course_schedule.day' => (new \DateTime($date))->format('w')])
+            ->andWhere(['course_schedule.day' => date_format((new \DateTime($date)),'N')])
             ->location($locationId)
             ->confirmed()
             ->notDeleted();
