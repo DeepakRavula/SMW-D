@@ -16,13 +16,16 @@ class ReportSearch extends Invoice
     public $fromDate;
     public $toDate;
     public $summarizeResults = false;
+    public $greatGrandTotal;
+    public $greatSubTotal;
+    public $greatTaxTotal;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['dateRange', 'fromDate', 'toDate', 'summarizeResults'], 'safe'],
+            [['dateRange', 'fromDate', 'toDate', 'summarizeResults','greatGrandTotal', 'greatSubTotal', 'greatTaxTotal'], 'safe'],
         ];
     }
 
