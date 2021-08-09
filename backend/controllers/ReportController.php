@@ -507,12 +507,25 @@ class ReportController extends BaseController
 
     public function actionAccountReceivable()
     {  
+        $searchModel = new ReportSearch();
+        $searchModel->showAllActive = true;
+        $searchModel->showAllInActive = true;
+        if (Yii::$app->request->queryParams) {
+            $searchModel->load(Yii::$app->request->queryParams);
+        }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $customersInclude = [];
         $customers = User::find()
                 ->customers($locationId)
-                ->notDeleted()
-                ->all();
+                ->notDeleted();
+                if ($searchModel->showAllActive) {
+                    $customers->active();
+                } else if ($searchModel->showAllInActive) {
+                    $customers->Inactive();
+                } else if (!$searchModel->showAllInActive && !$searchModel->showAllActive) {
+                    $customers->andWhere(['user.id' => null]);
+                }
+                $customers = $customers->all();
         foreach ($customers as $customer) {
             if ($customer->customerAccountBalance() != '0.00') {
                 $customersInclude[] = $customer->id;
@@ -529,6 +542,7 @@ class ReportController extends BaseController
         ]);
         return $this->render( 'account-receivable/index', [
                 'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
             ]);
     }
 }

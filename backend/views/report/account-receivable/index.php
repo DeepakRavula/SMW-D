@@ -9,7 +9,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
-<?php echo $this->render('account-receivable', ['dataProvider' => $dataProvider,]); ?>
+<?php echo $this->render('account-receivable', ['dataProvider' => $dataProvider,  'searchModel' => $searchModel,]); ?>
 
 <script>
     $(document).on("click", "#print", function () {

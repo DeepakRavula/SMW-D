@@ -16,13 +16,15 @@ class ReportSearch extends Invoice
     public $fromDate;
     public $toDate;
     public $summarizeResults = false;
+    public $showAllActive;
+    public $showAllInActive;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['dateRange', 'fromDate', 'toDate', 'summarizeResults'], 'safe'],
+            [['dateRange', 'fromDate', 'toDate', 'summarizeResults', 'showAllActive', 'showAllInActive'], 'safe'],
         ];
     }
 

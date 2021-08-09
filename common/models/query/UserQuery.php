@@ -37,6 +37,10 @@ class UserQuery extends ActiveQuery
     {
         return $this->andWhere(['user.status' => User::STATUS_ACTIVE]);
     }
+    public function Inactive()
+    {
+        return $this->andWhere(['NOT IN', 'user.status', User::STATUS_ACTIVE]);
+    }
 
     public function owingCustomers()
     {
