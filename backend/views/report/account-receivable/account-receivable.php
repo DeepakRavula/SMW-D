@@ -52,8 +52,9 @@ $sum30days = 0;
             [
                 'label' => 'Customer Name',
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->userProfile ? $data->userProfile->fullName : null;
+                    return  $data->userProfile ? '<span>'.$data->userProfile->fullName ."</span><span style='font-style: italic;'>  (  ".$data->getStatus()."  ) ".'</span>' : null;
                 },
             ],
             [
