@@ -49,7 +49,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 $greatSubTotal = 0.00;
 $greatTaxTotal = 0.00;
 $greatGrandTotal = 0.00;
-
+calcTotal($searchModel);
 function lineItems($searchModel) {
     $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
     $invoiceLineItems = InvoiceLineItem::find()
@@ -68,28 +68,18 @@ function lineItems($searchModel) {
        return $invoiceLineItems;
         
 }
-function calcTaxTotal($searchModel) {
 
+function calcTotal($searchModel) {
+    $searchModel->greatSubTotal =0.00;
+    $searchModel->greatGrandTotal =0.00;
+    $searchModel->greatTaxTotal = 0.00;
     $invoiceLineItems = lineItems($searchModel);
-    $greatTaxTotal =$invoiceLineItems->sum('tax_rate');
-    return $greatTaxTotal;
-}
-function calcSubTotal($searchModel) {
-    $greatSubTotal =0.00;
-    $invoiceLineItems = lineItems($searchModel)->all();
-    foreach ($invoiceLineItems as $invoiceLineItem) {
-        $greatSubTotal+=$invoiceLineItem->netPrice;
+    $invoiceLineItems2 = lineItems($searchModel)->all();
+    $searchModel->greatTaxTotal = $invoiceLineItems->sum('tax_rate');
+    foreach ($invoiceLineItems2 as $invoiceLineItem) {
+        $searchModel->greatSubTotal += $invoiceLineItem->netPrice;
+        $searchModel->greatGrandTotal += $invoiceLineItem->itemTotal;
     }
-    return $greatSubTotal;
-   
-}
-function calcGrandTotal($searchModel) {
-    $greatGrandTotal = 0.00;
-    $invoiceLineItems = lineItems($searchModel)->all();
-    foreach ($invoiceLineItems as $invoiceLineItem) {
-        $greatGrandTotal += $invoiceLineItem->itemTotal;
-    }
-    return $greatGrandTotal;
 }
 
     function getInvoiceLineItems($data, $searchModel) {
@@ -126,7 +116,7 @@ function calcGrandTotal($searchModel) {
                 foreach ($payments as $payment) {
                     $subTotal += $payment->netPrice;
                 }
-                $widget->footer = Yii::$app->formatter->asDecimal(calcSubTotal($searchModel), 2);
+                $widget->footer = Yii::$app->formatter->asDecimal($searchModel->greatSubTotal, 2);
                 return round($subTotal,2);
             },
             'contentOptions' => ['class' => 'text-right'],
@@ -141,7 +131,7 @@ function calcGrandTotal($searchModel) {
                 foreach ($payments as $payment) {
                     $tax_rate += $payment->tax_rate;
                 }
-                $widget->footer = Yii::$app->formatter->asDecimal(round(calcTaxTotal($searchModel), 2));
+                $widget->footer = Yii::$app->formatter->asDecimal(round($searchModel->greatTaxTotal, 2));
                 return Yii::$app->formatter->asDecimal(round($tax_rate, 2));
             },
             'contentOptions' => ['class' => 'text-right'],
@@ -156,7 +146,7 @@ function calcGrandTotal($searchModel) {
                 foreach ($payments as $payment) {
                     $amount += $payment->itemTotal;
                 }
-               $widget->footer = Yii::$app->formatter->asDecimal(calcGrandTotal($searchModel), 2);
+               $widget->footer = Yii::$app->formatter->asDecimal($searchModel->greatGrandTotal, 2);
                 return Yii::$app->formatter->asDecimal($amount, 2);
             },
             'contentOptions' => ['class' => 'text-right'],
