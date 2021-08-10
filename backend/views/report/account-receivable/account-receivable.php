@@ -35,7 +35,6 @@ $sum30days = 0;
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
-        'emptyText' => false,
         'toolbar' =>  [
             'content' =>
                     Html::a('<i class="fa fa-print"></i>', '#', 
@@ -58,7 +57,11 @@ $sum30days = 0;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->userProfile ? '<span>'.$data->userProfile->fullName ."</span><span style='font-style: italic;'>  (  ".$data->getStatus()."  ) ".'</span>' : null;
+                    if ($data->getStatus() == "Active") {
+                        return  $data->userProfile ? $data->userProfile->fullName : null;
+                    } else {
+                        return  $data->userProfile ? '<span>'.$data->userProfile->fullName ."</span><span style='font-style: italic;'>  (  ".$data->getStatus()."  ) ".'</span>' : null;
+                    }
                 },
             ],
             [

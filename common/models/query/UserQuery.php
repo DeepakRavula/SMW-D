@@ -61,6 +61,24 @@ class UserQuery extends ActiveQuery
             ]);
             return $this;
     }
+    public function allActiveInactiveCustomers()
+    {
+        return $this->andWhere([
+                'OR',
+                [
+                    'user.status' => User::STATUS_ACTIVE
+                ],
+             
+                  
+                    [
+                        'user.status' => User::STATUS_NOT_ACTIVE
+                    ],
+                    
+
+             
+            ]);
+            return $this;
+    }
 
     public function teachers($programId, $locationId)
     {
