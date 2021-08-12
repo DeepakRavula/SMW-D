@@ -518,13 +518,11 @@ class ReportController extends BaseController
         $customers = User::find()
                 ->customers($locationId)
                 ->notDeleted();
-                if ($searchModel->showAllInActive && $searchModel->showAllActive) {
-                  $customers->allActiveInactiveCustomers();
-                } else if ($searchModel->showAllInActive) {
+               if ($searchModel->showAllInActive && !$searchModel->showAllActive) {
                     $customers->Inactive();
-                } else if ($searchModel->showAllActive) {
+                } else if ($searchModel->showAllActive && !$searchModel->showAllInActive ) {
                     $customers->active();  
-                } else  { 
+                } else if (!$searchModel->showAllActive && !$searchModel->showAllInActive ) { 
                     $customers->andWhere(['user.id' => null]);
                 }
                 $customers = $customers->all();
