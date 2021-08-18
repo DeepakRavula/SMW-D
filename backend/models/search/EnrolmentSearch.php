@@ -75,7 +75,7 @@ class EnrolmentSearch extends Enrolment
         if ($this->studentView) {
             if (!$this->showAllEnrolments) {
                 $query->activeAndfutureEnrolments();
-            } 
+            }
             $query->andWhere(['enrolment.studentId' => $this->studentId]);
             $query->groupBy(['enrolment.id']);
         }
@@ -89,6 +89,7 @@ class EnrolmentSearch extends Enrolment
         $query->joinWith('student');
         $query->leftJoin(['program p'], 'course.programId = p.id');
         $query->leftJoin(['user_profile up'], 'course.teacherId=up.user_id');
+		$query->leftJoin(['lesson l'], 'course.id=l.courseId');
         $dataProvider->setSort([
             'attributes' => [
                 'program' => [
@@ -110,8 +111,7 @@ class EnrolmentSearch extends Enrolment
                 'enddate' => [
                     'asc' => ['course.endDate' => SORT_ASC],
                     'desc' => ['course.endDate' => SORT_DESC]
-                ]
-            ]
+                ]            ]
         ]);
         $dataProvider->sort->defaultOrder = [
             'program' => SORT_ASC
@@ -140,11 +140,11 @@ class EnrolmentSearch extends Enrolment
             $query->andFilterWhere(['AND', ['=', 'enrolment.isAutoRenew', 0]]);
         }
        
-        if (!$this->showAllEnrolments) {
-            $query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
-                ->isConfirmed()
-                ->isRegular();
+		if (!$this->showAllEnrolments) {
+			$query->andWhere('DATE(l.date)>= CURRENT_DATE')
+			      ->andWhere('DATE(l.date)<= DATE(enrolment.endDateTime)');
         }
+		$query->groupBy(['l.courseId']);
         return $dataProvider;
     }
 
