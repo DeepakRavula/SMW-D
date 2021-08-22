@@ -19,7 +19,7 @@ use yii\bootstrap\ActiveForm;
     </thead>
     <tbody>
         <tr class="line-items-value lesson-line-items" data-key="1">
-            <td class="text-left"> <?= $model->notes ?> </td>
+            <td class="text-left"> <?= $model->notes ? $model->notes : $model->reference ? $model->reference : "" ?> </td>
             <td class="text-left"> <?= (new DateTime($model->date))->format('M d, Y'); ?> </td>
             <td class="text-left"> <?= $model->paymentMethod->name ?> </td>
             <td class="text-right"><?= Yii::$app->formatter->asCurrency(round($model->amount, 2)); ?></td>
