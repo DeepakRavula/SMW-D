@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
+use common\models\Enrolment;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -147,8 +148,23 @@ use kartik\grid\GridView;
                 'opens' => 'left'
             ]
         ]
+    ],
+	[
+        'attribute' => 'status',
+        'label' => 'Status',
+        'value' => function ($data) {
+			$t=strtotime($data->endDateTime);
+			if($t>=time()){
+            return Enrolment::S_ACTIVE;
+			}else{
+				return Enrolment::S_INACTIVE;
+			}
+        },
+        'contentOptions' => ['style' => 'width:20%'],
     ]
-]; ?>
+];
+
+ ?>
 
 <div class="grid-row-open">
     <?= KartikGridView::widget([
@@ -189,6 +205,13 @@ use kartik\grid\GridView;
         'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
             $url = Url::to(['enrolment/view', 'id' => $model->id]);
             $data = ['data-url' => $url];
+			if ($searchModel->showAllEnrolments) {
+            if (strtotime($model->endDateTime)<time()) {
+				$data = array_merge($data, ['class' => 'danger inactive']);		//for inactive
+            } else {
+			    $data = array_merge($data, ['class' => 'info active']);			//for active
+            }
+        }
             return $data;
         },
         'columns' => $columns,
