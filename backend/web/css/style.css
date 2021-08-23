@@ -611,3 +611,6 @@ dl {
     overflow-y: scroll;
     overflow-x: hidden;
 }
+.enrolment-inactive-status {
+    background-color: #f2dede;
+}

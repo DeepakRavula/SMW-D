@@ -207,7 +207,7 @@ use common\models\Enrolment;
             $data = ['data-url' => $url];
 			if ($searchModel->showAllEnrolments) {
             if (strtotime($model->endDateTime)<time()) {
-				$data = array_merge($data, ['class' => 'danger inactive']);		//for inactive
+				$data = array_merge($data, ['class' => 'enrolment-inactive-status']);		//for inactive
             } else {
 			    $data = array_merge($data, ['class' => 'info active']);			//for active
             }
