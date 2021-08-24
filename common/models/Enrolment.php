@@ -38,6 +38,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public $applyFullDiscount;
     public $scheduleTitle;
     public $class;
+	public $status;
 
     const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const AUTO_RENEWAL_STATE_ENABLED = 'enabled';

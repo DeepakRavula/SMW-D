@@ -152,6 +152,12 @@ use common\models\Enrolment;
 	[
         'attribute' => 'status',
         'label' => 'Status',
+        'filter' => EnrolmentSearch::statusValue(),
+        'filterWidgetOptions' => [
+            'options' => [
+                'id' => 'enrolment-status',
+            ],
+        ],
         'value' => function ($data) {
 			$t=strtotime($data->endDateTime);
 			if($t>=time()){
