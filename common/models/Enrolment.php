@@ -50,8 +50,8 @@ class Enrolment extends \yii\db\ActiveRecord
     const EVENT_CREATE = 'create';
     const EVENT_GROUP = 'group-course-enroll';
     const CONSOLE_USER_ID  = 727;
-    const S_ACTIVE='Active';
-	const S_INACTIVE='Inactive';
+    const STATUS_ACTIVE='Active';
+	const STATUS_INACTIVE='Inactive';
 
     const SCENARIO_EDIT = 'scenario-edit';
     const SCENARIO_GROUP_ENROLMENT_ENDDATE_ADJUSTMENT = 'scenario-group-enrolment-enddate-adjustment';

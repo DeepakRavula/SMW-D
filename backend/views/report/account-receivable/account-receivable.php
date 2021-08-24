@@ -35,13 +35,16 @@ $sum30days = 0;
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
-        'emptyText' => false,
         'toolbar' =>  [
             'content' =>
                     Html::a('<i class="fa fa-print"></i>', '#', 
                     ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
-            '{toggleData}'
+            '{toggleData}',
+            [
+                'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+                'options' => ['title' => 'Filter',]
+            ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -52,8 +55,13 @@ $sum30days = 0;
             [
                 'label' => 'Customer Name',
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->userProfile ? $data->userProfile->fullName : null;
+                    if ($data->getStatus() == "Active") {
+                        return  $data->userProfile ? $data->userProfile->fullName : null;
+                    } else {
+                        return  $data->userProfile ? '<span>'.$data->userProfile->fullName ."</span><span style='font-style: italic;'>  (  ".$data->getStatus()."  ) ".'</span>' : null;
+                    }
                 },
             ],
             [
@@ -157,6 +165,13 @@ $sum30days = 0;
                 'hAlign' => 'right',
             ],
         ],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'account-listing'
+            ]
+            ],
         'beforeHeader'=>[
             [
                 'columns'=>[
@@ -179,4 +194,22 @@ $(document).off('click', '.account-receivable-report-detail-view').on('click', '
     window.open(url, '_blank');
         return false;   
      });
+
+    $(document).off('change', '#reportsearch-showallactive, #reportsearch-showallinactive').on('change', '#reportsearch-showallactive, #reportsearch-showallinactive', function() {
+        debugger;
+        var showAllInActiveCustomer = $("#reportsearch-showallinactive").is(":checked");
+        var showAllActiveCustomer = $("#reportsearch-showallactive").is(":checked");
+        var params = $.param({
+            'ReportSearch[showAllInActive]': (showAllInActiveCustomer | 0),  'ReportSearch[showAllActive]': (showAllActiveCustomer | 0),
+        });
+        var url = "<?php echo Url::to(['report/account-receivable']); ?>?" + params;
+        $.pjax.reload({
+            url: url,
+            container: "#account-listing",
+            replace: false,
+            timeout: 4000
+        }); //Reload GridView
+    });
+
+   
 </script>

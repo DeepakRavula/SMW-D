@@ -37,6 +37,10 @@ class UserQuery extends ActiveQuery
     {
         return $this->andWhere(['user.status' => User::STATUS_ACTIVE]);
     }
+    public function Inactive()
+    {
+        return $this->andWhere(['NOT IN', 'user.status', User::STATUS_ACTIVE]);
+    }
 
     public function owingCustomers()
     {
@@ -54,6 +58,24 @@ class UserQuery extends ActiveQuery
                     ['NOT', ['customer_account.balance' => 0]]
 
                 ]
+            ]);
+            return $this;
+    }
+    public function allActiveInactiveCustomers()
+    {
+        return $this->andWhere([
+                'OR',
+                [
+                    'user.status' => User::STATUS_ACTIVE
+                ],
+             
+                  
+                    [
+                        'user.status' => User::STATUS_NOT_ACTIVE
+                    ],
+                    
+
+             
             ]);
             return $this;
     }

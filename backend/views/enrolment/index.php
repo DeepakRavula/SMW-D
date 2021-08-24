@@ -19,12 +19,12 @@ use yii\jui\DatePicker;
         'dataProvider' => $dataProvider,
     ]);
 
-    // $calendarView = $this->render('_enrolment-calendar',  [
-    //     'searchModel' => $searchModel,
-    //     'locationAvailabilities'   => $locationAvailabilities,
-    //     'scheduleVisibilities'     => $scheduleVisibilities,
+    $calendarView = $this->render('_enrolment-calendar',  [
+        'searchModel' => $searchModel,
+        'locationAvailabilities'   => $locationAvailabilities,
+        'scheduleVisibilities'     => $scheduleVisibilities,
 
-    // ]);
+    ]);
 
     ?>
 
@@ -37,13 +37,13 @@ use yii\jui\DatePicker;
                     'id' => 'grid-view',
                 ],
             ],
-            // [
-            //     'label' =>'Schedule',
-            //     'content' => $calendarView,
-            //     'options' => [
-            //             'id' => 'calendar-view',
-            //         ],
-            // ],
+            [
+                'label' =>'Schedule',
+                'content' => $calendarView,
+                'options' => [
+                        'id' => 'calendar-view',
+                    ],
+            ],
         ],
     ]); ?>
 </div>

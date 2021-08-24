@@ -42,7 +42,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         return [
             [['day', 'fromTime'], 'required'],
             [['courseId', 'paymentFrequency'], 'integer'],
-            [['fromTime', 'duration', 'discount', 'paymentFrequency', 'programRate', 'isAutoRenew', 'startDate', 'endDate', 'teacherId'], 'safe'],
+            [['fromTime', 'duration', 'discount', 'paymentFrequency', 'programRate', 'isAutoRenew', 'startDate', 'endDate', 'teacherId', 'isRecent'], 'safe'],
         ];
     }
 
@@ -99,6 +99,12 @@ class CourseSchedule extends \yii\db\ActiveRecord
         if ($insert) {
             $fromTime = new \DateTime($this->fromTime);
             $this->fromTime = $fromTime->format('H:i:s');
+            $courseSchedules = CourseSchedule::find()->andWhere(['courseId' => $this->courseId])->all();
+            foreach ($courseSchedules as $courseSchedule) {
+                $courseSchedule->isRecent = false;
+                $courseSchedule->save();
+            }
+            $this->isRecent = true;
         }
 
         return parent::beforeSave($insert);
