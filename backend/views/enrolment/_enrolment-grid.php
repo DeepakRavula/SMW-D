@@ -69,7 +69,7 @@ use common\models\Enrolment;
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->course->startDate);
         },
-        'contentOptions' => ['style' => 'width:17%'],
+        'contentOptions' => ['style' => 'width:12%'],
         'filterType' => KartikGridView::FILTER_DATE_RANGE,
         'filterWidgetOptions' => [
             'id' => 'enrolment-startdate-search',
@@ -109,7 +109,7 @@ use common\models\Enrolment;
     [
         'label' => 'End Date',
         'attribute' => 'enddate',
-        'contentOptions' => ['style' => 'width:17%'],
+        'contentOptions' => ['style' => 'width:12%'],
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->endDateTime);
         },
@@ -166,7 +166,7 @@ use common\models\Enrolment;
 				return Enrolment::STATUS_INACTIVE;
 			}
         },
-        'contentOptions' => ['style' => 'width:20%'],
+        'contentOptions' => ['style' => 'width:10%'],
     ]
 ];
 
