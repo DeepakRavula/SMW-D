@@ -145,10 +145,12 @@ class EnrolmentSearch extends Enrolment
         if ($this->isAutoRenewal === Enrolment::AUTO_RENEWAL_STATE_DISABLED) {
             $query->andFilterWhere(['AND', ['=', 'enrolment.isAutoRenew', 0]]);
         }
-       
+
 		if (!$this->showAllEnrolments) {
 			$query->andWhere('DATE(l.date)>= CURRENT_DATE')
-			      ->andWhere('DATE(l.date)<= DATE(enrolment.endDateTime)');
+			      ->andWhere('DATE(l.date)<= DATE(enrolment.endDateTime)')
+                ->isConfirmed()
+                ->isRegular();
         }
 		$query->groupBy(['l.courseId']);
         return $dataProvider;
