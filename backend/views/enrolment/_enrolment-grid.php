@@ -149,24 +149,13 @@ use common\models\Enrolment;
             ]
         ]
     ],
-	[
-        'attribute' => 'status',
-        'label' => 'Status',
-        'filter' => EnrolmentSearch::statusValue(),
-        'filterWidgetOptions' => [
-            'options' => [
-                'id' => 'enrolment-status',
-            ],
-        ],
+    [
+        'attribute' => 'lessonCount',
+        'label' => 'Lessons Remaining',
         'value' => function ($data) {
-			$t=strtotime($data->endDateTime);
-			if($t>=time()){
-            return Enrolment::STATUS_ACTIVE;
-			}else{
-				return Enrolment::STATUS_INACTIVE;
-			}
-        },
-        'contentOptions' => ['style' => 'width:10%'],
+            return count($data->futureLessons);
+		},
+        'contentOptions' => ['style' => 'width:10%','align'=>'center'],
     ]
 ];
 
