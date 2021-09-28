@@ -1697,7 +1697,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getOriginalDate() 
     {
-        $ancestors = Lesson::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_DESC])->all(); 
+        $ancestors = Lesson::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_ASC])->all(); 
         $ancestors[] = $this;
         $lessonDate = $this->rootLesson ? $this->rootLesson->date : $this->date ;
         foreach ($ancestors as $ancestor) {
