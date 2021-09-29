@@ -40,7 +40,7 @@ echo GridView::widget([
             [
             'label' => 'Teacher',
             'value' => function ($data) {
-                return !empty($data->course->teacher->publicIdentity) ? $data->course->teacher->publicIdentity : null;
+                return !empty($data->course->recentCourseSchedule->teacher->publicIdentity) ? $data->course->recentCourseSchedule->teacher->publicIdentity : null;
             },
         ],
             [
