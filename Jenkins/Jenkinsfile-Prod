@@ -8,7 +8,11 @@ pipeline {
                 script {
                     sshagent(['smw-dev-instance']) {
                             sh """ssh -t -t ubuntu@3.98.69.25 -o StrictHostKeyChecking=no << EOF 
-                                echo "Test Command"
+                                cd /srv/smw
+                                pwd
+                                git pull
+                                composer install
+                                php console/yii migrate
                                 exit 
                                 EOF"""
                     }
