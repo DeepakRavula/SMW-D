@@ -6,8 +6,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sshagent(['smw-prod-instance']) {
-                            sh """ssh -t -t ubuntu@52.60.240.104 -o StrictHostKeyChecking=no << EOF 
+                    sshagent(['smw-dev-instance']) {
+                            sh """ssh -t -t ubuntu@3.98.69.25 -o StrictHostKeyChecking=no << EOF 
                                 echo "Test Command"
                                 exit 
                                 EOF"""
