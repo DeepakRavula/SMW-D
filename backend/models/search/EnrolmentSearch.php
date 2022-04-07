@@ -70,7 +70,6 @@ class EnrolmentSearch extends Enrolment
                         ->confirmed()
                         ->notDeleted();
             }])
-            ->currentEnrolments()
             ->notDeleted()
             ->isConfirmed()
             ->isRegular();
