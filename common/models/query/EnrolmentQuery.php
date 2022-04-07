@@ -201,7 +201,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
             $query->joinWith(['lessons' => function ($query) {
                 $query->andWhere(['NOT', ['lesson.id' => null]]);
             }])
-                ->futureEnrolments($fromDate, $toDate)
+                ->currentEnrolments($fromDate, $toDate)
                 ->regular()
                 ->confirmed()
                 ->notDeleted();
