@@ -65,8 +65,9 @@ class EnrolmentSearch extends Enrolment
         $currentDate = $currentdate->format('Y-m-d');
         $query = Enrolment::find()
             ->select(['enrolment.*','COUNT(*) AS lessonCount'])
-            ->joinWith(['course' => function ($query) use ($locationId) {
+            ->joinWith(['course' => function ($query) use ($locationId, $currentDate) {
                 $query->location($locationId)
+                      ->currentEnrolments($currentDate,'')
                         ->confirmed()
                         ->notDeleted();
             }])
