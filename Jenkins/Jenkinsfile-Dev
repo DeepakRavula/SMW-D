@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy') {
+            steps {
+                script {
+                    sshagent(['smw-dev-instance']) {
+                            sh """ssh -t -t ubuntu@3.98.69.25 -o StrictHostKeyChecking=no << EOF 
+                                cd /srv/smw
+                                pwd
+                                git pull origin develop
+                                composer install
+                                php console/yii migrate
+                                exit 
+                                EOF"""
+                    }
+              }
+            }
+        }
+    }
+
+
+}
