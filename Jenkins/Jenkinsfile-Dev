@@ -9,7 +9,7 @@ pipeline {
                             sh """ssh -t -t ubuntu@3.98.69.25 -o StrictHostKeyChecking=no << EOF 
                                 cd /srv/smw
                                 pwd
-                                git pull
+                                git pull origin develop
                                 composer install
                                 php console/yii migrate
                                 exit 
@@ -19,4 +19,6 @@ pipeline {
             }
         }
     }
+
+
 }
