@@ -146,7 +146,7 @@ class EnrolmentSearch extends Enrolment
 
         $lessonCntPattern="/[<>][=]?[1-9]{1,2}/";
         $lessonCntCheck=preg_match($lessonCntPattern,$this->lessonCount);
-		if (!$this->showAllEnrolments||$this->lessonCount>0||$lessonCntCheck==1) {
+		if (!$this->showAllEnrolments||$this->lessonCount>0||$lessonCntCheck==1){
 			$query->andWhere('DATE(l.date)>= CURRENT_DATE')
 			      ->andWhere('DATE(l.date)<= DATE(enrolment.endDateTime)')
                   ->andWhere('DATE(course.startDate)<= CURRENT_DATE')
