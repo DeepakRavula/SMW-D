@@ -444,7 +444,7 @@ class EmailController extends BaseController
             $customerStatement->on(CustomerStatement::EVENT_PRINT, [new CustomerStatementLog(), 'customerStatement'], ['loggedUser' => $loggedUser, 'activity' => LogActivity::TYPE_MAIL]);
             $data = $this->renderAjax('/mail/_customer-statement', [
             'model' => new EmailForm(),
-            'emails' => !empty($user->email) ?$user->email : null,
+            'emails' => !empty($user->emails) ? $user->emailNames : null,
             'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
             'emailTemplate' => $emailTemplate,
             'userModel' => $user,
