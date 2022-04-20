@@ -61,8 +61,7 @@ class EnrolmentSearch extends Enrolment
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $currentdate = $currentDate = new \DateTime();
-        $currentDate = $currentdate->format('Y-m-d');
+        $currentdate = new \DateTime();
         $currentMonthLastDate = $currentdate->format('Y-m-t');
         $query = Enrolment::find()
             ->select(['enrolment.*','COUNT(*) AS lessonCount'])
