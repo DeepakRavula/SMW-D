@@ -148,11 +148,19 @@ class EnrolmentSearch extends Enrolment
             $query->andFilterWhere(['AND', ['=', 'enrolment.isAutoRenew', 0]]);
         }
 
+<<<<<<< HEAD
         $lessonCntPattern = "/[<>][=]?[1-9]{1,2}/";
         $lessonCntCheck = preg_match($lessonCntPattern, $this->lessonCount);
 		if (!$this->showAllEnrolments || $this->lessonCount > 0 || $lessonCntCheck == 1) {
 			$query->andWhere('DATE(l.date) >= CURRENT_DATE')
 			      ->andWhere('DATE(l.date) <= DATE(enrolment.endDateTime)')
+=======
+        $lessonCntPattern="/[<>][=]?[1-9]{1,2}/";
+        $lessonCntCheck=preg_match($lessonCntPattern,$this->lessonCount);
+		if (!$this->showAllEnrolments||$this->lessonCount>0||$lessonCntCheck==1){
+			$query->andWhere('DATE(l.date)>= CURRENT_DATE')
+			      ->andWhere('DATE(l.date)<= DATE(enrolment.endDateTime)')
+>>>>>>> f4d2dc2e743c9a90cb6bcb4dd0ed1f3c345a6b38
                 ->isConfirmed()
                 ->isRegular();
         }

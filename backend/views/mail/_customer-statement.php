@@ -27,6 +27,7 @@ if (!empty($userModel)) {
         ->all(), 'email', 'email');
 }
 ?>
+<?php $model->to = !empty($data) ? $data : null; ?>
 <?= $this->render('/mail/_form', [
     'content' => $content,
     'model' => $model,
