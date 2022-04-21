@@ -61,13 +61,13 @@ class EnrolmentSearch extends Enrolment
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $currentdate = $currentDate = new \DateTime();
-        $currentDate = $currentdate->format('Y-m-d');
+        $currentdate = new \DateTime();
+        $currentMonthLastDate = $currentdate->format('Y-m-t');
         $query = Enrolment::find()
             ->select(['enrolment.*','COUNT(*) AS lessonCount'])
-            ->joinWith(['course' => function ($query) use ($locationId, $currentDate) {
+            ->joinWith(['course' => function ($query) use ($locationId, $currentMonthLastDate) {
                 $query->location($locationId)
-                      ->currentEnrolments($currentDate, $currentDate)
+                      ->currentEnrolments($currentMonthLastDate, $currentMonthLastDate)
                         ->confirmed()
                         ->notDeleted();
             }])
@@ -149,7 +149,6 @@ class EnrolmentSearch extends Enrolment
 		if (!$this->showAllEnrolments||$this->lessonCount>0||$lessonCntCheck==1){
 			$query->andWhere('DATE(l.date)>= CURRENT_DATE')
 			      ->andWhere('DATE(l.date)<= DATE(enrolment.endDateTime)')
-                  ->andWhere('DATE(course.startDate)<= CURRENT_DATE')
                 ->isConfirmed()
                 ->isRegular();
         }
