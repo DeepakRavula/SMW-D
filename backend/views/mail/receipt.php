@@ -18,7 +18,7 @@ use common\models\UserEmail;
         'model' => $paymentFormModel,
        
     ]);
-    $model->to = $emails;
+    
     $data = null;
     if (!empty($customer)) {
         $data = ArrayHelper::map(UserEmail::find()
@@ -28,6 +28,7 @@ use common\models\UserEmail;
             ->orderBy('user_email.email')
             ->all(), 'email', 'email');
     }
+    $model->to = $data;
 ?>
 
 <?= $this->render('/mail/_form', [
