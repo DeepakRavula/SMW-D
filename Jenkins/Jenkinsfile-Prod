@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy') {
+            steps {
+                script {
+                    sshagent(['smw-prod-instance']) {
+                            sh """ssh -t -t ubuntu@52.60.240.104 -o StrictHostKeyChecking=no << EOF
+                                cd /srv/smw-prod
+                                pwd
+                                exit
+                                EOF"""
+                    }
+              }
+            }
+        }
+    }
+}
