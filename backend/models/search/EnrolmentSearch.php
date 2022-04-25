@@ -14,6 +14,7 @@ use Yii;
 class EnrolmentSearch extends Enrolment
 {
     public $showAllEnrolments = false;
+    public $showActiveFutureEnrolments = false;
     public $program;
     public $course;
     public $student;
@@ -37,7 +38,7 @@ class EnrolmentSearch extends Enrolment
     {
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
-            [['showAllEnrolments', 'program', 'course', 'student', 'startdate', 'teacher', 'endEndDate',  
+            [['showAllEnrolments', 'showActiveFutureEnrolments', 'program', 'course', 'student', 'startdate', 'teacher', 'endEndDate',
             'startBeginDate', 'startEndDate', 'studentView', 'studentId', 'enddate', 'lessonCount', 'endBeginDate', 'isAutoRenewal', 'goToDate', 'weekDate'], 'safe']
         ];
     }
@@ -67,10 +68,12 @@ class EnrolmentSearch extends Enrolment
         $query = Enrolment::find()
             ->select(['enrolment.*','COUNT(*) AS lessonCount'])
             ->joinWith(['course' => function ($query) use ($locationId, $currentDate, $currentMonthLastDate) {
-                $query->location($locationId)
-                      ->activeEnrolments($currentDate, $currentMonthLastDate)
-                        ->confirmed()
-                        ->notDeleted();
+                $query->location($locationId);
+                if (!$this->showAllEnrolments && !$this->showActiveFutureEnrolments) {
+                    $query->activeEnrolments($currentDate, $currentMonthLastDate);
+                }
+                $query->confirmed()
+                    ->notDeleted();
             }])
             ->notDeleted()
             ->isConfirmed()
