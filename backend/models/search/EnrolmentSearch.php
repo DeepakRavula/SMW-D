@@ -71,6 +71,8 @@ class EnrolmentSearch extends Enrolment
                 $query->location($locationId);
                 if (!$this->showAllEnrolments && !$this->showActiveFutureEnrolments) {
                     $query->activeEnrolments($currentDate, $currentMonthLastDate);
+                } elseif ($this->showAllEnrolments && !$this->showActiveFutureEnrolments) {
+                    $query->andWhere(['<=', 'DATE(course.startDate)', $currentMonthLastDate]);
                 }
                 $query->confirmed()
                     ->notDeleted();
