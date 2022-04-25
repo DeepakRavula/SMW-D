@@ -11,7 +11,6 @@ use common\models\UserEmail;
         'content' => $body,
         'emailTemplate' => $emailTemplate
     ]);
-    $model->to = $emails;
     $userModel = $lessonModel->enrolment->student->customer;
     $data = null;
     if (!empty($userModel)) {
@@ -22,6 +21,7 @@ use common\models\UserEmail;
             ->orderBy('user_email.email')
             ->all(), 'email', 'email');
     }
+    $model->to = $data;
 ?>
 
 <?= $this->render('/mail/_form', [
