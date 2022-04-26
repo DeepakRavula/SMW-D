@@ -17,6 +17,9 @@
       "role": "Developer"
     }
   ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    
   "type": "project",
   "license": "BSD-3-Clause",
   "support": {
@@ -24,22 +27,11 @@
     "source": "https://github.com/trntv/yii2-starter-kit"
   },
 	"repositories": [
-		{
-			"type": "package",
-			"package": {
-				"name": "wbraganca/yii2-dynamicform",
-				"version": "dev-master",
-				"source": {
-					"url": "https://github.com/senguttuvang/yii2-dynamicform",
-					"type": "git",
-					"reference": "master"
-				},
-				"autoload": {
-					"classmap": [""]
-				}
-			}
-		}
-	],
+ {
+  "type": "composer",
+  "url": "https://asset-packagist.org"
+ }
+],
   "require": {
     "php": ">=5.5.0",
     "ext-intl": "*",
@@ -56,7 +48,7 @@
     "trntv/yii2-glide": "^1.0.0",
     "trntv/yii2-datetime-widget": "^1.0.0",
     "trntv/cheatsheet": "^0.1@dev",
-    "trntv/yii2-command-bus": "^2.0",
+    "trntv/yii2-command-bus": "^3.0",
     "intervention/image": "^2.1",
     "vlucas/phpdotenv": "^2.0",
     "bower-asset/admin-lte": "^2.0",
@@ -125,7 +117,11 @@
   },
   "config": {
     "process-timeout": 1800,
-    "discard-changes": true
+    "discard-changes": true,
+    "allow-plugins": {
+      "yiisoft/yii2-composer": false,
+      "kylekatarnls/update-helper": true
+    }
   },
   "extra": {
     "asset-installer-paths": {
