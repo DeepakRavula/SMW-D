@@ -1,0 +1,7 @@
+FROM pearlthoughts/smw:latest
+WORKDIR /srv/smw
+RUN apt install git -y
+RUN chmod -R 777 /srv/smw/
+COPY ./composer* /srv/smw/
+RUN composer install
+RUN mv vendor/bower-asset vendor/bower

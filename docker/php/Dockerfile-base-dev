@@ -1,0 +1,30 @@
+FROM php:7.1-apache-stretch
+
+WORKDIR /srv/smw
+
+COPY --from=composer:1.10.10 /usr/bin/composer /usr/bin/composer
+RUN apt-get update \
+    && apt-get install apt-file -y \
+    && apt-file update
+
+
+RUN apt-get update && apt-get install -y \ 
+	libldap2-dev \ 
+	libldb-dev \ 
+	&& ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so \ 
+	&& ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so
+
+RUN apt-get install  -y libxml2-dev \
+    libcurl4-gnutls-dev \
+    libpng-dev \
+    default-mysql-client \
+    libxslt-dev \
+    libzip-dev \
+    libmcrypt-dev \
+    git
+
+RUN pecl install igbinary
+
+RUN docker-php-ext-install gd zip pdo pdo_mysql gettext calendar calendar bcmath exif mcrypt mysqli intl pcntl shmop sockets sysvmsg sysvsem sysvshm xsl wddx opcache
+
+RUN a2enmod rewrite
