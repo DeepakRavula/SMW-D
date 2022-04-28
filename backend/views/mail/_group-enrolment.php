@@ -18,6 +18,7 @@ if (!empty($userModel)) {
         ->orderBy('user_email.email')
         ->all(), 'email', 'email');
 }
+$model->to = !empty($data) ? $data : null;
 ?>
 <?= $this->render('/mail/_form', [
     'content' => $content,
