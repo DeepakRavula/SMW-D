@@ -125,6 +125,7 @@ class Enrolment extends \yii\db\ActiveRecord
             'paymentFrequencyId' => 'Payment Frequency',
             'toEmailAddress' => 'To',
             'showAllEnrolments' => 'Show All',
+            'showActiveFutureEnrolments' => 'Show Active Future Enrolments',
             'isAutoRenew' => 'Auto Renew',
             'is_online' => 'Online'
         ];
