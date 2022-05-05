@@ -69,7 +69,7 @@ class EnrolmentSearch extends Enrolment
             ->select(['enrolment.*','COUNT(*) AS lessonCount'])
             ->joinWith(['course' => function ($query) use ($locationId, $currentDate, $currentMonthLastDate) {
                 $query->location($locationId);
-                if (!$this->showAllEnrolments && !$this->showActiveFutureEnrolments) {
+                if (!$this->showAllEnrolments && !$this->showActiveFutureEnrolments && !$this->studentView) {
                     $query->activeEnrolments($currentDate, $currentMonthLastDate);
                 } elseif ($this->showAllEnrolments && !$this->showActiveFutureEnrolments && !$this->studentView) {
                     $query->andWhere(['<=', 'DATE(course.startDate)', $currentMonthLastDate]);
