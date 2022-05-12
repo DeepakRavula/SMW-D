@@ -21,7 +21,7 @@ use common\models\UserEmail;
             ->orderBy('user_email.email')
             ->all(), 'email', 'email');
     }
-    $model->to = $data;
+    $model->to = !empty($data) ? $data : null;
 ?>
 
 <?= $this->render('/mail/_form', [

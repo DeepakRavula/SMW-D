@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy') {
+            steps {
+                script {
+                    sshagent(['smw-prod-instance']) {
+                            slackSend (tokenCredentialId: "slack-workspace-alert", teamDomain: "arcadia-music-academy", channel: "deployment-alerts", color: "#FFFF00", message: "STARTED: Job : '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (<${env.BUILD_URL}|OPEN>)")
+                            sh """ssh -t -t ubuntu@52.60.240.104 -o StrictHostKeyChecking=no << EOF
+                                cd /srv/smw-prod && \
+                                git pull origin master && \
+                                composer install && \
+                                php console/yii migrate
+                                exit
+                                EOF"""
+                    }
+              }
+            }
+        }
+    }
+     post{
+            success{
+                 slackSend tokenCredentialId: "slack-workspace-alert", teamDomain: "arcadia-music-academy", channel: "deployment-alerts", color: "#00FF00", message: "Deployed successfully - ${env.JOB_NAME} (<${env.BUILD_URL}|OPEN>) \nGIT_COMMIT_ID : ${GIT_COMMIT}"
+             }
+            failure{
+                 slackSend tokenCredentialId: "slack-workspace-alert", teamDomain: "arcadia-music-academy", channel: "deployment-alerts", color: "#FF9FA1", failOnError:true, message:"Build Failed  - ${env.JOB_NAME} (<${env.BUILD_URL}|OPEN>)"
+             }
+     }
+
+}
