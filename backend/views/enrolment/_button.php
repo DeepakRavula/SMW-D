@@ -23,8 +23,11 @@ use yii\widgets\Pjax;
         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter fa-1x"></i>&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
             <li>
-            <?= $form->field($searchModel, 'showAllEnrolments')->label(false)->checkbox(['label' => 'Show Inactive Items','data-pjax' => true]); ?>
-</li>
+                <?= $form->field($searchModel, 'showAllEnrolments')->label(false)->checkbox(['label' => 'Show Inactive Items','data-pjax' => true]); ?>
+            </li>
+            <li>
+                <?= $form->field($searchModel, 'showActiveFutureEnrolments')->label(false)->checkbox(['label' => 'Show Active & Future Enrolments','data-pjax' => true]); ?>
+            </li>
         </ul>
     </div>
 </div>
