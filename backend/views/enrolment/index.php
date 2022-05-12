@@ -31,7 +31,7 @@ use yii\jui\DatePicker;
     <?php echo Tabs::widget([
         'items' => [
             [
-                'label' => 'Enorlments',
+                'label' => 'Enrolments',
                 'content' => $gridView,
                 'options' => [
                     'id' => 'grid-view',
