@@ -157,29 +157,18 @@ class CourseQuery extends \yii\db\ActiveQuery
             ]);
     }
 
-    public function currentEnrolments($from, $to) 
+    public function activeEnrolments($currentDate, $currentMonthLastDate) 
     {
-        return $this->andWhere(['OR',
+        return $this->andWhere(['AND',
                     [
-                            'between', 'DATE(course.startDate)', $from, $to
+                            '<=', 'DATE(course.startDate)', $currentMonthLastDate
                     ],
                     [
-                            'between','DATE(course.endDate)' , $from, $to
-                    ],
-                    [
-                            'AND',
-                            [
-                                    '<', 'DATE(course.startDate)', $from
-                            ],
-                            [
-                                    '>', 'DATE(course.endDate)', $to
-                            ]
-
+                            '>=', 'DATE(course.endDate)', $currentDate
                     ]
-    
-            ]);
+        ]);
     }
-    
+
     public function notDeleted()  
     {
         return $this->andwhere(['course.isDeleted' => false]);
