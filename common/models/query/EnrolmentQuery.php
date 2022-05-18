@@ -188,6 +188,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['enrolment.studentId' => $studentId]);
     }
+
     public function activeAndfutureEnrolments()
     {
         $fromDate = null;
