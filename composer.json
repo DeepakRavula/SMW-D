@@ -119,7 +119,7 @@
     "process-timeout": 1800,
     "discard-changes": true,
     "allow-plugins": {
-      "yiisoft/yii2-composer": false,
+      "yiisoft/yii2-composer": true,
       "kylekatarnls/update-helper": true
     }
   },

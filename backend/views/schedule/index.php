@@ -12,7 +12,7 @@ use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 
 /* @var $this yii\web\View */
-$holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
+$holiday = Holiday::findOne(['date' => (new \DateTime())->format('Y-m-d')]);
 $holidayResource = '';
 if (!empty($holiday)) {
     $holidayResource = ' (' . $holiday->description. ')';
