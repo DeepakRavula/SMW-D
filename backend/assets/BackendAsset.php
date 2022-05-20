@@ -40,7 +40,7 @@ class BackendAsset extends AssetBundle
 
     public function init()
     {
-        $this->jsOptions['position'] = View::POS_BEGIN;
+        $this->jsOptions['position'] = View::POS_HEAD;
         parent::init();
     }
 }
