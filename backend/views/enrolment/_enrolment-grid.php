@@ -148,26 +148,15 @@ use common\models\Enrolment;
                 'opens' => 'left'
             ]
         ]
-    ]/*,
-	[
-        'attribute' => 'status',
-        'label' => 'Status',
-        'filter' => EnrolmentSearch::statusValue(),
-        'filterWidgetOptions' => [
-            'options' => [
-                'id' => 'enrolment-status',
-            ],
-        ],
+    ],
+    [
+        'attribute' => 'lessonCount',
+        'label' => 'Lessons Remaining',
         'value' => function ($data) {
-			$t=strtotime($data->endDateTime);
-			if($t>=time()){
-            return Enrolment::STATUS_ACTIVE;
-			}else{
-				return Enrolment::STATUS_INACTIVE;
-			}
-        },
-        'contentOptions' => ['style' => 'width:10%'],
-    ]*/
+            return count($data->futureLessons);
+		},
+        'contentOptions' => ['style' => 'width:10%','align'=>'center'],
+    ]
 ];
 
  ?>
@@ -298,8 +287,9 @@ use common\models\Enrolment;
         }
     });
 
-    $(document).on('change', '#enrolmentsearch-showallenrolments', function() {
-        var showAllEnrolments = $(this).is(":checked");
+    $(document).on('change', '#enrolmentsearch-showallenrolments, #enrolmentsearch-showactivefutureenrolments', function() {
+        var showAllEnrolments = $("#enrolmentsearch-showallenrolments").is(":checked");
+        var showActiveFutureEnrolments = $("#enrolmentsearch-showactivefutureenrolments").is(":checked");
         var program_search = $("input[name*='EnrolmentSearch[program]").val();
         var student_search = $("input[name*='EnrolmentSearch[student]").val();
         var teacher_search = $("input[name*='EnrolmentSearch[teacher]").val();
@@ -307,6 +297,7 @@ use common\models\Enrolment;
         var params = $.param({
             'EnrolmentSearch[startdate]': startDate,
             'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),
+            'EnrolmentSearch[showActiveFutureEnrolments]': (showActiveFutureEnrolments | 0),
             'EnrolmentSearch[program]': program_search,
             'EnrolmentSearch[student]': student_search,
             'EnrolmentSearch[teacher]': teacher_search

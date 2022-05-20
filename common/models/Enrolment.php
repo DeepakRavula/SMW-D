@@ -38,7 +38,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public $applyFullDiscount;
     public $scheduleTitle;
     public $class;
-	public $status;
+    public $lessonCount;
 
     const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const AUTO_RENEWAL_STATE_ENABLED = 'enabled';
@@ -51,8 +51,6 @@ class Enrolment extends \yii\db\ActiveRecord
     const EVENT_CREATE = 'create';
     const EVENT_GROUP = 'group-course-enroll';
     const CONSOLE_USER_ID  = 727;
-    const STATUS_ACTIVE='Active';
-	const STATUS_INACTIVE='Inactive';
 
     const SCENARIO_EDIT = 'scenario-edit';
     const SCENARIO_GROUP_ENROLMENT_ENDDATE_ADJUSTMENT = 'scenario-group-enrolment-enddate-adjustment';
@@ -127,6 +125,7 @@ class Enrolment extends \yii\db\ActiveRecord
             'paymentFrequencyId' => 'Payment Frequency',
             'toEmailAddress' => 'To',
             'showAllEnrolments' => 'Show All',
+            'showActiveFutureEnrolments' => 'Show Active Future Enrolments',
             'isAutoRenew' => 'Auto Renew',
             'is_online' => 'Online'
         ];
@@ -432,6 +431,21 @@ class Enrolment extends \yii\db\ActiveRecord
                     Lesson::STATUS_UNSCHEDULED
                 ]
             ]);
+    }
+
+    public function getFutureLessons()
+    {
+        return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
+            ->onCondition([
+                'lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                'lesson.status' => [
+                    Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                    Lesson::STATUS_UNSCHEDULED
+                ]
+            ])
+            ->andWhere('DATE(lesson.date)>= CURRENT_DATE')
+            ->andWhere('DATE(lesson.date)<= DATE(\''.$this->endDateTime.'\')')
+            ->orderBy(['lesson.date' => SORT_ASC]);
     }
 
     public function getLessonsByDate()

@@ -14,6 +14,7 @@ use Yii;
 class EnrolmentSearch extends Enrolment
 {
     public $showAllEnrolments = false;
+    public $showActiveFutureEnrolments = false;
     public $program;
     public $course;
     public $student;
@@ -37,8 +38,8 @@ class EnrolmentSearch extends Enrolment
     {
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
-            [['showAllEnrolments', 'program', 'course', 'student', 'startdate', 'teacher', 'endEndDate',  
-            'startBeginDate', 'startEndDate', 'studentView', 'studentId', 'enddate', 'status', 'endBeginDate', 'isAutoRenewal', 'goToDate', 'weekDate'], 'safe']
+            [['showAllEnrolments', 'showActiveFutureEnrolments', 'program', 'course', 'student', 'startdate', 'teacher', 'endEndDate',  
+            'startBeginDate', 'startEndDate', 'studentView', 'studentId', 'enddate', 'lessonCount', 'endBeginDate', 'isAutoRenewal', 'goToDate', 'weekDate'], 'safe']
         ];
     }
 
@@ -63,11 +64,18 @@ class EnrolmentSearch extends Enrolment
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentdate = $currentDate = new \DateTime();
         $currentDate = $currentdate->format('Y-m-d');
+        $currentMonthLastDate = $currentdate->format('Y-m-t');
         $query = Enrolment::find()
-            ->joinWith(['course' => function ($query) use ($locationId) {
-                $query->location($locationId)
-                        ->confirmed()
-                        ->notDeleted();
+            ->select(['enrolment.*','COUNT(*) AS lessonCount'])
+            ->joinWith(['course' => function ($query) use ($locationId, $currentDate, $currentMonthLastDate) {
+                $query->location($locationId);
+                if (!$this->showAllEnrolments && !$this->showActiveFutureEnrolments && !$this->studentView) {
+                    $query->activeEnrolments($currentDate, $currentMonthLastDate);
+                } elseif ($this->showAllEnrolments && !$this->showActiveFutureEnrolments && !$this->studentView) {
+                    $query->andWhere(['<=', 'DATE(course.startDate)', $currentMonthLastDate]);
+                }
+                $query->confirmed()
+                    ->notDeleted();
             }])
             ->notDeleted()
             ->isConfirmed()
@@ -120,11 +128,7 @@ class EnrolmentSearch extends Enrolment
         $query->andFilterWhere(['like', 'p.name', $this->program]);
         $query->andFilterWhere(['like', "CONCAT(student.first_name, ' ', student.last_name)", $this->student]);
         $query->andFilterWhere(['like', "CONCAT(up.firstname, ' ', up.lastname)", $this->teacher]);
-		if($this->status==Enrolment::STATUS_ACTIVE){
-			$query->andWhere('DATE(enrolment.endDateTime)>=CURRENT_DATE');
-		}elseif($this->status==Enrolment::STATUS_INACTIVE){
-			$query->andWhere('DATE(enrolment.endDateTime)<CURRENT_DATE');
-		}
+
         if ($this->startdate) {
             list($this->startBeginDate, $this->startEndDate) = explode(' - ', $this->startdate);
             $query->andWhere(['between', 'DATE(course.startDate)',
@@ -146,13 +150,28 @@ class EnrolmentSearch extends Enrolment
             $query->andFilterWhere(['AND', ['=', 'enrolment.isAutoRenew', 0]]);
         }
 
-		if (!$this->showAllEnrolments) {
-			$query->andWhere('DATE(l.date)>= CURRENT_DATE')
-			      ->andWhere('DATE(l.date)<= DATE(enrolment.endDateTime)')
+        $lessonCntPattern = "/[<>][=]?[1-9]{1,2}/";
+        $lessonCntCheck = preg_match($lessonCntPattern, $this->lessonCount);
+		if (!$this->showAllEnrolments || $this->lessonCount > 0 || $lessonCntCheck == 1) {
+			$query->andWhere('DATE(l.date) >= CURRENT_DATE')
+			      ->andWhere('DATE(l.date) <= DATE(enrolment.endDateTime)')
                 ->isConfirmed()
                 ->isRegular();
         }
+        if ($this->lessonCount == '0' || $this->lessonCount == '<=0') {
+			$query->andWhere('DATE(enrolment.endDateTime) < CURRENT_DATE');
+		}
+
 		$query->groupBy(['l.courseId']);
+
+        if ($this->lessonCount > 0) {
+			$query->having('lessonCount='.$this->lessonCount);
+		}
+        if ($lessonCntCheck == 1) {
+			$query->having('lessonCount'.$this->lessonCount);
+		} elseif ($this->lessonCount == '<0') {
+			$query->having('lessonCount'.$this->lessonCount);
+		}
         return $dataProvider;
     }
 
