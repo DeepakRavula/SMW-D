@@ -33,3 +33,7 @@ phpunit.phar
 
 #rest-asset
 rest/runtime
+
+# Supervisor local env files
+supervisord.log
+supervisord.pid
