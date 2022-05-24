@@ -181,6 +181,7 @@ $config = [
         'rollbar' => [
             'class' => 'baibaratsky\yii\rollbar\Rollbar',
             'accessToken' => env('ROLLBAR_POST_SERVER_ITEM'),
+            'environment' => env('ROLLBAR_ENVIRONMENT'),
         ],
     ],
     'params' => [
