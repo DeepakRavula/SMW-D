@@ -66,7 +66,7 @@ class EmailMultiCustomerController extends BaseController
                                     }]);
                                 }]);   
                         }])
-                        ->primary();
+                        ->all();
                     }])
                     ->orderBy('user_email.email')
                     ->all(), 'email', 'email');       
