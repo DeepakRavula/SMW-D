@@ -15,6 +15,9 @@ $user = User::findOne($model->id);
             <li><a id="mail-customer-statement" href="#">Email Statement</a></li>
             <li><a id="ar-report-detail" href="#">A/R Report Detail</a></li>
             <li><a id="item-report-detail" href="#">Items Purchased by Category</a></li>
+            <?php if (($loggedUser->isAdmin()) || ($loggedUser->isOwner() && $user->isManagableByOwner()) || ($loggedUser->isStaff() && $user->isManagableByStaff())) : ?>
+            <li><a id="notify-email-toggle" href="#">Notify Via Email</a></li>
+        <?php endif ; ?>
         <?php endif ; ?>
         <?php if (($loggedUser->isAdmin()) || ($loggedUser->isOwner() && $user->isManagableByOwner()) || ($loggedUser->isStaff() && $user->isManagableByStaff())) : ?>
             <li><a class="user-delete-button" href="<?= Url::to(['delete', 'id' => $model->id]);?>">Delete</a></li>
@@ -54,6 +57,11 @@ $user = User::findOne($model->id);
                     }
                 }
             });
+        return false;
+    });
+
+    $(document).off('click', '#notify-email-toggle').on('click', '#notify-email-toggle', function() {
+       alert('success');
         return false;
     });
 
