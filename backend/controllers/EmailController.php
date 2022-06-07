@@ -52,7 +52,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail', 'notify-email-preview'],
+                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail', 'notify-email', 'notify-email-preview'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -607,11 +607,18 @@ class EmailController extends BaseController
             ];
         }
     }
-    public function actionNotifyEmail()
+    public function actionNotifyEmail($customerId)
     {
         $model= new NotificationEmailType();
         if ($model->load(Yii::$app->request->post())){
-            print_r($model);
+            $invoice = Invoice::find()
+            ->andWhere(['invoice.user_id' => $customerId])
+            ->andWhere(['invoice.status' => 1])
+            ->notDeleted()
+            ->all();
+            print_r($invoice);
+           
+            
         }
     }
     public function actionNotifyEmailPreview($id)
@@ -620,6 +627,7 @@ class EmailController extends BaseController
         $emailTypes = new NotificationEmailType();
         $data = $this->renderAjax('/mail/notify-email-types', [
             'emailTypes' => $emailTypes,
+            'customerId' => $customerId->id,
         ]);
             return [
                 'status' => true,

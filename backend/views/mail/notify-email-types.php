@@ -5,7 +5,7 @@ use yii\helpers\ArrayHelper;
 use common\models\NotificationEmailType;
 ?>
     <?php 
-     $url = Url::to(['email/notify-email' ,'EmailTypes[reason]' => $emailTypes->emailNotifyType]);
+     $url = Url::to(['email/notify-email','customerId' => $customerId]);
     ?>
 <?php $form = ActiveForm::begin([
 
