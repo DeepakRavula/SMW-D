@@ -44,11 +44,11 @@ foreach ($roleNames as $name => $description) {
 </div>
 
 <script src="/plugins/bootbox/bootbox.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<!-- <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script> -->
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
