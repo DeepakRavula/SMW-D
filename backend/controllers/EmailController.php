@@ -616,9 +616,62 @@ class EmailController extends BaseController
             ->andWhere(['invoice.status' => 1])
             ->notDeleted()
             ->all();
-            print_r($invoice);
-           
             
+            $searchModel = new PaymentFormLessonSearch();
+            $searchModel->showCheckBox = true;
+            $modelPf = new PaymentForm();
+            $payment = new Payment();
+            $currentDate = new \DateTime();
+            $payment->date = $currentDate->format('M d, Y');
+            $modelPf->date = $currentDate->format('M d, Y');
+            $locationModel = Location::findOne(['slug' => \Yii::$app->location]);
+            
+            $searchModel->fromDate = $currentDate->format('M 1, Y');
+            $searchModel->toDate = $currentDate->format('M t, Y'); 
+            $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+            $searchModel->load(Yii::$app->request->get());
+            $modelPf->userId = $customerId;
+            $payment->user_id = $customerId;
+            $invoicedLessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled();
+                $invoicedLessons->dueLessons();
+                $invoicedLessons->privateLessons()
+                ->customer($customerId)
+                ->invoiced();
+            $lessonsQuery = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled();
+            $lessonsQuery->dueLessons();
+            $lessonsQuery->privateLessons()
+                ->customer($customerId)
+                ->joinWith(['privateLesson' => function($query) {
+                    $query->andWhere(['>', 'private_lesson.balance', 0.09]);
+                }])
+                ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+                ->andWhere(['invoiced_lesson.id' => null]);
+                $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
+            
+                $lessonLineItemsDataProvider = new ActiveDataProvider([
+                    'query' => $lessonsQuery,
+                    'pagination' => false
+                ]);
+
+           
+                $data = $this->renderAjax('/mail/notify-email-lessons', [
+                    'modelPf' => $modelPf,
+                    'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                    'searchModel' => $searchModel,
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $data
+                ];
+                print_($response);
+            
+        
         }
     }
     public function actionNotifyEmailPreview($id)
@@ -627,7 +680,7 @@ class EmailController extends BaseController
         $emailTypes = new NotificationEmailType();
         $data = $this->renderAjax('/mail/notify-email-types', [
             'emailTypes' => $emailTypes,
-            'customerId' => $customerId->id,
+            'customerId' => $id,
         ]);
             return [
                 'status' => true,
