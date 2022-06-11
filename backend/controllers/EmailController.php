@@ -669,7 +669,7 @@ class EmailController extends BaseController
                     'status' => true,
                     'data' => $data
                 ];
-                print_($response);
+                print_r($response);
             
         
         }
