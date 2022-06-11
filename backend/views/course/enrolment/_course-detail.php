@@ -78,7 +78,7 @@ use kartik\select2\Select2;
         return false;
     });
 
-    $(document).ready(function () {
+    $(document).ready(function (event) {
         $('#modal-back').show();
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Detail</h4>');
         var isReverse = <?= $isReverse ?>;
