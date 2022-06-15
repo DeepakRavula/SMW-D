@@ -13,8 +13,13 @@ use yii\bootstrap\ActiveForm;
 
 <?php
 $form = ActiveForm::begin([
-    'id' => 'modal-form-lesson',
-    'enableClientValidation' => false
+    'id' => 'modal-form',
+    // 'enableClientValidation' => false,
+    'action' => Url::to(['email/receipt',  'PaymentForm[userId]' => $modelPf->userId, 
+            'PaymentForm[invoiceCredits]' => $modelPf->invoiceCredits, 'PaymentForm[paymentCredits]' => $modelPf->paymentCredits,
+            'PaymentForm[invoicePayments]' => $modelPf->invoicePayments, 'PaymentForm[lessonPayments]' => $modelPf->lessonPayments, 
+            'PaymentForm[groupLessonPayments]' => $modelPf->groupLessonPayments, 'PaymentForm[amount]' => $modelPf->amount, 
+            'PaymentForm[paymentId]' => $modelPf->paymentId])
 ]);
 ?>
 

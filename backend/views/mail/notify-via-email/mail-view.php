@@ -12,24 +12,25 @@ use yii\bootstrap\Html;
         <div class="col-xs-12">
             <div class="col-xs-8">
             <div class = "row">
-            <?php if ($lessonLineItemsDataProvider->totalCount > 0) : ?>
-            <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
-            <?= $this->render('_lesson-line-item', [
+                
+            
+            <?php if ($invoiceLineItemsDataProvider) : ?>
+            <?= Html::label('Invoice', ['class' => 'admin-login']) ?>
+            <?= $this->render('_invoice-line-item', [
                 'model' => $model,
                 'isCreatePfi' => false,
-                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'searchModel' => $searchModel
             ]);
             ?>
             </div>
             <?php endif; ?>
-            
+
             <table style = "width:100%;">
             <table style = "width:50%">
             <table class = "table table-condensed">
             <tr>
-            <td style = "width:600px">Total</td>
-            <td style = "width:600px;text-align:right;"><?= $total;?></td>
+            
             </tr>
             </table>
             </table>
