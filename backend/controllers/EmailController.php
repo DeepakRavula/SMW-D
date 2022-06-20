@@ -663,81 +663,81 @@ class EmailController extends BaseController
 
                 }
                 elseif($type == 2){
-                    // print_r("First Schedule Lesson");
-                    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-                    $lessonQuery = Lesson::find()
-                         ->isConfirmed()
-                        ->notDeleted()
-                        ->location($locationId)
-                        ->activePrivateLessons()
-                        ->joinWith(['privateLesson'])
-                        ->notCanceled();
-                    $firstLesson = $lessonQuery->orderBy(['lesson.date' => SORT_ASC])->one();
-                    print_r($firstLesson);
+                    print_r("First Schedule Lesson");
+                    // $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+                    // $lessonQuery = Lesson::find()
+                    //      ->isConfirmed()
+                    //     ->notDeleted()
+                    //     ->location($locationId)
+                    //     ->activePrivateLessons()
+                    //     ->joinWith(['privateLesson'])
+                    //     ->notCanceled();
+                    // $firstLesson = $lessonQuery->orderBy(['lesson.date' => SORT_ASC])->one();
+                    // print_r($firstLesson);
                 }
                 elseif($type == 3){
-                    // print_r("OverDue Invoice");
-                    $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
-                    $invoicesQuery = Invoice::find();
-                     if (!$searchModel->userId) {
-                            $searchModel->userId = null;
-                        }
-                    $invoicesQuery->notDeleted()
-                        ->invoice()
-                        ->customer($searchModel->userId)
-                        ->unpaid()
-                        ->andWhere(['>','invoice.balance' , 0.09]);
-                        if ($searchModel->isWalkin()) {
-                            $invoicesQuery->andWhere(['id' => $searchModel->invoiceId]);
-                        }
-                    $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
-                    $invoiceLineItemsDataProvider = new ActiveDataProvider([
-                        'query' => $invoicesQuery,
-                        'pagination' => false
-                    ]);
+                    print_r("OverDue Invoice");
+                    // $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+                    // $invoicesQuery = Invoice::find();
+                    //  if (!$searchModel->userId) {
+                    //         $searchModel->userId = null;
+                    //     }
+                    // $invoicesQuery->notDeleted()
+                    //     ->invoice()
+                    //     ->customer($searchModel->userId)
+                    //     ->unpaid()
+                    //     ->andWhere(['>','invoice.balance' , 0.09]);
+                    //     if ($searchModel->isWalkin()) {
+                    //         $invoicesQuery->andWhere(['id' => $searchModel->invoiceId]);
+                    //     }
+                    // $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
+                    // $invoiceLineItemsDataProvider = new ActiveDataProvider([
+                    //     'query' => $invoicesQuery,
+                    //     'pagination' => false
+                    // ]);
                     
-                    $data = $this->renderAjax('/mail/notify-via-email/notify_invoice_from', [
-                        'model' => new EmailForm(),
-                        'emails' => !empty($user->emails) ? $user->emailNames : null,
-                        'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                        'emailTemplate' => $emailTemplate,
-                        'userModel' => $user,
-                        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                        'lessonLineItemsDataProvider' => null ,
-                        'searchModel' => $searchModel,
-                    ]);
-                    return [
-                        'status' => true,
-                        'data' => $data
-                    ];
+                    // $data = $this->renderAjax('/mail/notify-via-email/notify_invoice_from', [
+                    //     'model' => new EmailForm(),
+                    //     'emails' => !empty($user->emails) ? $user->emailNames : null,
+                    //     'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
+                    //     'emailTemplate' => $emailTemplate,
+                    //     'userModel' => $user,
+                    //     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                    //     'lessonLineItemsDataProvider' => null ,
+                    //     'searchModel' => $searchModel,
+                    // ]);
+                    // return [
+                    //     'status' => true,
+                    //     'data' => $data
+                    // ];
                 }
                 else{
-                    // print_r("future Lessons");
-                    $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
-                    $credits = 0.00;
-                    $creditResults = $creditDataProvider->getModels();   
-                    foreach ($creditResults as $creditResult) {
-                        $credits+= $creditResult['amount'];
-                    }  
+                    print_r("future Lessons");
+                    // $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
+                    // $credits = 0.00;
+                    // $creditResults = $creditDataProvider->getModels();   
+                    // foreach ($creditResults as $creditResult) {
+                    //     $credits+= $creditResult['amount'];
+                    // }  
                     
-                    $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
-                    $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
-                    $total = ($lessonsDue) - $credits;
-                    $data = $this->renderAjax('/mail/notify-via-email/notify_future_lesson_from', [
-                        'model' => new EmailForm(),
-                        'emails' => !empty($user->emails) ? $user->emailNames : null,
-                        'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                        'emailTemplate' => $emailTemplate,
-                        'userModel' => $user,
-                        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                        'searchModel' => $searchModel,
-                        // 'groupLessonSearchModel' => $groupLessonSearchModel,
-                        'total' =>$total,
-                    ]);
-                    return [
-                        'status' => true,
-                        'data' => $data
-                    ];
+                    // $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
+                    // $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
+                    // $total = ($lessonsDue) - $credits;
+                    // $data = $this->renderAjax('/mail/notify-via-email/notify_future_lesson_from', [
+                    //     'model' => new EmailForm(),
+                    //     'emails' => !empty($user->emails) ? $user->emailNames : null,
+                    //     'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
+                    //     'emailTemplate' => $emailTemplate,
+                    //     'userModel' => $user,
+                    //     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                    //     'searchModel' => $searchModel,
+                    //     // 'groupLessonSearchModel' => $groupLessonSearchModel,
+                    //     'total' =>$total,
+                    // ]);
+                    // return [
+                    //     'status' => true,
+                    //     'data' => $data
+                    // ];
                 }
             }
             
