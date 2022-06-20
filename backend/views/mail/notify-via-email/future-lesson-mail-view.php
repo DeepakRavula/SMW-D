@@ -12,8 +12,10 @@ use yii\bootstrap\Html;
         <div class="col-xs-12">
             <div class="col-xs-8">
             <div class = "row">
-            <?php if ($lessonLineItemsDataProvider->totalCount > 0) : ?>
-            <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
+                
+            
+            <?php if ($lessonLineItemsDataProvider) : ?>
+            <?= Html::label('Future Lesson', ['class' => 'admin-login']) ?>
             <?= $this->render('_lesson-line-item', [
                 'model' => $model,
                 'isCreatePfi' => false,
@@ -23,13 +25,12 @@ use yii\bootstrap\Html;
             ?>
             </div>
             <?php endif; ?>
-            
+
             <table style = "width:100%;">
             <table style = "width:50%">
             <table class = "table table-condensed">
             <tr>
-            <td style = "width:600px">Total</td>
-            <td style = "width:600px;text-align:right;"><?= $total;?></td>
+            
             </tr>
             </table>
             </table>
