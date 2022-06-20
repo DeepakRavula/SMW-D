@@ -131,6 +131,13 @@ use yii\jui\DatePicker;
         schedule.refreshCalendar(moment(selected_date));
     });
 
+    $(document).on('click', '.tv-icon', function(e) {
+        e.preventDefault();
+        var date = moment($('#schedule-go-to-datepicker').val()).format('DD-MM-YYYY');
+        var url = "<?= Url::to(['daily-schedule/index']);?>?date=" + date;
+        window.open(url, '_blank');
+        return false;
+    });
 
     $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
         $('.tv-icon').hide();
