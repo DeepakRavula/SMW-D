@@ -19,6 +19,7 @@ use common\models\User;
 use common\components\controllers\BaseController;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
+use common\models\Lesson;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -95,6 +96,11 @@ class ReportController extends BaseController
                     [
                         'allow' => true,
                         'actions' => ['account-receivable'],
+                        'roles' => ['manageAccountReceivableReport'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['amount-transfer-report'],
                         'roles' => ['manageAccountReceivableReport'],
                     ],
                 ],
@@ -543,6 +549,60 @@ class ReportController extends BaseController
         return $this->render( 'account-receivable/index', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
+            ]);
+    }
+
+    public function actionAmountTransferReport()
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $currentDate = (new \DateTime())->format('Y-m-d');
+
+        $paidFutureLessons = Lesson::find()
+                        ->joinWith(['lessonPayments' => function ($query) {
+                            $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
+                        }])
+                        ->location($locationId)
+                        ->andWhere(['>', 'lesson.date', $currentDate])
+                        ->orderBy(['lesson.id' => SORT_ASC])
+                        ->notCanceled()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->regular();
+
+        $paidPastLessons = Lesson::find()
+                        ->joinWith(['lessonPayments' => function ($query) {
+                            $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
+                        }])
+                        ->andWhere(['<', 'lesson.date', $currentDate])
+                        ->orderBy(['lesson.id' => SORT_ASC])
+                        ->location($locationId)
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->notCanceled()
+                        ->unscheduled()
+                        ->regular();
+
+        $outstandingInvoices = Invoice::find()
+                        ->invoice()
+                        ->location($locationId)
+                        ->andWhere(['>', 'invoice.balance', 0.0])
+                        ->notDeleted()
+                        ->unpaid();
+
+        $paidFutureLessondataProvider = new ActiveDataProvider([
+            'query' => $paidFutureLessons,
+        ]);
+        $paidPastLessondataProvider = new ActiveDataProvider([
+            'query' => $paidPastLessons,
+        ]);
+        $invoicedataProvider = new ActiveDataProvider([
+            'query' => $outstandingInvoices,
+        ]);
+
+        return $this->render( 'amount-transfer-report/index', [
+                'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
+                'paidPastLessondataProvider' => $paidPastLessondataProvider,
+                'invoicedataProvider' => $invoicedataProvider,
             ]);
     }
 }
