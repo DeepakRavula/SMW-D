@@ -20,6 +20,7 @@ use common\components\controllers\BaseController;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use common\models\Lesson;
+use common\models\CustomerAccount;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -589,6 +590,9 @@ class ReportController extends BaseController
                         ->notDeleted()
                         ->unpaid();
 
+        $customersWithCredit = CustomerAccount::find()
+                        ->andWhere(['<', 'balance', 0]);
+
         $paidFutureLessondataProvider = new ActiveDataProvider([
             'query' => $paidFutureLessons,
         ]);
@@ -598,11 +602,15 @@ class ReportController extends BaseController
         $invoicedataProvider = new ActiveDataProvider([
             'query' => $outstandingInvoices,
         ]);
+        $customerWithCreditdataProvider = new ActiveDataProvider([
+            'query' => $customersWithCredit,
+        ]);
 
         return $this->render( 'amount-transfer-report/index', [
                 'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
                 'paidPastLessondataProvider' => $paidPastLessondataProvider,
                 'invoicedataProvider' => $invoicedataProvider,
+                'customerWithCreditdataProvider' => $customerWithCreditdataProvider,
             ]);
     }
 }

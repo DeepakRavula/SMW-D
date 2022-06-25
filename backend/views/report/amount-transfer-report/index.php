@@ -13,6 +13,7 @@ use yii\helpers\Html;
     'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
     'paidPastLessondataProvider' => $paidPastLessondataProvider,
     'invoicedataProvider' => $invoicedataProvider,
+    'customerWithCreditdataProvider' => $customerWithCreditdataProvider,
     ]); ?>
 
 <script>

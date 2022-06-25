@@ -76,7 +76,7 @@ use common\models\User;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->date;
+                    return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
                 },
             ],
             [
@@ -84,7 +84,7 @@ use common\models\User;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->duration;
+                    return  (new \DateTime($data->duration))->format('H:i');
                 },
             ],
             [
@@ -180,7 +180,7 @@ use common\models\User;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->date;
+                    return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
                 },
             ],
             [
@@ -188,7 +188,7 @@ use common\models\User;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->duration;
+                    return  (new \DateTime($data->duration))->format('H:i');
                 },
             ],
             [
@@ -281,7 +281,7 @@ use common\models\User;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->date;
+                    return  (new \DateTime($data->date))->format('M d, Y');
                 },
             ],
             [
@@ -299,6 +299,68 @@ use common\models\User;
                 'value' => function ($data) {
                     $paymentTotal = !empty($data->invoicePaymentTotal) ? $data->invoicePaymentTotal : 0;
                     return  Yii::$app->formatter->asCurrency(round($paymentTotal, 2));
+                },
+            ],
+            [
+                'label' => 'Balance',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asCurrency(round($data->balance, 2));
+                },
+            ],
+        ],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'amount-report'
+            ]
+            ],
+]);
+
+    ?>
+<?php Pjax::end(); ?>
+
+<?php Pjax::begin(['id' => 'locations-listing']); ?>
+    <?= KartikGridView::widget([
+        'dataProvider' => $customerWithCreditdataProvider,
+        'rowOptions' =>  ['class' => 'amount-transfer-report-detail-view'],
+        'tableOptions' => ['class' => 'table table-condensed table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'toolbar' =>  [
+            'content' =>
+                    Html::a('<i class="fa fa-print"></i>', '#', 
+                    ['id' => 'print', 'class' => 'btn btn-default']),
+            '{export}',
+            '{toggleData}',
+            // [
+            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+            //     'options' => ['title' => 'Filter',]
+            // ],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Customers With Credit',
+        ],
+        'showFooter' =>true,
+        'columns' => [
+            [
+                'label' => 'Customer ID',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->customerId;
+                },
+            ],
+            [
+                'label' => 'Customer Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $customer = User::findOne(['id' => $data->customerId]);
+                    return  $customer->publicIdentity;
                 },
             ],
             [
