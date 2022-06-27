@@ -33,11 +33,11 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
-            '{export}',
-            '{toggleData}',
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
+            // '{export}',
+            // '{toggleData}',
             // [
             //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
             //     'options' => ['title' => 'Filter',]
@@ -137,11 +137,11 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
-            '{export}',
-            '{toggleData}',
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
+            // '{export}',
+            // '{toggleData}',
             // [
             //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
             //     'options' => ['title' => 'Filter',]
@@ -241,11 +241,11 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
-            '{export}',
-            '{toggleData}',
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
+            // '{export}',
+            // '{toggleData}',
             // [
             //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
             //     'options' => ['title' => 'Filter',]
@@ -332,11 +332,11 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
-            '{export}',
-            '{toggleData}',
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
+            // '{export}',
+            // '{toggleData}',
             // [
             //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
             //     'options' => ['title' => 'Filter',]

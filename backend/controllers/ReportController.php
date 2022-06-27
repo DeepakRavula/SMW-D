@@ -598,6 +598,10 @@ class ReportController extends BaseController
         $outstandingInvoicesCount = $outstandingInvoices->count();
 
         $customersWithCredit = CustomerAccount::find()
+                        ->location($locationId)
+                        ->joinWith(['user' => function ($query) {
+                            $query->andWhere(['NOT', ['user.status' => User::STATUS_NOT_ACTIVE]]);
+                        }])
                         ->andWhere(['<', 'balance', 0]);
 
         $paidFutureLessondataProvider = new ActiveDataProvider([
