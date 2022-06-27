@@ -119,7 +119,7 @@ use common\models\User;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'amount-report'
+                'id' => 'future-amount-report'
             ]
             ],
 ]);
@@ -223,7 +223,7 @@ use common\models\User;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'amount-report'
+                'id' => 'past-amount-report'
             ]
             ],
 ]);
@@ -314,7 +314,7 @@ use common\models\User;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'amount-report'
+                'id' => 'invoice-amount-report'
             ]
             ],
 ]);
@@ -376,7 +376,7 @@ use common\models\User;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'amount-report'
+                'id' => 'credit-amount-report'
             ]
             ],
 ]);
