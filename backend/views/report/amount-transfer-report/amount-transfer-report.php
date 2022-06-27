@@ -121,7 +121,7 @@ use insolita\wgadminlte\LteConst;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'amount-report'
+                'id' => 'future-amount-report'
             ]
             ],
 ]);
@@ -225,7 +225,7 @@ use insolita\wgadminlte\LteConst;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'amount-report'
+                'id' => 'past-amount-report'
             ]
             ],
 ]);
@@ -316,7 +316,7 @@ use insolita\wgadminlte\LteConst;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'amount-report'
+                'id' => 'invoice-amount-report'
             ]
             ],
 ]);
@@ -378,7 +378,7 @@ use insolita\wgadminlte\LteConst;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'amount-report'
+                'id' => 'credit-amount-report'
             ]
             ],
 ]);

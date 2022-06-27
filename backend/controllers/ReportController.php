@@ -583,6 +583,7 @@ class ReportController extends BaseController
                         ->isConfirmed()
                         ->notCanceled()
                         ->unscheduled()
+                        ->notExpired()
                         ->regular();
         $paidPastLessonsSum = $paidPastLessons->sum('lesson_payment.amount');
         $paidPastLessonsCount = $paidPastLessons->count();
