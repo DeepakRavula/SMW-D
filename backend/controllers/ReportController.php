@@ -581,6 +581,7 @@ class ReportController extends BaseController
                         ->isConfirmed()
                         ->notCanceled()
                         ->unscheduled()
+                        ->notExpired()
                         ->regular();
 
         $outstandingInvoices = Invoice::find()
