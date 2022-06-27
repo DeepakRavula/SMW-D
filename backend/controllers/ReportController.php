@@ -569,6 +569,8 @@ class ReportController extends BaseController
                         ->notDeleted()
                         ->isConfirmed()
                         ->regular();
+        $paidFutureLessonsSum = $paidFutureLessons->sum('lesson_payment.amount');
+        $paidFutureLessonsCount = $paidFutureLessons->count();
 
         $paidPastLessons = Lesson::find()
                         ->joinWith(['lessonPayments' => function ($query) {
@@ -582,6 +584,8 @@ class ReportController extends BaseController
                         ->notCanceled()
                         ->unscheduled()
                         ->regular();
+        $paidPastLessonsSum = $paidPastLessons->sum('lesson_payment.amount');
+        $paidPastLessonsCount = $paidPastLessons->count();
 
         $outstandingInvoices = Invoice::find()
                         ->invoice()
@@ -589,6 +593,8 @@ class ReportController extends BaseController
                         ->andWhere(['>', 'invoice.balance', 0.0])
                         ->notDeleted()
                         ->unpaid();
+        $outstandingInvoicesSum = $outstandingInvoices->sum('balance');
+        $outstandingInvoicesCount = $outstandingInvoices->count();
 
         $customersWithCredit = CustomerAccount::find()
                         ->andWhere(['<', 'balance', 0]);
@@ -611,6 +617,12 @@ class ReportController extends BaseController
                 'paidPastLessondataProvider' => $paidPastLessondataProvider,
                 'invoicedataProvider' => $invoicedataProvider,
                 'customerWithCreditdataProvider' => $customerWithCreditdataProvider,
+                'paidFutureLessonsSum' => $paidFutureLessonsSum,
+                'paidPastLessonsSum' => $paidPastLessonsSum,
+                'outstandingInvoicesSum' => $outstandingInvoicesSum,
+                'paidFutureLessonsCount' => $paidFutureLessonsCount,
+                'paidPastLessonsCount' => $paidPastLessonsCount,
+                'outstandingInvoicesCount' => $outstandingInvoicesCount,
             ]);
     }
 }

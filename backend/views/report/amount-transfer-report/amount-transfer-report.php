@@ -7,6 +7,8 @@ use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
 use Yii;
 use common\models\User;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 ?>
 <style>
 <style>
@@ -382,4 +384,33 @@ use common\models\User;
 ]);
 
     ?>
+<?php Pjax::end(); ?>
+
+<?php Pjax::begin([
+    'id' => 'amount-summary']) ?>
+<?php
+LteBox::begin([
+    'type' => LteConst::TYPE_DEFAULT,
+    'title' => 'Summary',
+    'withBorder' => true,
+])
+?>
+<dl class="horizontal">
+	<dt class=" m-r-10">Prepaid Lessons Paid Amount Total</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum); ?></dd>
+    <dt class=" m-r-10">Past Lessons Paid (service not taken) Amount Total</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidPastLessonsSum); ?></dd>
+    <dt class=" m-r-10">Outstanding Invoices Balance Total</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($outstandingInvoicesSum); ?></dd>
+    <dt class=" m-r-10">Prepaid Future Lessons Count</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= $paidFutureLessonsCount; ?></dd>
+    <dt class=" m-r-10">Past Lessons Paid (service not taken) Count</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= $paidPastLessonsCount; ?></dd>
+    <dt class=" m-r-10">Outstanding Invoices Count</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= $outstandingInvoicesCount; ?></dd>
+    <dt class=" m-r-10">Amount To Be Transferred</dt>
+    <dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum + $paidPastLessonsSum - $outstandingInvoicesSum); ?></dd>
+    <dt class=" m-r-10">(Prepaid Lessons Paid Amount Total + Past Lessons Paid (service not taken) Amount Total - Outstanding Invoices Balance Total)</dt>
+</dl>
+<?php LteBox::end()?>
 <?php Pjax::end(); ?>
