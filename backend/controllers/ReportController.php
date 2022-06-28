@@ -637,21 +637,39 @@ class ReportController extends BaseController
 
         $paidFutureLessondataProvider = new ActiveDataProvider([
             'query' => $paidFutureLessons,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $paidPastLessondataProvider = new ActiveDataProvider([
             'query' => $paidPastLessons,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $activeInvoicedataProvider = new ActiveDataProvider([
             'query' => $activeOutstandingInvoices,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $inactiveInvoicedataProvider = new ActiveDataProvider([
             'query' => $inactiveOutstandingInvoices,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $activeCustomerWithCreditdataProvider = new ActiveDataProvider([
             'query' => $activeCustomersWithCredit,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $inactiveCustomerWithCreditdataProvider = new ActiveDataProvider([
             'query' => $inactiveCustomersWithCredit,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
 
         return $this->render( 'change-over-report/index', [

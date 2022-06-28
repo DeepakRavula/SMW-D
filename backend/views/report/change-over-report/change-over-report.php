@@ -308,7 +308,14 @@ use insolita\wgadminlte\LteConst;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  Yii::$app->formatter->asCurrency(round($data->balance, 2));
+                    $balance = (round($data->balance, 2) > 0.00 && round($data->balance, 2) <= 0.09) || (round($data->balance, 2) < 0.00 && round($data->balance, 2) >= -0.09)  ? Yii::$app->formatter->format(round('0.00', 2), ['currency', 'USD', [
+                        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+                        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+                ]]): Yii::$app->formatter->format(round($data->balance, 2), ['currency', 'USD', [
+                        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+                        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+                ]]);
+                    return  Yii::$app->formatter->asCurrency(round($balance, 2));
                 },
             ],
         ],
