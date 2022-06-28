@@ -28,7 +28,7 @@ use insolita\wgadminlte\LteConst;
 <?php Pjax::begin(['id' => 'locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $paidFutureLessondataProvider,
-        'rowOptions' =>  ['class' => 'amount-transfer-report-detail-view'],
+        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -132,7 +132,7 @@ use insolita\wgadminlte\LteConst;
 <?php Pjax::begin(['id' => 'locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $paidPastLessondataProvider,
-        'rowOptions' =>  ['class' => 'amount-transfer-report-detail-view'],
+        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -149,7 +149,7 @@ use insolita\wgadminlte\LteConst;
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
-            'heading' => 'Paid Past Lessons(Service not taken)',
+            'heading' => 'Paid Unscheduled Lessons',
         ],
         'showFooter' =>true,
         'columns' => [
@@ -235,8 +235,8 @@ use insolita\wgadminlte\LteConst;
 
 <?php Pjax::begin(['id' => 'locations-listing']); ?>
     <?= KartikGridView::widget([
-        'dataProvider' => $invoicedataProvider,
-        'rowOptions' =>  ['class' => 'amount-transfer-report-detail-view'],
+        'dataProvider' => $activeInvoicedataProvider,
+        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -253,7 +253,7 @@ use insolita\wgadminlte\LteConst;
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
-            'heading' => 'Outstanding Invoices',
+            'heading' => 'Active Outstanding Invoices',
         ],
         'showFooter' =>true,
         'columns' => [
@@ -316,7 +316,7 @@ use insolita\wgadminlte\LteConst;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'invoice-amount-report'
+                'id' => 'active-invoice-amount-report'
             ]
             ],
 ]);
@@ -326,8 +326,8 @@ use insolita\wgadminlte\LteConst;
 
 <?php Pjax::begin(['id' => 'locations-listing']); ?>
     <?= KartikGridView::widget([
-        'dataProvider' => $customerWithCreditdataProvider,
-        'rowOptions' =>  ['class' => 'amount-transfer-report-detail-view'],
+        'dataProvider' => $inactiveInvoicedataProvider,
+        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -344,7 +344,98 @@ use insolita\wgadminlte\LteConst;
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
-            'heading' => 'Customers With Credit',
+            'heading' => 'Inactive Outstanding Invoices',
+        ],
+        'showFooter' =>true,
+        'columns' => [
+            [
+                'label' => 'Invoice ID',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->id;
+                },
+            ],
+            [
+                'label' => 'Customer Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $customer = User::findOne(['id' => $data->user_id]);
+                    if ($customer) {
+                        return $customer->publicIdentity;
+                    } else {
+                        return "NULL";
+                    }
+                },
+            ],
+            [
+                'label' => 'Date',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  (new \DateTime($data->date))->format('M d, Y');
+                },
+            ],
+            [
+                'label' => 'Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asCurrency(round($data->total, 2));
+                },
+            ],
+            [
+                'label' => 'Paid Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $paymentTotal = !empty($data->invoicePaymentTotal) ? $data->invoicePaymentTotal : 0;
+                    return  Yii::$app->formatter->asCurrency(round($paymentTotal, 2));
+                },
+            ],
+            [
+                'label' => 'Balance',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asCurrency(round($data->balance, 2));
+                },
+            ],
+        ],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'inactive-invoice-amount-report'
+            ]
+            ],
+]);
+
+    ?>
+<?php Pjax::end(); ?>
+
+<?php Pjax::begin(['id' => 'locations-listing']); ?>
+    <?= KartikGridView::widget([
+        'dataProvider' => $activeCustomerWithCreditdataProvider,
+        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
+        'tableOptions' => ['class' => 'table table-condensed table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'toolbar' =>  [
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
+            // '{export}',
+            // '{toggleData}',
+            // [
+            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+            //     'options' => ['title' => 'Filter',]
+            // ],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Active Customers With Credit',
         ],
         'showFooter' =>true,
         'columns' => [
@@ -378,7 +469,69 @@ use insolita\wgadminlte\LteConst;
         'pjaxSettings' => [
             'neverTimeout' => true,
             'options' => [
-                'id' => 'credit-amount-report'
+                'id' => 'active-credit-amount-report'
+            ]
+            ],
+]);
+
+    ?>
+<?php Pjax::end(); ?>
+
+<?php Pjax::begin(['id' => 'locations-listing']); ?>
+    <?= KartikGridView::widget([
+        'dataProvider' => $inactiveCustomerWithCreditdataProvider,
+        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
+        'tableOptions' => ['class' => 'table table-condensed table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'toolbar' =>  [
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
+            // '{export}',
+            // '{toggleData}',
+            // [
+            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+            //     'options' => ['title' => 'Filter',]
+            // ],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Inactive Customers With Credit',
+        ],
+        'showFooter' =>true,
+        'columns' => [
+            [
+                'label' => 'Customer ID',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->customerId;
+                },
+            ],
+            [
+                'label' => 'Customer Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $customer = User::findOne(['id' => $data->customerId]);
+                    return  $customer->publicIdentity;
+                },
+            ],
+            [
+                'label' => 'Balance',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asCurrency(round($data->balance, 2));
+                },
+            ],
+        ],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'inactive-credit-amount-report'
             ]
             ],
 ]);
@@ -398,19 +551,28 @@ LteBox::begin([
 <dl class="horizontal">
 	<dt class=" m-r-10">Prepaid Lessons Paid Amount Total</dt>
 	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum); ?></dd>
-    <dt class=" m-r-10">Past Lessons Paid (service not taken) Amount Total</dt>
+    <dt class=" m-r-10">Paid Unscheduled Lessons</dt>
 	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidPastLessonsSum); ?></dd>
-    <dt class=" m-r-10">Outstanding Invoices Balance Total</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($outstandingInvoicesSum); ?></dd>
+    <dt class=" m-r-10">Active Outstanding Invoices Balance Total</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($activeOutstandingInvoicesSum); ?></dd>
+    <dt class=" m-r-10">Inactive Outstanding Invoices Balance Total</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($inactiveOutstandingInvoicesSum); ?></dd>
     <dt class=" m-r-10">Prepaid Future Lessons Count</dt>
 	<dd class = "total-horizontal-dd pull-right"><?= $paidFutureLessonsCount; ?></dd>
-    <dt class=" m-r-10">Past Lessons Paid (service not taken) Count</dt>
+    <dt class=" m-r-10">Paid Unscheduled Lessons Count</dt>
 	<dd class = "total-horizontal-dd pull-right"><?= $paidPastLessonsCount; ?></dd>
-    <dt class=" m-r-10">Outstanding Invoices Count</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= $outstandingInvoicesCount; ?></dd>
+    <dt class=" m-r-10">Active Outstanding Invoices Count</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= $activeOutstandingInvoicesCount; ?></dd>
+    <dt class=" m-r-10">Inactive Outstanding Invoices Count</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= $inactiveOutstandingInvoicesCount; ?></dd>
+    <dt class=" m-r-10">Number of active Customers</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= $numberOfActiveCustomers; ?></dd>
+    <dt class=" m-r-10">Number of active Enrolments</dt>
+	<dd class = "total-horizontal-dd pull-right"><?= $numberOfEnrolments; ?></dd>
     <dt class=" m-r-10">Amount To Be Transferred</dt>
-    <dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum + $paidPastLessonsSum - $outstandingInvoicesSum); ?></dd>
-    <dt class=" m-r-10">(Prepaid Lessons Paid Amount Total + Past Lessons Paid (service not taken) Amount Total - Outstanding Invoices Balance Total)</dt>
+    <dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum + $paidPastLessonsSum); ?></dd>
+    <dt class=" m-r-10">(Prepaid Lessons Paid Amount Total + Past Unscheduled Lessons Amount Total)</dt>
+
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>

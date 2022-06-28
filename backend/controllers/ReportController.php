@@ -21,6 +21,7 @@ use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use common\models\Lesson;
 use common\models\CustomerAccount;
+use common\models\Enrolment;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -101,7 +102,7 @@ class ReportController extends BaseController
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['amount-transfer-report'],
+                        'actions' => ['change-over-report'],
                         'roles' => ['manageAccountReceivableReport'],
                     ],
                 ],
@@ -553,7 +554,7 @@ class ReportController extends BaseController
             ]);
     }
 
-    public function actionAmountTransferReport()
+    public function actionChangeOverReport()
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate = (new \DateTime())->format('Y-m-d');
@@ -588,19 +589,49 @@ class ReportController extends BaseController
         $paidPastLessonsSum = $paidPastLessons->sum('lesson_payment.amount');
         $paidPastLessonsCount = $paidPastLessons->count();
 
-        $outstandingInvoices = Invoice::find()
+        $activeOutstandingInvoices = Invoice::find()
                         ->invoice()
                         ->location($locationId)
                         ->andWhere(['>', 'invoice.balance', 0.0])
+                        ->joinWith(['user' => function ($query) {
+                            $query->active();
+                        }])
                         ->notDeleted()
                         ->unpaid();
-        $outstandingInvoicesSum = $outstandingInvoices->sum('balance');
-        $outstandingInvoicesCount = $outstandingInvoices->count();
+        $inactiveOutstandingInvoices = Invoice::find()
+                        ->invoice()
+                        ->location($locationId)
+                        ->andWhere(['>', 'invoice.balance', 0.0])
+                        ->joinWith(['user' => function ($query) {
+                            $query->inactive();
+                        }])
+                        ->notDeleted()
+                        ->unpaid();
+        $activeOutstandingInvoicesSum = $activeOutstandingInvoices->sum('balance');
+        $activeOutstandingInvoicesCount = $activeOutstandingInvoices->count();
+        $inactiveOutstandingInvoicesSum = $inactiveOutstandingInvoices->sum('balance');
+        $inactiveOutstandingInvoicesCount = $inactiveOutstandingInvoices->count();
+        $activeCustomers = User::find()
+                        ->customers($locationId)
+                        ->excludeWalkin()
+                        ->notDeleted();
+        $numberOfActiveCustomers = $activeCustomers->count();
+        $enrolments = Enrolment::find()
+                        ->location($locationId)
+                        ->active();
+        $numberOfEnrolments = $enrolments->count();
 
-        $customersWithCredit = CustomerAccount::find()
+        $activeCustomersWithCredit = CustomerAccount::find()
                         ->location($locationId)
                         ->joinWith(['user' => function ($query) {
-                            $query->andWhere(['NOT', ['user.status' => User::STATUS_NOT_ACTIVE]]);
+                            $query->active();
+                        }])
+                        ->andWhere(['<', 'balance', 0]);
+
+        $inactiveCustomersWithCredit = CustomerAccount::find()
+                        ->location($locationId)
+                        ->joinWith(['user' => function ($query) {
+                            $query->inactive();
                         }])
                         ->andWhere(['<', 'balance', 0]);
 
@@ -610,24 +641,36 @@ class ReportController extends BaseController
         $paidPastLessondataProvider = new ActiveDataProvider([
             'query' => $paidPastLessons,
         ]);
-        $invoicedataProvider = new ActiveDataProvider([
-            'query' => $outstandingInvoices,
+        $activeInvoicedataProvider = new ActiveDataProvider([
+            'query' => $activeOutstandingInvoices,
         ]);
-        $customerWithCreditdataProvider = new ActiveDataProvider([
-            'query' => $customersWithCredit,
+        $inactiveInvoicedataProvider = new ActiveDataProvider([
+            'query' => $inactiveOutstandingInvoices,
+        ]);
+        $activeCustomerWithCreditdataProvider = new ActiveDataProvider([
+            'query' => $activeCustomersWithCredit,
+        ]);
+        $inactiveCustomerWithCreditdataProvider = new ActiveDataProvider([
+            'query' => $inactiveCustomersWithCredit,
         ]);
 
-        return $this->render( 'amount-transfer-report/index', [
+        return $this->render( 'change-over-report/index', [
                 'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
                 'paidPastLessondataProvider' => $paidPastLessondataProvider,
-                'invoicedataProvider' => $invoicedataProvider,
-                'customerWithCreditdataProvider' => $customerWithCreditdataProvider,
+                'activeInvoicedataProvider' => $activeInvoicedataProvider,
+                'inactiveInvoicedataProvider' => $inactiveInvoicedataProvider,
+                'activeCustomerWithCreditdataProvider' => $activeCustomerWithCreditdataProvider,
+                'inactiveCustomerWithCreditdataProvider' => $inactiveCustomerWithCreditdataProvider,
                 'paidFutureLessonsSum' => $paidFutureLessonsSum,
                 'paidPastLessonsSum' => $paidPastLessonsSum,
-                'outstandingInvoicesSum' => $outstandingInvoicesSum,
+                'activeOutstandingInvoicesSum' => $activeOutstandingInvoicesSum,
+                'inactiveOutstandingInvoicesSum' => $inactiveOutstandingInvoicesSum,
                 'paidFutureLessonsCount' => $paidFutureLessonsCount,
                 'paidPastLessonsCount' => $paidPastLessonsCount,
-                'outstandingInvoicesCount' => $outstandingInvoicesCount,
+                'activeOutstandingInvoicesCount' => $activeOutstandingInvoicesCount,
+                'inactiveOutstandingInvoicesCount' => $inactiveOutstandingInvoicesCount,
+                'numberOfActiveCustomers' => $numberOfActiveCustomers,
+                'numberOfEnrolments' => $numberOfEnrolments,
             ]);
     }
 }
