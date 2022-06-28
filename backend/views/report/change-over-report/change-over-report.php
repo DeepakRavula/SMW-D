@@ -555,31 +555,67 @@ LteBox::begin([
     'withBorder' => true,
 ])
 ?>
-<dl class="horizontal">
-	<dt class=" m-r-10">Prepaid Lessons Paid Amount Total</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum); ?></dd>
-    <dt class=" m-r-10">Paid Unscheduled Lessons</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidPastLessonsSum); ?></dd>
-    <dt class=" m-r-10">Active Outstanding Invoices Balance Total</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($activeOutstandingInvoicesSum); ?></dd>
-    <dt class=" m-r-10">Inactive Outstanding Invoices Balance Total</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($inactiveOutstandingInvoicesSum); ?></dd>
-    <dt class=" m-r-10">Prepaid Future Lessons Count</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= $paidFutureLessonsCount; ?></dd>
-    <dt class=" m-r-10">Paid Unscheduled Lessons Count</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= $paidPastLessonsCount; ?></dd>
-    <dt class=" m-r-10">Active Outstanding Invoices Count</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= $activeOutstandingInvoicesCount; ?></dd>
-    <dt class=" m-r-10">Inactive Outstanding Invoices Count</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= $inactiveOutstandingInvoicesCount; ?></dd>
-    <dt class=" m-r-10">Number of active Customers</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= $numberOfActiveCustomers; ?></dd>
-    <dt class=" m-r-10">Number of active Enrolments</dt>
-	<dd class = "total-horizontal-dd pull-right"><?= $numberOfEnrolments; ?></dd>
-    <dt class=" m-r-10">Amount To Be Transferred</dt>
-    <dd class = "total-horizontal-dd pull-right"><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum + $paidPastLessonsSum); ?></dd>
-    <dt class=" m-r-10">(Prepaid Lessons Paid Amount Total + Past Unscheduled Lessons Amount Total)</dt>
-
-</dl>
+<table style="width:100%">
+  <tr>
+    <th style="width:80%"><u>Particulars</u></th>
+    <th style="width:10%"><u>Count</u></th>
+    <th style="width:10%"><u>Total</u></th>
+  </tr>
+  <tr>
+    <th><hr></th>
+    <th><hr></th>
+    <th><hr></th>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>Prepaid Future Lessons</b></td>
+    <td style="width:10%"><b><?= $paidFutureLessonsCount; ?></b></td>
+    <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum); ?></b></td>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>Paid Unscheduled Lessons</b></td>
+    <td style="width:10%"><b><?= $paidPastLessonsCount; ?></b></td>
+    <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($paidPastLessonsSum); ?></b></td>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>Active Outstanding Invoices</b></td>
+    <td style="width:10%"><b><?= $activeOutstandingInvoicesCount; ?></b></td>
+    <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($activeOutstandingInvoicesSum); ?></b></td>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>Inactive Outstanding Invoices</b></td>
+    <td style="width:10%"><b><?= $inactiveOutstandingInvoicesCount; ?></b></td>
+    <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($inactiveOutstandingInvoicesSum); ?></b></td>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>Number of Active Customers</b></td>
+    <td style="width:10%"><b><?= $numberOfActiveCustomers; ?></b></td>
+    <td style="width:10%"></td>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>Number of Active Enrolments</b></td>
+    <td style="width:10%"><b><?= $numberOfEnrolments; ?></b></td>
+    <td style="width:10%"></td>
+  </tr>
+  <tr>
+    <th><hr></th>
+    <th><hr></th>
+    <th><hr></th>
+  </tr>
+  <tr>
+    <td style="width:80%"><h4><b>Amount To Be Transferred</b></h4></td>
+    <td style="width:10%"></td>
+    <td style="width:10%"><h4><b><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum + $paidPastLessonsSum); ?></b></h4></td>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>(Prepaid Future Lessons Total + Paid Unscheduled Lessons Total)</b></td>
+    <td style="width:10%"></td>
+    <td style="width:10%"></td>
+  </tr>
+  <tr>
+    <th><hr></th>
+    <th><hr></th>
+    <th><hr></th>
+  </tr>
+</table>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>
