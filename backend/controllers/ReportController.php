@@ -613,12 +613,18 @@ class ReportController extends BaseController
         $inactiveOutstandingInvoicesCount = $inactiveOutstandingInvoices->count();
         $activeCustomers = User::find()
                         ->customers($locationId)
+                        ->owingCustomers()
                         ->excludeWalkin()
                         ->notDeleted();
         $numberOfActiveCustomers = $activeCustomers->count();
         $enrolments = Enrolment::find()
                         ->location($locationId)
-                        ->active();
+                        ->notDeleted()
+                        ->joinWith(['course' => function($query) {
+                            $query->andWhere('DATE(course.endDate) >= CURRENT_DATE');
+                        }])
+                        ->isConfirmed()
+                        ->isRegular();
         $numberOfEnrolments = $enrolments->count();
 
         $activeCustomersWithCredit = CustomerAccount::find()
