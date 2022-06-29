@@ -613,12 +613,18 @@ class ReportController extends BaseController
         $inactiveOutstandingInvoicesCount = $inactiveOutstandingInvoices->count();
         $activeCustomers = User::find()
                         ->customers($locationId)
+                        ->owingCustomers()
                         ->excludeWalkin()
                         ->notDeleted();
         $numberOfActiveCustomers = $activeCustomers->count();
         $enrolments = Enrolment::find()
                         ->location($locationId)
-                        ->active();
+                        ->notDeleted()
+                        ->joinWith(['course' => function($query) {
+                            $query->andWhere('DATE(course.endDate) >= CURRENT_DATE');
+                        }])
+                        ->isConfirmed()
+                        ->isRegular();
         $numberOfEnrolments = $enrolments->count();
 
         $activeCustomersWithCredit = CustomerAccount::find()
@@ -637,21 +643,39 @@ class ReportController extends BaseController
 
         $paidFutureLessondataProvider = new ActiveDataProvider([
             'query' => $paidFutureLessons,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $paidPastLessondataProvider = new ActiveDataProvider([
             'query' => $paidPastLessons,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $activeInvoicedataProvider = new ActiveDataProvider([
             'query' => $activeOutstandingInvoices,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $inactiveInvoicedataProvider = new ActiveDataProvider([
             'query' => $inactiveOutstandingInvoices,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $activeCustomerWithCreditdataProvider = new ActiveDataProvider([
             'query' => $activeCustomersWithCredit,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $inactiveCustomerWithCreditdataProvider = new ActiveDataProvider([
             'query' => $inactiveCustomersWithCredit,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
 
         return $this->render( 'change-over-report/index', [
