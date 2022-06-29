@@ -603,26 +603,6 @@ LteBox::begin([
     <td style="width:10%"><b><?= $numberOfEnrolments; ?></b></td>
     <td style="width:10%"></td>
   </tr>
-  <tr>
-    <th><hr></th>
-    <th><hr></th>
-    <th><hr></th>
-  </tr>
-  <tr>
-    <td style="width:80%"><h4><b>Amount To Be Transferred</b></h4></td>
-    <td style="width:10%"></td>
-    <td style="width:10%"><h4><b><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum + $paidPastLessonsSum); ?></b></h4></td>
-  </tr>
-  <tr>
-    <td style="width:80%"><b>(Prepaid Future Lessons Total + Paid Unscheduled Lessons Total)</b></td>
-    <td style="width:10%"></td>
-    <td style="width:10%"></td>
-  </tr>
-  <tr>
-    <th><hr></th>
-    <th><hr></th>
-    <th><hr></th>
-  </tr>
 </table>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>
