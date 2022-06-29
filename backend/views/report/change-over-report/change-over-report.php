@@ -25,7 +25,7 @@ use insolita\wgadminlte\LteConst;
 </style>
 <div class="clearfix"></div>
 
-<?php Pjax::begin(['id' => 'locations-listing']); ?>
+<?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $paidFutureLessondataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
@@ -129,7 +129,7 @@ use insolita\wgadminlte\LteConst;
     ?>
 <?php Pjax::end(); ?>
 
-<?php Pjax::begin(['id' => 'locations-listing']); ?>
+<?php Pjax::begin(['id' => 'paid-unschedule-locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $paidPastLessondataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
@@ -233,7 +233,7 @@ use insolita\wgadminlte\LteConst;
     ?>
 <?php Pjax::end(); ?>
 
-<?php Pjax::begin(['id' => 'locations-listing']); ?>
+<?php Pjax::begin(['id' => 'active-outstanding-locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $activeInvoicedataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
@@ -331,7 +331,7 @@ use insolita\wgadminlte\LteConst;
     ?>
 <?php Pjax::end(); ?>
 
-<?php Pjax::begin(['id' => 'locations-listing']); ?>
+<?php Pjax::begin(['id' => 'inactive-outstanding-locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $inactiveInvoicedataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
@@ -429,7 +429,7 @@ use insolita\wgadminlte\LteConst;
     ?>
 <?php Pjax::end(); ?>
 
-<?php Pjax::begin(['id' => 'locations-listing']); ?>
+<?php Pjax::begin(['id' => 'active-customer-credit-locations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $activeCustomerWithCreditdataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
@@ -491,7 +491,7 @@ use insolita\wgadminlte\LteConst;
     ?>
 <?php Pjax::end(); ?>
 
-<?php Pjax::begin(['id' => 'locations-listing']); ?>
+<?php Pjax::begin(['id' => 'inactive-customer-creditlocations-listing']); ?>
     <?= KartikGridView::widget([
         'dataProvider' => $inactiveCustomerWithCreditdataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
