@@ -34,9 +34,9 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
             // [
@@ -139,9 +139,9 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
             // [
@@ -244,9 +244,9 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
             // [
@@ -342,9 +342,9 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
             // [
@@ -440,9 +440,9 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
             // [
@@ -503,9 +503,9 @@ use insolita\wgadminlte\LteConst;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            'content' =>
-                    Html::a('<i class="fa fa-print"></i>', '#', 
-                    ['id' => 'print', 'class' => 'btn btn-default']),
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
             // [
