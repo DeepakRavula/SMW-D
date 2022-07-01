@@ -27,6 +27,7 @@ use insolita\wgadminlte\LteConst;
 
 <?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
     <?= KartikGridView::widget([
+        'id' => 'prepaid-future-id',
         'dataProvider' => $paidFutureLessondataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
@@ -131,6 +132,7 @@ use insolita\wgadminlte\LteConst;
 
 <?php Pjax::begin(['id' => 'paid-unschedule-locations-listing']); ?>
     <?= KartikGridView::widget([
+        'id' => 'paid-unschedule-id',
         'dataProvider' => $paidPastLessondataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
@@ -235,6 +237,7 @@ use insolita\wgadminlte\LteConst;
 
 <?php Pjax::begin(['id' => 'active-outstanding-locations-listing']); ?>
     <?= KartikGridView::widget([
+        'id' => '1',
         'dataProvider' => $activeInvoicedataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
@@ -332,6 +335,7 @@ use insolita\wgadminlte\LteConst;
 
 <?php Pjax::begin(['id' => 'inactive-outstanding-locations-listing']); ?>
     <?= KartikGridView::widget([
+        'id' => 'inactive-outstanding-id',
         'dataProvider' => $inactiveInvoicedataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
@@ -429,6 +433,7 @@ use insolita\wgadminlte\LteConst;
 
 <?php Pjax::begin(['id' => 'active-customer-credit-locations-listing']); ?>
     <?= KartikGridView::widget([
+        'id' => 'active-customer-id',
         'dataProvider' => $activeCustomerWithCreditdataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
@@ -491,6 +496,7 @@ use insolita\wgadminlte\LteConst;
 
 <?php Pjax::begin(['id' => 'inactive-customer-creditlocations-listing']); ?>
     <?= KartikGridView::widget([
+        'id' => 'inactive-customer-id',
         'dataProvider' => $inactiveCustomerWithCreditdataProvider,
         'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
