@@ -136,11 +136,11 @@ echo Menu::widget([
                     'active' => (Yii::$app->controller->action->id === 'account-receivable')
                 ],
                 [
-                    'label' => Yii::t('backend', 'Change Over Report'),
+                    'label' => Yii::t('backend', 'Financial Summary Report'),
                     'icon' => '<i class="fa fa-dollar" aria-hidden="true"></i>',
-                    'url' => ['/report/change-over-report'],
+                    'url' => ['/report/financial-summary-report'],
 					'visible' => Yii::$app->user->can('manageAccountReceivableReport'),
-                    'active' => (Yii::$app->controller->action->id === 'change-over-report')
+                    'active' => (Yii::$app->controller->action->id === 'financial-summary-report')
                 ],
                     [
                     'label' => Yii::t('backend', 'Birthdays'),

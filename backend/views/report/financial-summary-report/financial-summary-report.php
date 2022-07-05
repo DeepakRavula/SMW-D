@@ -9,6 +9,8 @@ use Yii;
 use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\jui\DatePicker;
+use kartik\daterange\DateRangePicker;
 ?>
 <style>
 <style>
@@ -26,10 +28,11 @@ use insolita\wgadminlte\LteConst;
 <div class="clearfix"></div>
 
 <?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
+   
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-id',
         'dataProvider' => $paidFutureLessondataProvider,
-        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -48,6 +51,7 @@ use insolita\wgadminlte\LteConst;
             'type' => GridView::TYPE_DEFAULT,
             'heading' => 'Prepaid Future Lessons',
         ],
+        
         'showFooter' =>true,
         'columns' => [
             [
@@ -134,7 +138,7 @@ use insolita\wgadminlte\LteConst;
     <?= KartikGridView::widget([
         'id' => 'paid-unschedule-id',
         'dataProvider' => $paidPastLessondataProvider,
-        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -239,7 +243,7 @@ use insolita\wgadminlte\LteConst;
     <?= KartikGridView::widget([
         'id' => '1',
         'dataProvider' => $activeInvoicedataProvider,
-        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -337,7 +341,7 @@ use insolita\wgadminlte\LteConst;
     <?= KartikGridView::widget([
         'id' => 'inactive-outstanding-id',
         'dataProvider' => $inactiveInvoicedataProvider,
-        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -435,7 +439,7 @@ use insolita\wgadminlte\LteConst;
     <?= KartikGridView::widget([
         'id' => 'active-customer-id',
         'dataProvider' => $activeCustomerWithCreditdataProvider,
-        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -498,7 +502,7 @@ use insolita\wgadminlte\LteConst;
     <?= KartikGridView::widget([
         'id' => 'inactive-customer-id',
         'dataProvider' => $inactiveCustomerWithCreditdataProvider,
-        'rowOptions' =>  ['class' => 'change-over-report-detail-view'],
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
