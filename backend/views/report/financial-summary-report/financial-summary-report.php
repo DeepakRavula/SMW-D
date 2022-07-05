@@ -9,6 +9,8 @@ use Yii;
 use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\jui\DatePicker;
+use kartik\daterange\DateRangePicker;
 ?>
 <style>
 <style>
@@ -26,6 +28,7 @@ use insolita\wgadminlte\LteConst;
 <div class="clearfix"></div>
 
 <?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
+   
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-id',
         'dataProvider' => $paidFutureLessondataProvider,
@@ -48,6 +51,7 @@ use insolita\wgadminlte\LteConst;
             'type' => GridView::TYPE_DEFAULT,
             'heading' => 'Prepaid Future Lessons',
         ],
+        
         'showFooter' =>true,
         'columns' => [
             [
