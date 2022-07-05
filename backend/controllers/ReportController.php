@@ -102,7 +102,7 @@ class ReportController extends BaseController
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['change-over-report'],
+                        'actions' => ['financial-summary-report'],
                         'roles' => ['manageAccountReceivableReport'],
                     ],
                 ],
@@ -554,7 +554,7 @@ class ReportController extends BaseController
             ]);
     }
 
-    public function actionChangeOverReport()
+    public function actionFinancialSummaryReport()
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate = (new \DateTime())->format('Y-m-d');
@@ -680,7 +680,7 @@ class ReportController extends BaseController
             ],
         ]);
 
-        return $this->render( 'change-over-report/index', [
+        return $this->render( 'financial-summary-report/index', [
                 'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
                 'paidPastLessondataProvider' => $paidPastLessondataProvider,
                 'activeInvoicedataProvider' => $activeInvoicedataProvider,

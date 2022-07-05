@@ -9,7 +9,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
-<?php echo $this->render('change-over-report', [
+<?php echo $this->render('financial-summary-report', [
     'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
     'paidPastLessondataProvider' => $paidPastLessondataProvider,
     'activeInvoicedataProvider' => $activeInvoicedataProvider,
@@ -30,7 +30,7 @@ use yii\helpers\Html;
 
 <script>
     $(document).on("click", "#print", function () {
-        var url = '<?php echo Url::to(['print/change-over-report']); ?>';
+        var url = '<?php echo Url::to(['print/financial-summary-report']); ?>';
         window.open(url, '_blank');
     });
 </script>
