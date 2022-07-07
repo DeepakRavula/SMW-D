@@ -580,7 +580,8 @@ class ReportController extends BaseController
                         ->notCanceled()
                         ->notDeleted()
                         ->isConfirmed()
-                        ->regular();
+                        ->regular()
+                        ->groupBy('lesson.id');
 
         $paidPastLessons = Lesson::find()
                         ->joinWith(['lessonPayments' => function ($query) {
@@ -653,6 +654,9 @@ class ReportController extends BaseController
 
         $paidFutureGroupLessonsdataProvider = new ActiveDataProvider([
             'query' => $paidFutureGroupLessons,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
             
         ]);
         $paidPastLessondataProvider = new ActiveDataProvider([

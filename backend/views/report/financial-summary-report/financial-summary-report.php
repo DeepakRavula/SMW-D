@@ -10,6 +10,7 @@ use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\jui\DatePicker;
+use common\models\GroupLesson;
 
 ?>
 <style>
@@ -117,8 +118,9 @@ use yii\jui\DatePicker;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    $balance = (round($data->privateLesson->balance ?? 0, 2) > 0.00 && round($data->privateLesson->balance ?? 0, 2) <= 0.09) || (round($data->privateLesson->balance ?? 0, 2) < 0.00 && round($data->privateLesson->balance ?? 0, 2) >= -0.09)  ? round('0.00', 2) : (round($data->privateLesson->balance ?? 0, 2));
-                    return  Yii::$app->formatter->asCurrency($balance);
+                    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $data->enrolment->id]);
+				$owing = $groupLesson->balance;
+                    return  Yii::$app->formatter->asCurrency($owing);
                 },
             ],
         ],
