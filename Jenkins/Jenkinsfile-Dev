@@ -11,7 +11,7 @@ pipeline {
                                 pwd
                                 git pull origin develop
                                 composer install
-                                php console/yii migrate
+                                php console/yii migrate --no-interaction
                                 exit 
                                 EOF"""
                     }
