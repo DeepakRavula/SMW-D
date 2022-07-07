@@ -10,7 +10,7 @@ use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\jui\DatePicker;
-use kartik\daterange\DateRangePicker;
+
 ?>
 <style>
 <style>
@@ -26,7 +26,6 @@ use kartik\daterange\DateRangePicker;
 }
 </style>
 <div class="clearfix"></div>
-
 <?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
    
     <?= KartikGridView::widget([
@@ -36,6 +35,7 @@ use kartik\daterange\DateRangePicker;
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
+        'filterModel' => $paidFutureLessonsSearchModel,
         'toolbar' =>  [
             // 'content' =>
             //         Html::a('<i class="fa fa-print"></i>', '#', 
@@ -81,10 +81,16 @@ use kartik\daterange\DateRangePicker;
             [
                 'label' => 'Date',
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'filter' => DatePicker::widget([
+                    'model'=>$paidFutureLessonsSearchModel,
+                    'attribute'=>'goToDate',
+                    'dateFormat' => 'yyyy-MM-dd',
+                ]),
                 'format' => 'html',
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
                 },
+                
             ],
             [
                 'label' => 'Duration',
@@ -583,8 +589,8 @@ LteBox::begin([
   </tr>
   <tr>
     <td style="width:80%"><b>Prepaid Future Lessons</b></td>
-    <td style="width:10%"><b><?= $paidFutureLessonsCount; ?></b></td>
-    <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum); ?></b></td>
+    <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->count() ?></b></td>
+    <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->sum('lesson_payment.amount'); ?></b></td>
   </tr>
   <tr>
     <td style="width:80%"><b>Paid Unscheduled Lessons</b></td>

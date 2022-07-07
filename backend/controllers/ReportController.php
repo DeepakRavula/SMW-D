@@ -559,20 +559,16 @@ class ReportController extends BaseController
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate = (new \DateTime())->format('Y-m-d');
 
-        $paidFutureLessons = Lesson::find()
-                        ->joinWith(['lessonPayments' => function ($query) {
-                            $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
-                        }])
-                        ->location($locationId)
-                        ->andWhere(['>', 'lesson.date', $currentDate])
-                        ->orderBy(['lesson.id' => SORT_ASC])
-                        ->privateLessons()
-                        ->notCanceled()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->regular();
-        $paidFutureLessonsSum = $paidFutureLessons->sum('lesson_payment.amount');
-        $paidFutureLessonsCount = $paidFutureLessons->count();
+        $paidFutureLessonsSearchModel = new ReportSearch();
+        $request = Yii::$app->request;
+        $searchRequest = $request->get('ReportSearch');
+        if (!empty($searchRequest['goToDate'])) {
+            $paidFutureLessonsSearchModel->goToDate = $searchRequest['goToDate'];
+        } else {
+            $paidFutureLessonsSearchModel->goToDate = $currentDate;
+        }
+
+        $paidFutureLessondataProvider = $paidFutureLessonsSearchModel->search(Yii::$app->request->queryParams);
 
         $paidPastLessons = Lesson::find()
                         ->joinWith(['lessonPayments' => function ($query) {
@@ -643,12 +639,6 @@ class ReportController extends BaseController
                         }])
                         ->andWhere(['<', 'balance', 0]);
 
-        $paidFutureLessondataProvider = new ActiveDataProvider([
-            'query' => $paidFutureLessons,
-            'pagination' => [
-                'pageSize' => 5,
-            ],
-        ]);
         $paidPastLessondataProvider = new ActiveDataProvider([
             'query' => $paidPastLessons,
             'pagination' => [
@@ -681,17 +671,16 @@ class ReportController extends BaseController
         ]);
 
         return $this->render( 'financial-summary-report/index', [
+                'paidFutureLessonsSearchModel' => $paidFutureLessonsSearchModel,
                 'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
                 'paidPastLessondataProvider' => $paidPastLessondataProvider,
                 'activeInvoicedataProvider' => $activeInvoicedataProvider,
                 'inactiveInvoicedataProvider' => $inactiveInvoicedataProvider,
                 'activeCustomerWithCreditdataProvider' => $activeCustomerWithCreditdataProvider,
                 'inactiveCustomerWithCreditdataProvider' => $inactiveCustomerWithCreditdataProvider,
-                'paidFutureLessonsSum' => $paidFutureLessonsSum,
                 'paidPastLessonsSum' => $paidPastLessonsSum,
                 'activeOutstandingInvoicesSum' => $activeOutstandingInvoicesSum,
                 'inactiveOutstandingInvoicesSum' => $inactiveOutstandingInvoicesSum,
-                'paidFutureLessonsCount' => $paidFutureLessonsCount,
                 'paidPastLessonsCount' => $paidPastLessonsCount,
                 'activeOutstandingInvoicesCount' => $activeOutstandingInvoicesCount,
                 'inactiveOutstandingInvoicesCount' => $inactiveOutstandingInvoicesCount,
