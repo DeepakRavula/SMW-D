@@ -6,6 +6,8 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Invoice;
 use Yii;
+use common\models\Location;
+use common\models\Lesson;
 
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -38,6 +40,35 @@ class ReportSearch extends Invoice
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
+    }
+
+    public function search($params)
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $currentDate = (new \DateTime())->format('Y-m-d');
+        $query = Lesson::find()
+        ->joinWith(['lessonPayments' => function ($query) {
+            $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
+        }])
+        ->location($locationId)
+        ->andWhere(['>', 'lesson.date', $currentDate])
+        ->orderBy(['lesson.id' => SORT_ASC])
+        ->privateLessons()
+        ->notCanceled()
+        ->notDeleted()
+        ->isConfirmed()
+        ->regular();
+            
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+        ]);
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+        return $dataProvider;
     }
 
     public function setDateRange($dateRange)
