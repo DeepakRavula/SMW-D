@@ -81,6 +81,11 @@ use yii\jui\DatePicker;
             [
                 'label' => 'Date',
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'filter' => DatePicker::widget([
+                    'model'=>$paidFutureLessonsSearchModel,
+                    'attribute'=>'goToDate',
+                    'dateFormat' => 'yyyy-MM-dd',
+                ]),
                 'format' => 'html',
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);

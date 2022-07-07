@@ -15,6 +15,7 @@ use common\models\Lesson;
 class ReportSearch extends Invoice
 {
     private $dateRange;
+    public $goToDate;
     public $fromDate;
     public $toDate;
     public $summarizeResults = false;
@@ -29,7 +30,7 @@ class ReportSearch extends Invoice
     public function rules()
     {
         return [
-            [['dateRange', 'fromDate', 'toDate', 'summarizeResults', 'showAllActive', 'showAllInActive', 'greatGrandTotal', 'greatSubTotal', 'greatTaxTotal'], 'safe'],
+            [['dateRange', 'fromDate', 'toDate', 'summarizeResults', 'showAllActive', 'showAllInActive', 'greatGrandTotal', 'greatSubTotal', 'greatTaxTotal', 'goToDate'], 'safe'],
         ];
     }
 
@@ -68,6 +69,9 @@ class ReportSearch extends Invoice
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
+        // print_r($this->goToDate);
+        $query->andFilterWhere(['>', 'lesson.date', $this->goToDate]);
+
         return $dataProvider;
     }
 
