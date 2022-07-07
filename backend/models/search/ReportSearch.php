@@ -47,7 +47,7 @@ class ReportSearch extends Invoice
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate = (new \DateTime())->format('Y-m-d');
-        $query = Lesson::find()
+        $lessonQuery = Lesson::find()
         ->joinWith(['lessonPayments' => function ($query) {
             $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
         }])
@@ -61,7 +61,7 @@ class ReportSearch extends Invoice
         ->regular();
             
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $lessonQuery,
             'pagination' => [
                 'pageSize' => 5,
             ],
@@ -69,8 +69,7 @@ class ReportSearch extends Invoice
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-        // print_r($this->goToDate);
-        $query->andFilterWhere(['>', 'lesson.date', $this->goToDate]);
+        $lessonQuery->andFilterWhere(['>', 'lesson.date', $this->goToDate]);
 
         return $dataProvider;
     }
