@@ -26,6 +26,113 @@ use yii\jui\DatePicker;
 }
 </style>
 <div class="clearfix"></div>
+<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing']); ?>
+   
+    <?= KartikGridView::widget([
+        'id' => 'prepaid-future-group-id',
+        'dataProvider' => $paidFutureGroupLessonsdataProvider,
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
+        'tableOptions' => ['class' => 'table table-condensed table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'toolbar' =>  [
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
+            '{export}',
+            '{toggleData}',
+            // [
+            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+            //     'options' => ['title' => 'Filter',]
+            // ],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Prepaid Future Group Lessons',
+        ],
+        
+        'showFooter' =>true,
+        'columns' => [
+            [
+                'label' => 'Lesson ID',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->id;
+                },
+            ],
+            [
+                'label' => 'Student Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->enrolment->student->fullName;
+                },
+            ],
+            [
+                'label' => 'Customer Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->enrolment->student->customer->publicIdentity;
+                },
+            ],
+            [
+                'label' => 'Date',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
+                },
+                
+            ],
+            [
+                'label' => 'Duration',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  (new \DateTime($data->duration))->format('H:i');
+                },
+            ],
+            [
+                'label' => 'Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) use ($paidFutureGroupLessonsdataProvider) {
+                    $amount = Yii::$app->formatter->asCurrency(round($data->getGroupNetPrice($paidFutureGroupLessonsdataProvider) ?? 0, 2));
+                    return  $amount;
+                },
+            ],
+            [
+                'label' => 'Paid Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $lessonPaid = !empty($data->getCreditAppliedAmount($data->enrolment->id)) ? $data->getCreditAppliedAmount($data->enrolment->id) : 0;
+                    return  Yii::$app->formatter->asCurrency(round($lessonPaid, 2));
+                },
+            ],
+            [
+                'label' => 'Balance',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $balance = (round($data->privateLesson->balance ?? 0, 2) > 0.00 && round($data->privateLesson->balance ?? 0, 2) <= 0.09) || (round($data->privateLesson->balance ?? 0, 2) < 0.00 && round($data->privateLesson->balance ?? 0, 2) >= -0.09)  ? round('0.00', 2) : (round($data->privateLesson->balance ?? 0, 2));
+                    return  Yii::$app->formatter->asCurrency($balance);
+                },
+            ],
+        ],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'future-group-amount-report'
+            ]
+            ],
+]);
+
+    ?>
+<?php Pjax::end(); ?>
 <?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
    
     <?= KartikGridView::widget([

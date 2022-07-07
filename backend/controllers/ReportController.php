@@ -569,6 +569,19 @@ class ReportController extends BaseController
 
         $paidFutureLessondataProvider = $paidFutureLessonsSearchModel->search(Yii::$app->request->queryParams);
 
+        $paidFutureGroupLessons = Lesson::find()
+                        ->joinWith(['lessonPayments' => function ($query) {
+                            $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
+                        }])
+                        ->location($locationId)
+                        ->andWhere(['>', 'lesson.date', $currentDate])
+                        ->orderBy(['lesson.id' => SORT_ASC])
+                        ->groupLessons()
+                        ->notCanceled()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->regular();
+
         $paidPastLessons = Lesson::find()
                         ->joinWith(['lessonPayments' => function ($query) {
                             $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
@@ -638,6 +651,10 @@ class ReportController extends BaseController
                         }])
                         ->andWhere(['<', 'balance', 0]);
 
+        $paidFutureGroupLessonsdataProvider = new ActiveDataProvider([
+            'query' => $paidFutureGroupLessons,
+            
+        ]);
         $paidPastLessondataProvider = new ActiveDataProvider([
             'query' => $paidPastLessons,
             'pagination' => [
@@ -670,6 +687,7 @@ class ReportController extends BaseController
         ]);
 
         return $this->render( 'financial-summary-report/index', [
+                'paidFutureGroupLessonsdataProvider' => $paidFutureGroupLessonsdataProvider,
                 'paidFutureLessonsSearchModel' => $paidFutureLessonsSearchModel,
                 'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
                 'paidPastLessondataProvider' => $paidPastLessondataProvider,
