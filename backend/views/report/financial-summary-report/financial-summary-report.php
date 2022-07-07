@@ -10,6 +10,8 @@ use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\jui\DatePicker;
+use yii\jui\DatePickerLanguageAsset;
+DatePickerLanguageAsset::register($this);
 
 ?>
 <style>
