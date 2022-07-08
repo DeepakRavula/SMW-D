@@ -38,6 +38,7 @@ $this->params['action-button'] = $this->render('_button');
 <?php $form = ActiveForm::begin([
     'id' => 'schedule-form'
 ]); ?>
+    <div class="col-md-2 schedule-picker">
         <?= $form->field($searchModel, 'goToDate', [
             'inputTemplate' => '<div class="input-group m-r-45">{input}</div>',
             ])->widget(DatePicker::classname(), [

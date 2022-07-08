@@ -85,6 +85,9 @@ use yii\jui\DatePicker;
                     'model'=>$paidFutureLessonsSearchModel,
                     'attribute'=>'goToDate',
                     'dateFormat' => 'yyyy-MM-dd',
+                    'clientOptions' => [
+                        'minDate' => 0
+                    ]
                 ]),
                 'format' => 'html',
                 'value' => function ($data) {
@@ -128,13 +131,6 @@ use yii\jui\DatePicker;
                 },
             ],
         ],
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'future-amount-report'
-            ]
-            ],
 ]);
 
     ?>

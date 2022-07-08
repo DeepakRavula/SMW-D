@@ -562,10 +562,9 @@ class ReportController extends BaseController
         $paidFutureLessonsSearchModel = new ReportSearch();
         $request = Yii::$app->request;
         $searchRequest = $request->get('ReportSearch');
+        $paidFutureLessonsSearchModel->goToDate = $currentDate;
         if (!empty($searchRequest['goToDate'])) {
             $paidFutureLessonsSearchModel->goToDate = $searchRequest['goToDate'];
-        } else {
-            $paidFutureLessonsSearchModel->goToDate = $currentDate;
         }
 
         $paidFutureLessondataProvider = $paidFutureLessonsSearchModel->search(Yii::$app->request->queryParams);
