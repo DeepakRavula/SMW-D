@@ -10,8 +10,6 @@ use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\jui\DatePicker;
-use yii\jui\DatePickerLanguageAsset;
-DatePickerLanguageAsset::register($this);
 
 ?>
 <style>
@@ -87,6 +85,9 @@ DatePickerLanguageAsset::register($this);
                     'model'=>$paidFutureLessonsSearchModel,
                     'attribute'=>'goToDate',
                     'dateFormat' => 'yyyy-MM-dd',
+                    'clientOptions' => [
+                        'minDate' => 0
+                    ]
                 ]),
                 'format' => 'html',
                 'value' => function ($data) {
@@ -130,13 +131,6 @@ DatePickerLanguageAsset::register($this);
                 },
             ],
         ],
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'future-amount-report'
-            ]
-            ],
 ]);
 
     ?>
