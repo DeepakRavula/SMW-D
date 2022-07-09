@@ -83,7 +83,7 @@ use common\models\GroupLesson;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
+                    return  Yii::$app->formatter->asDate($data->lesson->date) . ' @ ' . Yii::$app->formatter->asTime($data->lesson->date);
                 },
                 
             ],
@@ -92,15 +92,15 @@ use common\models\GroupLesson;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  (new \DateTime($data->duration))->format('H:i');
+                    return  (new \DateTime($data->lesson->duration))->format('H:i');
                 },
             ],
             [
                 'label' => 'Amount',
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
-                'value' => function ($data) use ($paidFutureGroupLessonsdataProvider) {
-                    $amount = Yii::$app->formatter->asCurrency(round($data->getGroupNetPrice($paidFutureGroupLessonsdataProvider) ?? 0, 2));
+                'value' => function ($data)   {
+                    $amount = Yii::$app->formatter->asCurrency(round($data->total, 2));
                     return  $amount;
                 },
             ],
@@ -109,8 +109,8 @@ use common\models\GroupLesson;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    $lessonPaid = !empty($data->getCreditAppliedAmount($data->enrolment->id)) ? $data->getCreditAppliedAmount($data->enrolment->id) : 0;
-                    return  Yii::$app->formatter->asCurrency(round($lessonPaid, 2));
+                    $paid = $data->total - $data->balance;
+                    return  Yii::$app->formatter->asCurrency(round($paid, 2));
                 },
             ],
             [
@@ -118,9 +118,9 @@ use common\models\GroupLesson;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $data->enrolment->id]);
-				$owing = $groupLesson->balance;
-                    return  Yii::$app->formatter->asCurrency($owing);
+                //     $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $data->enrolment->id]);
+				// $owing = $groupLesson->balance;
+                    return  Yii::$app->formatter->asCurrency($data->balance);
                 },
             ],
         ],
@@ -685,6 +685,11 @@ LteBox::begin([
     'withBorder' => true,
 ])
 ?>
+<?php  
+// foreach($paidFutureGroupLessonsdataProvider as $datas){
+//     $paid[] = $datas->total - $datas->balance;
+// }
+?>
 <table style="width:100%">
   <tr>
     <th style="width:80%"><u>Particulars</u></th>
@@ -697,9 +702,15 @@ LteBox::begin([
     <th><hr></th>
   </tr>
   <tr>
+    <td style="width:80%"><b>Prepaid Future Group Lessons</b></td>
+    <td style="width:10%"><b><?= $paidFutureGroupLessonsCount ?></b></td>
+    <td style="width:10%"><b><?=  round(array_sum($paidFutureGroupLessonsSum), 2) ?></b></td>
+  </tr>
+  <tr>
+  <tr>
     <td style="width:80%"><b>Prepaid Future Lessons</b></td>
     <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->count() ?></b></td>
-    <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->sum('lesson_payment.amount'); ?></b></td>
+    <td style="width:10%"><b><?= round($paidFutureLessondataProvider->query->sum('lesson_payment.amount'), 2) ?></b></td>
   </tr>
   <tr>
     <td style="width:80%"><b>Paid Unscheduled Lessons</b></td>

@@ -22,6 +22,9 @@ use yii\filters\AccessControl;
 use common\models\Lesson;
 use common\models\CustomerAccount;
 use common\models\Enrolment;
+use common\models\GroupLesson;
+use common\models\Student;
+use yii\db\conditions\AndCondition;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -568,20 +571,61 @@ class ReportController extends BaseController
         }
 
         $paidFutureLessondataProvider = $paidFutureLessonsSearchModel->search(Yii::$app->request->queryParams);
-
-        $paidFutureGroupLessons = Lesson::find()
-                        ->joinWith(['lessonPayments' => function ($query) {
-                            $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
-                        }])
-                        ->location($locationId)
-                        ->andWhere(['>', 'lesson.date', $currentDate])
-                        ->orderBy(['lesson.id' => SORT_ASC])
-                        ->groupLessons()
-                        ->notCanceled()
+        
+        $customerIds = Student::find()
                         ->notDeleted()
-                        ->isConfirmed()
-                        ->regular()
-                        ->groupBy('lesson.id');
+                        ->location($locationId)
+                        ->statusActive()
+                        ->all();
+                        
+        foreach($customerIds as $id ){
+        $customerIDs[] = $id->customer_id;
+        }
+
+        $paidFutureGroupLessonsTotals = GroupLesson::find()
+                        ->joinWith(['lesson' => function($query) use ($locationId) {
+                            $query->location($locationId)
+                                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                                ->notDeleted();
+                        }])
+                        ->notDeleted()
+                        ->all();
+
+        foreach($paidFutureGroupLessonsTotals as $total ){
+            $groupLessonTotal[] = $total->total;
+            $paidFutureGroupLessonsSum[] = $total->total - $total->balance;
+            }
+
+        $paidFutureGroupLessons = GroupLesson::find()
+                        ->andWhere(['OR',
+                                    ['group_lesson.paidStatus' => GroupLesson::STATUS_PAID ],
+                                    [
+                                        'AND',
+
+                                        ['group_lesson.paidStatus' => GroupLesson::STATUS_OWING],
+
+                                        ['NOT' , ['group_lesson.balance' => $groupLessonTotal ]]
+                                    ]
+                                    ])
+                        ->joinWith(['lesson' => function($query) use ($locationId) {
+                            $query->location($locationId)
+                                ->isConfirmed()
+                                ->orderBy(['lesson.id' => SORT_ASC])
+                                ->notCanceled()
+                                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                                ->notDeleted();
+                        }])
+                        ->joinWith(['enrolment' => function($query) use($customerIDs) {
+                            $query->joinWith(['student' => function($query){
+                               $query->notDeleted();
+                            }])
+                               ->notDeleted()
+                                ->isConfirmed()
+                                ->customer($customerIDs);
+                        }])
+                        ->notDeleted();
+
+        $paidFutureGroupLessonsCount = $paidFutureGroupLessons->count();
 
         $paidPastLessons = Lesson::find()
                         ->joinWith(['lessonPayments' => function ($query) {
@@ -597,6 +641,7 @@ class ReportController extends BaseController
                         ->unscheduled()
                         ->notExpired()
                         ->regular();
+
         $paidPastLessonsSum = $paidPastLessons->sum('lesson_payment.amount');
         $paidPastLessonsCount = $paidPastLessons->count();
 
@@ -609,6 +654,7 @@ class ReportController extends BaseController
                         }])
                         ->notDeleted()
                         ->unpaid();
+
         $inactiveOutstandingInvoices = Invoice::find()
                         ->invoice()
                         ->location($locationId)
@@ -618,16 +664,20 @@ class ReportController extends BaseController
                         }])
                         ->notDeleted()
                         ->unpaid();
+
         $activeOutstandingInvoicesSum = $activeOutstandingInvoices->sum('balance');
         $activeOutstandingInvoicesCount = $activeOutstandingInvoices->count();
         $inactiveOutstandingInvoicesSum = $inactiveOutstandingInvoices->sum('balance');
         $inactiveOutstandingInvoicesCount = $inactiveOutstandingInvoices->count();
+
         $activeCustomers = User::find()
                         ->customers($locationId)
                         ->owingCustomers()
                         ->excludeWalkin()
                         ->notDeleted();
+
         $numberOfActiveCustomers = $activeCustomers->count();
+
         $enrolments = Enrolment::find()
                         ->location($locationId)
                         ->notDeleted()
@@ -636,6 +686,7 @@ class ReportController extends BaseController
                         }])
                         ->isConfirmed()
                         ->isRegular();
+
         $numberOfEnrolments = $enrolments->count();
 
         $activeCustomersWithCredit = CustomerAccount::find()
@@ -691,6 +742,8 @@ class ReportController extends BaseController
         ]);
 
         return $this->render( 'financial-summary-report/index', [
+                'paidFutureGroupLessonsSum' => $paidFutureGroupLessonsSum,
+                'paidFutureGroupLessonsCount' => $paidFutureGroupLessonsCount,
                 'paidFutureGroupLessonsdataProvider' => $paidFutureGroupLessonsdataProvider,
                 'paidFutureLessonsSearchModel' => $paidFutureLessonsSearchModel,
                 'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
