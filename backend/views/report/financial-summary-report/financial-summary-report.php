@@ -118,8 +118,6 @@ use common\models\GroupLesson;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                //     $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $data->enrolment->id]);
-				// $owing = $groupLesson->balance;
                     return  Yii::$app->formatter->asCurrency($data->balance);
                 },
             ],
@@ -226,8 +224,6 @@ use common\models\GroupLesson;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                //     $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $data->enrolment->id]);
-				// $owing = $groupLesson->balance;
                     return  Yii::$app->formatter->asCurrency($data->balance);
                 },
             ],
@@ -793,11 +789,6 @@ LteBox::begin([
     'withBorder' => true,
 ])
 ?>
-<?php  
-// foreach($paidFutureGroupLessonsdataProvider as $datas){
-//     $paid[] = $datas->total - $datas->balance;
-// }
-?>
 <table style="width:100%">
   <tr>
     <th style="width:80%"><u>Particulars</u></th>
@@ -817,13 +808,13 @@ LteBox::begin([
   <tr>
     <td style="width:80%"><b>Paid Unscheduled Group Lessons</b></td>
     <td style="width:10%"><b><?= $paidPastGroupLessonsCount ?></b></td>
-    <td style="width:10%"><b><?=  round(array_sum($paidPastGroupLessonsSum), 2) ?></b></td>
+    <td style="width:10%"><b><?=  Yii::$app->formatter->asCurrency(round(array_sum($paidPastGroupLessonsSum), 2)) ?></b></td>
   </tr>
   <tr>
   <tr>
     <td style="width:80%"><b>Prepaid Future Lessons</b></td>
     <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->count() ?></b></td>
-    <td style="width:10%"><b><?= round($paidFutureLessondataProvider->query->sum('lesson_payment.amount'), 2) ?></b></td>
+    <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->sum('lesson_payment.amount') ?></b></td>
   </tr>
   <tr>
     <td style="width:80%"><b>Paid Unscheduled Lessons</b></td>
