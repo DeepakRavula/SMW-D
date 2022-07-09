@@ -42,6 +42,7 @@ use common\models\log\ReceivePaymentLog;
 use common\models\CourseSchedule;
 use common\models\NotifyViaEmail;
 use common\models\NotificationEmailType;
+use common\models\Course;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -610,6 +611,9 @@ class EmailController extends BaseController
     public function actionNotifyEmail($customerId)
     {
         $model= new NotificationEmailType();
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $user = User::findOne($customerId);
+        // print_r($user);
         
         $searchModel = new PaymentFormLessonSearch();
                 $searchModel->showCheckBox = true;
@@ -634,25 +638,26 @@ class EmailController extends BaseController
                     $invoicedLessons->privateLessons()
                     ->customer($customerId)
                     ->invoiced();
-                $lessonsQuery = Lesson::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->notCanceled();
-                $lessonsQuery->dueLessons();
-                $lessonsQuery->privateLessons()
-                    ->customer($customerId)
-                    ->joinWith(['privateLesson' => function($query) {
-                        $query->andWhere(['>', 'private_lesson.balance', 0.09]);
-                    }])
-                    ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
-                    ->andWhere(['invoiced_lesson.id' => null]);
-                    $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
+
+                // $lessonsQuery = Lesson::find()
+                // ->notDeleted()
+                // ->isConfirmed()
+                // ->notCanceled();
+                // $lessonsQuery->dueLessons();
+                // $lessonsQuery->privateLessons()
+                //     ->customer($customerId)
+                //     ->joinWith(['privateLesson' => function($query) {
+                //         $query->andWhere(['>', 'private_lesson.balance', 0.09]);
+                //     }])
+                //     ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+                //     ->andWhere(['invoiced_lesson.id' => null]);
+                //     $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
                 
-                    $lessonLineItemsDataProvider = new ActiveDataProvider([
-                        'query' => $lessonsQuery,
-                        'pagination' => false
-                    ]);
-                    $user = User::findOne($customerId);
+                //     $lessonLineItemsDataProvider = new ActiveDataProvider([
+                //         'query' => $lessonsQuery,
+                //         'pagination' => false
+                //     ]);
+                //     $user = User::findOne($customerId);
     
                
                     
@@ -663,81 +668,110 @@ class EmailController extends BaseController
 
                 }
                 elseif($type == 2){
-                    print_r("First Schedule Lesson");
+                    // print_r("First Schedule Lesson");
                     // $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+                    // $courses = Course::find()
+                    //             ->regular()
+                    //             ->confirmed()
+                    //             ->customer($customerId)
+                    //             ->location($locationId)
+                    //             ->privateProgram()
+                    //             ->notDeleted()
+                    //             ->all();
                     // $lessonQuery = Lesson::find()
-                    //      ->isConfirmed()
-                    //     ->notDeleted()
-                    //     ->location($locationId)
-                    //     ->activePrivateLessons()
-                    //     ->joinWith(['privateLesson'])
-                    //     ->notCanceled();
+                    //             ->customer($customerId)
+                    //             ->andWhere(['courseId' => $user->course->id])
+                    //             ->orderBy(['lesson.date' => SORT_ASC])
+                    //             ->notCanceled()
+                    //             ->notDeleted()
+                    //             ->isConfirmed()
+                    //             ->notRescheduled()
+                    //             ->regular()
+                    //             ->one();
                     // $firstLesson = $lessonQuery->orderBy(['lesson.date' => SORT_ASC])->one();
-                    // print_r($firstLesson);
+                    print_r($lessonQuery);
                 }
                 elseif($type == 3){
-                    print_r("OverDue Invoice");
-                    // $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
-                    // $invoicesQuery = Invoice::find();
-                    //  if (!$searchModel->userId) {
-                    //         $searchModel->userId = null;
-                    //     }
-                    // $invoicesQuery->notDeleted()
-                    //     ->invoice()
-                    //     ->customer($searchModel->userId)
-                    //     ->unpaid()
-                    //     ->andWhere(['>','invoice.balance' , 0.09]);
-                    //     if ($searchModel->isWalkin()) {
-                    //         $invoicesQuery->andWhere(['id' => $searchModel->invoiceId]);
-                    //     }
-                    // $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
-                    // $invoiceLineItemsDataProvider = new ActiveDataProvider([
-                    //     'query' => $invoicesQuery,
-                    //     'pagination' => false
-                    // ]);
+                    // print_r("OverDue Invoice");
+                    $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+                     if (!$searchModel->userId) {
+                            $searchModel->userId = null;
+                        }
+                    $invoicesQuery = Invoice::find()
+                                ->invoice()
+                                ->customer($customerId)
+                                ->unpaid()
+                                ->andWhere(['<','DATE(invoice.dueDate)' ,(new \DateTime())->format('Y-m-d')])
+                                ->andWhere(['>','invoice.balance' , 0.09])
+                                ->orderBy(['invoice.id' => SORT_ASC])
+                                ->notDeleted();
                     
-                    // $data = $this->renderAjax('/mail/notify-via-email/notify_invoice_from', [
-                    //     'model' => new EmailForm(),
-                    //     'emails' => !empty($user->emails) ? $user->emailNames : null,
-                    //     'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                    //     'emailTemplate' => $emailTemplate,
-                    //     'userModel' => $user,
-                    //     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                    //     'lessonLineItemsDataProvider' => null ,
-                    //     'searchModel' => $searchModel,
-                    // ]);
-                    // return [
-                    //     'status' => true,
-                    //     'data' => $data
-                    // ];
+                    $invoiceLineItemsDataProvider = new ActiveDataProvider([
+                        'query' => $invoicesQuery,
+                        'pagination' => false
+                    ]);
+                    
+                    $data = $this->renderAjax('/mail/notify-via-email/notify_invoice_from', [
+                        'model' => new EmailForm(),
+                        'emails' => !empty($user->emails) ? $user->emailNames : null,
+                        'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
+                        'emailTemplate' => $emailTemplate,
+                        'userModel' => $user,
+                        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                        'lessonLineItemsDataProvider' => null ,
+                        'searchModel' => $searchModel,
+                    ]);
+                    return [
+                        'status' => true,
+                        'data' => $data
+                    ];
                 }
                 else{
-                    print_r("future Lessons");
-                    // $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
-                    // $credits = 0.00;
-                    // $creditResults = $creditDataProvider->getModels();   
-                    // foreach ($creditResults as $creditResult) {
-                    //     $credits+= $creditResult['amount'];
-                    // }  
+                    // print_r("future Lessons");
+                    $lessonsQuery = Lesson::find()
+                            ->location($locationId)
+                            ->joinWith(['privateLesson' => function($query) {
+                                        $query->andWhere(['>', 'private_lesson.balance', 0.09]);
+                                    }])
+                            ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
+                            ->orderBy(['lesson.id' => SORT_ASC])
+                            ->privateLessons()
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->customer($customerId)
+                            ->isConfirmed()
+                            ->regular();
                     
-                    // $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
-                    // $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
-                    // $total = ($lessonsDue) - $credits;
-                    // $data = $this->renderAjax('/mail/notify-via-email/notify_future_lesson_from', [
-                    //     'model' => new EmailForm(),
-                    //     'emails' => !empty($user->emails) ? $user->emailNames : null,
-                    //     'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                    //     'emailTemplate' => $emailTemplate,
-                    //     'userModel' => $user,
-                    //     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                    //     'searchModel' => $searchModel,
-                    //     // 'groupLessonSearchModel' => $groupLessonSearchModel,
-                    //     'total' =>$total,
-                    // ]);
-                    // return [
-                    //     'status' => true,
-                    //     'data' => $data
-                    // ];
+                        $lessonLineItemsDataProvider = new ActiveDataProvider([
+                            'query' => $lessonsQuery,
+                            'pagination' => false
+                        ]);
+
+                    
+                    $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
+                    $credits = 0.00;
+                    $creditResults = $creditDataProvider->getModels();   
+                    foreach ($creditResults as $creditResult) {
+                        $credits+= $creditResult['amount'];
+                    }  
+                    
+                    $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
+                    $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
+                    $total = ($lessonsDue) - $credits;
+                    $data = $this->renderAjax('/mail/notify-via-email/notify_future_lesson_from', [
+                        'model' => new EmailForm(),
+                        'emails' => !empty($user->emails) ? $user->emailNames : null,
+                        'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
+                        'emailTemplate' => $emailTemplate,
+                        'userModel' => $user,
+                        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                        'searchModel' => $searchModel,
+                        'total' =>$total,
+                    ]);
+                    return [
+                        'status' => true,
+                        'data' => $data
+                    ];
                 }
             }
             

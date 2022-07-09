@@ -6,7 +6,6 @@ use common\models\Payment;
 
     $content = $this->renderAjax('future-lesson-mail-view', [
     'model' => new Payment(),
-    'userModel' => $userModel,
     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
     'emailTemplate' => $emailTemplate,
     'searchModel' => $searchModel,
