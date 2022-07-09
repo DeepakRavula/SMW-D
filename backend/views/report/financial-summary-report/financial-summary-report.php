@@ -135,6 +135,114 @@ use common\models\GroupLesson;
 
     ?>
 <?php Pjax::end(); ?>
+<?php Pjax::begin(['id' => 'prepaid-past-unscheduled-group-locations-listing']); ?>
+   
+    <?= KartikGridView::widget([
+        'id' => 'prepaid-past-unscheduled-group-id',
+        'dataProvider' => $paidPastGroupLessonsdataProvider,
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
+        'tableOptions' => ['class' => 'table table-condensed table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'toolbar' =>  [
+            // 'content' =>
+            //         Html::a('<i class="fa fa-print"></i>', '#', 
+            //         ['id' => 'print', 'class' => 'btn btn-default']),
+            '{export}',
+            '{toggleData}',
+            // [
+            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
+            //     'options' => ['title' => 'Filter',]
+            // ],
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Paid Unscheduled Group Lessons',
+        ],
+        
+        'showFooter' =>true,
+        'columns' => [
+            [
+                'label' => 'Lesson ID',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->id;
+                },
+            ],
+            [
+                'label' => 'Student Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->enrolment->student->fullName;
+                },
+            ],
+            [
+                'label' => 'Customer Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->enrolment->student->customer->publicIdentity;
+                },
+            ],
+            [
+                'label' => 'Date',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asDate($data->lesson->date) . ' @ ' . Yii::$app->formatter->asTime($data->lesson->date);
+                },
+                
+            ],
+            [
+                'label' => 'Duration',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  (new \DateTime($data->lesson->duration))->format('H:i');
+                },
+            ],
+            [
+                'label' => 'Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data)   {
+                    $amount = Yii::$app->formatter->asCurrency(round($data->total, 2));
+                    return  $amount;
+                },
+            ],
+            [
+                'label' => 'Paid Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $paid = $data->total - $data->balance;
+                    return  Yii::$app->formatter->asCurrency(round($paid, 2));
+                },
+            ],
+            [
+                'label' => 'Balance',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                //     $groupLesson = GroupLesson::findOne(['lessonId' => $data->id, 'enrolmentId' => $data->enrolment->id]);
+				// $owing = $groupLesson->balance;
+                    return  Yii::$app->formatter->asCurrency($data->balance);
+                },
+            ],
+        ],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'past-unscheduled-group-amount-report'
+            ]
+            ],
+]);
+
+    ?>
+<?php Pjax::end(); ?>
 <?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
    
     <?= KartikGridView::widget([
@@ -705,6 +813,11 @@ LteBox::begin([
     <td style="width:80%"><b>Prepaid Future Group Lessons</b></td>
     <td style="width:10%"><b><?= $paidFutureGroupLessonsCount ?></b></td>
     <td style="width:10%"><b><?=  round(array_sum($paidFutureGroupLessonsSum), 2) ?></b></td>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>Paid Unscheduled Group Lessons</b></td>
+    <td style="width:10%"><b><?= $paidPastGroupLessonsCount ?></b></td>
+    <td style="width:10%"><b><?=  round(array_sum($paidPastGroupLessonsSum), 2) ?></b></td>
   </tr>
   <tr>
   <tr>

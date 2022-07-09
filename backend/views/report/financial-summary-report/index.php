@@ -10,9 +10,12 @@ use yii\helpers\Html;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
 <?php echo $this->render('financial-summary-report', [
-    'paidFutureGroupLessonsSum' => $paidFutureGroupLessonsSum,
-    'paidFutureGroupLessonsCount' => $paidFutureGroupLessonsCount,
+    'paidPastGroupLessonsdataProvider' => $paidPastGroupLessonsdataProvider,
+    'paidPastGroupLessonsCount' => $paidPastGroupLessonsCount,
+    'paidPastGroupLessonsSum' => $paidPastGroupLessonsSum,
     'paidFutureGroupLessonsdataProvider' => $paidFutureGroupLessonsdataProvider,
+    'paidFutureGroupLessonsCount' => $paidFutureGroupLessonsCount,
+    'paidFutureGroupLessonsSum' => $paidFutureGroupLessonsSum,
     'paidFutureLessonsSearchModel' => $paidFutureLessonsSearchModel,
     'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
     'paidPastLessondataProvider' => $paidPastLessondataProvider,

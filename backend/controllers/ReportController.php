@@ -592,7 +592,7 @@ class ReportController extends BaseController
                         ->all();
 
         foreach($paidFutureGroupLessonsTotals as $total ){
-            $groupLessonTotal[] = $total->total;
+            $futureGroupLessonTotal[] = $total->total;
             $paidFutureGroupLessonsSum[] = $total->total - $total->balance;
             }
 
@@ -604,7 +604,7 @@ class ReportController extends BaseController
 
                                         ['group_lesson.paidStatus' => GroupLesson::STATUS_OWING],
 
-                                        ['NOT' , ['group_lesson.balance' => $groupLessonTotal ]]
+                                        ['NOT' , ['group_lesson.balance' => $futureGroupLessonTotal ]]
                                     ]
                                     ])
                         ->joinWith(['lesson' => function($query) use ($locationId) {
@@ -625,7 +625,53 @@ class ReportController extends BaseController
                         }])
                         ->notDeleted();
 
+        $paidPastGroupLessonsTotals = GroupLesson::find()
+                        ->joinWith(['lesson' => function($query) use ($locationId) {
+                            $query->location($locationId)
+                                ->unscheduled()
+                                ->andWhere(['<=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                                ->notDeleted();
+                        }])
+                        ->notDeleted()
+                        ->all();
+
+        foreach($paidPastGroupLessonsTotals as $total ){
+            $pastGroupLessonTotal[] = $total->total;
+            $paidPastGroupLessonsSum[] = $total->total - $total->balance;
+            }
+
+        $paidPastGroupLessons = GroupLesson::find()
+                        ->andWhere(['OR',
+                                    ['group_lesson.paidStatus' => GroupLesson::STATUS_PAID ],
+                                    [
+                                        'AND',
+
+                                        ['group_lesson.paidStatus' => GroupLesson::STATUS_OWING],
+
+                                        ['NOT' , ['group_lesson.balance' => $pastGroupLessonTotal ]]
+                                    ]
+                                    ])
+                        ->joinWith(['lesson' => function($query) use ($locationId) {
+                            $query->location($locationId)
+                                ->unscheduled()
+                                ->andWhere(['<=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                                ->orderBy(['lesson.id' => SORT_ASC])
+                                ->notCanceled()
+                                ->isConfirmed()
+                                ->notDeleted();
+                        }])
+                        ->joinWith(['enrolment' => function($query) use($customerIDs) {
+                            $query->joinWith(['student' => function($query){
+                               $query->notDeleted();
+                            }])
+                               ->notDeleted()
+                                ->isConfirmed()
+                                ->customer($customerIDs);
+                        }])
+                        ->notDeleted();
+
         $paidFutureGroupLessonsCount = $paidFutureGroupLessons->count();
+        $paidPastGroupLessonsCount = $paidPastGroupLessons->count();
 
         $paidPastLessons = Lesson::find()
                         ->joinWith(['lessonPayments' => function ($query) {
@@ -708,7 +754,12 @@ class ReportController extends BaseController
             'pagination' => [
                 'pageSize' => 5,
             ],
-            
+        ]);
+        $paidPastGroupLessonsdataProvider = new ActiveDataProvider([
+            'query' => $paidPastGroupLessons,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
         $paidPastLessondataProvider = new ActiveDataProvider([
             'query' => $paidPastLessons,
@@ -742,9 +793,12 @@ class ReportController extends BaseController
         ]);
 
         return $this->render( 'financial-summary-report/index', [
-                'paidFutureGroupLessonsSum' => $paidFutureGroupLessonsSum,
-                'paidFutureGroupLessonsCount' => $paidFutureGroupLessonsCount,
+                'paidPastGroupLessonsdataProvider' => $paidPastGroupLessonsdataProvider,
+                'paidPastGroupLessonsCount' => $paidPastGroupLessonsCount,
+                'paidPastGroupLessonsSum' => $paidPastGroupLessonsSum,
                 'paidFutureGroupLessonsdataProvider' => $paidFutureGroupLessonsdataProvider,
+                'paidFutureGroupLessonsCount' => $paidFutureGroupLessonsCount,
+                'paidFutureGroupLessonsSum' => $paidFutureGroupLessonsSum,
                 'paidFutureLessonsSearchModel' => $paidFutureLessonsSearchModel,
                 'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
                 'paidPastLessondataProvider' => $paidPastLessondataProvider,
