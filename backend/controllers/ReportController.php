@@ -562,6 +562,8 @@ class ReportController extends BaseController
         $customerIds = [];
         $futureGroupLessonTotal = [];
         $paidFutureGroupLessonsSum = [];
+        $pastGroupLessonTotal = [];
+        $paidPastGroupLessonsSum = [];
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate = (new \DateTime())->format('Y-m-d');
 
