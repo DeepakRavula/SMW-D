@@ -10,7 +10,6 @@ use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\jui\DatePicker;
-use common\models\GroupLesson;
 
 ?>
 <style>
@@ -37,15 +36,8 @@ use common\models\GroupLesson;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -143,15 +135,8 @@ use common\models\GroupLesson;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -250,15 +235,8 @@ use common\models\GroupLesson;
         'summary' => false,
         'filterModel' => $paidFutureLessonsSearchModel,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -362,15 +340,8 @@ use common\models\GroupLesson;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -467,15 +438,8 @@ use common\models\GroupLesson;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -565,15 +529,8 @@ use common\models\GroupLesson;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -663,15 +620,8 @@ use common\models\GroupLesson;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -726,15 +676,8 @@ use common\models\GroupLesson;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -803,7 +746,7 @@ LteBox::begin([
   <tr>
     <td style="width:80%"><b>Prepaid Future Group Lessons</b></td>
     <td style="width:10%"><b><?= $paidFutureGroupLessonsCount ?></b></td>
-    <td style="width:10%"><b><?=  round(array_sum($paidFutureGroupLessonsSum), 2) ?></b></td>
+    <td style="width:10%"><b><?=  Yii::$app->formatter->asCurrency(round(array_sum($paidFutureGroupLessonsSum), 2)) ?></b></td>
   </tr>
   <tr>
     <td style="width:80%"><b>Paid Unscheduled Group Lessons</b></td>

@@ -559,6 +559,9 @@ class ReportController extends BaseController
 
     public function actionFinancialSummaryReport()
     {
+        $customerIds = [];
+        $futureGroupLessonTotal = [];
+        $paidFutureGroupLessonsSum = [];
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate = (new \DateTime())->format('Y-m-d');
 
@@ -571,145 +574,149 @@ class ReportController extends BaseController
         }
 
         $paidFutureLessondataProvider = $paidFutureLessonsSearchModel->search(Yii::$app->request->queryParams);
-        
-        $customerIds = Student::find()
-                        ->notDeleted()
-                        ->location($locationId)
-                        ->statusActive()
-                        ->all();
-                        
-        foreach($customerIds as $id ){
-        $customerIDs[] = $id->customer_id;
+
+        $students = Student::find()
+            ->notDeleted()
+            ->location($locationId)
+            ->all();
+
+        foreach ($students as $student) {
+            $customerIds[] = $student->customer_id;
         }
 
-        $paidFutureGroupLessonsTotals = GroupLesson::find()
-                        ->joinWith(['lesson' => function($query) use ($locationId) {
-                            $query->location($locationId)
-                                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
-                                ->notDeleted();
-                        }])
-                        ->notDeleted()
-                        ->all();
+        $futureGroupLessons = GroupLesson::find()
+            ->joinWith(['lesson' => function ($query) use ($locationId) {
+            $query->location($locationId)
+                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                ->notDeleted();
+        }])
+            ->notDeleted()
+            ->all();
 
-        foreach($paidFutureGroupLessonsTotals as $total ){
-            $futureGroupLessonTotal[] = $total->total;
-            $paidFutureGroupLessonsSum[] = $total->total - $total->balance;
-            }
+        foreach ($futureGroupLessons as $groupLesson) {
+            $futureGroupLessonTotal[] = $groupLesson->total;
+            $paidFutureGroupLessonsSum[] = $groupLesson->total - $groupLesson->balance;
+        }
 
         $paidFutureGroupLessons = GroupLesson::find()
-                        ->andWhere(['OR',
-                                    ['group_lesson.paidStatus' => GroupLesson::STATUS_PAID ],
-                                    [
-                                        'AND',
+            ->andWhere(['OR',
+            ['group_lesson.paidStatus' => GroupLesson::STATUS_PAID],
+            [
+                'AND',
 
-                                        ['group_lesson.paidStatus' => GroupLesson::STATUS_OWING],
+                ['group_lesson.paidStatus' => GroupLesson::STATUS_OWING],
 
-                                        ['NOT' , ['group_lesson.balance' => $futureGroupLessonTotal ]]
-                                    ]
-                                    ])
-                        ->joinWith(['lesson' => function($query) use ($locationId) {
-                            $query->location($locationId)
-                                ->isConfirmed()
-                                ->orderBy(['lesson.id' => SORT_ASC])
-                                ->notCanceled()
-                                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
-                                ->notDeleted();
-                        }])
-                        ->joinWith(['enrolment' => function($query) use($customerIDs) {
-                            $query->joinWith(['student' => function($query){
-                               $query->notDeleted();
-                            }])
-                               ->notDeleted()
-                                ->isConfirmed()
-                                ->customer($customerIDs);
-                        }])
-                        ->notDeleted();
-
-        $paidPastGroupLessonsTotals = GroupLesson::find()
-                        ->joinWith(['lesson' => function($query) use ($locationId) {
-                            $query->location($locationId)
-                                ->unscheduled()
-                                ->andWhere(['<=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
-                                ->notDeleted();
-                        }])
-                        ->notDeleted()
-                        ->all();
-
-        foreach($paidPastGroupLessonsTotals as $total ){
-            $pastGroupLessonTotal[] = $total->total;
-            $paidPastGroupLessonsSum[] = $total->total - $total->balance;
-            }
+                ['NOT', ['group_lesson.balance' => $futureGroupLessonTotal]]
+            ]
+        ])
+            ->joinWith(['lesson' => function ($query) use ($locationId) {
+            $query->location($locationId)
+                ->isConfirmed()
+                ->orderBy(['lesson.id' => SORT_ASC])
+                ->notCanceled()
+                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                ->notDeleted();
+        }])
+            ->joinWith(['enrolment' => function ($query) use ($customerIds) {
+            $query->joinWith(['student' => function ($query) {
+                    $query->notDeleted();
+                }
+                    ])
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->customer($customerIds);
+            }])
+            ->notDeleted();
 
         $paidPastGroupLessons = GroupLesson::find()
-                        ->andWhere(['OR',
-                                    ['group_lesson.paidStatus' => GroupLesson::STATUS_PAID ],
-                                    [
-                                        'AND',
+            ->joinWith(['lesson' => function ($query) use ($locationId) {
+            $query->location($locationId)
+                ->unscheduled()
+                ->andWhere(['<', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                ->notDeleted();
+        }])
+            ->notDeleted()
+            ->all();
 
-                                        ['group_lesson.paidStatus' => GroupLesson::STATUS_OWING],
+        foreach ($paidPastGroupLessons as $groupLesson) {
+            $pastGroupLessonTotal[] = $groupLesson->total;
+            $paidPastGroupLessonsSum[] = $groupLesson->total - $groupLesson->balance;
+        }
 
-                                        ['NOT' , ['group_lesson.balance' => $pastGroupLessonTotal ]]
-                                    ]
-                                    ])
-                        ->joinWith(['lesson' => function($query) use ($locationId) {
-                            $query->location($locationId)
-                                ->unscheduled()
-                                ->andWhere(['<=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
-                                ->orderBy(['lesson.id' => SORT_ASC])
-                                ->notCanceled()
-                                ->isConfirmed()
-                                ->notDeleted();
-                        }])
-                        ->joinWith(['enrolment' => function($query) use($customerIDs) {
-                            $query->joinWith(['student' => function($query){
-                               $query->notDeleted();
-                            }])
-                               ->notDeleted()
-                                ->isConfirmed()
-                                ->customer($customerIDs);
-                        }])
-                        ->notDeleted();
+        $paidPastGroupLessons = GroupLesson::find()
+            ->andWhere(['OR',
+            [
+                'group_lesson.paidStatus' => GroupLesson::STATUS_PAID
+            ],
+            [
+                'AND',
+                [
+                    'group_lesson.paidStatus' => GroupLesson::STATUS_OWING],
+                [
+                    'NOT', ['group_lesson.balance' => $pastGroupLessonTotal]
+                ]
+            ]
+        ])
+            ->joinWith(['lesson' => function ($query) use ($locationId) {
+            $query->location($locationId)
+                ->unscheduled()
+                ->andWhere(['<', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                ->orderBy(['lesson.id' => SORT_ASC])
+                ->notCanceled()
+                ->isConfirmed()
+                ->notDeleted();
+        }])
+            ->joinWith(['enrolment' => function ($query) use ($customerIds) {
+            $query->joinWith(['student' => function ($query) {
+                    $query->notDeleted();
+                }
+                    ])
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->customer($customerIds);
+            }])
+            ->notDeleted();
 
         $paidFutureGroupLessonsCount = $paidFutureGroupLessons->count();
         $paidPastGroupLessonsCount = $paidPastGroupLessons->count();
 
         $paidPastLessons = Lesson::find()
-                        ->joinWith(['lessonPayments' => function ($query) {
-                            $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
-                        }])
-                        ->andWhere(['<', 'lesson.date', $currentDate])
-                        ->orderBy(['lesson.id' => SORT_ASC])
-                        ->location($locationId)
-                        ->privateLessons()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->notCanceled()
-                        ->unscheduled()
-                        ->notExpired()
-                        ->regular();
+            ->joinWith(['lessonPayments' => function ($query) {
+            $query->andWhere(['NOT', ['lesson_payment.lessonId' => null]]);
+        }])
+            ->andWhere(['<', 'lesson.date', $currentDate])
+            ->orderBy(['lesson.id' => SORT_ASC])
+            ->location($locationId)
+            ->privateLessons()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->unscheduled()
+            ->notExpired()
+            ->regular();
 
         $paidPastLessonsSum = $paidPastLessons->sum('lesson_payment.amount');
         $paidPastLessonsCount = $paidPastLessons->count();
 
         $activeOutstandingInvoices = Invoice::find()
-                        ->invoice()
-                        ->location($locationId)
-                        ->andWhere(['>', 'invoice.balance', 0.0])
-                        ->joinWith(['user' => function ($query) {
-                            $query->active();
-                        }])
-                        ->notDeleted()
-                        ->unpaid();
+            ->invoice()
+            ->location($locationId)
+            ->andWhere(['>', 'invoice.balance', 0.0])
+            ->joinWith(['user' => function ($query) {
+            $query->active();
+        }])
+            ->notDeleted()
+            ->unpaid();
 
         $inactiveOutstandingInvoices = Invoice::find()
-                        ->invoice()
-                        ->location($locationId)
-                        ->andWhere(['>', 'invoice.balance', 0.0])
-                        ->joinWith(['user' => function ($query) {
-                            $query->inactive();
-                        }])
-                        ->notDeleted()
-                        ->unpaid();
+            ->invoice()
+            ->location($locationId)
+            ->andWhere(['>', 'invoice.balance', 0.0])
+            ->joinWith(['user' => function ($query) {
+            $query->inactive();
+        }])
+            ->notDeleted()
+            ->unpaid();
 
         $activeOutstandingInvoicesSum = $activeOutstandingInvoices->sum('balance');
         $activeOutstandingInvoicesCount = $activeOutstandingInvoices->count();
@@ -717,37 +724,37 @@ class ReportController extends BaseController
         $inactiveOutstandingInvoicesCount = $inactiveOutstandingInvoices->count();
 
         $activeCustomers = User::find()
-                        ->customers($locationId)
-                        ->owingCustomers()
-                        ->excludeWalkin()
-                        ->notDeleted();
+            ->customers($locationId)
+            ->owingCustomers()
+            ->excludeWalkin()
+            ->notDeleted();
 
         $numberOfActiveCustomers = $activeCustomers->count();
 
         $enrolments = Enrolment::find()
-                        ->location($locationId)
-                        ->notDeleted()
-                        ->joinWith(['course' => function($query) {
-                            $query->andWhere('DATE(course.endDate) >= CURRENT_DATE');
-                        }])
-                        ->isConfirmed()
-                        ->isRegular();
+            ->location($locationId)
+            ->notDeleted()
+            ->joinWith(['course' => function ($query) {
+            $query->andWhere('DATE(course.endDate) >= CURRENT_DATE');
+        }])
+            ->isConfirmed()
+            ->isRegular();
 
         $numberOfEnrolments = $enrolments->count();
 
         $activeCustomersWithCredit = CustomerAccount::find()
-                        ->location($locationId)
-                        ->joinWith(['user' => function ($query) {
-                            $query->active();
-                        }])
-                        ->andWhere(['<', 'balance', 0]);
+            ->location($locationId)
+            ->joinWith(['user' => function ($query) {
+            $query->active();
+        }])
+            ->andWhere(['<', 'balance', 0]);
 
         $inactiveCustomersWithCredit = CustomerAccount::find()
-                        ->location($locationId)
-                        ->joinWith(['user' => function ($query) {
-                            $query->inactive();
-                        }])
-                        ->andWhere(['<', 'balance', 0]);
+            ->location($locationId)
+            ->joinWith(['user' => function ($query) {
+            $query->inactive();
+        }])
+            ->andWhere(['<', 'balance', 0]);
 
         $paidFutureGroupLessonsdataProvider = new ActiveDataProvider([
             'query' => $paidFutureGroupLessons,
@@ -792,28 +799,28 @@ class ReportController extends BaseController
             ],
         ]);
 
-        return $this->render( 'financial-summary-report/index', [
-                'paidPastGroupLessonsdataProvider' => $paidPastGroupLessonsdataProvider,
-                'paidPastGroupLessonsCount' => $paidPastGroupLessonsCount,
-                'paidPastGroupLessonsSum' => $paidPastGroupLessonsSum,
-                'paidFutureGroupLessonsdataProvider' => $paidFutureGroupLessonsdataProvider,
-                'paidFutureGroupLessonsCount' => $paidFutureGroupLessonsCount,
-                'paidFutureGroupLessonsSum' => $paidFutureGroupLessonsSum,
-                'paidFutureLessonsSearchModel' => $paidFutureLessonsSearchModel,
-                'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
-                'paidPastLessondataProvider' => $paidPastLessondataProvider,
-                'activeInvoicedataProvider' => $activeInvoicedataProvider,
-                'inactiveInvoicedataProvider' => $inactiveInvoicedataProvider,
-                'activeCustomerWithCreditdataProvider' => $activeCustomerWithCreditdataProvider,
-                'inactiveCustomerWithCreditdataProvider' => $inactiveCustomerWithCreditdataProvider,
-                'paidPastLessonsSum' => $paidPastLessonsSum,
-                'activeOutstandingInvoicesSum' => $activeOutstandingInvoicesSum,
-                'inactiveOutstandingInvoicesSum' => $inactiveOutstandingInvoicesSum,
-                'paidPastLessonsCount' => $paidPastLessonsCount,
-                'activeOutstandingInvoicesCount' => $activeOutstandingInvoicesCount,
-                'inactiveOutstandingInvoicesCount' => $inactiveOutstandingInvoicesCount,
-                'numberOfActiveCustomers' => $numberOfActiveCustomers,
-                'numberOfEnrolments' => $numberOfEnrolments,
-            ]);
+        return $this->render('financial-summary-report/index', [
+            'paidPastGroupLessonsdataProvider' => $paidPastGroupLessonsdataProvider,
+            'paidPastGroupLessonsCount' => $paidPastGroupLessonsCount,
+            'paidPastGroupLessonsSum' => $paidPastGroupLessonsSum,
+            'paidFutureGroupLessonsdataProvider' => $paidFutureGroupLessonsdataProvider,
+            'paidFutureGroupLessonsCount' => $paidFutureGroupLessonsCount,
+            'paidFutureGroupLessonsSum' => $paidFutureGroupLessonsSum,
+            'paidFutureLessonsSearchModel' => $paidFutureLessonsSearchModel,
+            'paidFutureLessondataProvider' => $paidFutureLessondataProvider,
+            'paidPastLessondataProvider' => $paidPastLessondataProvider,
+            'activeInvoicedataProvider' => $activeInvoicedataProvider,
+            'inactiveInvoicedataProvider' => $inactiveInvoicedataProvider,
+            'activeCustomerWithCreditdataProvider' => $activeCustomerWithCreditdataProvider,
+            'inactiveCustomerWithCreditdataProvider' => $inactiveCustomerWithCreditdataProvider,
+            'paidPastLessonsSum' => $paidPastLessonsSum,
+            'activeOutstandingInvoicesSum' => $activeOutstandingInvoicesSum,
+            'inactiveOutstandingInvoicesSum' => $inactiveOutstandingInvoicesSum,
+            'paidPastLessonsCount' => $paidPastLessonsCount,
+            'activeOutstandingInvoicesCount' => $activeOutstandingInvoicesCount,
+            'inactiveOutstandingInvoicesCount' => $inactiveOutstandingInvoicesCount,
+            'numberOfActiveCustomers' => $numberOfActiveCustomers,
+            'numberOfEnrolments' => $numberOfEnrolments,
+        ]);
     }
 }
