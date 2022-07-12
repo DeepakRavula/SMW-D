@@ -24,7 +24,6 @@ use common\models\CustomerAccount;
 use common\models\Enrolment;
 use common\models\GroupLesson;
 use common\models\Student;
-use yii\db\conditions\AndCondition;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.

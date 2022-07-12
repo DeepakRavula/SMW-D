@@ -51,7 +51,7 @@ use yii\jui\DatePicker;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->id;
+                    return  $data->lessonId;
                 },
             ],
             [
@@ -150,7 +150,7 @@ use yii\jui\DatePicker;
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
                 'value' => function ($data) {
-                    return  $data->id;
+                    return  $data->lessonId;
                 },
             ],
             [
@@ -757,7 +757,7 @@ LteBox::begin([
   <tr>
     <td style="width:80%"><b>Prepaid Future Lessons</b></td>
     <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->count() ?></b></td>
-    <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->sum('lesson_payment.amount') ?></b></td>
+    <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($paidFutureLessondataProvider->query->sum('lesson_payment.amount')) ?></b></td>
   </tr>
   <tr>
     <td style="width:80%"><b>Paid Unscheduled Lessons</b></td>
