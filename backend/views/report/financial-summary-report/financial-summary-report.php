@@ -26,7 +26,7 @@ use yii\jui\DatePicker;
 }
 </style>
 <div class="clearfix"></div>
-<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing']) ?>
+<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing']); ?>
    
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-group-id',
@@ -225,7 +225,7 @@ use yii\jui\DatePicker;
     ?>
 <?php Pjax::end(); ?>
 <?php Pjax::begin(['id' => 'prepaid-future-locations-listing',
-'timeout' => 30000 ]); ?>
+'timeout' => 30000]); ?>
    
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-id',
@@ -277,6 +277,9 @@ use yii\jui\DatePicker;
                     'model'=>$paidFutureLessonsSearchModel,
                     'attribute'=>'goToDate',
                     'dateFormat' => 'yyyy-MM-dd',
+                    'clientOptions' => [
+                        'minDate' => 0
+                    ]
                 ]),
                 'format' => 'html',
                 'value' => function ($data) {
@@ -320,13 +323,6 @@ use yii\jui\DatePicker;
                 },
             ],
         ],
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'future-amount-report'
-            ]
-            ],
 ]);
 
     ?>
