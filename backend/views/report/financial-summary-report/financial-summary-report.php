@@ -225,7 +225,7 @@ use yii\jui\DatePicker;
     ?>
 <?php Pjax::end(); ?>
 <?php Pjax::begin(['id' => 'prepaid-future-locations-listing',
-'timeout' => 30000 ]);]); ?>
+'timeout' => 30000 ]); ?>
    
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-id',
