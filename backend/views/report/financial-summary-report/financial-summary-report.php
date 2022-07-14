@@ -26,7 +26,7 @@ use yii\jui\DatePicker;
 }
 </style>
 <div class="clearfix"></div>
-<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing' ?>
+<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing']) ?>
    
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-group-id',
