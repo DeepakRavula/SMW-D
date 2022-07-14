@@ -26,8 +26,7 @@ use yii\jui\DatePicker;
 }
 </style>
 <div class="clearfix"></div>
-<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing',
-'timeout' => 30000 ]); ?>
+<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing' ?>
    
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-group-id',
@@ -225,7 +224,8 @@ use yii\jui\DatePicker;
 
     ?>
 <?php Pjax::end(); ?>
-<?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
+<?php Pjax::begin(['id' => 'prepaid-future-locations-listing',
+'timeout' => 30000 ]);]); ?>
    
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-id',
