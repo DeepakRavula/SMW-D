@@ -610,6 +610,7 @@ class ReportController extends BaseController
                 ['NOT', ['group_lesson.balance' => $futureGroupLessonTotal]]
             ]
         ])
+            ->andWhere(['!=', 'group_lesson.total', 0.0000])
             ->joinWith(['lesson' => function ($query) use ($locationId) {
             $query->location($locationId)
                 ->isConfirmed()
@@ -658,6 +659,7 @@ class ReportController extends BaseController
                 ]
             ]
         ])
+            ->andWhere(['!=', 'group_lesson.total', 0.0000])
             ->joinWith(['lesson' => function ($query) use ($locationId) {
             $query->location($locationId)
                 ->unscheduled()
