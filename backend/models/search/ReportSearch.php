@@ -57,8 +57,7 @@ class ReportSearch extends Invoice
         ->privateLessons()
         ->notCanceled()
         ->notDeleted()
-        ->isConfirmed()
-        ->regular();
+        ->isConfirmed();
             
         $dataProvider = new ActiveDataProvider([
             'query' => $lessonQuery,
