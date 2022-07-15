@@ -279,8 +279,13 @@ use yii\jui\DatePicker;
                     'dateFormat' => 'yyyy-MM-dd',
                     'clientOptions' => [
                         'minDate' => 0
-                    ]
+                    ],
+                    'clientEvents' => [
+                        'dp.change' =>  'getLessonCount()',
+                    ] ,
+                    
                 ]),
+               
                 'format' => 'html',
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
@@ -784,3 +789,12 @@ LteBox::begin([
 </table>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>
+
+<script>
+    function getLessonCount() {
+        $(document).ajaxStop(function(){
+            window.location.reload();
+        });
+    }
+
+</script>
