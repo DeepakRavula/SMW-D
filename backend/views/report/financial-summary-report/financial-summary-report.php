@@ -5,7 +5,7 @@ use yii\widgets\Pjax;
 use yii\helpers\Html;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
-use Yii;
+// use Yii;
 use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
@@ -279,8 +279,9 @@ use yii\jui\DatePicker;
                     'dateFormat' => 'yyyy-MM-dd',
                     'clientOptions' => [
                         'minDate' => 0
-                    ]
+                    ],
                 ]),
+               
                 'format' => 'html',
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
@@ -784,3 +785,11 @@ LteBox::begin([
 </table>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>
+
+<script type="text/javascript">
+    $('#reportsearch-gotodate').on('change', function() {
+            $(document).ajaxStop(function(){
+                window.location.reload();
+            });  
+    });
+</script>
