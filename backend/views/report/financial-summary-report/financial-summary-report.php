@@ -5,7 +5,7 @@ use yii\widgets\Pjax;
 use yii\helpers\Html;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
-use Yii;
+// use Yii;
 use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
@@ -280,10 +280,6 @@ use yii\jui\DatePicker;
                     'clientOptions' => [
                         'minDate' => 0
                     ],
-                    'clientEvents' => [
-                        'dp.change' =>  'getLessonCount()',
-                    ] ,
-                    
                 ]),
                
                 'format' => 'html',
@@ -790,11 +786,10 @@ LteBox::begin([
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>
 
-<script>
-    function getLessonCount() {
-        $(document).ajaxStop(function(){
-            window.location.reload();
-        });
-    }
-
+<script type="text/javascript">
+    $('#reportsearch-gotodate').on('change', function() {
+            $(document).ajaxStop(function(){
+                window.location.reload();
+            });  
+    });
 </script>
