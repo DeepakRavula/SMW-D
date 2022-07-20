@@ -747,7 +747,7 @@ LteBox::begin([
   <tr>
     <td style="width:80%"><b>Prepaid Future Group Lessons</b></td>
     <td style="width:10%"><b><?= $paidFutureGroupLessonsdataProvider->query->count() ?></b></td>
-    <td style="width:10%"><b><?=  Yii::$app->formatter->asCurrency($paidFutureGroupLessonsdataProvider->query->sum('group_lesson.total')); ?></b></td>
+    <td style="width:10%"><b><?=  Yii::$app->formatter->asCurrency($paidFutureGroupLessonsdataProvider->query->sum('group_lesson.total') - $paidFutureGroupLessonsdataProvider->query->sum('group_lesson.balance')); ?></b></td>
   </tr>
   <tr>
     <td style="width:80%"><b>Paid Unscheduled Group Lessons</b></td>

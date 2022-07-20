@@ -560,6 +560,8 @@ class ReportController extends BaseController
     public function actionFinancialSummaryReport()
     {
         $customerIds = [];
+        $pastGroupLessonTotal = [];
+        $paidPastGroupLessonsSum = [];
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate = (new \DateTime())->format('Y-m-d');
 
@@ -575,7 +577,7 @@ class ReportController extends BaseController
 
         $paidFutureGroupLessonsSearchModel = new ReportGroupLessonSearch();
         $request = Yii::$app->request;
-        $groupLessonSearchRequest = $request->get('ReportSearch');
+        $groupLessonSearchRequest = $request->get('ReportGroupLessonSearch');
         $paidFutureGroupLessonsSearchModel->goToDate = $currentDate;
         if (!empty($groupLessonSearchRequest['goToDate'])) {
             $paidFutureGroupLessonsSearchModel->goToDate = $groupLessonSearchRequest['goToDate'];

@@ -51,9 +51,9 @@ class ReportGroupLessonSearch extends Invoice
         }
 
         $futureGroupLessons = GroupLesson::find()
-            ->joinWith(['lesson' => function ($query) use ($locationId) {
+            ->joinWith(['lesson' => function ($query) use ($locationId,$currentDate) {
             $query->location($locationId)
-                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                ->andWhere(['>=', 'DATE(lesson.date)', $currentDate])
                 ->notDeleted();
         }])
             ->notDeleted()
@@ -61,7 +61,6 @@ class ReportGroupLessonSearch extends Invoice
 
         foreach ($futureGroupLessons as $groupLesson) {
             $futureGroupLessonTotal[] = $groupLesson->total;
-            // $paidFutureGroupLessonsSum[] = $groupLesson->total - $groupLesson->balance;
         }
 
         $lessonQuery = GroupLesson::find()
@@ -76,12 +75,12 @@ class ReportGroupLessonSearch extends Invoice
             ]
             ])
             ->andWhere(['!=', 'group_lesson.total', 0.0000])
-            ->joinWith(['lesson' => function ($query) use ($locationId) {
+            ->joinWith(['lesson' => function ($query) use ($locationId,$currentDate) {
             $query->location($locationId)
                 ->isConfirmed()
                 ->orderBy(['lesson.id' => SORT_ASC])
                 ->notCanceled()
-                ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime())->format('Y-m-d')])
+                ->andWhere(['>=', 'DATE(lesson.date)', $currentDate])
                 ->notDeleted();
             }])
             ->joinWith(['enrolment' => function ($query) use ($customerIds) {
@@ -104,7 +103,7 @@ class ReportGroupLessonSearch extends Invoice
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-        $lessonQuery->andFilterWhere(['>', 'lesson.date', $this->goToDate]);
+        $lessonQuery->andFilterWhere(['>=', 'lesson.date', $this->goToDate]);
 
         return $dataProvider;
     }
