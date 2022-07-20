@@ -43,6 +43,7 @@ use common\models\CourseSchedule;
 use common\models\NotifyViaEmail;
 use common\models\NotificationEmailType;
 use common\models\Course;
+use common\models\CustomerEmailNotification;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
