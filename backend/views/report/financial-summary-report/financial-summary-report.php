@@ -26,15 +26,17 @@ use yii\jui\DatePicker;
 }
 </style>
 <div class="clearfix"></div>
-<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing']); ?>
+<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing',
+'timeout' => 30000]); ?>
    
-    <?= KartikGridView::widget([
+<?= KartikGridView::widget([
         'id' => 'prepaid-future-group-id',
         'dataProvider' => $paidFutureGroupLessonsdataProvider,
         'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
+        'filterModel' => $paidFutureGroupLessonsSearchModel,
         'toolbar' =>  [
             '{export}',
             '{toggleData}',
@@ -74,6 +76,14 @@ use yii\jui\DatePicker;
                 'label' => 'Date',
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
                 'format' => 'html',
+                'filter' => DatePicker::widget([
+                    'model'=>$paidFutureGroupLessonsSearchModel,
+                    'attribute'=>'goToDate',
+                    'dateFormat' => 'yyyy-MM-dd',
+                    'clientOptions' => [
+                        'minDate' => 0
+                    ]
+                ]),
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDate($data->lesson->date) . ' @ ' . Yii::$app->formatter->asTime($data->lesson->date);
                 },
@@ -114,13 +124,6 @@ use yii\jui\DatePicker;
                 },
             ],
         ],
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'future-group-amount-report'
-            ]
-            ],
 ]);
 
     ?>
@@ -743,8 +746,8 @@ LteBox::begin([
   </tr>
   <tr>
     <td style="width:80%"><b>Prepaid Future Group Lessons</b></td>
-    <td style="width:10%"><b><?= $paidFutureGroupLessonsCount ?></b></td>
-    <td style="width:10%"><b><?=  Yii::$app->formatter->asCurrency(round(array_sum($paidFutureGroupLessonsSum), 2)) ?></b></td>
+    <td style="width:10%"><b><?= $paidFutureGroupLessonsdataProvider->query->count() ?></b></td>
+    <td style="width:10%"><b><?=  Yii::$app->formatter->asCurrency($paidFutureGroupLessonsdataProvider->query->sum('group_lesson.total') - $paidFutureGroupLessonsdataProvider->query->sum('group_lesson.balance')); ?></b></td>
   </tr>
   <tr>
     <td style="width:80%"><b>Paid Unscheduled Group Lessons</b></td>
@@ -788,6 +791,13 @@ LteBox::begin([
 
 <script type="text/javascript">
     $('#reportsearch-gotodate').on('change', function() {
+            $(document).ajaxStop(function(){
+                window.location.reload();
+            });  
+    });
+</script>
+<script type="text/javascript">
+    $('#reportgrouplessonsearch-gotodate').on('change', function() {
             $(document).ajaxStop(function(){
                 window.location.reload();
             });  
