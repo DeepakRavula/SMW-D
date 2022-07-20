@@ -632,25 +632,27 @@ class EmailController extends BaseController
 
         if ($model->load(Yii::$app->request->post())) {
             foreach ($model->notificationEmailType as $type) {
+                
+                $customerEmailNotification = CustomerEmailNotification::find()
+                        ->andWhere(['userId' => $customerId])
+                        ->andWhere(['emailNotificationTypeId' => $type])
+                        ->one();
+                if($type){
+                    $customerEmailNotification->isChecked = true;
+                    $customerEmailNotification->save();
+                } else {
+                    $customerEmailNotification->isChecked = false;
+                    $customerEmailNotification->save();
+                }
                 if ($type == 1) {
                     print_r("Upcomming Makeup Lessons");
 
                 }
                 elseif ($type == 2) {
-                    // print_r("First Schedule Lesson");
+                    // First Schedule Lesson
                     $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
                     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-                    // $courses = Course::find()
-                    //             ->regular()
-                    //             ->confirmed()
-                    //             // ->customer($customerId)
-                    //             ->location($locationId)
-                    //             ->privateProgram()
-                    //             ->notDeleted()
-                    //             ->all();
-                    // foreach($courses as $course){
-                    // // print_r($course);
-                    // $coursea []= $course->id ;}
+               
                     $courses = Course::find()
                         ->regular()
                         ->confirmed()
@@ -670,32 +672,16 @@ class EmailController extends BaseController
                             ->notRescheduled()
                             ->regular()
                             ->limit(1);
-                    // print_r($firstLesson);
-                    // print_r("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                     }
-                    // print_r($firstLesson);
+                    
                     $firstLessonDataProvider = new ActiveDataProvider([
                         'query' => $firstLesson,
                         'pagination' => false
                     ]);
-                    print_r("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-                    print_r($firstLessonDataProvider);
-                    $data = $this->renderAjax('/mail/notify-via-email/notify_first_lesson_form', [
-                        'model' => new EmailForm(),
-                        'emails' => !empty($user->emails) ? $user->emailNames : null,
-                        'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                        'emailTemplate' => $emailTemplate,
-                        'userModel' => $user,
-                        'firstLessonDataProvider' => $firstLessonDataProvider,
-                        'searchModel' => $searchModel,
-                    ]);
-                    return [
-                        'status' => true,
-                        'data' => $data
-                    ];
+                   
                 }
                 elseif ($type == 3) {
-                    // print_r("OverDue Invoice");
+                    // OverDue Invoice
                     $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
                     if (!$searchModel->userId) {
                         $searchModel->userId = null;
@@ -714,23 +700,9 @@ class EmailController extends BaseController
                         'pagination' => false
                     ]);
 
-                    $data = $this->renderAjax('/mail/notify-via-email/notify_invoice_from', [
-                        'model' => new EmailForm(),
-                        'emails' => !empty($user->emails) ? $user->emailNames : null,
-                        'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                        'emailTemplate' => $emailTemplate,
-                        'userModel' => $user,
-                        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                        'lessonLineItemsDataProvider' => null,
-                        'searchModel' => $searchModel,
-                    ]);
-                    return [
-                        'status' => true,
-                        'data' => $data
-                    ];
                 }
                 else {
-                    // print_r("future Lessons");
+                    // future Lessons
                     $lessonsQuery = Lesson::find()
                         ->location($locationId)
                         ->joinWith(['privateLesson' => function ($query) {
@@ -761,24 +733,14 @@ class EmailController extends BaseController
                     $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
                     $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
                     $total = ($lessonsDue) - $credits;
-                    $data = $this->renderAjax('/mail/notify-via-email/notify_future_lesson_from', [
-                        'model' => new EmailForm(),
-                        'emails' => !empty($user->emails) ? $user->emailNames : null,
-                        'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                        'emailTemplate' => $emailTemplate,
-                        'userModel' => $user,
-                        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                        'searchModel' => $searchModel,
-                        'total' => $total,
-                    ]);
-                    return [
-                        'status' => true,
-                        'data' => $data
-                    ];
+        
                 }
+
+                Yii::$app->session->setFlash('success', "The status has been updated successfully.");
             }
-
-
+            return [
+                'status' => true,
+            ];
 
         }
     }
