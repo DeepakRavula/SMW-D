@@ -631,19 +631,9 @@ class EmailController extends BaseController
         $payment->user_id = $customerId;
 
         if ($model->load(Yii::$app->request->post())) {
-            foreach ($model->notificationEmailType as $type) {
-                
-                $customerEmailNotification = CustomerEmailNotification::find()
-                        ->andWhere(['userId' => $customerId])
-                        ->andWhere(['emailNotificationTypeId' => $type])
-                        ->one();
-                if($type){
-                    $customerEmailNotification->isChecked = true;
-                    $customerEmailNotification->save();
-                } else {
-                    $customerEmailNotification->isChecked = false;
-                    $customerEmailNotification->save();
-                }
+            $notificationEmailType = Yii::$app->request->post();
+            foreach ($notificationEmailType as $type) {
+           
                 if ($type == 1) {
                     print_r("Upcomming Makeup Lessons");
 
