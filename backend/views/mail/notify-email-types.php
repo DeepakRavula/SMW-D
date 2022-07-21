@@ -21,10 +21,11 @@ use common\models\CustomerEmailNotification;
             $checkedList [] = $isCheckedList->emailNotificationTypeId;
             
         }
-        $emailTypes->id = $checkedList;
+
+        $emailTypes->emailNotifyType = $checkedList;
         ?> 
         <?=
-         $form->field ($emailTypes, 'id')->checkboxList(NotificationEmailType::emailNotifyList())->label(false);
+         $form->field ($emailTypes, 'emailNotifyType')->checkboxList(NotificationEmailType::emailNotifyList())->label(false);
         ?>
              
             </div>
