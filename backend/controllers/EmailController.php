@@ -44,6 +44,7 @@ use common\models\NotifyViaEmail;
 use common\models\NotificationEmailType;
 use common\models\Course;
 use common\models\CustomerEmailNotification;
+use yii\helpers\Url;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -735,12 +736,15 @@ class EmailController extends BaseController
                     $total = ($lessonsDue) - $credits;
         
                 }
-
-                Yii::$app->session->setFlash('success', "The status has been updated successfully.");
+                Yii::$app->session->setFlash('alert', [
+                    'body' => \Yii::t('backend', 'The status has been updated successfully.'),
+                    'options' => ['class' => 'alert-success'],
+                ]);
+        
+                return [
+                    'status' => true,
+                ];
             }
-            return [
-                'status' => true,
-            ];
 
         }
     }
