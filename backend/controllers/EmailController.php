@@ -44,7 +44,6 @@ use common\models\NotifyViaEmail;
 use common\models\NotificationEmailType;
 use common\models\Course;
 use common\models\CustomerEmailNotification;
-use yii\helpers\Url;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
