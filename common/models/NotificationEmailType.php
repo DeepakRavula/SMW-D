@@ -84,7 +84,7 @@ class NotificationEmailType extends \yii\db\ActiveRecord
     {
         $data =  static::find()
             ->select(['id', 'emailNotifyType'])
-            ->orderBy('emailNotifyType')->asArray()->all();
+            ->orderBy('id')->asArray()->all();
         return ArrayHelper::map($data, 'id', 'emailNotifyType');
     }
 
