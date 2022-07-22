@@ -14,7 +14,7 @@ use common\models\CustomerEmailNotification;
     'action' => $url,    ]); ?>
     <div id = "email-notify-reasons">
         <?php 
-
+        $checkedList = [];
         $isCheckedLists = CustomerEmailNotification::find()->andwhere(['userId'=> $customerId])->andwhere(['isChecked' => true])->all();
         foreach($isCheckedLists as $isCheckedList) {
             
