@@ -612,14 +612,14 @@ class EmailController extends BaseController
     public function actionNotifyEmail($customerId)
     {
         $model = new NotificationEmailType();
-        
+
         if ($model->load(Yii::$app->request->post())) {
             $notificationEmailType = Yii::$app->request->post();
 
             foreach ($notificationEmailType as $emailNotifyTypes) {
 
                 foreach ($emailNotifyTypes as $types) {
-                    
+
                     if (in_array(1, $types)) {
                         // print_r("Upcomming Makeup Lessons");
                         $toSendEmail = CustomerEmailNotification::find()
@@ -682,29 +682,38 @@ class EmailController extends BaseController
                             $update->isChecked = false;
                             $update->save();
                         }
-                        if (in_array(4, $types)) {
-                            // print_r("Over Due Lesson");
-                            $toSendEmail = CustomerEmailNotification::find()
-                                ->andWhere(['userId' => $customerId])
-                                ->andWhere(['emailNotificationTypeId' => 4])
-                                ->all();
-                            foreach ($toSendEmail as $update) {
-                                $update->isChecked = true;
-                                $update->save();
-                            }
-                        }
-                        else {
-                            $toStopEmail = CustomerEmailNotification::find()
-                                ->andWhere(['userId' => $customerId])
-                                ->andWhere(['emailNotificationTypeId' => 4])
-                                ->all();
-                            foreach ($toStopEmail as $update) {
-                                $update->isChecked = false;
-                                $update->save();
-                            }
+                    }
+                    if (in_array(4, $types)) {
+                        // print_r("Over Due Lesson");
+                        $toSendEmail = CustomerEmailNotification::find()
+                            ->andWhere(['userId' => $customerId])
+                            ->andWhere(['emailNotificationTypeId' => 4])
+                            ->all();
+                        foreach ($toSendEmail as $update) {
+                            $update->isChecked = true;
+                            $update->save();
                         }
                     }
+                    else {
+                        $toStopEmail = CustomerEmailNotification::find()
+                            ->andWhere(['userId' => $customerId])
+                            ->andWhere(['emailNotificationTypeId' => 4])
+                            ->all();
+                        foreach ($toStopEmail as $update) {
+                            $update->isChecked = false;
+                            $update->save();
+                        }
+                    }
+                    Yii::$app->session->setFlash('alert', [
+                        'body' => \Yii::t('backend', 'The status has been updated successfully.'),
+                        'options' => ['class' => 'alert-success'],
+                    ]);
+            
+                    return [
+                        'status' => true,
+                    ];
                 }
+                
             }
         }
     }
