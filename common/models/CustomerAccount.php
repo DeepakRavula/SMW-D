@@ -4,6 +4,8 @@ namespace common\models;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
+use common\models\UserLocation;
+use common\models\User;
 
 use Yii;
 
@@ -79,5 +81,15 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\CustomerAccountQuery(get_called_class());
+    }
+
+    public function getUserLocation()
+    {
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'customerId']);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'customerId']);
     }
 }

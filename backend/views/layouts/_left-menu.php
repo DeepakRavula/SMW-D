@@ -135,6 +135,13 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('manageAccountReceivableReport'),
                     'active' => (Yii::$app->controller->action->id === 'account-receivable')
                 ],
+                [
+                    'label' => Yii::t('backend', 'Financial Summary Report'),
+                    'icon' => '<i class="fa fa-dollar" aria-hidden="true"></i>',
+                    'url' => ['/report/financial-summary-report'],
+					'visible' => Yii::$app->user->can('manageAccountReceivableReport'),
+                    'active' => (Yii::$app->controller->action->id === 'financial-summary-report')
+                ],
                     [
                     'label' => Yii::t('backend', 'Birthdays'),
                     'icon' => '<i class="fa fa-birthday-cake" aria-hidden="true"></i>',

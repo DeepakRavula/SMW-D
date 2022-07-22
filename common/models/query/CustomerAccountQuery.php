@@ -31,4 +31,12 @@ class CustomerAccountQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function location($locationId)
+    {
+        $this->joinWith('userLocation uslo')
+            ->andWhere(['uslo.location_id' => $locationId]);
+
+        return $this;
+    }
 }
