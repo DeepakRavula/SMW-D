@@ -42,6 +42,8 @@ use common\models\log\ReceivePaymentLog;
 use common\models\CourseSchedule;
 use common\models\NotifyViaEmail;
 use common\models\NotificationEmailType;
+use common\models\Course;
+use common\models\CustomerEmailNotification;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -609,153 +611,134 @@ class EmailController extends BaseController
     }
     public function actionNotifyEmail($customerId)
     {
-        $model= new NotificationEmailType();
-        
-        $searchModel = new PaymentFormLessonSearch();
-                $searchModel->showCheckBox = true;
-                $modelPf = new PaymentForm();
-                $payment = new Payment();
-                $currentDate = new \DateTime();
-                $payment->date = $currentDate->format('M d, Y');
-                $modelPf->date = $currentDate->format('M d, Y');
-                $locationModel = Location::findOne(['slug' => \Yii::$app->location]);
-                
-                $searchModel->fromDate = $currentDate->format('M 1, Y');
-                $searchModel->toDate = $currentDate->format('M t, Y'); 
-                $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
-                $searchModel->load(Yii::$app->request->get());
-                $modelPf->userId = $customerId;
-                $payment->user_id = $customerId;
-                $invoicedLessons = Lesson::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->notCanceled();
-                    $invoicedLessons->dueLessons();
-                    $invoicedLessons->privateLessons()
-                    ->customer($customerId)
-                    ->invoiced();
-                $lessonsQuery = Lesson::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->notCanceled();
-                $lessonsQuery->dueLessons();
-                $lessonsQuery->privateLessons()
-                    ->customer($customerId)
-                    ->joinWith(['privateLesson' => function($query) {
-                        $query->andWhere(['>', 'private_lesson.balance', 0.09]);
-                    }])
-                    ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
-                    ->andWhere(['invoiced_lesson.id' => null]);
-                    $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
-                
-                    $lessonLineItemsDataProvider = new ActiveDataProvider([
-                        'query' => $lessonsQuery,
-                        'pagination' => false
-                    ]);
-                    $user = User::findOne($customerId);
-    
-               
-                    
-        if ($model->load(Yii::$app->request->post())){
-            foreach($model->notificationEmailType as $type){
-                if($type == 1){
-                    print_r("Upcomming Makeup Lessons");
+        $model = new NotificationEmailType();
 
-                }
-                elseif($type == 2){
-                    print_r("First Schedule Lesson");
-                    // $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-                    // $lessonQuery = Lesson::find()
-                    //      ->isConfirmed()
-                    //     ->notDeleted()
-                    //     ->location($locationId)
-                    //     ->activePrivateLessons()
-                    //     ->joinWith(['privateLesson'])
-                    //     ->notCanceled();
-                    // $firstLesson = $lessonQuery->orderBy(['lesson.date' => SORT_ASC])->one();
-                    // print_r($firstLesson);
-                }
-                elseif($type == 3){
-                    print_r("OverDue Invoice");
-                    // $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
-                    // $invoicesQuery = Invoice::find();
-                    //  if (!$searchModel->userId) {
-                    //         $searchModel->userId = null;
-                    //     }
-                    // $invoicesQuery->notDeleted()
-                    //     ->invoice()
-                    //     ->customer($searchModel->userId)
-                    //     ->unpaid()
-                    //     ->andWhere(['>','invoice.balance' , 0.09]);
-                    //     if ($searchModel->isWalkin()) {
-                    //         $invoicesQuery->andWhere(['id' => $searchModel->invoiceId]);
-                    //     }
-                    // $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
-                    // $invoiceLineItemsDataProvider = new ActiveDataProvider([
-                    //     'query' => $invoicesQuery,
-                    //     'pagination' => false
-                    // ]);
+        if ($model->load(Yii::$app->request->post())) {
+            $notificationEmailType = Yii::$app->request->post();
+
+            foreach ($notificationEmailType as $emailNotifyTypes) {
+
+                foreach ($emailNotifyTypes as $types) {
                     
-                    // $data = $this->renderAjax('/mail/notify-via-email/notify_invoice_from', [
-                    //     'model' => new EmailForm(),
-                    //     'emails' => !empty($user->emails) ? $user->emailNames : null,
-                    //     'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                    //     'emailTemplate' => $emailTemplate,
-                    //     'userModel' => $user,
-                    //     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                    //     'lessonLineItemsDataProvider' => null ,
-                    //     'searchModel' => $searchModel,
-                    // ]);
-                    // return [
-                    //     'status' => true,
-                    //     'data' => $data
-                    // ];
-                }
-                else{
-                    print_r("future Lessons");
-                    // $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
-                    // $credits = 0.00;
-                    // $creditResults = $creditDataProvider->getModels();   
-                    // foreach ($creditResults as $creditResult) {
-                    //     $credits+= $creditResult['amount'];
-                    // }  
+                    if($types) {
+                        if (in_array(1, $types)) {
+                            // print_r("Upcomming Makeup Lessons");
+                            $toSendEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 1])
+                                ->all();
+                            foreach ($toSendEmail as $update) {
+                                $update->isChecked = true;
+                                $update->save();
+                            }
+                        }
+                        else {
+                            $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 1])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                        }
+                        if (in_array(2, $types)) {
+                            // print_r("First schedule lesson");
+                            $toSendEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 2])
+                                ->all();
+                            foreach ($toSendEmail as $update) {
+                                $update->isChecked = true;
+                                $update->save();
+                            }
+                        }
+                        else {
+                            $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 2])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                        }
+                        if (in_array(3, $types)) {
+                            // print_r("Over Due Lesson");
+                            $toSendEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 3])
+                                ->all();
+                            foreach ($toSendEmail as $update) {
+                                $update->isChecked = true;
+                                $update->save();
+                            }
+                        }
+                        else {
+                            $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 3])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                        }
+                        if (in_array(4, $types)) {
+                            // print_r("Over Due Lesson");
+                            $toSendEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 4])
+                                ->all();
+                            foreach ($toSendEmail as $update) {
+                                $update->isChecked = true;
+                                $update->save();
+                            }
+                        }
+                        else {
+                            $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 4])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                        }
+                    }
+                    else {
+                        $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                    }
+
                     
-                    // $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
-                    // $lessonsDue = $lessonsQuery->sum('private_lesson.balance');
-                    // $total = ($lessonsDue) - $credits;
-                    // $data = $this->renderAjax('/mail/notify-via-email/notify_future_lesson_from', [
-                    //     'model' => new EmailForm(),
-                    //     'emails' => !empty($user->emails) ? $user->emailNames : null,
-                    //     'subject' => $emailTemplate->subject ?? 'Customer Statement from Arcadia Academy of Music',
-                    //     'emailTemplate' => $emailTemplate,
-                    //     'userModel' => $user,
-                    //     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                    //     'searchModel' => $searchModel,
-                    //     // 'groupLessonSearchModel' => $groupLessonSearchModel,
-                    //     'total' =>$total,
-                    // ]);
-                    // return [
-                    //     'status' => true,
-                    //     'data' => $data
-                    // ];
+                    Yii::$app->session->setFlash('alert', [
+                        'body' => \Yii::t('backend', 'The status has been updated successfully.'),
+                        'options' => ['class' => 'alert-success'],
+                    ]);
+            
+                    return $this->redirect(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customerId]);
                 }
+                
             }
-            
-            
-        
         }
     }
     public function actionNotifyEmailPreview($id)
     {
-        
+
         $emailTypes = new NotificationEmailType();
         $data = $this->renderAjax('/mail/notify-email-types', [
             'emailTypes' => $emailTypes,
             'customerId' => $id,
         ]);
-            return [
-                'status' => true,
-                'data' => $data
-            ];
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 }

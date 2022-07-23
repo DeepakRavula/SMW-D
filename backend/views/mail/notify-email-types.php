@@ -3,25 +3,33 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use common\models\NotificationEmailType;
+use common\models\CustomerEmailNotification;
 ?>
-    <?php 
-     $url = Url::to(['email/notify-email','customerId' => $customerId]);
-    ?>
+<?php 
+ $url = Url::to(['email/notify-email','customerId' => $customerId]);
+ ?>
+    
 <?php $form = ActiveForm::begin([
-
-        'id' => 'modal-form',
-        'action' => $url,    ]); ?>
-     <div id = "email-notify-reasons">
-            <?php 
-            $emailReasonsQuery = NotificationEmailType::find()
-            ->notDeleted()
-            ->all();
+    'id' => 'modal-form',
+    'action' => $url,    ]); ?>
+    <div id = "email-notify-reasons">
+        <?php 
+        $checkedList = [];
+        $isCheckedLists = CustomerEmailNotification::find()->andwhere(['userId'=> $customerId])->andwhere(['isChecked' => true])->all();
+        foreach($isCheckedLists as $isCheckedList) {
             
-            $emailNotifyTypes = ArrayHelper::map($emailReasonsQuery, 'id', 'emailNotifyType');
-            echo $form->field($emailTypes, 'notificationEmailType')->checkboxList(NotificationEmailType::emailNotifyList());
-            ?>
-        </div>
-    <?php ActiveForm::end(); ?>
+            $checkedList [] = $isCheckedList->emailNotificationTypeId;
+            
+        }
+
+        $emailTypes->emailNotifyType = $checkedList;
+        ?> 
+        <?=
+         $form->field ($emailTypes, 'emailNotifyType')->checkboxList(NotificationEmailType::emailNotifyList())->label(false);
+        ?>
+             
+            </div>
+                <?php ActiveForm::end(); ?>
 
 
 <script>
