@@ -11,7 +11,7 @@ use common\models\User;
         'emailTemplate' => $emailTemplate,
         'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
     ]);
-    $model->to = $emails;
+    // $model->to = $emails;
     $data = null;
     if (!empty($userModel)) {
         $data = ArrayHelper::map(UserEmail::find()

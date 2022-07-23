@@ -18,7 +18,7 @@ use common\models\UserEmail;
         'model' => $paymentFormModel,
        
     ]);
-    $model->to = $emails;
+    
     $data = null;
     if (!empty($customer)) {
         $data = ArrayHelper::map(UserEmail::find()

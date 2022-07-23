@@ -47,6 +47,8 @@ use common\models\discount\EnrolmentDiscount;
 use common\models\LocationAvailability;
 use common\models\TeacherAvailability;
 use common\models\TeacherUnavailability;
+use common\models\NotificationEmailType;
+use common\models\CustomerEmailNotification;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -576,6 +578,17 @@ class EnrolmentController extends BaseController
             $student->status = Student::STATUS_INACTIVE;
             $student->isDeleted = true;
             $student->save();
+
+            //Setting Notify Via Email Status
+            $emailNotifyTypes = NotificationEmailType::find()->all();
+
+                foreach($emailNotifyTypes as $emailNotifyType){
+                    $customerEmailNotification = new CustomerEmailNotification();
+                    $customerEmailNotification->userId = $user->id;
+                    $customerEmailNotification->emailNotificationTypeId = $emailNotifyType->id;
+                    $customerEmailNotification->isChecked = false;
+                    $customerEmailNotification->save();
+                }
 
             //save course
             return $this->redirect(['student/create-enrolment', 'id' => $student->id, 'EnrolmentForm' => $courseDetail]);
