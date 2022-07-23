@@ -725,7 +725,9 @@ use yii\jui\DatePicker;
 <?php Pjax::end(); ?>
 
 <?php Pjax::begin([
-    'id' => 'amount-summary']) ?>
+    'id' => 'amount-summary',
+    'timeout' => 4000]) ?>
+
 <?php
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
@@ -733,6 +735,7 @@ LteBox::begin([
     'withBorder' => true,
 ])
 ?>
+
 <table style="width:100%">
   <tr>
     <th style="width:80%"><u>Particulars</u></th>
@@ -787,19 +790,20 @@ LteBox::begin([
   </tr>
 </table>
 <?php LteBox::end()?>
+
 <?php Pjax::end(); ?>
 
 <script type="text/javascript">
-    $('#reportsearch-gotodate').on('change', function() {
-            $(document).ajaxStop(function(){
-                window.location.reload();
-            });  
-    });
-</script>
-<script type="text/javascript">
-    $('#reportgrouplessonsearch-gotodate').on('change', function() {
-            $(document).ajaxStop(function(){
-                window.location.reload();
-            });  
-    });
+    $(document).off('change', "#reportgrouplessonsearch-gotodate").on('change', "#reportgrouplessonsearch-gotodate", function(){
+        $(document).ajaxStop(function(){
+            window.location.reload();
+        });  
+    });  
+
+    $(document).off('change', "#reportsearch-gotodate").on('change', "#reportsearch-gotodate", function(){
+        $(document).ajaxStop(function(){
+            window.location.reload();
+        });  
+    }); 
+   
 </script>
