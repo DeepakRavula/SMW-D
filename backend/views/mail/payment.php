@@ -11,7 +11,7 @@ use common\models\UserEmail;
     'emailTemplate' => $emailTemplate,
     'searchModel' => $searchModel,
     ]);
-    $model->to = $emails;
+    
     $data = null;
     if (!empty($userModel)) {
         $data = ArrayHelper::map(UserEmail::find()

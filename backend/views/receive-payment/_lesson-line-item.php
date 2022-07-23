@@ -52,7 +52,6 @@ array_push($columns, [
         'convertFormat' => true,
         'initRangeExpr' => true,
         'attribute' => 'dueDateRange',
-        'convertFormat' => true,
         'options' => [
             'readOnly' => true,
         ],

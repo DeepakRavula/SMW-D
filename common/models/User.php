@@ -48,8 +48,8 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 2;
     const STATUS_DRAFT = 3;
 
-    const DEFAULT_ADMIN_EMAIL1 = 'tonia@arcadiamusicacademy.com';
-    const DEFAULT_ADMIN_EMAIL2 = 'kristin@kristingreen.ca';
+    const DEFAULT_ADMIN_EMAIL1 = 'maurizio@arcadiamusicacademy.com';
+    const DEFAULT_ADMIN_EMAIL2 = 'giancarlo@aaom.com';
     const DEFAULT_ADMIN_EMAIL3 = 'senguttuvang@gmail.com';
     const ROLE_ADMINISTRATOR = 'administrator';
     const ROLE_CUSTOMER = 'customer';
