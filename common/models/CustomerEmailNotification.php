@@ -57,5 +57,13 @@ class CustomerEmailNotification extends \yii\db\ActiveRecord
             'emailNotificationTypeId' => 'EmailNotificationTypeId',
         ];
     }
+    public function getUserContact()
+    {
+        return $this->hasMany(UserContact::className(), ['userId' => 'userId']);
+    }
+    public function getUserEmail()
+    {
+        return $this->hasMany(UserEmail::className(), ['userId' => 'userId']);
+    }
 
 }
