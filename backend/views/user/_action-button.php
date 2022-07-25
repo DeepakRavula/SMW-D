@@ -15,7 +15,7 @@ $user = User::findOne($model->id);
             <li><a id="mail-customer-statement" href="#">Email Statement</a></li>
             <li><a id="ar-report-detail" href="#">A/R Report Detail</a></li>
             <li><a id="item-report-detail" href="#">Items Purchased by Category</a></li>
-            <?php if (($loggedUser->isAdmin()) || ($loggedUser->isOwner() && $user->isManagableByOwner()) || ($loggedUser->isStaff() && $user->isManagableByStaff())) : ?>
+            <?php if (env('TASK_IN_DEV') == true && (($loggedUser->isAdmin()) || ($loggedUser->isOwner() && $user->isManagableByOwner()) || ($loggedUser->isStaff() && $user->isManagableByStaff()))) : ?>
             <li><a id="notify-email-toggle" href="#">Notify Via Email</a></li>
         <?php endif ; ?>
         <?php endif ; ?>
