@@ -244,7 +244,7 @@ use yii\jui\DatePicker;
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
-            'heading' => 'Prepaid Future Lessons',
+            'heading' => 'Prepaid Future Private Lessons',
         ],
         
         'showFooter' =>true,
@@ -346,7 +346,7 @@ use yii\jui\DatePicker;
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
-            'heading' => 'Paid Unscheduled Lessons',
+            'heading' => 'Paid Unscheduled Private Lessons',
         ],
         'showFooter' =>true,
         'columns' => [
