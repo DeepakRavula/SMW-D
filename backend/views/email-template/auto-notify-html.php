@@ -1,3 +1,11 @@
+<?php
+
+use common\models\Location;
+use yii\helpers\ArrayHelper;
+use common\models\Student;
+use yii\bootstrap\Html;
+
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 xmlns:v="urn:schemas-microsoft-com:vml"
@@ -41,8 +49,8 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
     ?>
         <tr>
             <td><?=   
-            $date = Yii::$app->formatter->asDate($data->dueDate);
-            $lessonTime = (new \DateTime($data->dueDate))->format('H:i:s');
+            $date = Yii::$app->formatter->asDate($data['dueDate']);
+            $lessonTime = (new \DateTime($data['dueDate']))->format('H:i:s');
             return !empty($date) ? $date : null;
          ?></td>
             <td>
@@ -59,10 +67,10 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
                 ->customer($model->userId)
                 ->all(), 'id', 'fullName') ?>
         </td>
-            <td><?= return $model->course->program->name; ?></td>
-            <td><?=  $data->teacher->publicIdentity; ?></td>
-            <td><?=  return Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2)); ?> </td>
-            <td><?=  return Yii::$app->formatter->asBalance(round($data->privateLesson->balance ?? 0, 2)); ?></td>
+            <td><?= return $model['course']['program']['name']; ?></td>
+            <td><?=  $data['teacher']['publicIdentity']; ?></td>
+            <td><?=  return Yii::$app->formatter->asCurrency(round($data['privateLesson']['total'] ?? 0, 2)); ?> </td>
+            <td><?=  return Yii::$app->formatter->asBalance(round($data['privateLesson']['balance'] ?? 0, 2)); ?></td>
         </tr>
         <?php  } ?>
     </tbody>

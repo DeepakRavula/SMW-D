@@ -108,7 +108,7 @@ class EmailController extends Controller
                 if($requiredLessons) {
 
                     $sendMail   =   \yii::$app->mailer->compose('@backend/views/email-template/auto-notify', [
-                                'contents' => $requiredLessons->all(),
+                                'contents' => $requiredLessons,
                             ])
                             ->setFrom(env('ADMIN_EMAIL'))
                             ->setTo($mailIds[0]['email'])
