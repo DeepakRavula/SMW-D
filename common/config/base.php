@@ -74,6 +74,13 @@ $config = [
                 'password' => env('SMTP_PASSWORD'),
                 'port' => env('SMTP_PORT'),
                 'encryption' => env('SMTP_ENCRYPTION'),
+                'streamOptions' => [
+                    'ssl' => [
+                        'allow_self_signed' => true,
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                    ],
+                ],
             ],
             'as catchAllEmail' => [
                 'class' => '\common\behaviors\CatchAllEmailBehavior',
