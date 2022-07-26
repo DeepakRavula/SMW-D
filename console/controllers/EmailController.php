@@ -106,10 +106,17 @@ class EmailController extends Controller
                             ->all();
 
                 if($requiredLessons) {
-                    $dataProvider = new ActiveDataProvider([
-                        'query' => $mailContent,
-                        'pagination' => false
-                    ]);
+
+                    $sendMail   =   \yii::$app->mailer->compose('@backend/views/email-template/auto-notify', [
+                                'contents' => $requiredLessons->all(),
+                            ])
+                            ->setFrom(env('ADMIN_EMAIL'))
+                            ->setTo($mailIds[0]['email'])
+                            ->setReplyTo(env('NOREPLY_EMAIL'))
+                            ->setSubject('Notification for the upcoming lessons.')
+                            ->send();
+
+                    return $sendEmail;
                 }
             }
             
