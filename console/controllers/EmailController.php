@@ -5,13 +5,13 @@ namespace console\controllers;
 
 use yii\console\Controller;
 use common\models\CustomerEmailNotification;
-use common\models\Location;
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
 use common\models\Lesson;
-use common\models\log\LessonLog;
 use common\models\User;
-use Yii;
+use common\models\Enrolment;
+use yii\data\ActiveDataProvider;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 
 class EmailController extends Controller
 {
@@ -26,22 +26,50 @@ class EmailController extends Controller
 
         foreach($sendEmails as $sendEmail){
 
+
+            $customerId = $sendEmail->userId;
             print_r("\n");
-            print_r($sendEmail->userId);
+            print_r($customerId);
             print_r("\n");
+
+            $user = User::findOne($sendEmail->userId);
+
+            $firstScheduledLesson = Enrolment::find()
+                        ->joinWith(['student' => function ($query) use ($customerId) {
+                            $query->andWhere(['customer_id' => $customerId]);
+                        }])
+                        ->joinWith(['course' => function ($query) {
+                            $query->andWhere(['>=', 'DATE(course.startDate)', (new \DateTime())->format('Y-m-d')]);
+                        }])
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->isRegular()
+                        ->groupBy(['enrolment.id'])
+                        ->activeAndfutureEnrolments();
+
+            $lessonQuery = Lesson::find()
+                            ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
+                            ->orderBy(['lesson.id' => SORT_ASC])
+                            ->notCanceled()
+                            ->notDeleted()
+                            ->customer($customerId)
+                            ->isConfirmed()
+                            ->regular();
+
+            $lessonDateTime = (new DateTime())->modify('+1 day')->format('Y-m-d');
             
             $emailNotificationTypes = CustomerEmailNotification::find()
                 ->andWhere(['isChecked' => true])
-                ->andWhere(['userId' => $sendEmail->userId])
+                ->andWhere(['userId' => $customerId])
                 ->all();
 
 
             foreach($emailNotificationTypes as $emailNotificationType) {
 
-                $data = ArrayHelper::map(UserEmail::find()
+                $mailIds = ArrayHelper::map(UserEmail::find()
                     ->notDeleted()
                     ->joinWith('userContact')
-                    ->andWhere(['user_contact.userId' => $sendEmail->userId])
+                    ->andWhere(['user_contact.userId' => $customerId])
                     ->orderBy('user_email.email')
                     ->all(), 'email', 'email');
 
@@ -50,14 +78,19 @@ class EmailController extends Controller
                 
                 print_r($type);
                 print_r("\n");
-                print_r($data); 
+                print_r($mailIds); 
                 print_r("\n");
+
                 if($type == 1) {
                     print_r("Upcommig Makeup Lesson");
+
+                    $mailContent = $lessonQuery->rescheduled();
 
                 }
                 elseif($type == 2) {
                     print_r("First Schedule Lessons");
+
+                    $mailContent = $firstScheduledLesson;
 
                 }
                 elseif($type == 3) {
@@ -66,8 +99,29 @@ class EmailController extends Controller
                 }
                 else {
                     print_r("Future Lessons");
+                    $firstRecord = $firstScheduledLesson;
+                    $firstLessonCourseIds = [];
+                    foreach($firstRecord as $record){
+                        $firstLessonCourseIds[] = $record->course->firstLesson->id;
+                    }
+
+                    $mailContent =  $lessonQuery->andWhere(['NOT IN','lesson.id', $firstLessonCourseIds]);
                     
                 }
+
+                $requiredLessons = $mailContent
+                            ->andWhere(['OR', ['lesson.date' => $lessonDateTime], ['<', 'lesson.date', $lessonDateTime]])
+                            ->all();
+
+                if($requiredLessons) {
+
+                    $dataProvider = new ActiveDataProvider([
+                        'query' => $mailContent,
+                        'pagination' => false
+                    ]);
+                    
+                }
+
 
             }
             
