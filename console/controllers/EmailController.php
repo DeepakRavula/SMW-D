@@ -17,16 +17,12 @@ class EmailController extends Controller
 {
     public function actionAutoEmail()
     {
-
         $sendEmails = CustomerEmailNotification::find()
                 ->andWhere(['isChecked' => true])
-                
                 ->groupBy('userId')
                 ->all();
 
         foreach($sendEmails as $sendEmail){
-
-
             $customerId = $sendEmail->userId;
             print_r("\n");
             print_r($customerId);
@@ -63,7 +59,6 @@ class EmailController extends Controller
                 ->andWhere(['userId' => $customerId])
                 ->all();
 
-
             foreach($emailNotificationTypes as $emailNotificationType) {
 
                 $mailIds = ArrayHelper::map(UserEmail::find()
@@ -73,7 +68,6 @@ class EmailController extends Controller
                     ->orderBy('user_email.email')
                     ->all(), 'email', 'email');
 
-                    
                 $type = $emailNotificationType->emailNotificationTypeId;
                 
                 print_r($type);
@@ -81,32 +75,30 @@ class EmailController extends Controller
                 print_r($mailIds); 
                 print_r("\n");
 
-                if($type == 1) {
+                if($type == CustomerEmailNotification::MAKEUP_LESSON) {
                     print_r("Upcommig Makeup Lesson");
 
                     $mailContent = $lessonQuery->rescheduled();
 
                 }
-                elseif($type == 2) {
+                elseif($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
                     print_r("First Schedule Lessons");
 
                     $mailContent = $firstScheduledLesson;
 
                 }
-                elseif($type == 3) {
+                elseif($type == CustomerEmailNotification::OVERDUE_INVOICE) {
                     print_r("OverDue Invoice");
                     
                 }
                 else {
                     print_r("Future Lessons");
-                    $firstRecord = $firstScheduledLesson;
                     $firstLessonCourseIds = [];
-                    foreach($firstRecord as $record){
+                    foreach($firstScheduledLesson as $record){
                         $firstLessonCourseIds[] = $record->course->firstLesson->id;
                     }
 
                     $mailContent =  $lessonQuery->andWhere(['NOT IN','lesson.id', $firstLessonCourseIds]);
-                    
                 }
 
                 $requiredLessons = $mailContent
@@ -114,15 +106,11 @@ class EmailController extends Controller
                             ->all();
 
                 if($requiredLessons) {
-
                     $dataProvider = new ActiveDataProvider([
                         'query' => $mailContent,
                         'pagination' => false
                     ]);
-                    
                 }
-
-
             }
             
         }

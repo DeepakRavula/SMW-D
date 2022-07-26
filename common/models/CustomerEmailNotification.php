@@ -17,6 +17,10 @@ use yii\helpers\ArrayHelper;
 
 class CustomerEmailNotification extends \yii\db\ActiveRecord
 {
+    const MAKEUP_LESSON = 1;
+    const FIRST_SCHEDULE_LESSON = 2;
+    const OVERDUE_INVOICE =3;
+    const FUTURE_LESSON = 4;
     /**
      * @inheritdoc
      */
