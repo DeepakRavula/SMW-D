@@ -40,10 +40,6 @@ use common\models\log\InvoiceLog;
 use common\models\log\PaymentLog;
 use common\models\log\ReceivePaymentLog;
 use common\models\CourseSchedule;
-use common\models\NotifyViaEmail;
-use common\models\NotificationEmailType;
-use common\models\Course;
-use common\models\CustomerEmailNotification;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -54,7 +50,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail', 'notify-email', 'notify-email-preview'],
+                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -65,7 +61,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail','notify-email', 'notify-email-preview'],
+                        'actions' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
