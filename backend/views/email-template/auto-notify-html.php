@@ -34,11 +34,44 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
 <table>
     <thead>
     <tr>
-        <th></th>
-        <th>Project Number</th>
-        <th>Project Status</th>
+        <th>Start Date</th>
+        <th>Student Name</th>
+        <th>Course Name</th>
+        <th>Teacher Name</th>
+        <th>Amount</th>
+        <th>Balance</th>
     </tr>
     </thead>
+    <tbody>
+    <?php foreach($contents as $data){
+    ?>
+        <tr>
+            <td><?=   
+            $date = Yii::$app->formatter->asDate($data->dueDate);
+            $lessonTime = (new \DateTime($data->dueDate))->format('H:i:s');
+            return !empty($date) ? $date : null;
+         ?></td>
+            <td>
+           <?= ArrayHelper::map(Student::find()
+                ->notDeleted()
+                ->orderBy(['first_name' => SORT_ASC])
+                ->joinWith(['enrolments' => function ($query) {
+                    $query->joinWith(['course' => function ($query) {
+                        $query->confirmed()
+                            ->notDeleted()
+                            ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+                    }]);
+                }])
+                ->customer($model->userId)
+                ->all(), 'id', 'fullName') ?>
+        </td>
+            <td><?= return $model->course->program->name; ?></td>
+            <td><?=  $data->teacher->publicIdentity; ?></td>
+            <td><?=  return Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2)); ?> </td>
+            <td><?=  return Yii::$app->formatter->asBalance(round($data->privateLesson->balance ?? 0, 2)); ?></td>
+        </tr>
+        <?php  } ?>
+    </tbody>
 </table>
 </body>
 </html>
