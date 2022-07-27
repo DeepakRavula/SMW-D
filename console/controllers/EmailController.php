@@ -11,7 +11,7 @@ use common\models\Lesson;
 use common\models\User;
 use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
-use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
+use Yii;
 
 class EmailController extends Controller
 {
@@ -52,7 +52,7 @@ class EmailController extends Controller
                             ->isConfirmed()
                             ->regular();
 
-            $lessonDateTime = (new DateTime())->modify('+1 day')->format('Y-m-d');
+            $lessonDateTime = (new \DateTime())->modify('+1 day')->format('Y-m-d');
             
             $emailNotificationTypes = CustomerEmailNotification::find()
                 ->andWhere(['isChecked' => true])
@@ -104,19 +104,18 @@ class EmailController extends Controller
                 $requiredLessons = $mailContent
                             ->andWhere(['OR', ['lesson.date' => $lessonDateTime], ['<', 'lesson.date', $lessonDateTime]])
                             ->all();
-
+                    
                 if($requiredLessons) {
-
-                    $sendMail   =   \yii::$app->mailer->compose('@backend/views/email-template/auto-notify', [
+                   print_r('require');
+                   $sendMail = [];
+                    $sendMail[]   =   \yii::$app->mailer->compose('/mail/auto-notify', [
                                 'contents' => $requiredLessons,
                             ])
                             ->setFrom(env('ADMIN_EMAIL'))
-                            ->setTo($mailIds[0]['email'])
-                            ->setReplyTo(env('NOREPLY_EMAIL'))
-                            ->setSubject('Notification for the upcoming lessons.')
-                            ->send();
-
-                    return $sendEmail;
+                            ->setTo($mailIds)
+                            ->setSubject('Notification for the upcoming lessons.');
+                     Yii::$app->mailer->sendMultiple($sendMail);
+                   
                 }
             }
             
