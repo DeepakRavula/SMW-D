@@ -56,6 +56,7 @@ $user = User::findOne($model->id);
             });
         return false;
     });
+    
 
     $(document).off('click', '#ar-report-detail').on('click', '#ar-report-detail', function() { 
         var url = '<?= Url::to(['account-receivable-report/view' ,'id' => $model->id]); ?>';

@@ -6,6 +6,7 @@ pipeline {
             steps {
                 script {
                     sshagent(['smw-dev-instance']) {
+                            slackSend (tokenCredentialId: "slack-workspace-alert", teamDomain: "arcadia-music-academy", channel: "deployment-alerts", color: "#FFFF00", message: "STARTED: Job : '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (<${env.BUILD_URL}|OPEN>)")
                             sh """ssh -t -t ubuntu@3.98.69.25 -o StrictHostKeyChecking=no << EOF 
                                 cd /srv/smw
                                 pwd
@@ -19,6 +20,13 @@ pipeline {
             }
         }
     }
-
+     post{
+            success{
+                 slackSend tokenCredentialId: "slack-workspace-alert", teamDomain: "arcadia-music-academy", channel: "deployment-alerts", color: "#00FF00", message: "Deployed successfully - ${env.JOB_NAME} (<${env.BUILD_URL}|OPEN>) \nGIT_COMMIT_ID : ${GIT_COMMIT}"
+             }
+            failure{
+                 slackSend tokenCredentialId: "slack-workspace-alert", teamDomain: "arcadia-music-academy", channel: "deployment-alerts", color: "#FF9FA1", failOnError:true, message:"Build Failed  - ${env.JOB_NAME} (<${env.BUILD_URL}|OPEN>)"
+             }
+     }
 
 }

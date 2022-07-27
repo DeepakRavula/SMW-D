@@ -611,6 +611,7 @@ class UserController extends BaseController
         if ($request->post()) {
             if ($model->load($request->post()) && $emailModel->load($request->post())) {
                 $model->save();
+                
                if ($customerReferralSource->load($request->post())) {
                    if($customerReferralSource->referralSourceId) {
                    $customerReferralSource->userId = $model->getModel()->id;
