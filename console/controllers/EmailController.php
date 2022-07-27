@@ -102,19 +102,22 @@ class EmailController extends Controller
                 }
 
                 $requiredLessons = $mailContent
-                            ->andWhere(['OR', ['lesson.date' => $lessonDateTime], ['<', 'lesson.date', $lessonDateTime]])
-                            ->all();
+                            ->andWhere(['OR', ['lesson.date' => $lessonDateTime], ['<', 'lesson.date', $lessonDateTime]]);
                     
                 if($requiredLessons) {
                    print_r('require');
-                   $sendMail = [];
-                    $sendMail[]   =   \yii::$app->mailer->compose('/mail/auto-notify', [
-                                'contents' => $requiredLessons,
+                   $sendEmail = [];
+
+                    $sendMail []  =   \yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
+                                'contents' => $requiredLessons->all(),
                             ])
                             ->setFrom(env('ADMIN_EMAIL'))
                             ->setTo($mailIds)
+                            ->setReplyTo(env('NOREPLY_EMAIL'))
                             ->setSubject('Notification for the upcoming lessons.');
-                     Yii::$app->mailer->sendMultiple($sendMail);
+                        Yii::$app->mailer->sendMultiple($sendMail);
+
+                    return $sendMail;
                    
                 }
             }

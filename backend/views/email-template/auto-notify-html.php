@@ -51,7 +51,7 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
             <td><?=   
             $date = Yii::$app->formatter->asDate($data['dueDate']);
             $lessonTime = (new \DateTime($data['dueDate']))->format('H:i:s');
-            return !empty($date) ? $date : null;
+             !empty($date) ? $date : null;
          ?></td>
             <td>
            <?= ArrayHelper::map(Student::find()
@@ -67,10 +67,10 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
                 ->customer($model->userId)
                 ->all(), 'id', 'fullName') ?>
         </td>
-            <td><?= return $model['course']['program']['name']; ?></td>
+            <td><?=  $model['course']['program']['name']; ?></td>
             <td><?=  $data['teacher']['publicIdentity']; ?></td>
-            <td><?=  return Yii::$app->formatter->asCurrency(round($data['privateLesson']['total'] ?? 0, 2)); ?> </td>
-            <td><?=  return Yii::$app->formatter->asBalance(round($data['privateLesson']['balance'] ?? 0, 2)); ?></td>
+            <td><?=   Yii::$app->formatter->asCurrency(round($data['privateLesson']['total'] ?? 0, 2)); ?> </td>
+            <td><?=   Yii::$app->formatter->asBalance(round($data['privateLesson']['balance'] ?? 0, 2)); ?></td>
         </tr>
         <?php  } ?>
     </tbody>
