@@ -45,34 +45,25 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
     </tr>
     </thead>
     <tbody>
-    <?php foreach($contents as $data){
-    ?>
+        
+    <?php
+     foreach($contents->query->all() as $data) { ?>
         <tr>
-            <td><?=   
-            $date = Yii::$app->formatter->asDate($data['dueDate']);
-            $lessonTime = (new \DateTime($data['dueDate']))->format('H:i:s');
-             !empty($date) ? $date : null;
-         ?></td>
-            <td>
-           <?= ArrayHelper::map(Student::find()
-                ->notDeleted()
-                ->orderBy(['first_name' => SORT_ASC])
-                ->joinWith(['enrolments' => function ($query) {
-                    $query->joinWith(['course' => function ($query) {
-                        $query->confirmed()
-                            ->notDeleted()
-                            ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                    }]);
-                }])
-                ->customer($model->userId)
-                ->all(), 'id', 'fullName') ?>
-        </td>
-            <td><?=  $model['course']['program']['name']; ?></td>
-            <td><?=  $data['teacher']['publicIdentity']; ?></td>
-            <td><?=   Yii::$app->formatter->asCurrency(round($data['privateLesson']['total'] ?? 0, 2)); ?> </td>
-            <td><?=   Yii::$app->formatter->asBalance(round($data['privateLesson']['balance'] ?? 0, 2)); ?></td>
+    
+            <td> <?=$data->date ?> </td> 
+            <td> <?= $data->enrolment->student->fullName ?> </td>
+            <td> <?= $data->program->name ?> </td>
+            <td> <?= $data->teacherProfile->firstname .' '. $data->teacherProfile->lastname ?> </td>
+            <td> <?= Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2)) ?> </td>
+            <td> <?= $data->privateLesson->balance ?> </td>
+            
         </tr>
-        <?php  } ?>
+        <?php 
+        
+        ?>
+       <?php    
+        die;} 
+        ?>    
     </tbody>
 </table>
 </body>

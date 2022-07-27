@@ -8,7 +8,6 @@ use common\models\CustomerEmailNotification;
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
 use common\models\Lesson;
-use common\models\User;
 use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 use Yii;
@@ -17,49 +16,43 @@ class EmailController extends Controller
 {
     public function actionAutoEmail()
     {
+        $firstLessonCourseIds = [];
         $sendEmails = CustomerEmailNotification::find()
-                ->andWhere(['isChecked' => true])
-                ->groupBy('userId')
-                ->all();
+            ->andWhere(['isChecked' => true])
+            ->groupBy('userId')
+            ->all();
 
-        foreach($sendEmails as $sendEmail){
+        foreach ($sendEmails as $sendEmail) {
             $customerId = $sendEmail->userId;
             print_r("\n");
             print_r($customerId);
             print_r("\n");
 
-            $user = User::findOne($sendEmail->userId);
-
             $firstScheduledLesson = Enrolment::find()
-                        ->joinWith(['student' => function ($query) use ($customerId) {
-                            $query->andWhere(['customer_id' => $customerId]);
-                        }])
-                        ->joinWith(['course' => function ($query) {
-                            $query->andWhere(['>=', 'DATE(course.startDate)', (new \DateTime())->format('Y-m-d')]);
-                        }])
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->isRegular()
-                        ->groupBy(['enrolment.id'])
-                        ->activeAndfutureEnrolments();
+                ->customer($customerId)
+                ->joinWith(['firstLesson'])
+                ->notDeleted()
+                ->isConfirmed()
+                ->all();
 
             $lessonQuery = Lesson::find()
-                            ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
-                            ->orderBy(['lesson.id' => SORT_ASC])
-                            ->notCanceled()
-                            ->notDeleted()
-                            ->customer($customerId)
-                            ->isConfirmed()
-                            ->regular();
+                ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                ->orderBy(['lesson.id' => SORT_ASC])
+                ->notCanceled()
+                ->notDeleted()
+                ->customer($customerId)
+                ->isConfirmed()
+                ->regular();
 
-            $lessonDateTime = (new \DateTime())->modify('+1 day')->format('Y-m-d');
-            
+            $lessonDateTime = (new \DateTime())->modify('+1 day')->format('Y-m-d H:i:s');
+            print_r($lessonDateTime);
+
             $emailNotificationTypes = CustomerEmailNotification::find()
                 ->andWhere(['isChecked' => true])
                 ->andWhere(['userId' => $customerId])
                 ->all();
 
-            foreach($emailNotificationTypes as $emailNotificationType) {
+            foreach ($emailNotificationTypes as $emailNotificationType) {
 
                 $mailIds = ArrayHelper::map(UserEmail::find()
                     ->notDeleted()
@@ -69,60 +62,72 @@ class EmailController extends Controller
                     ->all(), 'email', 'email');
 
                 $type = $emailNotificationType->emailNotificationTypeId;
-                
+
                 print_r($type);
                 print_r("\n");
-                print_r($mailIds); 
+                print_r($mailIds);
                 print_r("\n");
 
-                if($type == CustomerEmailNotification::MAKEUP_LESSON) {
+                if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
                     print_r("Upcommig Makeup Lesson");
 
                     $mailContent = $lessonQuery->rescheduled();
 
                 }
-                elseif($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
+                elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
                     print_r("First Schedule Lessons");
 
-                    $mailContent = $firstScheduledLesson;
+
+                    foreach ($firstScheduledLesson as $record) {
+
+                        print_r($record->firstLesson->id);
+                        $firstLessonCourseIds[] = $record->firstLesson->id;
+
+                    }
+
+                    $mailContent = $lessonQuery->andWhere(['IN', 'lesson.id', $firstLessonCourseIds]);
 
                 }
-                elseif($type == CustomerEmailNotification::OVERDUE_INVOICE) {
+                elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
                     print_r("OverDue Invoice");
-                    
+
                 }
                 else {
                     print_r("Future Lessons");
-                    $firstLessonCourseIds = [];
-                    foreach($firstScheduledLesson as $record){
-                        $firstLessonCourseIds[] = $record->course->firstLesson->id;
+
+                    foreach ($firstScheduledLesson as $record) {
+
+                        print_r($record->firstLesson->id);
+                        $firstLessonCourseIds[] = $record->firstLesson->id;
+
                     }
 
-                    $mailContent =  $lessonQuery->andWhere(['NOT IN','lesson.id', $firstLessonCourseIds]);
+                    $mailContent = $lessonQuery->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
                 }
 
                 $requiredLessons = $mailContent
-                            ->andWhere(['OR', ['lesson.date' => $lessonDateTime], ['<', 'lesson.date', $lessonDateTime]]);
-                    
-                if($requiredLessons) {
-                   print_r('require');
-                   $sendEmail = [];
+                    ->andWhere(['<', 'lesson.date', $lessonDateTime]);
 
-                    $sendMail []  =   \yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
-                                'contents' => $requiredLessons->all(),
-                            ])
-                            ->setFrom(env('ADMIN_EMAIL'))
-                            ->setTo($mailIds)
-                            ->setReplyTo(env('NOREPLY_EMAIL'))
-                            ->setSubject('Notification for the upcoming lessons.');
-                        Yii::$app->mailer->sendMultiple($sendMail);
+                
+                if ($requiredLessons) {
 
-                    return $sendMail;
-                   
+                    print_r(' requiredLessons ');
+                    $dateProvider = new ActiveDataProvider([
+                        'query' => $requiredLessons,
+                        'pagination' => false
+                    ]);
+                    $sendEmail = [];
+
+                    $sendMail[] = Yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
+                        'contents' => $dateProvider,
+                    ])
+                        ->setFrom(env('ADMIN_EMAIL'))
+                        ->setTo($mailIds)
+                        ->setReplyTo(env('NOREPLY_EMAIL'))
+                        ->setSubject('Notification for the upcoming lessons.');
+                    Yii::$app->mailer->sendMultiple($sendMail);
                 }
             }
-            
         }
-        
     }
 }
