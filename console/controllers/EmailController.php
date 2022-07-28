@@ -107,27 +107,27 @@ class EmailController extends Controller
                     ->andWhere(['<', 'lesson.date', $lessonDateTime]);
 
 
-                if ($requiredLessons) {
-
+                if ($requiredLessons && $requiredLessons->count() != 0 ) {
                     print_r(' requiredLessons ');
-                    $dateProvider = new ActiveDataProvider([
+                    $dataProvider = new ActiveDataProvider([
                         'query' => $requiredLessons,
                         'pagination' => false
                     ]);
 
-                    Yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
-                        'contents' => $dateProvider,
-                        'type' => $message,
+                    $sendMail = Yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
+                        'contents' => $dataProvider,
+                        'message' => $message,
                     ])
                         ->setFrom(env('ADMIN_EMAIL'))
                         ->setTo($mailIds)
                         ->setReplyTo(env('NOREPLY_EMAIL'))
-                        ->setSubject('Notification for the upcoming lessons.')
-                        ->send();
-                    foreach($dateProvider->query->all() as $data) {
-                        $data->auto_email_status = true;
-                        $data->save();
+                        ->setSubject('Notification for the upcoming lessons.');
+                    if($sendMail->send()){
+                        foreach($requiredLessons->all() as $data){
+                            $data->updateAttributes(['auto_email_status' => true]);
+                        }
                     }
+                    sleep(5);
                 }
             }
         }
