@@ -33,7 +33,7 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
 </style>  
 </head>
 <body>
-<table>
+<table width="100%" cellspacing="0" cellpadding="0" border="1">
     <thead>
     <tr>
         <th>Start Date</th>
@@ -50,19 +50,19 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
      foreach($contents->query->all() as $data) { ?>
         <tr>
     
-            <td> <?=$data->date ?> </td> 
-            <td> <?= $data->enrolment->student->fullName ?> </td>
-            <td> <?= $data->program->name ?> </td>
-            <td> <?= $data->teacherProfile->firstname .' '. $data->teacherProfile->lastname ?> </td>
-            <td> <?= Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2)) ?> </td>
-            <td> <?= $data->privateLesson->balance ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?=$data->date ?> </td> 
+            <td align="center" valign="top" bgcolor="#ffffff" > <?= $data->enrolment->student->fullName ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?= $data->program->name ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?= $data->teacherProfile->firstname .' '. $data->teacherProfile->lastname ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?= Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2)) ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?= $data->privateLesson->balance ?> </td>
             
         </tr>
         <?php 
         
         ?>
        <?php    
-        die;} 
+        } 
         ?>    
     </tbody>
 </table>
