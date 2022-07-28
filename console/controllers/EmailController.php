@@ -48,6 +48,7 @@ class EmailController extends Controller
                 $lessonQuery = Lesson::find()
                     ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
                     ->orderBy(['lesson.id' => SORT_ASC])
+                    ->andWhere(['lesson.auto_email_status' => false])
                     ->notCanceled()
                     ->notDeleted()
                     ->customer($customerId)
@@ -96,7 +97,9 @@ class EmailController extends Controller
 
                     }
 
-                    $mailContent = $lessonQuery->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
+                    $mailContent = $lessonQuery
+                        ->scheduled()
+                        ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
                     $message = 'Future Lesson';
                 }
 
@@ -121,6 +124,10 @@ class EmailController extends Controller
                         ->setReplyTo(env('NOREPLY_EMAIL'))
                         ->setSubject('Notification for the upcoming lessons.')
                         ->send();
+                    foreach($dateProvider->query->all() as $data) {
+                        $data->auto_email_status = true;
+                        $data->save();
+                    }
                 }
             }
         }
