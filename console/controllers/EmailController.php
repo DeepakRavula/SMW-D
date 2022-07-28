@@ -89,9 +89,6 @@ class EmailController extends Controller
                 elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
 
                     foreach ($firstScheduledLesson as $record) {
-
-                        print_r($record->firstLesson->id);
-                        print_r("\n");
                         $firstLessonCourseIds[] = $record->firstLesson->id;
 
                     }
@@ -105,14 +102,12 @@ class EmailController extends Controller
 
 
                 if ($requiredLessons) {
-
-                    print_r(' requiredLessons ');
                     $dateProvider = new ActiveDataProvider([
                         'query' => $requiredLessons,
                         'pagination' => false
                     ]);
 
-                    Yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
+                    Yii::$app->mailer->compose('/mail/auto-notify', [
                         'contents' => $dateProvider,
                         'type' => $message,
                     ])

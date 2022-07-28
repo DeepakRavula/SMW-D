@@ -15,24 +15,58 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0 " />
-<meta name="format-detection" content="telephone=no"/>
-<style type="text/css">
-body { margin: 0 auto; padding: 0; -webkit-text-size-adjust: 100% !important; -ms-text-size-adjust: 100% !important; -webkit-font-smoothing: antialiased !important; }
-img { border: 0 !important; outline: none !important; }
-p { Margin: 0px !important; Padding: 0px !important; }
-table { border-collapse: collapse; mso-table-lspace: 0px; mso-table-rspace: 0px; }
-td, a, span { border-collapse: collapse; mso-line-height-rule: exactly; }
-.ExternalClass * { line-height: 100%; }
-.em_defaultlink a { color: inherit; text-decoration: none; }
-.em_defaultlink2 a { color: inherit; text-decoration: underline; }
-.em_g_img + div { display: none; }
-a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; text-decoration: none; font-size: inherit; font-family: inherit; font-weight: inherit; line-height: inherit; }
- @media only screen and (max-width:599px) {
-.em_hide { display: none !important; }
-}
-</style>  
+<meta name="format-detection" content="telephone=no"/>  
 </head>
 <body>
-<p> <?php echo $contents; ?></p>
+    <h3> <?= $message ?> </h3>
+<table width="100%" cellspacing="0" cellpadding="0" border="1">
+    <thead>
+    <tr>
+        <th>Start Date</th>
+        <th>Student Name</th>
+        <th>Course Name</th>
+        <th>Teacher Name</th>
+        <th>Amount</th>
+        <th>Balance</th>
+    </tr>
+    </thead>
+    <tbody>
+        
+    <?php
+     foreach($contents->query->all() as $data) { 
+        if($data->course->isPrivate()){
+            $date = Yii::$app->formatter->asDate($data->date);
+            $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+            $startDate = !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+            $studentName = $data->course->enrolment->student->fullName ?? null;
+            $courseName = $data->course->program->name ?? null;
+            $teacherName = $data->teacher->publicIdentity ?? null;
+            $amount = Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2));
+            $balance = Yii::$app->formatter->asBalance(round($data->privateLesson->balance ?? 0, 2));
+        } else {
+            $date = Yii::$app->formatter->asDate($data->lesson->date);
+            $lessonTime = (new \DateTime($data->lesson->date))->format('H:i:s');
+            $startDate = !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+            $studentName = $data->enrolment->student->fullName ?? null;
+            $courseName = $data->lesson->course->program->name ?? null;
+            $teacherName = $data->lesson->teacher->publicIdentity ?? null;
+            $amount = Yii::$app->formatter->asCurrency(round($data->total, 2));
+            $balance = Yii::$app->formatter->asBalance(round($data->balance ?? 0, 2));
+        } 
+    ?>
+        <tr>
+            <td align="center" valign="top" bgcolor="#ffffff"><?= $startDate; ?> </td> 
+            <td align="center" valign="top" bgcolor="#ffffff" > <?= $studentName; ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?= $courseName; ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?= $teacherName; ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?= $amount; ?> </td>
+            <td align="center" valign="top" bgcolor="#ffffff"> <?= $balance; ?> </td>
+            
+        </tr>
+       <?php    
+        } 
+        ?>    
+    </tbody>
+</table>
 </body>
 </html>
