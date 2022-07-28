@@ -33,7 +33,9 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
 </style>  
 </head>
 <body>
-    <h3> <?= $message ?> </h3>
+<?php
+foreach($contents->query->all() as $data) { ?>
+    <h3> <?= 'Hello ' . $data->enrolment->student->fullName . 'Please check the ' $message . ' details.'; ?> </h3>
 <table width="100%" cellspacing="0" cellpadding="0" border="1">
     <thead>
     <tr>
@@ -46,9 +48,6 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
     </tr>
     </thead>
     <tbody>
-        
-    <?php
-     foreach($contents->query->all() as $data) { ?>
         <tr>
     
             <td align="center" valign="top" bgcolor="#ffffff"> <?=$data->date ?> </td> 
@@ -59,13 +58,10 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
             <td align="center" valign="top" bgcolor="#ffffff"> <?= $data->privateLesson->balance ?> </td>
             
         </tr>
-        <?php 
-        
-        ?>
-       <?php    
-        } 
-        ?>    
     </tbody>
 </table>
+<?php    
+    } 
+    ?>  
 </body>
 </html>

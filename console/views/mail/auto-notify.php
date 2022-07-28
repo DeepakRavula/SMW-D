@@ -18,21 +18,7 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
 <meta name="format-detection" content="telephone=no"/>  
 </head>
 <body>
-    <h3> <?= $message ?> </h3>
-<table width="100%" cellspacing="0" cellpadding="0" border="1">
-    <thead>
-    <tr>
-        <th>Start Date</th>
-        <th>Student Name</th>
-        <th>Course Name</th>
-        <th>Teacher Name</th>
-        <th>Amount</th>
-        <th>Balance</th>
-    </tr>
-    </thead>
-    <tbody>
-        
-    <?php
+<?php
      foreach($contents->query->all() as $data) { 
         if($data->course->isPrivate()){
             $date = Yii::$app->formatter->asDate($data->date);
@@ -54,6 +40,19 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
             $balance = Yii::$app->formatter->asBalance(round($data->balance ?? 0, 2));
         } 
     ?>
+    <h3> <?= 'Hello ' . $studentName . 'Please check the following ' $message . ' details.'; ?> </h3>
+<table width="100%" cellspacing="0" cellpadding="0" border="1">
+    <thead>
+    <tr>
+        <th>Start Date</th>
+        <th>Student Name</th>
+        <th>Course Name</th>
+        <th>Teacher Name</th>
+        <th>Amount</th>
+        <th>Balance</th>
+    </tr>
+    </thead>
+    <tbody>
         <tr>
             <td align="center" valign="top" bgcolor="#ffffff"><?= $startDate; ?> </td> 
             <td align="center" valign="top" bgcolor="#ffffff" > <?= $studentName; ?> </td>
@@ -63,10 +62,10 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
             <td align="center" valign="top" bgcolor="#ffffff"> <?= $balance; ?> </td>
             
         </tr>
-       <?php    
-        } 
-        ?>    
     </tbody>
 </table>
+<?php    
+    } 
+    ?>    
 </body>
 </html>

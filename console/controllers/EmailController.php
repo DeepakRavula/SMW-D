@@ -101,8 +101,8 @@ class EmailController extends Controller
                 }
 
                 $requiredLessons = $mailContent
-                    ->andWhere(['<', 'lesson.date', $lessonDateTime])
-                    ->orWhere(['=', strtotime('leeson.date'), strtotime($lessonDateTime)]);
+                    ->andWhere(['<', 'lesson.date', $lessonDateTime]);
+                    // ->orWhere(['=', strtotime('leeson.date'), strtotime($lessonDateTime)]);
 
 
                 if ($requiredLessons && $requiredLessons->count() != 0 ) {
@@ -112,7 +112,7 @@ class EmailController extends Controller
                         'pagination' => false
                     ]);
 
-                    $sendMail = Yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
+                    $sendMail = Yii::$app->mailer->compose('/mail/auto-notify', [
                         'contents' => $dataProvider,
                         'message' => $message,
                     ])
