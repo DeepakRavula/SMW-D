@@ -33,7 +33,7 @@ a[x-apple-data-detectors], u + .em_body a, #MessageViewBody a { color: inherit; 
 </style>  
 </head>
 <body>
-    <h3> <?= $message ?> </h3?
+    <h3> <?= $message ?> </h3>
 <table width="100%" cellspacing="0" cellpadding="0" border="1">
     <thead>
     <tr>

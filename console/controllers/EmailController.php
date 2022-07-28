@@ -48,6 +48,7 @@ class EmailController extends Controller
                 $lessonQuery = Lesson::find()
                     ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
                     ->orderBy(['lesson.id' => SORT_ASC])
+                    ->andWhere(['lesson.auto_email_status' => false])
                     ->notCanceled()
                     ->notDeleted()
                     ->customer($customerId)
@@ -93,7 +94,9 @@ class EmailController extends Controller
 
                     }
 
-                    $mailContent = $lessonQuery->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
+                    $mailContent = $lessonQuery
+                        ->scheduled()
+                        ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
                     $message = 'Future Lesson';
                 }
 
@@ -101,21 +104,27 @@ class EmailController extends Controller
                     ->andWhere(['<', 'lesson.date', $lessonDateTime]);
 
 
-                if ($requiredLessons) {
-                    $dateProvider = new ActiveDataProvider([
+                if ($requiredLessons && $requiredLessons->count() != 0 ) {
+                    print_r(' requiredLessons ');
+                    $dataProvider = new ActiveDataProvider([
                         'query' => $requiredLessons,
                         'pagination' => false
                     ]);
 
-                    Yii::$app->mailer->compose('/mail/auto-notify', [
-                        'contents' => $dateProvider,
-                        'type' => $message,
+                    $sendMail = Yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
+                        'contents' => $dataProvider,
+                        'message' => $message,
                     ])
                         ->setFrom(env('ADMIN_EMAIL'))
                         ->setTo($mailIds)
                         ->setReplyTo(env('NOREPLY_EMAIL'))
-                        ->setSubject('Notification for the upcoming lessons.')
-                        ->send();
+                        ->setSubject('Notification for the upcoming lessons.');
+                    if($sendMail->send()){
+                        foreach($requiredLessons->all() as $data){
+                            $data->updateAttributes(['auto_email_status' => true]);
+                        }
+                    }
+                    sleep(5);
                 }
             }
         }
