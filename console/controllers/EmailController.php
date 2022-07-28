@@ -101,7 +101,8 @@ class EmailController extends Controller
                 }
 
                 $requiredLessons = $mailContent
-                    ->andWhere(['<', 'lesson.date', $lessonDateTime]);
+                    ->andWhere(['<', 'lesson.date', $lessonDateTime])
+                    ->orWhere(['=', strtotime('leeson.date'), strtotime($lessonDateTime)]);
 
 
                 if ($requiredLessons && $requiredLessons->count() != 0 ) {
