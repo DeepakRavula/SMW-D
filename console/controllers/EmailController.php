@@ -35,6 +35,7 @@ class EmailController extends Controller
                 ->all();
 
             $requiredLessons;
+            $message;
             foreach ($emailNotificationTypes as $emailNotificationType) {
 
                 $firstScheduledLesson = Enrolment::find()
@@ -66,6 +67,7 @@ class EmailController extends Controller
                 if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
 
                     $mailContent = $lessonQuery->rescheduled();
+                    $message = 'Upcomming Makeup Lesson';
 
                 }
                 elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
@@ -78,6 +80,7 @@ class EmailController extends Controller
                     }
 
                     $mailContent = $lessonQuery->andWhere(['IN', 'lesson.id', $firstLessonCourseIds]);
+                    $message = 'First Scheduled Lesson';
 
                 }
                 elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
@@ -94,6 +97,7 @@ class EmailController extends Controller
                     }
 
                     $mailContent = $lessonQuery->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
+                    $message = 'Future Lesson';
                 }
 
                 $requiredLessons = $mailContent
@@ -110,6 +114,7 @@ class EmailController extends Controller
 
                     Yii::$app->mailer->compose('@backend/views/email-template/auto-notify-html', [
                         'contents' => $dateProvider,
+                        'type' => $message,
                     ])
                         ->setFrom(env('ADMIN_EMAIL'))
                         ->setTo($mailIds)
