@@ -25,9 +25,12 @@ class EmailController extends Controller
         foreach ($sendEmails as $sendEmail) {
             $customerId = $sendEmail->userId;
 
+            date_default_timezone_set('Asia/Kolkata'); // Check Before Deploy
             $lessonDateTime = (new \DateTime())->modify('+1 day')->format('Y-m-d H:i:s');
+            $currentDateTime = (new \DateTime())->format('Y-m-d H:i:s');
             print_r($lessonDateTime);
             print_r("\n");
+            print_r($currentDateTime);
 
             $emailNotificationTypes = CustomerEmailNotification::find()
                 ->andWhere(['isChecked' => true])
@@ -101,9 +104,7 @@ class EmailController extends Controller
                 }
 
                 $requiredLessons = $mailContent
-                    ->andWhere(['<', 'lesson.date', $lessonDateTime]);
-                    // ->orWhere(['=', strtotime('leeson.date'), strtotime($lessonDateTime)]);
-
+                    ->andWhere(['AND' , ['<=', 'lesson.date', $lessonDateTime] , ['>' , 'lesson.date' , $currentDateTime]]);
 
                 if ($requiredLessons && $requiredLessons->count() != 0 ) {
                     print_r(' requiredLessons ');
@@ -120,11 +121,11 @@ class EmailController extends Controller
                         ->setTo($mailIds)
                         ->setReplyTo(env('NOREPLY_EMAIL'))
                         ->setSubject('Notification for the upcoming lessons.');
-                    if($sendMail->send()){
-                        foreach($requiredLessons->all() as $data){
-                            $data->updateAttributes(['auto_email_status' => true]);
-                        }
-                    }
+                    // if($sendMail->send()){
+                    //     foreach($requiredLessons->all() as $data){
+                    //         $data->updateAttributes(['auto_email_status' => true]);
+                    //     }
+                    // }
                     sleep(5);
                 }
             }

@@ -30,17 +30,18 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
             $amount = Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2));
             $balance = Yii::$app->formatter->asBalance(round($data->privateLesson->balance ?? 0, 2));
         } else {
-            $date = Yii::$app->formatter->asDate($data->lesson->date);
-            $lessonTime = (new \DateTime($data->lesson->date))->format('H:i:s');
+            
+            $date = Yii::$app->formatter->asDate($data->date);
+            $lessonTime = (new \DateTime($data->date))->format('H:i:s');
             $startDate = !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
             $studentName = $data->enrolment->student->fullName ?? null;
-            $courseName = $data->lesson->course->program->name ?? null;
-            $teacherName = $data->lesson->teacher->publicIdentity ?? null;
+            $courseName = $data->course->program->name ?? null;
+            $teacherName = $data->teacher->publicIdentity ?? null;
             $amount = Yii::$app->formatter->asCurrency(round($data->total, 2));
             $balance = Yii::$app->formatter->asBalance(round($data->balance ?? 0, 2));
         } 
     ?>
-    <h3> <?= 'Hello ' . $studentName . 'Please check the following ' $message . ' details.'; ?> </h3>
+    <h3> <?= 'Hello ' . $studentName . ' Please check the following ' . $message . ' details.'; ?> </h3>
 <table width="100%" cellspacing="0" cellpadding="0" border="1">
     <thead>
     <tr>
