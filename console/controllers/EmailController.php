@@ -17,10 +17,8 @@ class EmailController extends Controller
     public function actionAutoEmail()
     {
         $firstLessonCourseIds = [];
-        $sendEmails = CustomerEmailNotification::find()
-            ->andWhere(['isChecked' => true])
-            ->groupBy('userId')
-            ->all();
+        $customerNotification  = CustomerEmailNotification::find()->andWhere(['isChecked' => true]);
+        $sendEmails = $customerNotification->groupBy('userId')->all();
 
         foreach ($sendEmails as $sendEmail) {
             $customerId = $sendEmail->userId;
@@ -28,14 +26,8 @@ class EmailController extends Controller
             date_default_timezone_set('Asia/Kolkata'); // Check Before Deploy
             $lessonDateTime = (new \DateTime())->modify('+1 day')->format('Y-m-d H:i:s');
             $currentDateTime = (new \DateTime())->format('Y-m-d H:i:s');
-            print_r($lessonDateTime);
-            print_r("\n");
-            print_r($currentDateTime);
 
-            $emailNotificationTypes = CustomerEmailNotification::find()
-                ->andWhere(['isChecked' => true])
-                ->andWhere(['userId' => $customerId])
-                ->all();
+            $emailNotificationTypes = $customerNotification->andWhere(['userId' => $customerId]) ->all();
 
             $requiredLessons;
             $message;
@@ -107,7 +99,6 @@ class EmailController extends Controller
                     ->andWhere(['AND' , ['<=', 'lesson.date', $lessonDateTime] , ['>' , 'lesson.date' , $currentDateTime]]);
 
                 if ($requiredLessons && $requiredLessons->count() != 0 ) {
-                    print_r(' requiredLessons ');
                     $dataProvider = new ActiveDataProvider([
                         'query' => $requiredLessons,
                         'pagination' => false
