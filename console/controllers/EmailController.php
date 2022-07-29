@@ -17,8 +17,8 @@ class EmailController extends Controller
     public function actionAutoEmail()
     {
         $firstLessonCourseIds = [];
-        $customerNotification  = CustomerEmailNotification::find()->andWhere(['isChecked' => true]);
-        $sendEmails = $customerNotification->groupBy('userId')->all();
+        $sendEmails = CustomerEmailNotification::find()->andWhere(['isChecked' => true])
+            ->groupBy('userId')->all();
 
         foreach ($sendEmails as $sendEmail) {
             $customerId = $sendEmail->userId;
@@ -27,7 +27,9 @@ class EmailController extends Controller
             $lessonDateTime = (new \DateTime())->modify('+1 day')->format('Y-m-d H:i:s');
             $currentDateTime = (new \DateTime())->format('Y-m-d H:i:s');
 
-            $emailNotificationTypes = $customerNotification->andWhere(['userId' => $customerId]) ->all();
+            $emailNotificationTypes = CustomerEmailNotification::find()
+                ->andWhere(['isChecked' => true])
+                ->andWhere(['userId' => $customerId]) ->all();
 
             $requiredLessons;
             $message;
