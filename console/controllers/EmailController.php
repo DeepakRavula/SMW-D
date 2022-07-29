@@ -121,11 +121,11 @@ class EmailController extends Controller
                         ->setTo($mailIds)
                         ->setReplyTo(env('NOREPLY_EMAIL'))
                         ->setSubject('Notification for the upcoming lessons.');
-                    // if($sendMail->send()){
-                    //     foreach($requiredLessons->all() as $data){
-                    //         $data->updateAttributes(['auto_email_status' => true]);
-                    //     }
-                    // }
+                    if($sendMail->send()){
+                        foreach($requiredLessons->all() as $data){
+                            $data->updateAttributes(['auto_email_status' => true]);
+                        }
+                    }
                     sleep(5);
                 }
             }
