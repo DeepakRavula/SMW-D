@@ -4,6 +4,7 @@ use common\models\Location;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
 use yii\bootstrap\Html;
+use common\models\GroupLesson;
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -30,15 +31,20 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
             $amount = Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2));
             $balance = Yii::$app->formatter->asBalance(round($data->privateLesson->balance ?? 0, 2));
         } else {
-            
+            $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $data->id])->all();
+            foreach($groupLesson as $lesson) {
+                $total = $lesson->total;
+                $remainingBalance = $lesson->balance; 
+            }
+
             $date = Yii::$app->formatter->asDate($data->date);
             $lessonTime = (new \DateTime($data->date))->format('H:i:s');
             $startDate = !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
             $studentName = $data->enrolment->student->fullName ?? null;
             $courseName = $data->course->program->name ?? null;
             $teacherName = $data->teacher->publicIdentity ?? null;
-            $amount = Yii::$app->formatter->asCurrency(round($data->total, 2));
-            $balance = Yii::$app->formatter->asBalance(round($data->balance ?? 0, 2));
+            $amount = Yii::$app->formatter->asCurrency(round($total, 2));
+            $balance = Yii::$app->formatter->asBalance(round($remainingBalance ?? 0, 2));
         } 
     ?>
     <h3> <?= 'Hello ' . $studentName . ' Please check the following ' . $message . ' details.'; ?> </h3>
