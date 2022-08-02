@@ -48,7 +48,7 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
         } 
     ?>
     <h3> <?= $emailTemplate->header;?> <br> 
-    <?= 'Hello ' . $studentName . ' Please check the following ' . $message . ' details.'; ?> </h3>
+    <?= 'Hello ' . $studentName . ' please check the following ' . $message . ' details.'; ?> </h3>
 <table width="100%" cellspacing="0" cellpadding="0" border="1">
     <thead>
     <tr>

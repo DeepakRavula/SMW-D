@@ -23,8 +23,6 @@ class EmailController extends Controller
         $locations = Location::find()->notDeleted()->all();
         $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
         foreach ($locations as $location) {
-            print_r($location->name);
-
             $sendEmails = CustomerEmailNotification::find()->andWhere(['isChecked' => true])
                 ->groupBy('userId')->all();
 
@@ -48,6 +46,9 @@ class EmailController extends Controller
                         ->notDeleted()
                         ->isConfirmed()
                         ->all();
+                    foreach ($firstScheduledLesson as $record) {
+                        $firstLessonCourseIds[] = $record->firstLesson->id;
+                    }
 
                     $lessonQuery = Lesson::find()
                         ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
@@ -70,20 +71,10 @@ class EmailController extends Controller
 
 
                     if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
-                        print_r("make up");
-
                         $mailContent = $lessonQuery->rescheduled();
-                        $message = 'Upcoming Makeup Lesson';
+                        $message = 'Makeup Lesson';
 
                     } elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
-
-
-                        foreach ($firstScheduledLesson as $record) {
-
-                            $firstLessonCourseIds[] = $record->firstLesson->id;
-
-                        }
-
                         $mailContent = $lessonQuery->andWhere(['IN', 'lesson.id', $firstLessonCourseIds]);
                         $message = 'First Scheduled Lesson';
 
@@ -101,11 +92,6 @@ class EmailController extends Controller
                         $message = 'Overdue Invoice';
 
                     } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
-
-                        foreach ($firstScheduledLesson as $record) {
-                            $firstLessonCourseIds[] = $record->firstLesson->id;
-                        }
-
                         $mailContent = $lessonQuery
                             ->scheduled()
                             ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
@@ -116,7 +102,6 @@ class EmailController extends Controller
                         ->andWhere(['AND', ['<=', 'lesson.date', $lessonDateTime], ['>', 'lesson.date', $currentDateTime]]);
 
                     if ($requiredLessons && $requiredLessons->count() != 0) {
-                        print_r("requiredLessons");
                         $dataProvider = new ActiveDataProvider([
                             'query' => $requiredLessons,
                             'pagination' => false
