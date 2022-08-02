@@ -11,7 +11,6 @@ use common\models\UserEmail;
         'content' => $body,
         'emailTemplate' => $emailTemplate
     ]);
-    $model->to = $emails;
     $userModel = $lessonModel->enrolment->student->customer;
     $data = null;
     if (!empty($userModel)) {

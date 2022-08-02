@@ -162,7 +162,7 @@ class EnrolmentSearch extends Enrolment
 			$query->andWhere('DATE(enrolment.endDateTime) < CURRENT_DATE');
 		}
 
-		$query->groupBy(['l.courseId']);
+		$query->groupBy(['enrolment.id']);
 
         if ($this->lessonCount > 0) {
 			$query->having('lessonCount='.$this->lessonCount);

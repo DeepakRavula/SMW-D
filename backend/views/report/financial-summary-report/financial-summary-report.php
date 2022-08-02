@@ -5,12 +5,12 @@ use yii\widgets\Pjax;
 use yii\helpers\Html;
 use common\components\gridView\KartikGridView;
 use kartik\grid\GridView;
-use Yii;
+// use Yii;
 use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\jui\DatePicker;
-use kartik\daterange\DateRangePicker;
+
 ?>
 <style>
 <style>
@@ -26,8 +26,209 @@ use kartik\daterange\DateRangePicker;
 }
 </style>
 <div class="clearfix"></div>
+<?php Pjax::begin(['id' => 'prepaid-future-group-locations-listing',
+'timeout' => 30000]); ?>
+   
+<?= KartikGridView::widget([
+        'id' => 'prepaid-future-group-id',
+        'dataProvider' => $paidFutureGroupLessonsdataProvider,
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
+        'tableOptions' => ['class' => 'table table-condensed table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'filterModel' => $paidFutureGroupLessonsSearchModel,
+        'toolbar' =>  [
+            '{export}',
+            '{toggleData}',
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Prepaid Future Group Lessons',
+        ],
+        
+        'showFooter' =>true,
+        'columns' => [
+            [
+                'label' => 'Lesson ID',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->lessonId;
+                },
+            ],
+            [
+                'label' => 'Student Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->enrolment->student->fullName;
+                },
+            ],
+            [
+                'label' => 'Customer Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->enrolment->student->customer->publicIdentity;
+                },
+            ],
+            [
+                'label' => 'Date',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'filter' => DatePicker::widget([
+                    'model'=>$paidFutureGroupLessonsSearchModel,
+                    'attribute'=>'goToDate',
+                    'dateFormat' => 'yyyy-MM-dd',
+                    'clientOptions' => [
+                        'minDate' => 0
+                    ]
+                ]),
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asDate($data->lesson->date) . ' @ ' . Yii::$app->formatter->asTime($data->lesson->date);
+                },
+                
+            ],
+            [
+                'label' => 'Duration',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  (new \DateTime($data->lesson->duration))->format('H:i');
+                },
+            ],
+            [
+                'label' => 'Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data)   {
+                    $amount = Yii::$app->formatter->asCurrency(round($data->total, 2));
+                    return  $amount;
+                },
+            ],
+            [
+                'label' => 'Paid Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $paid = $data->total - $data->balance;
+                    return  Yii::$app->formatter->asCurrency(round($paid, 2));
+                },
+            ],
+            [
+                'label' => 'Balance',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asCurrency($data->balance);
+                },
+            ],
+        ],
+]);
 
-<?php Pjax::begin(['id' => 'prepaid-future-locations-listing']); ?>
+    ?>
+<?php Pjax::end(); ?>
+<?php Pjax::begin(['id' => 'prepaid-past-unscheduled-group-locations-listing']); ?>
+   
+    <?= KartikGridView::widget([
+        'id' => 'prepaid-past-unscheduled-group-id',
+        'dataProvider' => $paidPastGroupLessonsdataProvider,
+        'rowOptions' =>  ['class' => 'financial-summary-report-detail-view'],
+        'tableOptions' => ['class' => 'table table-condensed table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'toolbar' =>  [
+            '{export}',
+            '{toggleData}',
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT,
+            'heading' => 'Paid Unscheduled Group Lessons',
+        ],
+        
+        'showFooter' =>true,
+        'columns' => [
+            [
+                'label' => 'Lesson ID',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->lessonId;
+                },
+            ],
+            [
+                'label' => 'Student Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->enrolment->student->fullName;
+                },
+            ],
+            [
+                'label' => 'Customer Name',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  $data->enrolment->student->customer->publicIdentity;
+                },
+            ],
+            [
+                'label' => 'Date',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asDate($data->lesson->date) . ' @ ' . Yii::$app->formatter->asTime($data->lesson->date);
+                },
+                
+            ],
+            [
+                'label' => 'Duration',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  (new \DateTime($data->lesson->duration))->format('H:i');
+                },
+            ],
+            [
+                'label' => 'Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data)   {
+                    $amount = Yii::$app->formatter->asCurrency(round($data->total, 2));
+                    return  $amount;
+                },
+            ],
+            [
+                'label' => 'Paid Amount',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    $paid = $data->total - $data->balance;
+                    return  Yii::$app->formatter->asCurrency(round($paid, 2));
+                },
+            ],
+            [
+                'label' => 'Balance',
+                'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'format' => 'html',
+                'value' => function ($data) {
+                    return  Yii::$app->formatter->asCurrency($data->balance);
+                },
+            ],
+        ],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'past-unscheduled-group-amount-report'
+            ]
+            ],
+]);
+
+    ?>
+<?php Pjax::end(); ?>
+<?php Pjax::begin(['id' => 'prepaid-future-locations-listing',
+'timeout' => 30000]); ?>
    
     <?= KartikGridView::widget([
         'id' => 'prepaid-future-id',
@@ -36,20 +237,14 @@ use kartik\daterange\DateRangePicker;
         'tableOptions' => ['class' => 'table table-condensed table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
+        'filterModel' => $paidFutureLessonsSearchModel,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
-            'heading' => 'Prepaid Future Lessons',
+            'heading' => 'Prepaid Future Private Lessons',
         ],
         
         'showFooter' =>true,
@@ -81,10 +276,20 @@ use kartik\daterange\DateRangePicker;
             [
                 'label' => 'Date',
                 'headerOptions' => ['class' => 'warning', 'style' => 'background-color: lightgray'],
+                'filter' => DatePicker::widget([
+                    'model'=>$paidFutureLessonsSearchModel,
+                    'attribute'=>'goToDate',
+                    'dateFormat' => 'yyyy-MM-dd',
+                    'clientOptions' => [
+                        'minDate' => 0
+                    ],
+                ]),
+               
                 'format' => 'html',
                 'value' => function ($data) {
                     return  Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
                 },
+                
             ],
             [
                 'label' => 'Duration',
@@ -122,13 +327,6 @@ use kartik\daterange\DateRangePicker;
                 },
             ],
         ],
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'future-amount-report'
-            ]
-            ],
 ]);
 
     ?>
@@ -143,19 +341,12 @@ use kartik\daterange\DateRangePicker;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
-            'heading' => 'Paid Unscheduled Lessons',
+            'heading' => 'Paid Unscheduled Private Lessons',
         ],
         'showFooter' =>true,
         'columns' => [
@@ -248,15 +439,8 @@ use kartik\daterange\DateRangePicker;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -346,15 +530,8 @@ use kartik\daterange\DateRangePicker;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -444,15 +621,8 @@ use kartik\daterange\DateRangePicker;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -507,15 +677,8 @@ use kartik\daterange\DateRangePicker;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'toolbar' =>  [
-            // 'content' =>
-            //         Html::a('<i class="fa fa-print"></i>', '#', 
-            //         ['id' => 'print', 'class' => 'btn btn-default']),
             '{export}',
             '{toggleData}',
-            // [
-            //     'content' =>  $this->render('_button', ['searchModel' => $searchModel]),
-            //     'options' => ['title' => 'Filter',]
-            // ],
         ],
         'panel' => [
             'type' => GridView::TYPE_DEFAULT,
@@ -562,7 +725,9 @@ use kartik\daterange\DateRangePicker;
 <?php Pjax::end(); ?>
 
 <?php Pjax::begin([
-    'id' => 'amount-summary']) ?>
+    'id' => 'amount-summary',
+    'timeout' => 4000]) ?>
+
 <?php
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
@@ -570,6 +735,7 @@ LteBox::begin([
     'withBorder' => true,
 ])
 ?>
+
 <table style="width:100%">
   <tr>
     <th style="width:80%"><u>Particulars</u></th>
@@ -582,12 +748,23 @@ LteBox::begin([
     <th><hr></th>
   </tr>
   <tr>
-    <td style="width:80%"><b>Prepaid Future Lessons</b></td>
-    <td style="width:10%"><b><?= $paidFutureLessonsCount; ?></b></td>
-    <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($paidFutureLessonsSum); ?></b></td>
+    <td style="width:80%"><b>Prepaid Future Group Lessons</b></td>
+    <td style="width:10%"><b><?= $paidFutureGroupLessonsdataProvider->query->count() ?></b></td>
+    <td style="width:10%"><b><?=  Yii::$app->formatter->asCurrency($paidFutureGroupLessonsdataProvider->query->sum('group_lesson.total') - $paidFutureGroupLessonsdataProvider->query->sum('group_lesson.balance')); ?></b></td>
   </tr>
   <tr>
-    <td style="width:80%"><b>Paid Unscheduled Lessons</b></td>
+    <td style="width:80%"><b>Paid Unscheduled Group Lessons</b></td>
+    <td style="width:10%"><b><?= $paidPastGroupLessonsCount ?></b></td>
+    <td style="width:10%"><b><?=  Yii::$app->formatter->asCurrency(round(array_sum($paidPastGroupLessonsSum), 2)) ?></b></td>
+  </tr>
+  <tr>
+  <tr>
+    <td style="width:80%"><b>Prepaid Future Private Lessons</b></td>
+    <td style="width:10%"><b><?= $paidFutureLessondataProvider->query->count() ?></b></td>
+    <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($paidFutureLessondataProvider->query->sum('lesson_payment.amount')); ?></b></td>
+  </tr>
+  <tr>
+    <td style="width:80%"><b>Paid Unscheduled Private Lessons</b></td>
     <td style="width:10%"><b><?= $paidPastLessonsCount; ?></b></td>
     <td style="width:10%"><b><?= Yii::$app->formatter->asCurrency($paidPastLessonsSum); ?></b></td>
   </tr>
@@ -613,4 +790,20 @@ LteBox::begin([
   </tr>
 </table>
 <?php LteBox::end()?>
+
 <?php Pjax::end(); ?>
+
+<script type="text/javascript">
+    $(document).off('change', "#reportgrouplessonsearch-gotodate").on('change', "#reportgrouplessonsearch-gotodate", function(){
+        $(document).ajaxStop(function(){
+            window.location.reload();
+        });  
+    });  
+
+    $(document).off('change', "#reportsearch-gotodate").on('change', "#reportsearch-gotodate", function(){
+        $(document).ajaxStop(function(){
+            window.location.reload();
+        });  
+    }); 
+   
+</script>
