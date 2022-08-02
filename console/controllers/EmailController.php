@@ -59,6 +59,7 @@ class EmailController extends Controller
                         ->customer($customerId)
                         ->isConfirmed()
                         ->regular();
+                        
 
                     $mailIds = ArrayHelper::map(UserEmail::find()
                         ->notDeleted()
@@ -79,13 +80,28 @@ class EmailController extends Controller
                         $message = 'First Scheduled Lesson';
 
                     } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
-                       
-                        $privateLesson = $lessonQuery->joinWith(['privateLesson' => function($query) {
-                                $query->andWhere(['>', 'private_lesson.balance', 0.00]);
-                            }]);
-                        $groupLesson =   $lessonQuery->scheduled()->joinWith(['groupLesson' => function($query) {
-                                $query->andWhere(['>', 'group_lesson.balance', 0.00]);
-                            }]);
+                        $privateLesson =  Lesson::find()
+                                    ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                                    ->orderBy(['lesson.id' => SORT_ASC])
+                                    ->notCanceled()
+                                    ->notDeleted()
+                                    ->customer($customerId)
+                                    ->isConfirmed()
+                                    ->regular()
+                                    ->joinWith(['privateLesson' => function($query) {
+                                            $query->andWhere(['>', 'private_lesson.balance', 0.00]);
+                                        }]);
+                        $groupLesson =    Lesson::find()
+                                ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                                ->orderBy(['lesson.id' => SORT_ASC])
+                                ->notCanceled()
+                                ->notDeleted()
+                                ->customer($customerId)
+                                ->isConfirmed()
+                                ->regular()
+                                ->scheduled()->joinWith(['groupLesson' => function($query) {
+                                        $query->andWhere(['>', 'group_lesson.balance', 0.00]);
+                                    }]);
                         if(!empty($privateLesson)){
                             $mailContent = $privateLesson;
                         } else {
@@ -93,7 +109,6 @@ class EmailController extends Controller
                         }
                         $mailContent = $mailContent->scheduled()->orderBy(['lesson.dueDate' => SORT_ASC]);
                         $message = 'Overdue Invoice';
-
                     } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
                         $mailContent = $lessonQuery
                             ->scheduled()
