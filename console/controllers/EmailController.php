@@ -28,7 +28,7 @@ class EmailController extends Controller
 
             foreach ($sendEmails as $sendEmail) {
                 $customerId = $sendEmail->userId;
-
+                date_default_timezone_set('Asia/Kolkata');
                 $lessonDateTime = (new \DateTime())->modify('+1 day')->format('Y-m-d H:i:s');
                 $currentDateTime = (new \DateTime())->format('Y-m-d H:i:s');
 
@@ -79,14 +79,17 @@ class EmailController extends Controller
                         $message = 'First Scheduled Lesson';
 
                     } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
-                        if($lessonQuery->course->isPrivate()){
-                            $mailContent = $lessonQuery->joinWith(['privateLesson' => function($query) {
+                       
+                        $privateLesson = $lessonQuery->joinWith(['privateLesson' => function($query) {
                                 $query->andWhere(['>', 'private_lesson.balance', 0.00]);
                             }]);
-                        } else {
-                            $lessonQuery->scheduled()->joinWith(['groupLesson' => function($query) {
+                        $groupLesson =   $lessonQuery->scheduled()->joinWith(['groupLesson' => function($query) {
                                 $query->andWhere(['>', 'group_lesson.balance', 0.00]);
                             }]);
+                        if(!empty($privateLesson)){
+                            $mailContent = $privateLesson;
+                        } else {
+                            $mailContent = $groupLesson;
                         }
                         $mailContent = $mailContent->scheduled()->orderBy(['lesson.dueDate' => SORT_ASC]);
                         $message = 'Overdue Invoice';
