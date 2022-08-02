@@ -57,8 +57,8 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
         <th>Course Name</th>
         <th>Teacher Name</th>
         <?php if($type == CustomerEmailNotification::OVERDUE_INVOICE){ ?>
-            <th>Course Name</th>
-            <th>Teacher Name</th>
+            <th>Amount</th>
+            <th>Balance</th>
         <?php
             }
         ?>
