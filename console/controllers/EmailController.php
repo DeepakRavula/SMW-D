@@ -83,7 +83,16 @@ class EmailController extends Controller
                         $message = 'First Scheduled Lesson';
 
                     } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
-                        $mailContent = $lessonQuery->scheduled();
+                        if($lessonQuery->course->isPrivate()){
+                            $mailContent = $lessonQuery->joinWith(['privateLesson' => function($query) {
+                                $query->andWhere(['>', 'private_lesson.balance', 0.00]);
+                            }]);
+                        } else {
+                            $lessonQuery->scheduled()->joinWith(['groupLesson' => function($query) {
+                                $query->andWhere(['>', 'group_lesson.balance', 0.00]);
+                            }]);
+                        }
+                        $mailContent = $mailContent->scheduled()->orderBy(['lesson.dueDate' => SORT_ASC]);
                         $message = 'Overdue Invoice';
 
                     } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
