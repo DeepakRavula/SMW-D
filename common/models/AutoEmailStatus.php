@@ -2,25 +2,23 @@
 
 namespace common\models;
 
-use yii2tech\ar\softdelete\SoftDeleteBehavior;
+
 use Yii;
-use yii\behaviors\BlameableBehavior;
-use yii\behaviors\TimestampBehavior;
-use yii\helpers\ArrayHelper;
+
 
 /**
- * This is the model class for table "customer_email_notification".
+ * This is the model class for table "auto_email_status".
  *
  * @property int $id
- * @property string $emailNotificationTypeId
+ * @property string $notificationType
  */
 
-class CustomerEmailNotification extends \yii\db\ActiveRecord
+class AutoEmailStatus extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
-    // public $notificationEmailType;
+    // public $notificationType;
 
     public static function tableName()
     {
@@ -37,6 +35,14 @@ class CustomerEmailNotification extends \yii\db\ActiveRecord
             [['lessonId','notificationType'], 'integer'],
             [['status'], 'safe'],
         ];
+    }
+    /**
+     * @inheritdoc
+     * @return \common\models\query\AutoEmailStatusQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new \common\models\query\AutoEmailStatusQuery(get_called_class());
     }
 
     /**

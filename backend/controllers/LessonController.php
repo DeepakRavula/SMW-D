@@ -40,6 +40,8 @@ use Carbon\Carbon;
 use common\components\queue\EnrolmentConfirm;
 use common\components\queue\LessonConfirm as QueueLessonConfirm;
 use common\components\queue\MakeLessonAsRoot;
+use common\models\NotificationEmailType;
+use common\models\AutoEmailStatus;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -720,6 +722,15 @@ class LessonController extends BaseController
             $lesson->isConfirmed = true;
             $lesson->save();
             $lesson->setDiscount();
+            $emailNotifyTypes = NotificationEmailType::find()->all();
+
+                foreach($emailNotifyTypes as $emailNotifyType) {
+                    $autoEmailStatus = new AutoEmailStatus();
+                    $autoEmailStatus->lessonId = $lesson->id;
+                    $autoEmailStatus->notificationType = $emailNotifyType->id;
+                    $autoEmailStatus->status = false;
+                    $autoEmailStatus->save();
+                }
         }
         if (!$model->enrolmentIds) {
             Yii::$app->queue->push(new QueueLessonConfirm([
