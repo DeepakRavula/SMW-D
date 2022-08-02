@@ -14,6 +14,7 @@ use Yii;
 use common\models\Location;
 use common\models\EmailObject;
 use common\models\EmailTemplate;
+use common\models\AutoEmailStatus;
 
 class EmailController extends Controller
 {
@@ -137,7 +138,8 @@ class EmailController extends Controller
                             ->setSubject($emailTemplate->subject);
                         if ($sendMail->send()) {
                             foreach ($requiredLessons->all() as $data) {
-                                $data->updateAttributes(['auto_email_status' => true]);
+                                $emailStatus = AutoEmailStatus::find()->andWhere(['lessonId'=> $data->id])->andWhere(['notificationType' => $type])->one();
+                                $emailStatus->updateAttributes(['auto_email_status' => true]);
                             }
                         }
                         sleep(5);
