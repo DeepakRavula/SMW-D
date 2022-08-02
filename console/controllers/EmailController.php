@@ -12,6 +12,8 @@ use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 use Yii;
 use common\models\Location;
+use common\models\EmailObject;
+use common\models\EmailTemplate;
 
 class EmailController extends Controller
 {
@@ -19,7 +21,9 @@ class EmailController extends Controller
     {
         $firstLessonCourseIds = [];
         $locations = Location::find()->notDeleted()->all();
+        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
         foreach ($locations as $location) {
+            print_r($location->name);
 
             $sendEmails = CustomerEmailNotification::find()->andWhere(['isChecked' => true])
                 ->groupBy('userId')->all();
@@ -66,6 +70,7 @@ class EmailController extends Controller
 
 
                     if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
+                        print_r("make up");
 
                         $mailContent = $lessonQuery->rescheduled();
                         $message = 'Upcoming Makeup Lesson';
@@ -99,7 +104,6 @@ class EmailController extends Controller
 
                         foreach ($firstScheduledLesson as $record) {
                             $firstLessonCourseIds[] = $record->firstLesson->id;
-
                         }
 
                         $mailContent = $lessonQuery
@@ -112,6 +116,7 @@ class EmailController extends Controller
                         ->andWhere(['AND', ['<=', 'lesson.date', $lessonDateTime], ['>', 'lesson.date', $currentDateTime]]);
 
                     if ($requiredLessons && $requiredLessons->count() != 0) {
+                        print_r("requiredLessons");
                         $dataProvider = new ActiveDataProvider([
                             'query' => $requiredLessons,
                             'pagination' => false
@@ -121,11 +126,12 @@ class EmailController extends Controller
                             'contents' => $dataProvider,
                             'message' => $message,
                             'type' => $type,
+                            'emailTemplate' => $emailTemplate,
                         ])
                             ->setFrom($location->email)
                             ->setTo($mailIds)
                             ->setReplyTo($location->email)
-                            ->setSubject('Notification for the upcoming lessons.');
+                            ->setSubject($emailTemplate->subject);
                         if ($sendMail->send()) {
                             foreach ($requiredLessons->all() as $data) {
                                 $data->updateAttributes(['auto_email_status' => true]);
