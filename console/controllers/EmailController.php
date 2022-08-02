@@ -21,6 +21,7 @@ class EmailController extends Controller
     {
         $firstLessonCourseIds = [];
         $locations = Location::find()->notDeleted()->all();
+        date_default_timezone_set('Asia/Kolkata'); // Check Before Deploy
         $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
         foreach ($locations as $location) {
             print_r($location->name);
@@ -109,7 +110,7 @@ class EmailController extends Controller
                         ->andWhere(['AND', ['<=', 'lesson.date', $lessonDateTime], ['>', 'lesson.date', $currentDateTime]]);
 
                     if ($requiredLessons && $requiredLessons->count() != 0) {
-                        print_r("requiredLessons");
+
                         $dataProvider = new ActiveDataProvider([
                             'query' => $requiredLessons,
                             'pagination' => false
@@ -119,11 +120,12 @@ class EmailController extends Controller
                             'contents' => $dataProvider,
                             'message' => $message,
                             'emailTemplate' => $emailTemplate,
+                            'type' => $type,
                         ])
                             ->setFrom($location->email)
                             ->setTo($mailIds)
                             ->setReplyTo($location->email)
-                            ->setSubject($emailTemplate->subject);
+                            ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
                         if ($sendMail->send()) {
                             foreach ($requiredLessons->all() as $data) {
                                 $data->updateAttributes(['auto_email_status' => true]);

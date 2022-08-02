@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Student;
 use yii\bootstrap\Html;
 use common\models\GroupLesson;
+use common\models\CustomerEmailNotification;
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -30,6 +31,8 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
         if($data->course->isPrivate()){
             
             $studentName = $data->course->enrolment->student->fullName ?? null;
+            $amount = Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2));
+            $balance = Yii::$app->formatter->asBalance(round($data->privateLesson->balance ?? 0, 2));
             
         } else {
             $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $data->id])->all();
@@ -39,10 +42,12 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
             }
 
             $studentName = $data->enrolment->student->fullName ?? null;
+            $amount = Yii::$app->formatter->asCurrency(round($total, 2));
+            $balance = Yii::$app->formatter->asBalance(round($remainingBalance ?? 0, 2));
             
         } 
     ?>
-    <h3> <?= $emailTemplate->header;?> <br> 
+    <h3> <?= $emailTemplate->header ?? null ;?> <br> 
     <?= 'Hello ' . $studentName . ' Please check the following ' . $message . ' details.'; ?> </h3>
 <table width="100%" cellspacing="0" cellpadding="0" border="1">
     <thead>
@@ -51,6 +56,11 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
         <th>Student Name</th>
         <th>Course Name</th>
         <th>Teacher Name</th>
+        <?php if ($type == CustomerEmailNotification::OVERDUE_INVOICE) { ?>
+            <th>Amount</th>
+            <th>Balance</th>
+        <?php } ?>
+        
     </tr>
     </thead>
     <tbody>
@@ -59,11 +69,15 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
             <td align="center" valign="top" bgcolor="#ffffff" > <?= $studentName; ?> </td>
             <td align="center" valign="top" bgcolor="#ffffff"> <?= $courseName; ?> </td>
             <td align="center" valign="top" bgcolor="#ffffff"> <?= $teacherName; ?> </td>
+            <?php if ($type == CustomerEmailNotification::OVERDUE_INVOICE) { ?>
+                <td align="center" valign="top" bgcolor="#ffffff"> <?= $amount; ?> </td>
+                <td align="center" valign="top" bgcolor="#ffffff"> <?= $balance; ?> </td>
+        <?php } ?>
             
         </tr>
     </tbody>
 </table>
-<?= $emailTemplate->footer;?>
+<?= $emailTemplate->footer ?? null ;;?>
 <?php    
     } 
     ?>    
