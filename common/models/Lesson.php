@@ -23,6 +23,7 @@ use backend\models\lesson\discount\EnrolmentLessonDiscount;
 use backend\models\lesson\discount\PaymentFrequencyLessonDiscount;
 use common\models\discount\LessonDiscount;
 use Carbon\Carbon;
+use common\models\AutoEmailStatus;
 
 /**
  * This is the model class for table "lesson".
@@ -383,6 +384,11 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id'])
                 ->via('student');
+    }
+
+    public function getEmailStatus()
+    {
+        return $this->hasOne(AutoEmailStatus::className(), ['lessonId' => 'id']);
     }
 
     public function getEnrolmentDiscount()
