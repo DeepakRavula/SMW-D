@@ -54,12 +54,14 @@ class EmailController extends Controller
                     $lessonQuery = Lesson::find()
                         ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
                         ->orderBy(['lesson.id' => SORT_ASC])
-                        ->andWhere(['lesson.auto_email_status' => false])
                         ->notCanceled()
                         ->notDeleted()
                         ->customer($customerId)
                         ->isConfirmed()
-                        ->regular();
+                        ->regular()
+                        ->joinWith(['emailStatus' => function($query) {
+                            $query->andWhere(['auto_email_status.status' => false]);
+                        }]);;
                         
 
                     $mailIds = ArrayHelper::map(UserEmail::find()
@@ -100,7 +102,7 @@ class EmailController extends Controller
                                 ->customer($customerId)
                                 ->isConfirmed()
                                 ->regular()
-                                ->scheduled()->joinWith(['groupLesson' => function($query) {
+                                ->joinWith(['groupLesson' => function($query) {
                                         $query->andWhere(['>', 'group_lesson.balance', 0.00]);
                                     }]);
                         if(!empty($privateLesson)){
@@ -139,7 +141,7 @@ class EmailController extends Controller
                         if ($sendMail->send()) {
                             foreach ($requiredLessons->all() as $data) {
                                 $emailStatus = AutoEmailStatus::find()->andWhere(['lessonId'=> $data->id])->andWhere(['notificationType' => $type])->one();
-                                $emailStatus->updateAttributes(['auto_email_status' => true]);
+                                $emailStatus->updateAttributes(['status' => true]);
                             }
                         }
                         sleep(5);
