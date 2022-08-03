@@ -19,7 +19,10 @@ class m220802_121807_auto_email_status_entries extends Migration
         $locations = Location::find()->all();
         foreach($locations as $location) {
 
-            $lessons = Lesson::find()->location($location->id)->all();
+            $lessons = Lesson::find()
+                    ->location($location->id)
+                    ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                    ->all();
 
             foreach ($lessons as $lesson) {
                 $emailNotifyTypes = NotificationEmailType::find()->all();
