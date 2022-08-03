@@ -29,7 +29,7 @@ class EmailController extends Controller
 
             foreach ($sendEmails as $sendEmail) {
                 $customerId = $sendEmail->userId;
-                date_default_timezone_set('Asia/Kolkata');
+                // date_default_timezone_set('Asia/Kolkata');
                 $lessonDateTime = (new \DateTime())->modify('+1 day')->format('Y-m-d H:i:s');
                 $currentDateTime = (new \DateTime())->format('Y-m-d H:i:s');
 
