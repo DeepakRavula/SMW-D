@@ -58,10 +58,7 @@ class EmailController extends Controller
                         ->notDeleted()
                         ->customer($customerId)
                         ->isConfirmed()
-                        ->regular()
-                        ->joinWith(['emailStatus' => function($query) {
-                            $query->andWhere(['auto_email_status.status' => false]);
-                        }]);;
+                        ->regular();
                         
 
                     $mailIds = ArrayHelper::map(UserEmail::find()
@@ -75,11 +72,21 @@ class EmailController extends Controller
 
 
                     if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
-                        $mailContent = $lessonQuery->rescheduled();
+                        $mailContent = $lessonQuery
+                        ->joinWith(['emailStatus' => function($query) {
+                            $query->andWhere(['auto_email_status.status' => false])
+                            ->andWhere(['auto_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                        }])
+                        ->rescheduled();
                         $message = 'Makeup Lesson';
 
                     } elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
-                        $mailContent = $lessonQuery->andWhere(['IN', 'lesson.id', $firstLessonCourseIds]);
+                        $mailContent = $lessonQuery
+                        ->joinWith(['emailStatus' => function($query) {
+                            $query->andWhere(['auto_email_status.status' => false])
+                            ->andWhere(['auto_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
+                        }])
+                        ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds]);
                         $message = 'First Scheduled Lesson';
 
                     } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
@@ -93,7 +100,11 @@ class EmailController extends Controller
                                     ->regular()
                                     ->joinWith(['privateLesson' => function($query) {
                                             $query->andWhere(['>', 'private_lesson.balance', 0.00]);
-                                        }]);
+                                        }])
+                                    ->joinWith(['emailStatus' => function($query) {
+                                        $query->andWhere(['auto_email_status.status' => false])
+                                        ->andWhere(['auto_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
+                                    }]);
                         $groupLesson =    Lesson::find()
                                 ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
                                 ->orderBy(['lesson.id' => SORT_ASC])
@@ -104,7 +115,11 @@ class EmailController extends Controller
                                 ->regular()
                                 ->joinWith(['groupLesson' => function($query) {
                                         $query->andWhere(['>', 'group_lesson.balance', 0.00]);
-                                    }]);
+                                    }])
+                                ->joinWith(['emailStatus' => function($query) {
+                                    $query->andWhere(['auto_email_status.status' => false])
+                                    ->andWhere(['auto_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
+                                }]);
                         if(!empty($privateLesson)){
                             $mailContent = $privateLesson;
                         } else {
@@ -114,6 +129,10 @@ class EmailController extends Controller
                         $message = 'Overdue Invoice';
                     } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
                         $mailContent = $lessonQuery
+                            ->joinWith(['emailStatus' => function($query) {
+                                $query->andWhere(['auto_email_status.status' => false])
+                                ->andWhere(['auto_email_status.notificationType' => CustomerEmailNotification::FUTURE_LESSON]);
+                            }])
                             ->scheduled()
                             ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
                         $message = 'Future Lesson';
