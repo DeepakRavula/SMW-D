@@ -103,6 +103,7 @@ class EmailController extends Controller
                                     ->scheduled()
                                     ->orderBy(['lesson.dueDate' => SORT_ASC]);
                         $message = 'Overdue Invoice';
+                        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
                     }
                     elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
                         $mailContent = $lessonQuery
@@ -130,7 +131,7 @@ class EmailController extends Controller
                             ->setFrom($location->email)
                             ->setTo($mailIds)
                             ->setReplyTo($location->email)
-                            ->setSubject($emailTemplate->subject);
+                            ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
                         if ($sendMail->send()) {
                             foreach ($requiredLessons->all() as $data) {
                                 if($type == CustomerEmailNotification::OVERDUE_INVOICE){

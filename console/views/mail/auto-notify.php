@@ -79,7 +79,7 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
         </tr>
     </tbody>
 </table>
-<?= $emailTemplate->footer;?>
+<?= $emailTemplate->footer ?? null ;;?>
 <?php    
     } 
     ?>    
