@@ -75,7 +75,7 @@ class EmailController extends Controller
 
                     if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
 
-                        $mailContent = $lessonQuery->rescheduled();
+                        $mailContent = $lessonQuery->andWhere(['auto_email_status' => false])->rescheduled();
                         $message = 'Makeup Lesson';
 
                     }
