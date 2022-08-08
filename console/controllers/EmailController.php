@@ -61,6 +61,7 @@ class EmailController extends Controller
                         ->customer($customerId)
                         ->location($location->id)
                         ->isConfirmed()
+                        ->privateLessons()
                         ->regular();
 
                     $mailIds = ArrayHelper::map(UserEmail::find()
@@ -93,6 +94,7 @@ class EmailController extends Controller
                                     ->notDeleted()
                                     ->customer($customerId)
                                     ->location($location->id)
+                                    ->privateLessons()
                                     ->isConfirmed()
                                     ->regular()
                                     ->joinWith(['privateLesson' => function($query) {
