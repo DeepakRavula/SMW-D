@@ -57,6 +57,7 @@ class EmailController extends Controller
                         ->notDeleted()
                         ->customer($customerId)
                         ->location($location->id)
+                        ->privateLesson()
                         ->isConfirmed()
                         ->regular();
                         
