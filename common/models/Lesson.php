@@ -201,7 +201,8 @@ class Lesson extends \yii\db\ActiveRecord
             ['splittedLessonId', 'validateMerge', 'on' => self::SCENARIO_MERGE],
             ['date', 'validateOnInvoiced', 'on' => self::SCENARIO_EDIT],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
-            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]]
+            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
+            [['auto_email_status', 'overdue_status'], 'safe']
         ];
     }
 
