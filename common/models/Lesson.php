@@ -115,6 +115,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $paymentAmount;
     public $userId;
     public $isOnline;
+    public $groupStudentId;
 
     /**
      * {@inheritdoc}
@@ -380,7 +381,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getGroupStudents()
     {
-        return $this->hasMany(Student::className(), ['id' => 'studentId']);
+        return $this->hasMany(Student::className(), ['id' => 'studentId'])->via('enrolment');
     }
     
     public function getDiscounts()

@@ -197,7 +197,7 @@ class EmailController extends Controller
                     ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds])
                     ->joinWith(['privateEmailStatus' => function($query){
                         $query->andWhere(['private_lesson_email_status.status' => false])
-                        ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                        ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
                     }]);
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
@@ -216,7 +216,7 @@ class EmailController extends Controller
                             }])
                         ->joinWith(['privateEmailStatus' => function($query){
                             $query->andWhere(['private_lesson_email_status.status' => false])
-                            ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                            ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
                         }])
                         ->scheduled()
                         ->orderBy(['lesson.dueDate' => SORT_ASC]);
@@ -278,7 +278,7 @@ class EmailController extends Controller
                     ->joinWith(['groupEmailStatus' => function($query){
                         $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
                         ->andWhere(['group_lesson_email_status.status' => false])
-                        ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                        ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
                     }]);
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
@@ -298,7 +298,7 @@ class EmailController extends Controller
                         ->joinWith(['groupEmailStatus' => function($query){
                             $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
                             ->andWhere(['group_lesson_email_status.status' => false])
-                            ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                            ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
                         }])
                         ->scheduled()
                         ->orderBy(['lesson.dueDate' => SORT_ASC]);
@@ -337,8 +337,8 @@ class EmailController extends Controller
                 foreach ($requiredLessons->all() as $lesson) {
                     foreach($lesson->groupStudents as $data){
                         $emailStatus = GroupLessonEmailStatus::find()
-                                ->andWhere(['lessonId' => $data->id])
-                                ->andWhere(['studentId' => $data->student->id])
+                                ->andWhere(['lessonId' => $lesson->id])
+                                ->andWhere(['studentId' => $data->id])
                                 ->andWhere(['notificationType' => $type])
                                 ->one();
                         $emailStatus->updateAttributes(['status' => true]);

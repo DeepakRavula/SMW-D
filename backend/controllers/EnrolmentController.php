@@ -343,6 +343,7 @@ class EnrolmentController extends BaseController
         $course = Course::findOne($enrolmentModel->courseId);
         $enrolmentModel->isConfirmed = true;
         $enrolmentModel->endDateTime = Carbon::parse($course->endDate)->format('Y-m-d');
+        $emailNotifyTypes = NotificationEmailType::find()->all();
         if ($course->hasExtraCourse()) {
             foreach ($course->extraCourses as $extraCourse) {
                 $extraCourse->studentId = $enrolmentModel->studentId;
@@ -359,6 +360,16 @@ class EnrolmentController extends BaseController
                     $groupLesson->enrolmentId = $enrolment->id;
                     $groupLesson->dueDate = (new \DateTime())->format('Y-m-d');
                     $groupLesson->save();
+                   foreach($lesson->groupStudents as $data){
+                        foreach ($emailNotifyTypes as $emailNotifyType) {
+                            $emailStatus = new AutoEmailStatus();
+                            $emailStatus->lessonId = $lesson->id;
+                            $emailStatus->studentId = $data->id;
+                            $emailStatus->notificationType = $emailNotifyType->id;
+                            $emailStatus->status = false;
+                            $emailStatus->save();
+                        }
+                   }
                 }
             }
         }
@@ -375,6 +386,16 @@ class EnrolmentController extends BaseController
                 $groupLesson->enrolmentId = $enrolmentId;
                 $groupLesson->dueDate = (new \DateTime($enrolmentModel->createdAt))->format('Y-m-d');
                 $groupLesson->save();
+                foreach($lesson->groupStudents as $data){
+                    foreach ($emailNotifyTypes as $emailNotifyType) {
+                        $emailStatus = new AutoEmailStatus();
+                        $emailStatus->lessonId = $lesson->id;
+                        $emailStatus->studentId = $data->id;
+                        $emailStatus->notificationType = $emailNotifyType->id;
+                        $emailStatus->status = false;
+                        $emailStatus->save();
+                    }
+               }
             }
             $enrolmentModel->setStatus();
             $enrolmentModel->customer->updateCustomerBalance();

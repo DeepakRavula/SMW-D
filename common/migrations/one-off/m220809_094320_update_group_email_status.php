@@ -26,20 +26,15 @@ class m220809_094320_update_group_email_status extends Migration
                     ->all();
             $emailNotifyTypes = NotificationEmailType::find()->all();
             foreach($lessons as $lesson){
-              
-                     foreach($lesson->students as $data){
-                        foreach($emailNotifyTypes as $emailNotifyType) {
-                //     print_r('Student id '. $data->id);
-                // }
-                // print_r('Lesson ' . $lesson->id );
-                // print_r('Studnet id '.$lesson->student->id); die('come');
-                    $emailStatus = new GroupLessonEmailStatus();
-                    $emailStatus->lessonId = $lesson->id;
-                    $emailStatus->studentId = $lesson->student->id;
-                    $emailStatus->notificationType = $emailNotifyType->id;
-                    $emailStatus->status = false;
-                    $emailStatus->save();
-                     }
+             foreach($lesson->groupStudents as $student){
+                foreach($emailNotifyTypes as $emailNotifyType) {
+                        $emailStatus = new GroupLessonEmailStatus();
+                        $emailStatus->lessonId = $lesson->id;
+                        $emailStatus->studentId = $student->id;
+                        $emailStatus->notificationType = $emailNotifyType->id;
+                        $emailStatus->status = false;
+                        $emailStatus->save();
+                    }
                 }
             }
         }    
