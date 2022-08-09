@@ -24,6 +24,7 @@ use backend\models\lesson\discount\PaymentFrequencyLessonDiscount;
 use common\models\discount\LessonDiscount;
 use Carbon\Carbon;
 use common\models\AutoEmailStatus;
+use common\models\PrivateLessonEmailStatus;
 
 /**
  * This is the model class for table "lesson".
@@ -390,6 +391,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function getEmailStatus()
     {
         return $this->hasOne(AutoEmailStatus::className(), ['lessonId' => 'id']);
+    }
+
+    public function getPrivateEmailStatus()
+    {
+        return $this->hasOne(PrivateLessonEmailStatus::className(), ['lessonId' => 'id']);
     }
 
     public function getEnrolmentDiscount()

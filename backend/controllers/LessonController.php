@@ -42,6 +42,7 @@ use common\components\queue\LessonConfirm as QueueLessonConfirm;
 use common\components\queue\MakeLessonAsRoot;
 use common\models\NotificationEmailType;
 use common\models\AutoEmailStatus;
+use common\models\PrivateLessonEmailStatus;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -685,6 +686,7 @@ class LessonController extends BaseController
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->notCanceled()
                 ->all();
+
         } else {
             $lessons = Lesson::find()
                 ->notDeleted()
@@ -725,11 +727,11 @@ class LessonController extends BaseController
             $emailNotifyTypes = NotificationEmailType::find()->all();
 
                 foreach($emailNotifyTypes as $emailNotifyType) {
-                    $autoEmailStatus = new AutoEmailStatus();
-                    $autoEmailStatus->lessonId = $lesson->id;
-                    $autoEmailStatus->notificationType = $emailNotifyType->id;
-                    $autoEmailStatus->status = false;
-                    $autoEmailStatus->save();
+                    $emailStatus = new PrivateLessonEmailStatus();
+                    $emailStatus->lessonId = $lesson->id;
+                    $emailStatus->notificationType = $emailNotifyType->id;
+                    $emailStatus->status = false;
+                    $emailStatus->save();
                 }
         }
         if (!$model->enrolmentIds) {

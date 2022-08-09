@@ -14,6 +14,7 @@ use Yii;
 use common\models\Location;;
 use common\models\EmailObject;
 use common\models\EmailTemplate;
+use common\models\PrivateLessonEmailStatus;
 
 class EmailController extends Controller
 {
@@ -185,10 +186,19 @@ class EmailController extends Controller
 
     public function getPrivateNotify($privateLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentTime, $lessonTime, $emailTemplate){
         if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
-            $mailContent = $privateLessons->andWhere(['auto_email_status' => false])->rescheduled();
+            $mailContent = $privateLessons
+                    ->rescheduled()
+                    ->joinWith(['privateEmailStatus' => function($query){
+                        $query->andWhere(['private_lesson_email_status.status' => false])
+                        ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                    }]);
         } elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
-            $mailContent = $privateLessons->andWhere(['auto_email_status' => false])
-                    ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds]);
+            $mailContent = $privateLessons
+                    ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds])
+                    ->joinWith(['privateEmailStatus' => function($query){
+                        $query->andWhere(['private_lesson_email_status.status' => false])
+                        ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                    }]);
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
                         ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
@@ -204,14 +214,21 @@ class EmailController extends Controller
                         ->joinWith(['privateLesson' => function($query) {
                                 $query->andWhere(['>', 'private_lesson.balance', 0.00]);
                             }])
+                        ->joinWith(['privateEmailStatus' => function($query){
+                            $query->andWhere(['private_lesson_email_status.status' => false])
+                            ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                        }])
                         ->scheduled()
                         ->orderBy(['lesson.dueDate' => SORT_ASC]);
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
         } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
             $mailContent = $privateLessons
-                ->andWhere(['auto_email_status' => false])
                 ->scheduled()
-                ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds]);
+                ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds])
+                ->joinWith(['privateEmailStatus' => function($query){
+                    $query->andWhere(['private_lesson_email_status.status' => false])
+                    ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                }]);
         }
 
         $requiredLessons = $mailContent
@@ -235,11 +252,11 @@ class EmailController extends Controller
                 ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
             if ($sendMail->send()) {
                 foreach ($requiredLessons->all() as $data) {
-                    if($type == CustomerEmailNotification::OVERDUE_INVOICE){
-                        $data->updateAttributes(['overdue_status' => true]);
-                    } else {
-                        $data->updateAttributes(['auto_email_status' => true]);
-                    }
+                    $emailStatus = PrivateLessonEmailStatus::find()
+                                    ->andWhere(['lessonId'=> $data->id])
+                                    ->andWhere(['notificationType' => $type])
+                                    ->one();
+                    $emailStatus->updateAttributes(['status' => true]);
                 }
             }
             sleep(5);
