@@ -25,6 +25,7 @@ use common\models\discount\LessonDiscount;
 use Carbon\Carbon;
 use common\models\AutoEmailStatus;
 use common\models\PrivateLessonEmailStatus;
+use common\models\GroupLessonEmailStatus;
 
 /**
  * This is the model class for table "lesson".
@@ -376,6 +377,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId'])
                 ->via('enrolment');
     }
+
+    public function getGroupStudents()
+    {
+        return $this->hasMany(Student::className(), ['id' => 'studentId']);
+    }
     
     public function getDiscounts()
     {
@@ -396,6 +402,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPrivateEmailStatus()
     {
         return $this->hasOne(PrivateLessonEmailStatus::className(), ['lessonId' => 'id']);
+    }
+
+    public function getGroupEmailStatus()
+    {
+        return $this->hasOne(GroupLessonEmailStatus::className(), ['lessonId' => 'id']);
     }
 
     public function getEnrolmentDiscount()

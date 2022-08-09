@@ -184,7 +184,7 @@ class EmailController extends Controller
         return $message;
     }
 
-    public function getPrivateNotify($privateLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentTime, $lessonTime, $emailTemplate){
+    public function getPrivateNotify($privateLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentTime, $lessonTime, $emailTemplate, $mailIds){
         if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
             $mailContent = $privateLessons
                     ->rescheduled()
@@ -257,6 +257,92 @@ class EmailController extends Controller
                                     ->andWhere(['notificationType' => $type])
                                     ->one();
                     $emailStatus->updateAttributes(['status' => true]);
+                }
+            }
+            sleep(5);
+        }
+    }
+
+    public function getGroupNotify($groupLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentTime, $lessonTime, $emailTemplate, $mailIds){
+        if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
+            $mailContent = $groupLessons
+                    ->rescheduled()
+                    ->joinWith(['groupEmailStatus' => function($query){
+                        $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
+                        ->andWhere(['group_lesson_email_status.status' => false])
+                        ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                    }]);
+        } elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
+            $mailContent = $groupLessons
+                    ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds])
+                    ->joinWith(['groupEmailStatus' => function($query){
+                        $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
+                        ->andWhere(['group_lesson_email_status.status' => false])
+                        ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                    }]);
+        } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
+            $mailContent =  Lesson::find()
+                        ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                        ->andWhere(['overdue_status' => false])
+                        ->orderBy(['lesson.id' => SORT_ASC])
+                        ->notCanceled()
+                        ->notDeleted()
+                        ->customer($customerId)
+                        ->location($location->id)
+                        ->privateLessons()
+                        ->isConfirmed()
+                        ->regular()
+                        ->joinWith(['groupLesson' => function($query) {
+                                $query->andWhere(['>', 'group_lesson.balance', 0.00]);
+                            }])
+                        ->joinWith(['groupEmailStatus' => function($query){
+                            $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
+                            ->andWhere(['group_lesson_email_status.status' => false])
+                            ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                        }])
+                        ->scheduled()
+                        ->orderBy(['lesson.dueDate' => SORT_ASC]);
+            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
+        } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
+            $mailContent = $groupLessons
+                ->scheduled()
+                ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds])
+                ->joinWith(['groupEmailStatus' => function($query){
+                    $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
+                    ->andWhere(['group_lesson_email_status.status' => false])
+                    ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
+                }]);
+        }
+
+        $requiredLessons = $mailContent
+            ->andWhere(['AND', ['<=', 'lesson.date', $lessonTime], ['>', 'lesson.date', $currentTime]]);
+
+        if ($requiredLessons && $requiredLessons->count() != 0) {
+            $dataProvider = new ActiveDataProvider([
+                'query' => $requiredLessons,
+                'pagination' => false
+            ]);
+
+            $sendMail = Yii::$app->mailer->compose('/mail/auto-notify', [
+                'contents' => $dataProvider,
+                'message' => $message,
+                'type' => $type,
+                'emailTemplate' => $emailTemplate,
+            ])
+                ->setFrom($location->email)
+                ->setTo($mailIds)
+                ->setReplyTo($location->email)
+                ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
+            if ($sendMail->send()) {
+                foreach ($requiredLessons->all() as $lesson) {
+                    foreach($lesson->groupStudents as $data){
+                        $emailStatus = GroupLessonEmailStatus::find()
+                                ->andWhere(['lessonId' => $data->id])
+                                ->andWhere(['studentId' => $data->student->id])
+                                ->andWhere(['notificationType' => $type])
+                                ->one();
+                        $emailStatus->updateAttributes(['status' => true]);
+                    }
                 }
             }
             sleep(5);
