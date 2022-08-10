@@ -25,7 +25,6 @@ class EmailController extends Controller
         $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
         $locations = Location::find()->notDeleted()->all();
         foreach ($locations as $location) {
-
             $sendEmails = CustomerEmailNotification::find()->andWhere(['isChecked' => true])
                 ->groupBy('userId')->all();
 
@@ -51,11 +50,10 @@ class EmailController extends Controller
                         ->all();
                     foreach ($firstScheduledLesson as $record) {
                         $firstLessonCourseIds[] = $record->firstLesson->id;
-
                     }
 
                     $privateLessons = Lesson::find()
-                            ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                            ->andWhere(['>', 'lesson.date', $currentDateTime])
                             ->orderBy(['lesson.id' => SORT_ASC])
                             ->notCanceled()
                             ->notDeleted()
@@ -65,16 +63,16 @@ class EmailController extends Controller
                             ->regular()
                             ->privateLessons();
                     $groupLessons = Lesson::find()
-                        ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                        ->andWhere(['>', 'lesson.date', $currentDateTime])
                         ->orderBy(['lesson.id' => SORT_ASC])
                         ->notCanceled()
                         ->notDeleted()
                         ->customer($customerId)
-                        // ->location($location->id)
+                        ->location($location->id)
                         ->isConfirmed()
                         ->regular()
                         ->groupLessons();
-
+                        
                     $mailIds = ArrayHelper::map(UserEmail::find()
                         ->notDeleted()
                         ->joinWith('userContact')
@@ -87,7 +85,8 @@ class EmailController extends Controller
                     
                     if($privateLessons && $privateLessons->count() != 0){
                         $this->getPrivateNotify($privateLessons, $firstLessonCourseIds, $type, $message,$customerId, $location, $currentDateTime, $lessonDateTime, $emailTemplate, $mailIds);
-                    } elseif($groupLessons &&  $groupLessons->count() != 0 ){
+                    } 
+                    if($groupLessons &&  $groupLessons->count() != 0 ){
                         $this->getGroupNotify($groupLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentDateTime,$lessonDateTime, $emailTemplate, $mailIds );
                     }
                 }
@@ -218,7 +217,7 @@ class EmailController extends Controller
                     }]);
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
-                        ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                        ->andWhere(['>', 'lesson.date', $currentTime])
                         ->andWhere(['overdue_status' => false])
                         ->orderBy(['lesson.id' => SORT_ASC])
                         ->notCanceled()
@@ -236,7 +235,6 @@ class EmailController extends Controller
                             ->andWhere(['group_lesson_email_status.status' => false])
                             ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
                         }])
-                        ->scheduled()
                         ->orderBy(['lesson.dueDate' => SORT_ASC]);
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
         } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
