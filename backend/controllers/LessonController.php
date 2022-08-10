@@ -318,6 +318,14 @@ class LessonController extends BaseController
                     $lessonDate = new \DateTime($model->date);
                     $model->date = $lessonDate->format('Y-m-d H:i:s');
                     if ($model->save()) {
+                        $emailNotifyTypes = NotificationEmailType::find()->all();
+                        foreach($emailNotifyTypes as $emailNotifyType) {
+                            $emailStatus = new PrivateLessonEmailStatus();
+                            $emailStatus->lessonId = $model->id;
+                            $emailStatus->notificationType = $emailNotifyType->id;
+                            $emailStatus->status = false;
+                            $emailStatus->save();
+                        }
                         $response = [
                             'status' => true,
                             'url' => Url::to(['lesson/view', 'id' => $model->id])
