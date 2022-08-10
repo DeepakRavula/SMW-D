@@ -131,7 +131,6 @@ class EmailController extends Controller
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
                         ->andWhere(['>', 'lesson.date', $currentTime])
-                        ->andWhere(['overdue_status' => false])
                         ->orderBy(['lesson.id' => SORT_ASC])
                         ->notCanceled()
                         ->notDeleted()
@@ -207,6 +206,7 @@ class EmailController extends Controller
                         ->andWhere(['group_lesson_email_status.status' => false])
                         ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
                     }]);
+                  
         } elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
             $mailContent = $groupLessons
                     ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds])
@@ -218,13 +218,12 @@ class EmailController extends Controller
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
                         ->andWhere(['>', 'lesson.date', $currentTime])
-                        ->andWhere(['overdue_status' => false])
                         ->orderBy(['lesson.id' => SORT_ASC])
                         ->notCanceled()
                         ->notDeleted()
                         ->customer($customerId)
                         ->location($location->id)
-                        ->privateLessons()
+                        ->groupLessons()
                         ->isConfirmed()
                         ->regular()
                         ->joinWith(['groupLesson' => function($query) {

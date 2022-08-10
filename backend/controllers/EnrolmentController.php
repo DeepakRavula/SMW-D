@@ -356,24 +356,19 @@ class EnrolmentController extends BaseController
                     ->andWhere(['courseId' => $extraCourse->id])
                     ->all();
                 foreach ($lessons as $lesson) {
-                    print_r($lesson->student->id); die('come');
                     $groupLesson = new GroupLesson();
                     $groupLesson->lessonId = $lesson->id;
                     $groupLesson->enrolmentId = $enrolment->id;
                     $groupLesson->dueDate = (new \DateTime())->format('Y-m-d');
                     $groupLesson->save();
-                
-                //    foreach($lesson->groupStudents as $data){
-                        foreach ($emailNotifyTypes as $emailNotifyType) {
-                            $emailStatus = new GroupLessonEmailStatus();
-                            $emailStatus->lessonId = $lesson->id;
-                            $emailStatus->studentId = $enrolment->student->id;
-                            $emailStatus->notificationType = $emailNotifyType->id;
-                            $emailStatus->status = false;
-                            $emailStatus->save();
-                        }
-                //    }
-        
+                    foreach ($emailNotifyTypes as $emailNotifyType) {
+                        $emailStatus = new GroupLessonEmailStatus();
+                        $emailStatus->lessonId = $lesson->id;
+                        $emailStatus->studentId = $enrolmentModel->studentId;
+                        $emailStatus->notificationType = $emailNotifyType->id;
+                        $emailStatus->status = false;
+                        $emailStatus->save();
+                    }
                 }
             }
         }
@@ -390,16 +385,14 @@ class EnrolmentController extends BaseController
                 $groupLesson->enrolmentId = $enrolmentId;
                 $groupLesson->dueDate = (new \DateTime($enrolmentModel->createdAt))->format('Y-m-d');
                 $groupLesson->save();
-                foreach($lesson->groupStudents as $data){
-                    foreach ($emailNotifyTypes as $emailNotifyType) {
-                        $emailStatus = new GroupLessonEmailStatus();
-                        $emailStatus->lessonId = $lesson->id;
-                        $emailStatus->studentId = $data->id;
-                        $emailStatus->notificationType = $emailNotifyType->id;
-                        $emailStatus->status = false;
-                        $emailStatus->save();
-                    }
-               }
+                foreach ($emailNotifyTypes as $emailNotifyType) {
+                    $emailStatus = new GroupLessonEmailStatus();
+                    $emailStatus->lessonId = $lesson->id;
+                    $emailStatus->studentId = $enrolmentModel->studentId;
+                    $emailStatus->notificationType = $emailNotifyType->id;
+                    $emailStatus->status = false;
+                    $emailStatus->save();
+                }
             }
             $enrolmentModel->setStatus();
             $enrolmentModel->customer->updateCustomerBalance();
