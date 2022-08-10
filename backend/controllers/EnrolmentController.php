@@ -49,6 +49,7 @@ use common\models\TeacherAvailability;
 use common\models\TeacherUnavailability;
 use common\models\NotificationEmailType;
 use common\models\CustomerEmailNotification;
+use common\models\GroupLessonEmailStatus;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -362,7 +363,7 @@ class EnrolmentController extends BaseController
                     $groupLesson->save();
                    foreach($lesson->groupStudents as $data){
                         foreach ($emailNotifyTypes as $emailNotifyType) {
-                            $emailStatus = new AutoEmailStatus();
+                            $emailStatus = new GroupLessonEmailStatus();
                             $emailStatus->lessonId = $lesson->id;
                             $emailStatus->studentId = $data->id;
                             $emailStatus->notificationType = $emailNotifyType->id;
@@ -388,7 +389,7 @@ class EnrolmentController extends BaseController
                 $groupLesson->save();
                 foreach($lesson->groupStudents as $data){
                     foreach ($emailNotifyTypes as $emailNotifyType) {
-                        $emailStatus = new AutoEmailStatus();
+                        $emailStatus = new GroupLessonEmailStatus();
                         $emailStatus->lessonId = $lesson->id;
                         $emailStatus->studentId = $data->id;
                         $emailStatus->notificationType = $emailNotifyType->id;
