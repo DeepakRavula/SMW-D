@@ -15,6 +15,7 @@ use common\models\Location;;
 use common\models\EmailObject;
 use common\models\EmailTemplate;
 use common\models\PrivateLessonEmailStatus;
+use common\models\GroupLessonEmailStatus;
 
 class EmailController extends Controller
 {
@@ -69,7 +70,7 @@ class EmailController extends Controller
                         ->notCanceled()
                         ->notDeleted()
                         ->customer($customerId)
-                        ->location($location->id)
+                        // ->location($location->id)
                         ->isConfirmed()
                         ->regular()
                         ->groupLessons();
@@ -86,7 +87,7 @@ class EmailController extends Controller
                     
                     if($privateLessons && $privateLessons->count() != 0){
                         $this->getPrivateNotify($privateLessons, $firstLessonCourseIds, $type, $message,$customerId, $location, $currentDateTime, $lessonDateTime, $emailTemplate, $mailIds);
-                    } elseif($groupLessons->count() != 0 ){
+                    } elseif($groupLessons &&  $groupLessons->count() != 0 ){
                         $this->getGroupNotify($groupLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentDateTime,$lessonDateTime, $emailTemplate, $mailIds );
                     }
 
@@ -264,19 +265,26 @@ class EmailController extends Controller
     }
 
     public function getGroupNotify($groupLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentTime, $lessonTime, $emailTemplate, $mailIds){
+       $groupStudentsId = [];
+       $groupLessonData = $groupLessons->all();
+       foreach($groupLessonData as $group){
+            foreach($group->groupStudents as $student){
+                $groupStudentsId[] = $student->id;
+            }
+       }
         if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
             $mailContent = $groupLessons
                     ->rescheduled()
-                    ->joinWith(['groupEmailStatus' => function($query){
-                        $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
+                    ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId) {
+                        $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
                         ->andWhere(['group_lesson_email_status.status' => false])
                         ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
                     }]);
         } elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
             $mailContent = $groupLessons
                     ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds])
-                    ->joinWith(['groupEmailStatus' => function($query){
-                        $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
+                    ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
+                        $query->andWhere(['IN', 'group_lesson_email_status.studentId', $groupStudentsId])
                         ->andWhere(['group_lesson_email_status.status' => false])
                         ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
                     }]);
@@ -295,8 +303,8 @@ class EmailController extends Controller
                         ->joinWith(['groupLesson' => function($query) {
                                 $query->andWhere(['>', 'group_lesson.balance', 0.00]);
                             }])
-                        ->joinWith(['groupEmailStatus' => function($query){
-                            $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
+                        ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
+                            $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
                             ->andWhere(['group_lesson_email_status.status' => false])
                             ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
                         }])
@@ -307,8 +315,8 @@ class EmailController extends Controller
             $mailContent = $groupLessons
                 ->scheduled()
                 ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds])
-                ->joinWith(['groupEmailStatus' => function($query){
-                    $query->andWhere(['IN','group_lesson_email_status.studentId', $this->groupStudents->id])
+                ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
+                    $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
                     ->andWhere(['group_lesson_email_status.status' => false])
                     ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::FUTURE_LESSON]);
                 }]);
