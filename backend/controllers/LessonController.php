@@ -43,6 +43,7 @@ use common\components\queue\MakeLessonAsRoot;
 use common\models\NotificationEmailType;
 use common\models\AutoEmailStatus;
 use common\models\PrivateLessonEmailStatus;
+use common\models\GroupLessonEmailStatus;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -319,13 +320,27 @@ class LessonController extends BaseController
                     $model->date = $lessonDate->format('Y-m-d H:i:s');
                     if ($model->save()) {
                         $emailNotifyTypes = NotificationEmailType::find()->all();
-                        foreach($emailNotifyTypes as $emailNotifyType) {
-                            $emailStatus = new PrivateLessonEmailStatus();
-                            $emailStatus->lessonId = $model->id;
-                            $emailStatus->notificationType = $emailNotifyType->id;
-                            $emailStatus->status = false;
-                            $emailStatus->save();
-                        }
+                        if($model->isPrivate()){
+                            foreach($emailNotifyTypes as $emailNotifyType) {
+                                $emailStatus = new PrivateLessonEmailStatus();
+                                $emailStatus->lessonId = $model->id;
+                                $emailStatus->notificationType = $emailNotifyType->id;
+                                $emailStatus->status = false;
+                                $emailStatus->save();
+                            }
+                        } else {
+                            foreach($model->groupStudents as $student){
+                                foreach($emailNotifyTypes as $emailNotifyType) {
+                                    $emailStatus = new GroupLessonEmailStatus();
+                                    $emailStatus->lessonId = $model->id;
+                                    $emailStatus->studentId = $student->id;
+                                    $emailStatus->notificationType = $emailNotifyType->id;
+                                    $emailStatus->status = false;
+                                    $emailStatus->save();
+                                }
+                            }
+                        } 
+                        
                         $response = [
                             'status' => true,
                             'url' => Url::to(['lesson/view', 'id' => $model->id])
