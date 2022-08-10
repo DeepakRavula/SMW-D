@@ -131,7 +131,7 @@ class EmailController extends Controller
                     }]);
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
-                        ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                        ->andWhere(['>', 'lesson.date', $currentTime])
                         ->andWhere(['overdue_status' => false])
                         ->orderBy(['lesson.id' => SORT_ASC])
                         ->notCanceled()
@@ -148,7 +148,6 @@ class EmailController extends Controller
                             $query->andWhere(['private_lesson_email_status.status' => false])
                             ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
                         }])
-                        ->scheduled()
                         ->orderBy(['lesson.dueDate' => SORT_ASC]);
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
         } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
