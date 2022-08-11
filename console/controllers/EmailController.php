@@ -213,9 +213,13 @@ class EmailController extends Controller
                     ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds])
                     ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
                         $query->andWhere(['IN', 'group_lesson_email_status.studentId', $groupStudentsId])
-                        ->andWhere(['group_lesson_email_status.status' => false])
-                        ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
+                        ->orWhere(['group_lesson_email_status.status' => false])
+                        ->orWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
                     }]);
+                    // print_r($firstLessonCourseIds);
+                    // foreach($mailContent->all() as $data){
+                    //     print_r($data->id);
+                    // }die('come');
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
                         ->andWhere(['>', 'lesson.date', $currentTime])
@@ -256,29 +260,36 @@ class EmailController extends Controller
                 'query' => $requiredLessons,
                 'pagination' => false
             ]);
-
-            $sendMail = Yii::$app->mailer->compose('/mail/auto-notify', [
-                'contents' => $dataProvider,
-                'message' => $message,
-                'type' => $type,
-                'emailTemplate' => $emailTemplate,
-            ])
-                ->setFrom($location->email)
-                ->setTo($mailIds)
-                ->setReplyTo($location->email)
-                ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
-            if ($sendMail->send()) {
-                foreach ($requiredLessons->all() as $lesson) {
-                    foreach($lesson->groupStudents as $data){
-                        $emailStatus = GroupLessonEmailStatus::find()
-                                ->andWhere(['lessonId' => $lesson->id])
-                                ->andWhere(['studentId' => $data->id])
-                                ->andWhere(['notificationType' => $type])
-                                ->one();
-                        $emailStatus->updateAttributes(['status' => true]);
-                    }
+            foreach ($requiredLessons->all() as $lesson) {
+                foreach($lesson->groupStudents as $student){
+                    print_r('Student id '.$student->id);
+                // $sendMail = Yii::$app->mailer->compose('/mail/group-notify', [
+                //     'contents' => $dataProvider,
+                //     'message' => $message,
+                //     'type' => $type,
+                //     'emailTemplate' => $emailTemplate,
+                //     'date' => $lesson->date,
+                //     'courseName' => $lesson->course->program->name ?? null,
+                //     'teacherName' => $lesson->teacher->publicIdentity ?? null,
+                //     'studentName' => $data->first_name . $data->last_name ?? null,
+                //     'lessonId' => $lesson->id,
+                // ])
+                //     ->setFrom($location->email)
+                //     ->setTo($mailIds)
+                //     ->setReplyTo($location->email)
+                //     ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
+                // if ($sendMail->send()) {
+                
+                   
+                //         $emailStatus = GroupLessonEmailStatus::find()
+                //                 ->andWhere(['lessonId' => $lesson->id])
+                //                 ->andWhere(['studentId' => $data->id])
+                //                 ->andWhere(['notificationType' => $type])
+                //                 ->one();
+                //         $emailStatus->updateAttributes(['status' => true]);
+                //     }
                 }
-            }
+            } die('come');
             sleep(5);
         }
     }
