@@ -124,6 +124,7 @@ class EmailController extends Controller
         } elseif ($type == CustomerEmailNotification::FIRST_SCHEDULE_LESSON) {
             $mailContent = $privateLessons
                     ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds])
+                    ->scheduled()
                     ->joinWith(['privateEmailStatus' => function($query){
                         $query->andWhere(['private_lesson_email_status.status' => false])
                         ->andWhere(['private_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
