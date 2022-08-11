@@ -1,22 +1,19 @@
 <?php
 
 use yii\db\Migration;
+use common\models\PrivateLessonEmailStatus;
 
 /**
- * Class m220728_074712_set_auto_email_status
+ * Class m220811_101220_delete_email_records
  */
-class m220728_074712_set_auto_email_status extends Migration
+class m220811_101220_delete_email_records extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->addColumn(
-            'lesson',
-            'auto_email_status',
-            $this->boolean()->notNull()->after('status')
-        );
+        PrivateLessonEmailStatus::deleteAll();
     }
 
     /**
@@ -24,7 +21,7 @@ class m220728_074712_set_auto_email_status extends Migration
      */
     public function safeDown()
     {
-        echo "m220728_074712_set_auto_email_status cannot be reverted.\n";
+        echo "m220811_101220_delete_email_records cannot be reverted.\n";
 
         return false;
     }
@@ -38,7 +35,7 @@ class m220728_074712_set_auto_email_status extends Migration
 
     public function down()
     {
-        echo "m220728_074712_set_auto_email_status cannot be reverted.\n";
+        echo "m220811_101220_delete_email_records cannot be reverted.\n";
 
         return false;
     }
