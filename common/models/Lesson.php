@@ -115,7 +115,6 @@ class Lesson extends \yii\db\ActiveRecord
     public $paymentAmount;
     public $userId;
     public $isOnline;
-    public $groupStudentId;
 
     /**
      * {@inheritdoc}
