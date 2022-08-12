@@ -21,22 +21,26 @@ class m220809_071952_update_private_email_status extends Migration
 
         foreach($locations as $location) {
             $lessons = Lesson::find()
-            ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
-            ->notCanceled()
-            ->notDeleted()
-            ->isConfirmed()
-            ->regular()
-            ->location($location->id)
-            ->privateLessons()
-            ->all();
+                    ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                    ->notCanceled()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->regular()
+                    ->location($location->id)
+                    ->privateLessons()
+                    ->all();
             $emailNotifyTypes = NotificationEmailType::find()->all();
+            
             foreach($lessons as $lesson){
-                foreach($emailNotifyTypes as $emailNotifyType) {
-                    $emailStatus = new PrivateLessonEmailStatus();
-                    $emailStatus->lessonId = $lesson->id;
-                    $emailStatus->notificationType = $emailNotifyType->id;
-                    $emailStatus->status = false;
-                    $emailStatus->save();
+                $privateLessonEmail = PrivateLessonEmailStatus::find()->andWhere(['lessonId' => $lesson->id])->count();
+                if($privateLessonEmail != 0 ){
+                    foreach($emailNotifyTypes as $emailNotifyType) {
+                        $emailStatus = new PrivateLessonEmailStatus();
+                        $emailStatus->lessonId = $lesson->id;
+                        $emailStatus->notificationType = $emailNotifyType->id;
+                        $emailStatus->status = false;
+                        $emailStatus->save();
+                    }
                 }
             }
         }    
