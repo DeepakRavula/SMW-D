@@ -214,8 +214,8 @@ class EmailController extends Controller
                     ->andWhere(['IN', 'lesson.id', $firstLessonCourseIds])
                     ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
                         $query->andWhere(['IN', 'group_lesson_email_status.studentId', $groupStudentsId])
-                        ->orWhere(['group_lesson_email_status.status' => false])
-                        ->orWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
+                        ->andWhere(['group_lesson_email_status.status' => false])
+                        ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
                     }]);
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
