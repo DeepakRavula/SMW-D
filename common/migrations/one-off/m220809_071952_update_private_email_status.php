@@ -16,7 +16,8 @@ class m220809_071952_update_private_email_status extends Migration
      */
     public function safeUp()
     {
-        $locations = Location::find()->all();
+        $locationIds = [1, 4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+        $locations = Location::find()->andWhere(['id' => $locationIds])->all();
 
         foreach($locations as $location) {
             $lessons = Lesson::find()

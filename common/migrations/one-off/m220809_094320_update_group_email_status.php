@@ -16,11 +16,16 @@ class m220809_094320_update_group_email_status extends Migration
      */
     public function safeUp()
     {
-        $locations = Location::find()->all();
+        $locationIds = [1, 4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+        $locations = Location::find()->andWhere(['id' => $locationIds])->all();
 
         foreach($locations as $location) {
             $lessons = Lesson::find()
                     ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
+                    ->notCanceled()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->regular()
                     ->location($location->id)
                     ->groupLessons()
                     ->all();
