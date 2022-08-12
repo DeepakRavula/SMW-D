@@ -31,14 +31,17 @@ class m220809_094320_update_group_email_status extends Migration
                     ->all();
             $emailNotifyTypes = NotificationEmailType::find()->all();
             foreach($lessons as $lesson){
-             foreach($lesson->groupStudents as $student){
-                foreach($emailNotifyTypes as $emailNotifyType) {
-                        $emailStatus = new GroupLessonEmailStatus();
-                        $emailStatus->lessonId = $lesson->id;
-                        $emailStatus->studentId = $student->id;
-                        $emailStatus->notificationType = $emailNotifyType->id;
-                        $emailStatus->status = false;
-                        $emailStatus->save();
+                foreach($lesson->groupStudents as $student){
+                    $groupLessonEmail = GroupLessonEmailStatus::find()->andWhere(['studentId' => $student->id])->count();
+                    if($groupLessonEmail != 0){
+                        foreach($emailNotifyTypes as $emailNotifyType) {
+                            $emailStatus = new GroupLessonEmailStatus();
+                            $emailStatus->lessonId = $lesson->id;
+                            $emailStatus->studentId = $student->id;
+                            $emailStatus->notificationType = $emailNotifyType->id;
+                            $emailStatus->status = false;
+                            $emailStatus->save();
+                        }
                     }
                 }
             }
