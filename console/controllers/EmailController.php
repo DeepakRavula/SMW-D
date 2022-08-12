@@ -258,30 +258,9 @@ class EmailController extends Controller
                 'pagination' => false
             ]);
             foreach ($requiredLessons->all() as $lesson) {
-                $lessonData = $requiredLessons->andWhere(['group_lesson_email_status.lessonId' => $lesson->id]);
-                if($lessonData){
-                
-                
-                $id = $lesson->id;
-                $groupLessonStudents = Student::find()
-                    ->notDeleted()
-                    ->joinWith(['enrolments' => function ($query) use ($id) {
-                        $query->joinWith(['course' => function ($query) use ($id) {
-                            $query->joinWith(['program' => function ($query) use ($id) {
-                                $query->group();
-                            }]);
-                            $query->joinWith(['lessons' => function ($query) use ($id) {
-                                $query->andWhere(['lesson.id' => $id]);
-                            }])
-                                ->confirmed()
-                                ->notDeleted();
-                        }])
-                            ->notDeleted()
-                            ->isConfirmed();
-                    }])
-                    ->location($location->id)
-                    ->all();
-            
+            $groupLessonStudents = Student::find()
+                ->notDeleted()
+                ->groupCourseEnrolled($lesson->enrolment->course->id)->all();
                 foreach($groupLessonStudents as $student){
                 $sendMail = Yii::$app->mailer->compose('/mail/group-notify', [
                     'contents' => $dataProvider,
@@ -307,7 +286,6 @@ class EmailController extends Controller
                         $emailStatus->updateAttributes(['status' => true]);
                     }
                 }
-            }
             }
             sleep(5);
         }
