@@ -33,7 +33,7 @@ class m220809_094320_update_group_email_status extends Migration
             foreach($lessons as $lesson){
                 foreach($lesson->groupStudents as $student){
                     $groupLessonEmail = GroupLessonEmailStatus::find()->andWhere(['studentId' => $student->id])->count();
-                    if($groupLessonEmail != 0){
+                    if($groupLessonEmail == 0){
                         foreach($emailNotifyTypes as $emailNotifyType) {
                             $emailStatus = new GroupLessonEmailStatus();
                             $emailStatus->lessonId = $lesson->id;
