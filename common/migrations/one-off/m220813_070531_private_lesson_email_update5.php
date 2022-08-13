@@ -7,16 +7,16 @@ use common\models\NotificationEmailType;
 use common\models\PrivateLessonEmailStatus;
 
 /**
- * Class m220809_071952_update_private_email_status
+ * Class m220813_070531_private_lesson_email_update5
  */
-class m220809_071952_update_private_email_status extends Migration
+class m220813_070531_private_lesson_email_update5 extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $locationIds = [1, 4, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+        $locationIds = [18, 19, 21, 22];
         $locations = Location::find()->andWhere(['id'=> $locationIds])->all();
 
         foreach($locations as $location) {
@@ -33,7 +33,7 @@ class m220809_071952_update_private_email_status extends Migration
             
             foreach($lessons as $lesson){
                 $privateLessonEmail = PrivateLessonEmailStatus::find()->andWhere(['lessonId' => $lesson->id])->count();
-                if($privateLessonEmail != 0 ){
+                if($privateLessonEmail == 0 ){
                     foreach($emailNotifyTypes as $emailNotifyType) {
                         $emailStatus = new PrivateLessonEmailStatus();
                         $emailStatus->lessonId = $lesson->id;
@@ -43,7 +43,7 @@ class m220809_071952_update_private_email_status extends Migration
                     }
                 }
             }
-        }    
+        }
     }
 
     /**
@@ -51,7 +51,7 @@ class m220809_071952_update_private_email_status extends Migration
      */
     public function safeDown()
     {
-        echo "m220809_071952_update_private_email_status cannot be reverted.\n";
+        echo "m220813_070531_private_lesson_email_update5 cannot be reverted.\n";
 
         return false;
     }
@@ -65,7 +65,7 @@ class m220809_071952_update_private_email_status extends Migration
 
     public function down()
     {
-        echo "m220809_071952_update_private_email_status cannot be reverted.\n";
+        echo "m220813_070531_private_lesson_email_update5 cannot be reverted.\n";
 
         return false;
     }
