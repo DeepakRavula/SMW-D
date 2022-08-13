@@ -28,7 +28,7 @@ class m220813_050606_northbrampton_private_lesson extends Migration
 
         foreach($lessons as $lesson){
             $privateLessonEmail = PrivateLessonEmailStatus::find()->andWhere(['lessonId' => $lesson->id])->count();
-            if($privateLessonEmail != 0 ){
+            if($privateLessonEmail == 0 ){
                 foreach($emailNotifyTypes as $emailNotifyType) {
                     $emailStatus = new PrivateLessonEmailStatus();
                     $emailStatus->lessonId = $lesson->id;

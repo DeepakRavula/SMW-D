@@ -33,7 +33,7 @@ class m220809_071952_update_private_email_status extends Migration
             
             foreach($lessons as $lesson){
                 $privateLessonEmail = PrivateLessonEmailStatus::find()->andWhere(['lessonId' => $lesson->id])->count();
-                if($privateLessonEmail != 0 ){
+                if($privateLessonEmail == 0 ){
                     foreach($emailNotifyTypes as $emailNotifyType) {
                         $emailStatus = new PrivateLessonEmailStatus();
                         $emailStatus->lessonId = $lesson->id;
