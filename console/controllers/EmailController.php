@@ -206,7 +206,7 @@ class EmailController extends Controller
                     ->rescheduled()
                     ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId) {
                         $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
-                        ->andWhere(['group_lesson_email_statutatus' => false])
+                        ->andWhere(['group_lesson_email_status.status' => false])
                         ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
                     }]);
                   
