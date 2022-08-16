@@ -7,9 +7,9 @@ use common\models\NotificationEmailType;
 use common\models\PrivateLessonEmailStatus;
 
 /**
- * Class m220813_070525_private_lesson_email_update4
+ * Class m220816_060242_private_lesson_email_update6
  */
-class m220813_070525_private_lesson_email_update4 extends Migration
+class m220816_060242_private_lesson_email_update6 extends Migration
 {
     /**
      * {@inheritdoc}
@@ -18,7 +18,7 @@ class m220813_070525_private_lesson_email_update4 extends Migration
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $locationIds = [14, 18];
+        $locationIds = [21, 22];
         $locations = Location::find()->andWhere(['id'=> $locationIds])->all();
 
         foreach($locations as $location) {
@@ -53,7 +53,7 @@ class m220813_070525_private_lesson_email_update4 extends Migration
      */
     public function safeDown()
     {
-        echo "m220813_070525_private_lesson_email_update4 cannot be reverted.\n";
+        echo "m220816_060242_private_lesson_email_update6 cannot be reverted.\n";
 
         return false;
     }
@@ -67,7 +67,7 @@ class m220813_070525_private_lesson_email_update4 extends Migration
 
     public function down()
     {
-        echo "m220813_070525_private_lesson_email_update4 cannot be reverted.\n";
+        echo "m220816_060242_private_lesson_email_update6 cannot be reverted.\n";
 
         return false;
     }

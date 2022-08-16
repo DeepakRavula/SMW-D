@@ -16,7 +16,8 @@ class m220813_070438_private_lesson_email_update2 extends Migration
      */
     public function safeUp()
     {
-      
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationId = 16;
         $lessons = Lesson::find()
                 ->andWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])

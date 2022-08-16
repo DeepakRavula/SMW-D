@@ -16,7 +16,9 @@ class m220813_070502_private_lesson_email_update3 extends Migration
      */
     public function safeUp()
     {
-        $locationIds = [4,20,22];
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationIds = [1,15,17];
         $locations = Location::find()->andWhere(['id'=> $locationIds])->all();
 
         foreach($locations as $location) {
