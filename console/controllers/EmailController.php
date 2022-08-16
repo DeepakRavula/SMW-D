@@ -14,7 +14,7 @@ use Yii;
 use common\models\Location;;
 use common\models\EmailObject;
 use common\models\EmailTemplate;
-use common\models\Student;;
+use common\models\Student;
 use common\models\PrivateLessonEmailStatus;
 use common\models\GroupLessonEmailStatus;
 
@@ -54,7 +54,7 @@ class EmailController extends Controller
                     }
 
                     $privateLessons = Lesson::find()
-                            ->andWhere(['>', 'lesson.date', $currentDateTime])
+                            ->andWhere(['AND', ['<=', 'lesson.date', $lessonDateTime], ['>', 'lesson.date', $currentDateTime]])
                             ->orderBy(['lesson.id' => SORT_ASC])
                             ->notCanceled()
                             ->notDeleted()
@@ -64,7 +64,7 @@ class EmailController extends Controller
                             ->regular()
                             ->privateLessons();
                     $groupLessons = Lesson::find()
-                        ->andWhere(['>', 'lesson.date', $currentDateTime])
+                        ->andWhere(['AND', ['<=', 'lesson.date', $lessonDateTime], ['>', 'lesson.date', $currentDateTime]])
                         ->orderBy(['lesson.id' => SORT_ASC])
                         ->notCanceled()
                         ->notDeleted()
@@ -114,7 +114,7 @@ class EmailController extends Controller
         return $message;
     }
 
-    public function getPrivateNotify($privateLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentTime, $lessonTime, $emailTemplate, $mailIds){
+    public function getPrivateNotify($privateLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentDateTime, $lessonDateTime, $emailTemplate, $mailIds){
         if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
             $mailContent = $privateLessons
                     ->rescheduled()
@@ -132,7 +132,7 @@ class EmailController extends Controller
                     }]);
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
-                        ->andWhere(['>', 'lesson.date', $currentTime])
+                        ->andWhere(['>', 'lesson.date', $currentDateTime])
                         ->orderBy(['lesson.id' => SORT_ASC])
                         ->notCanceled()
                         ->notDeleted()
@@ -160,8 +160,7 @@ class EmailController extends Controller
                 }]);
         }
 
-        $requiredLessons = $mailContent
-            ->andWhere(['AND', ['<=', 'lesson.date', $lessonTime], ['>', 'lesson.date', $currentTime]]);
+        $requiredLessons = $mailContent;
 
         if ($requiredLessons && $requiredLessons->count() != 0) {
             $dataProvider = new ActiveDataProvider([
@@ -192,7 +191,7 @@ class EmailController extends Controller
         }
     }
 
-    public function getGroupNotify($groupLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentTime, $lessonTime, $emailTemplate, $mailIds){
+    public function getGroupNotify($groupLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentDateTime, $lessonDateTime, $emailTemplate, $mailIds){
        $groupStudentsId = [];
        $groupLessonData = $groupLessons->all();
        foreach($groupLessonData as $group){
@@ -219,7 +218,7 @@ class EmailController extends Controller
                     }]);
         } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
             $mailContent =  Lesson::find()
-                        ->andWhere(['>', 'lesson.date', $currentTime])
+                        ->andWhere(['>', 'lesson.date', $currentDateTime])
                         ->orderBy(['lesson.id' => SORT_ASC])
                         ->notCanceled()
                         ->notDeleted()
@@ -250,7 +249,7 @@ class EmailController extends Controller
         }
 
         $requiredLessons = $mailContent
-            ->andWhere(['AND', ['<=', 'lesson.date', $lessonTime], ['>', 'lesson.date', $currentTime]]);
+            ->andWhere(['AND', ['<=', 'lesson.date', $lessonDateTime], ['>', 'lesson.date', $currentDateTime]]);
 
         if ($requiredLessons && $requiredLessons->count() != 0) {
             $dataProvider = new ActiveDataProvider([
