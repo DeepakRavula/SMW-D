@@ -21,31 +21,18 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
 </head>
 <body>
 <?php
-    //  foreach($contents->query->all() as $data) { 
-        $date = Yii::$app->formatter->asDate($date);
+        $lessonDate = Yii::$app->formatter->asDate($date);
         $lessonTime = (new \DateTime($date))->format('H:i:s');
-        $startDate = !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
-        // $courseName = $data->course->program->name ?? null;
-        // $teacherName = $data->teacher->publicIdentity ?? null;
-
-        // if($data->course->isPrivate()){ 
-        //     $studentName = $data->course->enrolment->student->fullName ?? null;
-        //     if($type == CustomerEmailNotification::OVERDUE_INVOICE){
-        //         $amount = Yii::$app->formatter->asCurrency(round($data->privateLesson->total ?? 0, 2));
-        //         $balance = Yii::$app->formatter->asBalance(round($data->privateLesson->balance ?? 0, 2));
-        //     }
-        // } else {
+        $startDate = !empty($lessonDate) ? $lessonDate.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
             $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $lessonId])->all();
             foreach($groupLesson as $lesson) {
                 $total = $lesson->total;
                 $remainingBalance = $lesson->balance; 
             }
-            // $studentName = $data->enrolment->student->fullName ?? null;
             if($type == CustomerEmailNotification::OVERDUE_INVOICE){
                 $amount = Yii::$app->formatter->asCurrency(round($total, 2));
                 $balance = Yii::$app->formatter->asBalance(round($remainingBalance ?? 0, 2));
             }
-        // } 
     ?>
     <h3> <?= $emailTemplate->header;?> <br> 
     <?= 'Hello ' . $studentName . ' please check the following ' . $message . ' details.'; ?> </h3>
