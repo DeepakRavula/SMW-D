@@ -329,7 +329,10 @@ class LessonController extends BaseController
                                 $emailStatus->save();
                             }
                         } else {
-                            foreach($model->groupStudents as $student){
+                            $groupStudents = Student::find()
+                                    ->notDeleted()
+                                    ->groupCourseEnrolled($model->enrolment->course->id)->all();
+                            foreach($groupStudents as $student){
                                 foreach($emailNotifyTypes as $emailNotifyType) {
                                     $emailStatus = new GroupLessonEmailStatus();
                                     $emailStatus->lessonId = $model->id;
