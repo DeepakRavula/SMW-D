@@ -45,7 +45,10 @@ class EmailController extends Controller
         
                     $firstScheduledLesson = Enrolment::find()
                         ->customer($customerId)
-                        ->joinWith(['firstLesson'])
+                        ->joinWith(['firstLesson' => function($query) use($currentDateTime) {
+                            $query->andWhere(['>', 'lesson.date', $currentDateTime ])
+                            ->notCompleted();
+                        }])
                         ->notDeleted()
                         ->isConfirmed()
                         ->all();
