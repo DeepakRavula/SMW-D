@@ -197,8 +197,12 @@ class EmailController extends Controller
        $groupStudentsId = [];
        $groupLessonData = $groupLessons->all();
        foreach($groupLessonData as $group){
-            foreach($group->groupStudents as $student){
-                $groupStudentsId[] = $student->id;
+            $groupStudents = Student::find()
+            ->notDeleted()
+            ->groupCourseEnrolled($group->enrolment->course->id)->all();
+            foreach($groupStudents as $student) {
+            $groupStudentsId [] = $student->id;
+                
             }
        }
         if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
@@ -206,7 +210,7 @@ class EmailController extends Controller
                     ->rescheduled()
                     ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId) {
                         $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
-                        ->andWhere(['group_lesson_email_statutatus' => false])
+                        ->andWhere(['group_lesson_email_status.status' => false])
                         ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::MAKEUP_LESSON]);
                     }]);
                   
