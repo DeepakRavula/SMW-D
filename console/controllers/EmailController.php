@@ -44,12 +44,15 @@ class EmailController extends Controller
                 foreach ($emailNotificationTypes as $emailNotificationType) {
         
                     $firstScheduledLesson = Enrolment::find()
+                        ->activeAndfutureEnrolments()
                         ->customer($customerId)
                         ->notDeleted()
                         ->isConfirmed()
                         ->all();
                     foreach ($firstScheduledLesson as $record) {
-                        $firstLessonCourseIds[] = $record->firstLesson->id;
+                        if (!$record->firstLesson->isCompleted()) {
+                          $firstLessonCourseIds[] = $record->firstLesson->id;
+                        }
                     }
 
                     $privateLessons = Lesson::find()
