@@ -143,6 +143,7 @@ class EmailController extends Controller
                         ->customer($customerId)
                         ->location($location->id)
                         ->privateLessons()
+                        ->scheduledOrRescheduled()
                         ->isConfirmed()
                         ->regular()
                         ->joinWith(['privateLesson' => function($query) {
@@ -234,6 +235,7 @@ class EmailController extends Controller
                         ->customer($customerId)
                         ->location($location->id)
                         ->groupLessons()
+                        ->scheduledOrRescheduled()
                         ->isConfirmed()
                         ->regular()
                         ->joinWith(['groupLesson' => function($query) {
