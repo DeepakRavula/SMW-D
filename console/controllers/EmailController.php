@@ -250,29 +250,31 @@ class EmailController extends Controller
                         ->andWhere(['group_lesson_email_status.status' => false])
                         ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::FIRST_SCHEDULE_LESSON]);
                     }]);
-        } elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
-            $mailContent =  Lesson::find()
-                        ->andWhere(['between', 'lesson.date', $currentDateTime, $lessonDateTime])
-                        ->orderBy(['lesson.id' => SORT_ASC])
-                        ->notCanceled()
-                        ->notDeleted()
-                        ->customer($customerId)
-                        ->location($location->id)
-                        ->groupLessons()
-                        ->scheduledOrRescheduled()
-                        ->isConfirmed()
-                        ->regular()
-                        ->joinWith(['groupLesson' => function($query) {
-                                $query->andWhere(['>', 'group_lesson.balance', 0.00]);
-                            }])
-                        ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
-                            $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
-                            ->andWhere(['group_lesson_email_status.status' => false])
-                            ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
-                        }])
-                        ->orderBy(['lesson.dueDate' => SORT_ASC]);
-            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
-        } elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
+        } 
+        // elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
+        //     $mailContent =  Lesson::find()
+        //                 ->andWhere(['between', 'lesson.date', $currentDateTime, $lessonDateTime])
+        //                 ->orderBy(['lesson.id' => SORT_ASC])
+        //                 ->notCanceled()
+        //                 ->notDeleted()
+        //                 ->customer($customerId)
+        //                 ->location($location->id)
+        //                 ->groupLessons()
+        //                 ->scheduledOrRescheduled()
+        //                 ->isConfirmed()
+        //                 ->regular()
+        //                 ->joinWith(['groupLesson' => function($query) {
+        //                         $query->andWhere(['>', 'group_lesson.balance', 0.00]);
+        //                     }])
+        //                 ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
+        //                     $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
+        //                     ->andWhere(['group_lesson_email_status.status' => false])
+        //                     ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
+        //                 }])
+        //                 ->orderBy(['lesson.dueDate' => SORT_ASC]);
+        //     $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
+        // } 
+        elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
             $mailContent = $groupLessons
                 ->scheduled()
                 ->andWhere(['NOT IN', 'lesson.id', $firstLessonCourseIds])
