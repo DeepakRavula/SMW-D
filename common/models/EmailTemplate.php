@@ -21,6 +21,7 @@ class EmailTemplate extends \yii\db\ActiveRecord
     const INVOICE='Invoice';
     const PROFORMA_INVOICE='ProformaInvoice';
     const CUSTOMERSTATEMENT = 'CustomerStatement';
+    const OVERDUE_LESSON = 'OverDueLesson';
     
     public static function tableName()
     {

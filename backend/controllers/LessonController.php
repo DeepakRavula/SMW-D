@@ -40,6 +40,10 @@ use Carbon\Carbon;
 use common\components\queue\EnrolmentConfirm;
 use common\components\queue\LessonConfirm as QueueLessonConfirm;
 use common\components\queue\MakeLessonAsRoot;
+use common\models\NotificationEmailType;
+use common\models\AutoEmailStatus;
+use common\models\PrivateLessonEmailStatus;
+use common\models\GroupLessonEmailStatus;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -315,6 +319,31 @@ class LessonController extends BaseController
                     $lessonDate = new \DateTime($model->date);
                     $model->date = $lessonDate->format('Y-m-d H:i:s');
                     if ($model->save()) {
+                        $emailNotifyTypes = NotificationEmailType::find()->all();
+                        if($model->isPrivate()){
+                            foreach($emailNotifyTypes as $emailNotifyType) {
+                                $emailStatus = new PrivateLessonEmailStatus();
+                                $emailStatus->lessonId = $model->id;
+                                $emailStatus->notificationType = $emailNotifyType->id;
+                                $emailStatus->status = false;
+                                $emailStatus->save();
+                            }
+                        } else {
+                            $groupStudents = Student::find()
+                                    ->notDeleted()
+                                    ->groupCourseEnrolled($model->enrolment->course->id)->all();
+                            foreach($groupStudents as $student){
+                                foreach($emailNotifyTypes as $emailNotifyType) {
+                                    $emailStatus = new GroupLessonEmailStatus();
+                                    $emailStatus->lessonId = $model->id;
+                                    $emailStatus->studentId = $student->id;
+                                    $emailStatus->notificationType = $emailNotifyType->id;
+                                    $emailStatus->status = false;
+                                    $emailStatus->save();
+                                }
+                            }
+                        } 
+                        
                         $response = [
                             'status' => true,
                             'url' => Url::to(['lesson/view', 'id' => $model->id])
@@ -683,6 +712,7 @@ class LessonController extends BaseController
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->notCanceled()
                 ->all();
+
         } else {
             $lessons = Lesson::find()
                 ->notDeleted()
@@ -720,6 +750,15 @@ class LessonController extends BaseController
             $lesson->isConfirmed = true;
             $lesson->save();
             $lesson->setDiscount();
+            $emailNotifyTypes = NotificationEmailType::find()->all();
+
+                foreach($emailNotifyTypes as $emailNotifyType) {
+                    $emailStatus = new PrivateLessonEmailStatus();
+                    $emailStatus->lessonId = $lesson->id;
+                    $emailStatus->notificationType = $emailNotifyType->id;
+                    $emailStatus->status = false;
+                    $emailStatus->save();
+                }
         }
         if (!$model->enrolmentIds) {
             Yii::$app->queue->push(new QueueLessonConfirm([

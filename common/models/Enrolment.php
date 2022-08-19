@@ -185,6 +185,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
 
+    public function getGroupStudents()
+    {
+        return $this->hasMany(Student::className(), ['id' => 'studentId']);
+    }
+
     public function getCurrentPaymentCycleDateRange($date)
     {
         $currentPaymentCycle = $this->getCurrentPaymentcycle($date);

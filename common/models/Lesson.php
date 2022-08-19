@@ -23,6 +23,9 @@ use backend\models\lesson\discount\EnrolmentLessonDiscount;
 use backend\models\lesson\discount\PaymentFrequencyLessonDiscount;
 use common\models\discount\LessonDiscount;
 use Carbon\Carbon;
+use common\models\AutoEmailStatus;
+use common\models\PrivateLessonEmailStatus;
+use common\models\GroupLessonEmailStatus;
 
 /**
  * This is the model class for table "lesson".
@@ -200,7 +203,8 @@ class Lesson extends \yii\db\ActiveRecord
             ['splittedLessonId', 'validateMerge', 'on' => self::SCENARIO_MERGE],
             ['date', 'validateOnInvoiced', 'on' => self::SCENARIO_EDIT],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
-            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]]
+            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
+            [['auto_email_status', 'overdue_status'], 'safe']
         ];
     }
 
@@ -373,6 +377,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId'])
                 ->via('enrolment');
     }
+
+    public function getGroupStudents()
+    {
+        return $this->hasMany(Student::className(), ['id' => 'studentId'])->via('enrolment');
+    }
     
     public function getDiscounts()
     {
@@ -383,6 +392,21 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id'])
                 ->via('student');
+    }
+
+    public function getEmailStatus()
+    {
+        return $this->hasOne(AutoEmailStatus::className(), ['lessonId' => 'id']);
+    }
+
+    public function getPrivateEmailStatus()
+    {
+        return $this->hasOne(PrivateLessonEmailStatus::className(), ['lessonId' => 'id']);
+    }
+
+    public function getGroupEmailStatus()
+    {
+        return $this->hasOne(GroupLessonEmailStatus::className(), ['lessonId' => 'id']);
     }
 
     public function getEnrolmentDiscount()

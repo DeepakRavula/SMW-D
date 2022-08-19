@@ -508,6 +508,7 @@ class UserController extends BaseController
      */
     public function actionView($id)
     {
+        ini_set('memory_limit', '-1');
         $model = $this->findModel($id);
         $request = Yii::$app->request;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;

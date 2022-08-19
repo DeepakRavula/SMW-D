@@ -23,6 +23,7 @@ $schedule->command('recurring-payment/update-recurring-payments')->sendOutputTo(
 $schedule->command('recurring-payment/create')->sendOutputTo('/var/log/smw.'.$environment.'.log')->dailyAt('03:10');
 $schedule->command('tools/backup')->dailyAt('23:59');
 $schedule->command('queue/run')->everyMinute();
+$schedule->command('email/auto-email')->everyNMinutes(5);
 
 
 

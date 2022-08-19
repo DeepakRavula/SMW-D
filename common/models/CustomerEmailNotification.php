@@ -17,6 +17,10 @@ use yii\helpers\ArrayHelper;
 
 class CustomerEmailNotification extends \yii\db\ActiveRecord
 {
+    const MAKEUP_LESSON = 1;
+    const FIRST_SCHEDULE_LESSON = 2;
+    const OVERDUE_INVOICE =3;
+    const FUTURE_LESSON = 4;
     /**
      * @inheritdoc
      */
@@ -56,6 +60,14 @@ class CustomerEmailNotification extends \yii\db\ActiveRecord
             'id' => 'ID',
             'emailNotificationTypeId' => 'EmailNotificationTypeId',
         ];
+    }
+    public function getUserContact()
+    {
+        return $this->hasMany(UserContact::className(), ['userId' => 'userId']);
+    }
+    public function getUserEmail()
+    {
+        return $this->hasMany(UserEmail::className(), ['userId' => 'userId']);
     }
 
 }
