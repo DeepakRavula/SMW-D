@@ -17,12 +17,14 @@ use common\models\EmailTemplate;
 use common\models\Student;
 use common\models\PrivateLessonEmailStatus;
 use common\models\GroupLessonEmailStatus;
+use common\models\Course;
 
 class EmailController extends Controller
 {
     public function actionAutoEmail()
     {
-        $firstLessonCourseIds = [];
+        $firstPrivateLessonCourseIds = [];
+        $firstGroupLessonCourseIds = [];
         $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]);
         $locations = Location::find()->notDeleted()->all();
         foreach ($locations as $location) {
@@ -41,20 +43,41 @@ class EmailController extends Controller
 
                 $requiredLessons;
                 $message;
+             
                 foreach ($emailNotificationTypes as $emailNotificationType) {
         
-                    $firstScheduledLesson = Enrolment::find()
+                    $privateEnrolmens = Enrolment::find()
+                        ->privateProgram()
                         ->activeAndfutureEnrolments()
                         ->customer($customerId)
                         ->notDeleted()
                         ->isConfirmed()
+                        ->location($location->id)
                         ->all();
-                    foreach ($firstScheduledLesson as $record) {
+                    foreach ($privateEnrolmens as $record) {
                         if (!$record->firstLesson->isCompleted()) {
-                          $firstLessonCourseIds[] = $record->firstLesson->id;
+                        $firstPrivateLessonCourseIds[] = $record->firstLesson->id;
                         }
                     }
+                    $groupEnrolments = Enrolment::find()
+                        ->customer($customerId)
+                        ->activeAndfutureEnrolments()
+                        ->joinWith(['course' => function ($query) use ($location) {
+                            $query->joinWith(['program' => function ($query) {
+                                $query->group();
+                            }])
+                                ->confirmed()
+                                ->notDeleted()
+                                ->andWhere(['course.type' => Course::TYPE_REGULAR])
+                                ->location($location->id);
+                        }])
+                        ->all();
 
+                    foreach ($groupEnrolments as $record) {
+                        if (!$record->firstLesson->isCompleted()) {
+                            $firstGroupLessonCourseIds[] = $record->firstLesson->id;
+                        }
+                    }
                     $privateLessons = Lesson::find()
                             ->andWhere(['between', 'lesson.date', $currentDateTime, $lessonDateTime])
                             ->orderBy(['lesson.id' => SORT_ASC])
@@ -89,10 +112,10 @@ class EmailController extends Controller
                     $message = $this->getMessage($type);
                     
                     if($privateLessons && $privateLessons->count() != 0){
-                        $this->getPrivateNotify($privateLessons, $firstLessonCourseIds, $type, $message,$customerId, $location, $currentDateTime, $lessonDateTime, $emailTemplate, $mailIds);
+                        $this->getPrivateNotify($privateLessons, $firstPrivateLessonCourseIds, $type, $message,$customerId, $location, $currentDateTime, $lessonDateTime, $emailTemplate, $mailIds);
                     } 
                     if($groupLessons &&  $groupLessons->count() != 0 ){
-                        $this->getGroupNotify($groupLessons, $firstLessonCourseIds, $type, $message, $customerId, $location, $currentDateTime,$lessonDateTime, $emailTemplate, $mailIds );
+                        $this->getGroupNotify($groupLessons, $firstGroupLessonCourseIds, $type, $message, $customerId, $location, $currentDateTime,$lessonDateTime, $emailTemplate, $mailIds );
                     }
                 }
             }
@@ -201,13 +224,14 @@ class EmailController extends Controller
        $groupLessonData = $groupLessons->all();
        foreach($groupLessonData as $group){
             $groupStudents = Student::find()
-            ->notDeleted()
-            ->groupCourseEnrolled($group->enrolment->course->id)->all();
+                ->customer($customerId)
+                ->notDeleted()
+                ->groupCourseEnrolled($group->enrolment->course->id)->all();
             foreach($groupStudents as $student) {
-            $groupStudentsId [] = $student->id;
-                
+                 $groupStudentsId [] = $student->id;  
             }
        }
+
         if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
             $mailContent = $groupLessons
                     ->rescheduled()
@@ -259,8 +283,7 @@ class EmailController extends Controller
                 }]);
         }
 
-        $requiredLessons = $mailContent
-            ->andWhere(['AND', ['<=', 'lesson.date', $lessonDateTime], ['>', 'lesson.date', $currentDateTime]]);
+        $requiredLessons = $mailContent;
 
         if ($requiredLessons && $requiredLessons->count() != 0) {
             $dataProvider = new ActiveDataProvider([
@@ -269,6 +292,7 @@ class EmailController extends Controller
             ]);
             foreach ($requiredLessons->all() as $lesson) {
             $groupLessonStudents = Student::find()
+                ->customer($customerId)
                 ->notDeleted()
                 ->groupCourseEnrolled($lesson->enrolment->course->id)->all();
                 foreach($groupLessonStudents as $student){
