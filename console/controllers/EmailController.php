@@ -231,7 +231,7 @@ class EmailController extends Controller
                  $groupStudentsId [] = $student->id;  
             }
        }
-
+       $mailContent;
         if ($type == CustomerEmailNotification::MAKEUP_LESSON) {
             $mailContent = $groupLessons
                     ->rescheduled()
