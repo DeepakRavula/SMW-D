@@ -313,44 +313,45 @@ class EmailController extends Controller
                 }]);
         }
 
-
-        if ($mailContent && $mailContent->count() != 0 && $type != CustomerEmailNotification::OVERDUE_INVOICE ) {
-            $dataProvider = new ActiveDataProvider([
-                'query' => $mailContent,
-                'pagination' => false
-            ]);
-            foreach ($mailContent->all() as $lesson) {
-            $groupLessonStudents = Student::find()
-                ->customer($customerId)
-                ->notDeleted()
-                ->groupCourseEnrolled($lesson->enrolment->course->id)->all();
-                foreach($groupLessonStudents as $student){
-                $sendMail = Yii::$app->mailer->compose('/mail/group-notify', [
-                    'contents' => $dataProvider,
-                    'message' => $message,
-                    'type' => $type,
-                    'emailTemplate' => $emailTemplate,
-                    'date' => $lesson->date,
-                    'courseName' => $lesson->course->program->name ?? null,
-                    'teacherName' => $lesson->teacher->publicIdentity ?? null,
-                    'studentName' => $student->first_name . $student->last_name ?? null,
-                    'lessonId' => $lesson->id,
-                ])
-                    ->setFrom($location->email)
-                    ->setTo($mailIds)
-                    ->setReplyTo($location->email)
-                    ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
-                if ($sendMail->send()) {
-                        $emailStatus = GroupLessonEmailStatus::find()
-                                ->andWhere(['lessonId' => $lesson->id])
-                                ->andWhere(['studentId' => $student->id])
-                                ->andWhere(['notificationType' => $type])
-                                ->one();
-                        $emailStatus->updateAttributes(['status' => true]);
+        if ($type != CustomerEmailNotification::OVERDUE_INVOICE ) {
+            if ($mailContent && $mailContent->count() != 0 && $type != CustomerEmailNotification::OVERDUE_INVOICE ) {
+                $dataProvider = new ActiveDataProvider([
+                    'query' => $mailContent,
+                    'pagination' => false
+                ]);
+                foreach ($mailContent->all() as $lesson) {
+                $groupLessonStudents = Student::find()
+                    ->customer($customerId)
+                    ->notDeleted()
+                    ->groupCourseEnrolled($lesson->enrolment->course->id)->all();
+                    foreach($groupLessonStudents as $student){
+                    $sendMail = Yii::$app->mailer->compose('/mail/group-notify', [
+                        'contents' => $dataProvider,
+                        'message' => $message,
+                        'type' => $type,
+                        'emailTemplate' => $emailTemplate,
+                        'date' => $lesson->date,
+                        'courseName' => $lesson->course->program->name ?? null,
+                        'teacherName' => $lesson->teacher->publicIdentity ?? null,
+                        'studentName' => $student->first_name . $student->last_name ?? null,
+                        'lessonId' => $lesson->id,
+                    ])
+                        ->setFrom($location->email)
+                        ->setTo($mailIds)
+                        ->setReplyTo($location->email)
+                        ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
+                    if ($sendMail->send()) {
+                            $emailStatus = GroupLessonEmailStatus::find()
+                                    ->andWhere(['lessonId' => $lesson->id])
+                                    ->andWhere(['studentId' => $student->id])
+                                    ->andWhere(['notificationType' => $type])
+                                    ->one();
+                            $emailStatus->updateAttributes(['status' => true]);
+                        }
                     }
                 }
+                sleep(5);
             }
-            sleep(5);
         }
     }
 
