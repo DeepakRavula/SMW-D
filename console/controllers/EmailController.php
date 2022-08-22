@@ -252,56 +252,55 @@ class EmailController extends Controller
                     }]);
         } 
         elseif ($type == CustomerEmailNotification::OVERDUE_INVOICE) {
-                foreach($groupLessons->all() as $lessonData){
-                      foreach($lessonData->enrolments as $enrolment){
-                        $enrolmentId = $enrolment->id;
-                        $emailContent = Lesson::find()
-                                ->andWhere(['lesson.id' => $lessonData->id])
-                                ->scheduledOrRescheduled()
-                                ->joinWith(['groupLesson' => function($query) use ($enrolmentId){
-                                        $query->andWhere(['enrolmentId' => $enrolmentId])
-                                        ->andWhere(['>', 'group_lesson.balance', 0.00]);
-                                    }])
-                                ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
-                                    $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
-                                    ->andWhere(['group_lesson_email_status.status' => false])
-                                        ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
-                                    }])
-                                ->one();
-    
-                            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
-                        
-                                if ($emailContent) {
-                                    $student = Student::findOne($enrolment->studentId);
-                                    $sendMail = Yii::$app->mailer->compose('/mail/group-notify', [
-                                        'message' => $message,
-                                        'type' => $type,
-                                        'emailTemplate' => $emailTemplate,
-                                        'date' => $lessonData->date,
-                                        'courseName' => $lessonData->course->program->name ?? null,
-                                        'teacherName' => $lessonData->teacher->publicIdentity ?? null,
-                                        'studentName' => $student->first_name . $student->last_name ?? null,
-                                        'lessonId' => $lessonData->id,
-                                        'enrolmentId' => $enrolment->id,
-                                    ])
-                                        ->setFrom($location->email)
-                                        ->setTo($mailIds)
-                                        ->setReplyTo($location->email)
-                                        ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
-                                        if ($sendMail->send()) {
-                                            $emailStatus = GroupLessonEmailStatus::find()
-                                                    ->andWhere(['lessonId' => $lessonData->id])
-                                                    ->andWhere(['studentId' => $enrolment->studentId])
-                                                    ->andWhere(['notificationType' => $type])
-                                                    ->one();
-                                            if($emailStatus){
-                                                $emailStatus->updateAttributes(['status' => true]);
-                                            }
+            foreach($groupLessons->all() as $lessonData){
+                    foreach($lessonData->enrolments as $enrolment){
+                    $enrolmentId = $enrolment->id;
+                    $emailContent = Lesson::find()
+                            ->andWhere(['lesson.id' => $lessonData->id])
+                            ->scheduledOrRescheduled()
+                            ->joinWith(['groupLesson' => function($query) use ($enrolmentId){
+                                    $query->andWhere(['enrolmentId' => $enrolmentId])
+                                    ->andWhere(['>', 'group_lesson.balance', 0.00]);
+                                }])
+                            ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
+                                $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
+                                ->andWhere(['group_lesson_email_status.status' => false])
+                                    ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
+                                }])
+                            ->one();
+
+                        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_OVERDUE_LESSON]);
+                    
+                            if ($emailContent) {
+                                $student = Student::findOne($enrolment->studentId);
+                                $sendMail = Yii::$app->mailer->compose('/mail/group-notify', [
+                                    'message' => $message,
+                                    'type' => $type,
+                                    'emailTemplate' => $emailTemplate,
+                                    'date' => $lessonData->date,
+                                    'courseName' => $lessonData->course->program->name ?? null,
+                                    'teacherName' => $lessonData->teacher->publicIdentity ?? null,
+                                    'studentName' => $student->first_name . $student->last_name ?? null,
+                                    'lessonId' => $lessonData->id,
+                                    'enrolmentId' => $enrolment->id,
+                                ])
+                                    ->setFrom($location->email)
+                                    ->setTo($mailIds)
+                                    ->setReplyTo($location->email)
+                                    ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
+                                    if ($sendMail->send()) {
+                                        $emailStatus = GroupLessonEmailStatus::find()
+                                                ->andWhere(['lessonId' => $lessonData->id])
+                                                ->andWhere(['studentId' => $enrolment->studentId])
+                                                ->andWhere(['notificationType' => $type])
+                                                ->one();
+                                        if($emailStatus){
+                                            $emailStatus->updateAttributes(['status' => true]);
                                         }
-                                }
-                    }
+                                    }
+                            }
                 }
-                
+            } 
         } 
         elseif ($type == CustomerEmailNotification::FUTURE_LESSON) {
             $mailContent = $groupLessons
