@@ -24,7 +24,7 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
         $lessonDate = Yii::$app->formatter->asDate($date);
         $lessonTime = (new \DateTime($date))->format('H:i:s');
         $startDate = !empty($lessonDate) ? $lessonDate.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
-            $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $lessonId])->all();
+            $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $lessonId])->enrolment($enrolmentId)->all();
             foreach($groupLesson as $lesson) {
                 $total = $lesson->total;
                 $remainingBalance = $lesson->balance; 
