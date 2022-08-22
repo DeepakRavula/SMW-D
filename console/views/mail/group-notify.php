@@ -25,7 +25,7 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
         $lessonTime = (new \DateTime($date))->format('H:i:s');
         $groupLesson;
         $startDate = !empty($lessonDate) ? $lessonDate.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
-        if ($enrolmentId) {
+        if (!empty($enrolmentId)) {
             $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $lessonId])->enrolment($enrolmentId)->all();
         } else {
             $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $lessonId])->all();

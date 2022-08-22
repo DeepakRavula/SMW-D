@@ -335,6 +335,7 @@ class EmailController extends Controller
                         'teacherName' => $lesson->teacher->publicIdentity ?? null,
                         'studentName' => $student->first_name . $student->last_name ?? null,
                         'lessonId' => $lesson->id,
+                        'enrolmentId' => '',
                     ])
                         ->setFrom($location->email)
                         ->setTo($mailIds)
