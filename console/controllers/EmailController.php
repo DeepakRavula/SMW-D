@@ -313,14 +313,13 @@ class EmailController extends Controller
                 }]);
         }
 
-        $requiredLessons = $mailContent;
 
-        if ($requiredLessons && $requiredLessons->count() != 0) {
+        if ($mailContent && $mailContent->count() != 0 && $type != CustomerEmailNotification::OVERDUE_INVOICE ) {
             $dataProvider = new ActiveDataProvider([
-                'query' => $requiredLessons,
+                'query' => $mailContent,
                 'pagination' => false
             ]);
-            foreach ($requiredLessons->all() as $lesson) {
+            foreach ($mailContent->all() as $lesson) {
             $groupLessonStudents = Student::find()
                 ->customer($customerId)
                 ->notDeleted()
