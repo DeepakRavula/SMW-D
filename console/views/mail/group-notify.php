@@ -23,8 +23,13 @@ xmlns:o="urn:schemas-microsoft-com:office:office">
 <?php
         $lessonDate = Yii::$app->formatter->asDate($date);
         $lessonTime = (new \DateTime($date))->format('H:i:s');
+        $groupLesson;
         $startDate = !empty($lessonDate) ? $lessonDate.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+        if ($enrolmentId) {
             $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $lessonId])->enrolment($enrolmentId)->all();
+        } else {
+            $groupLesson = GroupLesson::find()->andWhere(['lessonId' => $lessonId])->all();
+        }
             foreach($groupLesson as $lesson) {
                 $total = $lesson->total;
                 $remainingBalance = $lesson->balance; 
