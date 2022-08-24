@@ -1016,6 +1016,14 @@ class Enrolment extends \yii\db\ActiveRecord
         foreach ($extendedLessons as $extendedLesson) {
             $extendedLesson->setDiscount();
             $extendedLesson->makeAsRoot();
+            $emailNotifyTypes = NotificationEmailType::find()->all();
+            foreach($emailNotifyTypes as $emailNotifyType) {
+                $emailStatus = new PrivateLessonEmailStatus();
+                $emailStatus->lessonId = $extendedLesson->id;
+                $emailStatus->notificationType = $emailNotifyType->id;
+                $emailStatus->status = false;
+                $emailStatus->save();
+            }
         }
         $paymentCycleStartDate = (new \DateTime($lastLesson->date))->format('Y-m-t');
         $paymentCycleStartDate = (new \DateTime($paymentCycleStartDate))->modify('+1 day')->format('M, Y');

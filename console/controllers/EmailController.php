@@ -300,6 +300,7 @@ class EmailController extends Controller
             foreach($groupLessons->all() as $lessonData){
                 foreach($lessonData->enrolments as $enrolment){
                     $enrolmentId = $enrolment->id;
+                    $studentId = $enrolment->studentId;
                     $emailContent = Lesson::find()
                             ->andWhere(['lesson.id' => $lessonData->id])
                             ->scheduledOrRescheduled()
@@ -307,8 +308,8 @@ class EmailController extends Controller
                                     $query->andWhere(['enrolmentId' => $enrolmentId])
                                     ->andWhere(['>', 'group_lesson.balance', 0.00]);
                                 }])
-                            ->joinWith(['groupEmailStatus' => function($query) use ($groupStudentsId){
-                                $query->andWhere(['IN','group_lesson_email_status.studentId', $groupStudentsId])
+                            ->joinWith(['groupEmailStatus' => function($query) use ($studentId){
+                                $query->andWhere(['group_lesson_email_status.studentId' => $studentId])
                                 ->andWhere(['group_lesson_email_status.status' => false])
                                     ->andWhere(['group_lesson_email_status.notificationType' => CustomerEmailNotification::OVERDUE_INVOICE]);
                                 }])
