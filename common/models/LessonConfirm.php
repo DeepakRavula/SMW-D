@@ -143,15 +143,18 @@ class LessonConfirm extends Model
 
     public function confirmEnrolmentTeacherChange($enrolmentId)
     {
+     
         $changesFrom = (new \DateTime($this->changesFrom))->format('Y-m-d');
+
         $oldLessons = Lesson::find()
             ->notDeleted()
-            ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+            ->andWhere(['>=', 'DATE(`lesson`.`date`)', $changesFrom])
             ->enrolment($enrolmentId)
             ->notCanceled()
             ->orderBy(['lesson.date' => SORT_ASC])
             ->isConfirmed()
             ->all();
+            
         $lessons = Lesson::find()
             ->notDeleted()
             ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
@@ -160,6 +163,7 @@ class LessonConfirm extends Model
             ->orderBy(['lesson.date' => SORT_ASC])
             ->notConfirmed()
             ->all();
+           
         foreach ($lessons as $i => $lesson) {
             $oldLesson = Lesson::findOne($oldLessons[$i]->id);
             $oldLesson->cancel();
