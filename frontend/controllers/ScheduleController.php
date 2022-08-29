@@ -108,7 +108,7 @@ class ScheduleController extends FrontendBaseController
             ->day($date->format('N'))
             ->locationaAvailabilityHours()
             ->one();
-        $holiday = Holiday::findOne(['DATE(date)' => $date->format('Y-m-d')]);
+	$holiday = Holiday::find()->andWhere(['DATE(`date`)' => $date->format('Y-m-d')])->one();
         $holidayResource = '';
         if (!empty($holiday)) {
             $holidayResource = ' (' . $holiday->description . ')';
