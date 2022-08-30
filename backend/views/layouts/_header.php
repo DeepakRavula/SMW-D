@@ -73,7 +73,8 @@ $bundle = BackendAsset::register($this);
                                     <p>
                                         <?= Yii::$app->user->identity->userProfile->fullName ?> - <?= Yii::$app->user->identity->getRoleName(); ?>
                                         <small>Member since <?= date('Y M', Yii::$app->user->identity->created_at) ?>
-                                        </small>
+					</small>
+					<small>Composer version 2.2.12 </small>
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
