@@ -124,7 +124,7 @@ class ScheduleController extends FrontendBaseController
 
     public function actionFetchHolidayName($date)
     {
-        $holiday = Holiday::findOne(['DATE(date)' => $date]);
+        $holiday = Holiday::find()->andWhere(['DATE(date)' => $date])->one();
         $holidayResource = '';
         if (!empty($holiday)) {
             $holidayResource = ' (' . $holiday->description . ')';
