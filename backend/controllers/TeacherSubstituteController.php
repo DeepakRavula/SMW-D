@@ -16,6 +16,9 @@ use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
 use common\models\EnrolmentSubstituteTeacher;
 use common\models\Enrolment;
+use common\models\NotificationEmailType;
+use common\models\GroupLessonEmailStatus;
+use common\models\Student;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 /**
@@ -184,6 +187,20 @@ class TeacherSubstituteController extends BaseController
             $lessonIds[] = $lesson->id;
             $lesson->isConfirmed = true;
             $lesson->save();
+            $emailNotifyTypes = NotificationEmailType::find()->all();
+            $groupStudents = Student::find()
+            ->notDeleted()
+            ->groupCourseEnrolled($lesson->enrolment->course->id)->all();
+            foreach($groupStudents as $student) {
+                foreach($emailNotifyTypes as $emailNotifyType) { 
+                    $emailStatus = new GroupLessonEmailStatus();
+                    $emailStatus->lessonId = $lesson->id;
+                    $emailStatus->studentId = $student->id;
+                    $emailStatus->notificationType = $emailNotifyType->id;
+                    $emailStatus->status = false;
+                    $emailStatus->save();
+                }  
+            }
         }
         Lesson::triggerPusher();
         if (end($lessons)->isGroup()) {
