@@ -426,6 +426,14 @@ class Enrolment extends \yii\db\ActiveRecord
             ->orderBy(['date' => SORT_ASC]);
     }
 
+    public function getFirst()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
+            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true])
+            ->onCondition(['!=', 'lesson.status', Lesson::STATUS_CANCELED ])
+            ->orderBy(['date' => SORT_ASC]);
+    }
+
     public function getLessons()
     {
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])

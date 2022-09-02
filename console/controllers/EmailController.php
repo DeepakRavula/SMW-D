@@ -18,6 +18,7 @@ use common\models\Student;
 use common\models\PrivateLessonEmailStatus;
 use common\models\GroupLessonEmailStatus;
 use common\models\Course;
+use yii\helpers\Console;
 
 class EmailController extends Controller
 {
@@ -55,10 +56,11 @@ class EmailController extends Controller
                         ->location($location->id)
                         ->all();
                     foreach ($privateEnrolmens as $record) {
-                        if (!$record->firstLesson->isCompleted()) {
-                        $firstPrivateLessonCourseIds[] = $record->firstLesson->id;
+                        if (!$record->first->isCompleted()) {
+                        $firstPrivateLessonCourseIds[] = $record->first->id;
                         }
                     }
+                
                     $groupEnrolments = Enrolment::find()
                         ->customer($customerId)
                         ->activeAndfutureEnrolments()
@@ -74,10 +76,10 @@ class EmailController extends Controller
                         ->all();
 
                     foreach ($groupEnrolments as $record) {
-                        if (!$record->firstLesson->isCompleted()) {
-                            $firstGroupLessonCourseIds[] = $record->firstLesson->id;
+                        if (!$record->first->isCompleted()) {
+                            $firstGroupLessonCourseIds[] = $record->first->id;
                         }
-                    }
+                    } 
                     $privateLessons = Lesson::find()
                             ->andWhere(['between', 'lesson.date', $currentDateTime, $lessonDateTime])
                             ->orderBy(['lesson.id' => SORT_ASC])
@@ -200,6 +202,7 @@ class EmailController extends Controller
                 ->setReplyTo($location->email)
                 ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
             if ($sendMail->send()) {
+               Console::output('Email send successfully for Lesson ID - '. $data->id);
                 foreach ($requiredLessons->all() as $data) {
                     $emailStatus = PrivateLessonEmailStatus::find()
                                     ->andWhere(['lessonId'=> $data->id])
@@ -285,6 +288,7 @@ class EmailController extends Controller
                         ->setReplyTo($location->email)
                         ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
                     if ($sendMail->send()) {
+                        Console::output('Email send successfully for Lesson ID - '. $lesson->id);
                             $emailStatus = GroupLessonEmailStatus::find()
                                     ->andWhere(['lessonId' => $lesson->id])
                                     ->andWhere(['studentId' => $student->id])
