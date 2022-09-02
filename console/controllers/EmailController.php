@@ -202,13 +202,13 @@ class EmailController extends Controller
                 ->setReplyTo($location->email)
                 ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
             if ($sendMail->send()) {
-               Console::output('Email send successfully for Lesson ID - '. $data->id);
                 foreach ($requiredLessons->all() as $data) {
                     $emailStatus = PrivateLessonEmailStatus::find()
                                     ->andWhere(['lessonId'=> $data->id])
                                     ->andWhere(['notificationType' => $type])
                                     ->one();
                     $emailStatus->updateAttributes(['status' => true]);
+                    Console::output('Email send successfully for Lesson ID - '. $data->id);
                 }
             }
             sleep(5);
@@ -288,13 +288,13 @@ class EmailController extends Controller
                         ->setReplyTo($location->email)
                         ->setSubject($emailTemplate->subject ?? "Remainder for tommorrow's Lesson ");
                     if ($sendMail->send()) {
-                        Console::output('Email send successfully for Lesson ID - '. $lesson->id);
                             $emailStatus = GroupLessonEmailStatus::find()
                                     ->andWhere(['lessonId' => $lesson->id])
                                     ->andWhere(['studentId' => $student->id])
                                     ->andWhere(['notificationType' => $type])
                                     ->one();
                             $emailStatus->updateAttributes(['status' => true]);
+                            Console::output('Email send successfully for Lesson ID - '. $lesson->id);
                         }
                     }
                 }
@@ -347,6 +347,7 @@ class EmailController extends Controller
                                 if($emailStatus){
                                     $emailStatus->updateAttributes(['status' => true]);
                                 }
+                                Console::output('Email send successfully for Lesson ID - '. $lessonData->id);
                             }
                     }
                         sleep(5);
