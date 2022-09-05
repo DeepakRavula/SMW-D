@@ -57,6 +57,28 @@ $user = User::findOne($model->id);
             });
         return false;
     });
+
+    $(document).off('click', '#notify-email-toggle').on('click', '#notify-email-toggle', function() {
+       var userId = '<?= $model->id ?>';
+        var params = $.param({ 'id' : userId});
+        $.ajax({
+            url: '<?= Url::to(['email/notify-email-preview']) ?>?' + params,
+            type: 'get',
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#menu-shown').hide();
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                } else {
+                    $('#menu-shown').hide();
+                    $('#error-notification').html(response.message).fadeIn().delay(3000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
     
 
     $(document).off('click', '#ar-report-detail').on('click', '#ar-report-detail', function() { 
