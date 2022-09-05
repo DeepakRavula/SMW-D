@@ -732,7 +732,7 @@ class EmailController extends BaseController
     {
 
         $emailTypes = new NotificationEmailType();
-        $data = $this->renderAjax('/mail/notify-email', [
+        $data = $this->renderAjax('/mail/notify-email-types', [
             'emailTypes' => $emailTypes,
             'customerId' => $id,
         ]);
