@@ -40,6 +40,10 @@ use common\models\log\InvoiceLog;
 use common\models\log\PaymentLog;
 use common\models\log\ReceivePaymentLog;
 use common\models\CourseSchedule;
+use common\models\NotifyViaEmail;
+use common\models\NotificationEmailType;
+use common\models\Course;
+use common\models\CustomerEmailNotification;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -50,7 +54,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail'],
+                'only' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail', 'notify-email', 'notify-email-preview'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -61,7 +65,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail'],
+                        'actions' => ['send', 'lesson-bulk-email-send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment', 'customer-statement', 'group-enrolment-detail','notify-email', 'notify-email-preview'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -604,5 +608,137 @@ class EmailController extends BaseController
                 'message' => 'Mail has been sent successfully',
             ];
         }
+    }
+    public function actionNotifyEmail($customerId)
+    {
+        $model = new NotificationEmailType();
+
+        if ($model->load(Yii::$app->request->post())) {
+            $notificationEmailType = Yii::$app->request->post();
+
+            foreach ($notificationEmailType as $emailNotifyTypes) {
+
+                foreach ($emailNotifyTypes as $types) {
+                    
+                    if($types) {
+                        if (in_array(1, $types)) {
+                            // print_r("Upcomming Makeup Lessons");
+                            $toSendEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 1])
+                                ->all();
+                            foreach ($toSendEmail as $update) {
+                                $update->isChecked = true;
+                                $update->save();
+                            }
+                        }
+                        else {
+                            $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 1])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                        }
+                        if (in_array(2, $types)) {
+                            // print_r("First schedule lesson");
+                            $toSendEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 2])
+                                ->all();
+                            foreach ($toSendEmail as $update) {
+                                $update->isChecked = true;
+                                $update->save();
+                            }
+                        }
+                        else {
+                            $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 2])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                        }
+                        if (in_array(3, $types)) {
+                            // print_r("Over Due Lesson");
+                            $toSendEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 3])
+                                ->all();
+                            foreach ($toSendEmail as $update) {
+                                $update->isChecked = true;
+                                $update->save();
+                            }
+                        }
+                        else {
+                            $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 3])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                        }
+                        if (in_array(4, $types)) {
+                            // print_r("Over Due Lesson");
+                            $toSendEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 4])
+                                ->all();
+                            foreach ($toSendEmail as $update) {
+                                $update->isChecked = true;
+                                $update->save();
+                            }
+                        }
+                        else {
+                            $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->andWhere(['emailNotificationTypeId' => 4])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                        }
+                    }
+                    else {
+                        $toStopEmail = CustomerEmailNotification::find()
+                                ->andWhere(['userId' => $customerId])
+                                ->all();
+                            foreach ($toStopEmail as $update) {
+                                $update->isChecked = false;
+                                $update->save();
+                            }
+                    }
+
+                    
+                    Yii::$app->session->setFlash('alert', [
+                        'body' => \Yii::t('backend', 'The status has been updated successfully.'),
+                        'options' => ['class' => 'alert-success'],
+                    ]);
+            
+                    return $this->redirect(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customerId]);
+                }
+                
+            }
+        }
+    }
+    public function actionNotifyEmailPreview($id)
+    {
+
+        $emailTypes = new NotificationEmailType();
+        $data = $this->renderAjax('/mail/notify-email', [
+            'emailTypes' => $emailTypes,
+            'customerId' => $id,
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 }
