@@ -8,13 +8,6 @@ use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\ArrayHelper;
 
-/**
- * This is the model class for table "customer_email_notification".
- *
- * @property int $id
- * @property string $emailNotificationTypeId
- */
-
 class CustomerEmailNotification extends \yii\db\ActiveRecord
 {
     const MAKEUP_LESSON = 1;
