@@ -33,7 +33,7 @@ class NotificationEmailType extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['emailNotifyType',],  'string', 'max' => 255],
+            [['emailNotifyType',],  'safe'],
             ['notificationEmailType', 'each', 'rule' => [
                 'exist', 'tagetClass' => NotificationEmailType::className(),  'targetAttribute' => 'id']
             ],

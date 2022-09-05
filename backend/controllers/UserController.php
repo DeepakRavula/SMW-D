@@ -41,6 +41,8 @@ use common\models\Transaction;
 use common\models\CustomerReferralSource;
 use common\models\GroupLesson;
 use common\models\CustomerRecurringPayment;
+use common\models\CustomerEmailNotification;
+use common\models\NotificationEmailType;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -612,6 +614,15 @@ class UserController extends BaseController
         if ($request->post()) {
             if ($model->load($request->post()) && $emailModel->load($request->post())) {
                 $model->save();
+                $emailNotifyTypes = NotificationEmailType::find()->all();
+
+                foreach($emailNotifyTypes as $emailNotifyType){
+                    $customerEmailNotification = new CustomerEmailNotification();
+                    $customerEmailNotification->userId = $model->getModel()->id;
+                    $customerEmailNotification->emailNotificationTypeId = $emailNotifyType->id;
+                    $customerEmailNotification->isChecked = false;
+                    $customerEmailNotification->save();
+                }
                 
                if ($customerReferralSource->load($request->post())) {
                    if($customerReferralSource->referralSourceId) {

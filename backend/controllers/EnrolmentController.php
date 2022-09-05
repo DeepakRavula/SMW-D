@@ -598,6 +598,17 @@ class EnrolmentController extends BaseController
             $student->isDeleted = true;
             $student->save();
 
+            //Setting Notify Via Email Status
+            $emailNotifyTypes = NotificationEmailType::find()->all();
+
+                foreach($emailNotifyTypes as $emailNotifyType){
+                    $customerEmailNotification = new CustomerEmailNotification();
+                    $customerEmailNotification->userId = $user->id;
+                    $customerEmailNotification->emailNotificationTypeId = $emailNotifyType->id;
+                    $customerEmailNotification->isChecked = false;
+                    $customerEmailNotification->save();
+                }
+
             //save course
             return $this->redirect(['student/create-enrolment', 'id' => $student->id, 'EnrolmentForm' => $courseDetail]);
         }
