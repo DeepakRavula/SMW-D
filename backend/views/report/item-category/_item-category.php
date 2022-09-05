@@ -418,7 +418,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ],
         GridView::PDF => [
             'label' => Yii::t('kvgrid', 'PDF'),
-            'icon' => 'floppy-disk',
+            'icon' => 'glyphicon glyphicon-floppy-disk',
             'iconOptions' => ['class' => 'text-danger'],
             'showHeader' => true,
             'showPageSummary' => true,

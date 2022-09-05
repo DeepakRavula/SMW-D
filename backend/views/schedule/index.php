@@ -12,7 +12,7 @@ use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 
 /* @var $this yii\web\View */
-$holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
+$holiday = Holiday::findOne(['date' => (new \DateTime())->format('Y-m-d')]);
 $holidayResource = '';
 if (!empty($holiday)) {
     $holidayResource = ' (' . $holiday->description. ')';
@@ -21,11 +21,11 @@ $this->title = 'Schedule';
 $this->params['action-button'] = $this->render('_button');
 ?>
 
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<!-- <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script> -->
 <script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.min.js"></script>
 <script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.js"></script>
 <link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
