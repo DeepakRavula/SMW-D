@@ -279,7 +279,7 @@ class EmailController extends Controller
                         'date' => $lesson->date,
                         'courseName' => $lesson->course->program->name ?? null,
                         'teacherName' => $lesson->teacher->publicIdentity ?? null,
-                        'studentName' => $student->first_name . $student->last_name ?? null,
+                        'studentName' => $student->first_name . ' ' . $student->last_name ?? null,
                         'lessonId' => $lesson->id,
                         'enrolmentId' => '',
                     ])
