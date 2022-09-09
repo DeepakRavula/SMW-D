@@ -182,6 +182,8 @@ class PaymentController extends BaseController
      */
     public function actionUpdate($id)
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $payment = $this->findModel($id);
         $payment->setScenario(Payment::SCENARIO_EDIT);
         $model = new PaymentEditForm();
@@ -351,6 +353,8 @@ class PaymentController extends BaseController
 
     public function actionReceive()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $request = Yii::$app->request;
         $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
         $groupLessonSearchModel->showCheckBox = true;
