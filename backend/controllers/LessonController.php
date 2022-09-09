@@ -693,6 +693,8 @@ class LessonController extends BaseController
 
     public function actionConfirm()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $model = new LessonConfirm();
         $request = Yii::$app->request;
         $model->load($request->get());
