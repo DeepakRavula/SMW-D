@@ -355,6 +355,8 @@ class PaymentController extends BaseController
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
+
+        
         $request = Yii::$app->request;
         $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
         $groupLessonSearchModel->showCheckBox = true;
