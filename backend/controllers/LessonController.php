@@ -569,9 +569,7 @@ class LessonController extends BaseController
             }
         }
         if (!$model->courseId) {
-            $enrolment = Enrolment::findOne(end($model->enrolmentIds));
-            $course = Course::findOne($enrolment->courseId);
-            $teacherId = $course->teacherId;
+            $teacherId = $model->teacherId;
         } else {
             $teacherId = $courseModel->teacherId;
         }
