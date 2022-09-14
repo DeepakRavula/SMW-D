@@ -511,33 +511,20 @@ class LessonController extends BaseController
         if ($model->courseId) {
             $courseModel = Course::findOne(['id' => $model->courseId]);
             $startDate = new \DateTime($model->rescheduleBeginDate);
-            $lessons = Lesson::find()
-                ->notDeleted()
-                ->notConfirmed()
-                ->statusScheduled()
-                ->andWhere(['courseId' => $model->courseId])
-                ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
-                ->orderBy(['lesson.date' => SORT_ASC])
-                ->all();
-            if ($model->rescheduleBeginDate) {
-                $oldLessons = Lesson::find()
-                    ->andWhere(['courseId' => $courseModel->id])
+            $query = Lesson::find()
                     ->notDeleted()
-                    ->isConfirmed()
+                    ->andWhere(['courseId' => $courseModel->id])
                     ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
-                    ->orderBy(['lesson.date' => SORT_ASC])
+                    ->orderBy(['lesson.date' => SORT_ASC]);
+            $lessons =  $query->notConfirmed()
+                    ->statusScheduled()
                     ->all();
+            if ($model->rescheduleBeginDate) {
+                $oldLessons = $query->isConfirmed()->all();
                 $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
                     return $element->id;
                 });
-                $oldLessonsRe = Lesson::find()
-                    ->andWhere(['courseId' => $courseModel->id])
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->statusScheduled()
-                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
-                    ->orderBy(['lesson.date' => SORT_ASC])
-                    ->all();
+                $oldLessonsRe = $query->isConfirmed()->statusScheduled()->all();
                 $oldLessonsReIds = ArrayHelper::getColumn($oldLessonsRe, function ($element) {
                     return $element->id;
                 });
@@ -547,22 +534,14 @@ class LessonController extends BaseController
             }
         } else if ($model->enrolmentIds) {
             $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
-            $oldLessons = Lesson::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
-                ->enrolment($model->enrolmentIds)
-                ->notCanceled()
-                ->orderBy(['lesson.date' => SORT_ASC])
-                ->all();
-            $lessons = Lesson::find()
-                ->notDeleted()
-                ->notConfirmed()
-                ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
-                ->enrolment($model->enrolmentIds)
-                ->notCanceled()
-                ->orderBy(['lesson.date' => SORT_ASC])
-                ->all();
+            $lessonQuery =  Lesson::find()
+                        ->notDeleted()
+                        ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+                        ->enrolment($model->enrolmentIds)
+                        ->notCanceled()
+                        ->orderBy(['lesson.date' => SORT_ASC]);
+            $oldLessons = $lessonQuery->isConfirmed()->all();
+            $lessons = $lessonQuery->notConfirmed()->all();
             $oldLessonsIds = ArrayHelper::getColumn($oldLessons, 'id');
             foreach ($lessons as $i => $lesson) {
                 $lesson->lessonId = $oldLessonsIds;
