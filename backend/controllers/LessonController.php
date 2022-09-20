@@ -520,11 +520,18 @@ class LessonController extends BaseController
                     ->statusScheduled()
                     ->all();
             if ($model->rescheduleBeginDate) {
-                $oldLessons = $query->isConfirmed()->all();
+                $queryData = Lesson::find()
+                        ->select(['lesson.id','type'])
+                        ->notDeleted()
+                        ->andWhere(['courseId' => $courseModel->id])
+                        ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
+                        ->orderBy(['lesson.date' => SORT_ASC])
+                        ->isConfirmed();
+                $oldLessons = $queryData->all();
                 $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
                     return $element->id;
                 });
-                $oldLessonsRe = $query->isConfirmed()->statusScheduled()->all();
+                $oldLessonsRe = $queryData->statusScheduled()->all();
                 $oldLessonsReIds = ArrayHelper::getColumn($oldLessonsRe, function ($element) {
                     return $element->id;
                 });
@@ -535,6 +542,7 @@ class LessonController extends BaseController
         } else if ($model->enrolmentIds) {
             $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
             $lessonQuery =  Lesson::find()
+                        ->select(['lesson.id'])
                         ->notDeleted()
                         ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
                         ->enrolment($model->enrolmentIds)
@@ -560,15 +568,18 @@ class LessonController extends BaseController
             return $element->id;
         });
         $schduleLessonQuery = Lesson::find()
+            ->select(['lesson.id'])
             ->andWhere(['id' => $oldLessonIds])
             ->orderBy(['lesson.date' => SORT_ASC]);
 
         $unscheduledLessonCount = Lesson::find()
+            ->select(['lesson.id','type','lesson.date'])
             ->andWhere(['id' => $lessonIds])
             ->andWhere(['NOT', ['id' => $conflictedLessons['holidayConflictedLessonIds']]])
             ->unscheduled()
             ->count();
         $query = Lesson::find()
+            ->select(['lesson.id','type','lesson.date'])
             ->andWhere(['id' => $lessonIds])
             ->orderBy(['lesson.date' => SORT_ASC]);
         $lessonDataProvider = new ActiveDataProvider([
