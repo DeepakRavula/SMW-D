@@ -521,7 +521,7 @@ class LessonController extends BaseController
                     ->all();
             if ($model->rescheduleBeginDate) {
                 $queryData = Lesson::find()
-                        ->select(['lesson.id','type'])
+                        ->select(['lesson.id','type','lesson.date','duration'])
                         ->notDeleted()
                         ->andWhere(['courseId' => $courseModel->id])
                         ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
@@ -542,7 +542,7 @@ class LessonController extends BaseController
         } else if ($model->enrolmentIds) {
             $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
             $lessonQuery =  Lesson::find()
-                        ->select(['lesson.id'])
+                        ->select(['lesson.id','type','lesson.date','duration'])
                         ->notDeleted()
                         ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
                         ->enrolment($model->enrolmentIds)
@@ -568,18 +568,18 @@ class LessonController extends BaseController
             return $element->id;
         });
         $schduleLessonQuery = Lesson::find()
-            ->select(['lesson.id'])
+            ->select(['lesson.id','type','lesson.date','duration'])
             ->andWhere(['id' => $oldLessonIds])
             ->orderBy(['lesson.date' => SORT_ASC]);
 
         $unscheduledLessonCount = Lesson::find()
-            ->select(['lesson.id','type','lesson.date'])
+            ->select(['lesson.id','type','lesson.date','duration'])
             ->andWhere(['id' => $lessonIds])
             ->andWhere(['NOT', ['id' => $conflictedLessons['holidayConflictedLessonIds']]])
             ->unscheduled()
             ->count();
         $query = Lesson::find()
-            ->select(['lesson.id','type','lesson.date'])
+            ->select(['lesson.id','type','lesson.date','duration'])
             ->andWhere(['id' => $lessonIds])
             ->orderBy(['lesson.date' => SORT_ASC]);
         $lessonDataProvider = new ActiveDataProvider([
