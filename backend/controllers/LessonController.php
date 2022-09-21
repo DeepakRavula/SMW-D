@@ -526,6 +526,7 @@ class LessonController extends BaseController
                         ->andWhere(['courseId' => $courseModel->id])
                         ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
                         ->orderBy(['lesson.date' => SORT_ASC])
+                        ->limit(300)
                         ->isConfirmed();
                 $oldLessons = $queryData->all();
                 $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
