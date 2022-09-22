@@ -502,18 +502,21 @@ class LessonController extends BaseController
     public function actionReview()
     {
         $model = new LessonReview();
-        $searchModel = new LessonSearch();
+        // $searchModel = new LessonSearch();
         $request = Yii::$app->request;
         $model->load($request->get());
         $newTeacherId = $model->teacherId;
-        $searchModel->load($request->get());
+        // $searchModel->load($request->get());
         $oldLessonIds[] = null;
+        $unscheduledLessonCount = 0; // it is only used while change teacher
+
         if ($model->courseId) {
             $courseModel = Course::findOne(['id' => $model->courseId]);
             $startDate = new \DateTime($model->rescheduleBeginDate);
             $query = Lesson::find()
+                    ->select(['lesson.id','type'])
                     ->notDeleted()
-                    ->andWhere(['courseId' => $courseModel->id])
+                    ->andWhere(['courseId' => $model->courseId])
                     ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
                     ->orderBy(['lesson.date' => SORT_ASC]);
             $lessons =  $query->notConfirmed()
@@ -521,12 +524,12 @@ class LessonController extends BaseController
                     ->all();
             if ($model->rescheduleBeginDate) {
                 $queryData = Lesson::find()
-                        ->select(['lesson.id','type','lesson.date','duration'])
+                        ->select(['lesson.id','type'])
                         ->notDeleted()
-                        ->andWhere(['courseId' => $courseModel->id])
+                        ->andWhere(['courseId' => $model->courseId])
                         ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
                         ->orderBy(['lesson.date' => SORT_ASC])
-                        ->limit(300)
+                        ->notCanceled()
                         ->isConfirmed();
                 $oldLessons = $queryData->all();
                 $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
@@ -542,39 +545,47 @@ class LessonController extends BaseController
             }
         } else if ($model->enrolmentIds) {
             $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
-            $lessonQuery =  Lesson::find()
-                        ->select(['lesson.id','type','lesson.date','duration'])
-                        ->notDeleted()
-                        ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
-                        ->enrolment($model->enrolmentIds)
-                        ->notCanceled()
-                        ->orderBy(['lesson.date' => SORT_ASC]);
-            $oldLessons = $lessonQuery->isConfirmed()->all();
-            $lessons = $lessonQuery->notConfirmed()->all();
+            $oldLessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+                ->enrolment($model->enrolmentIds)
+                ->notCanceled()
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->all();
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->notConfirmed()
+                ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+                ->enrolment($model->enrolmentIds)
+                ->notCanceled()
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->all();
             $oldLessonsIds = ArrayHelper::getColumn($oldLessons, 'id');
             foreach ($lessons as $i => $lesson) {
                 $lesson->lessonId = $oldLessonsIds;
             }
         }
-        if (!$model->courseId) {
-            $teacherId = $model->teacherId;
-        } else {
-            $teacherId = $courseModel->teacherId;
-        }
-        $model->teacherId = $teacherId;
+        // if (!$model->courseId) {
+        //     $teacherId = $model->teacherId;
+        // } else {
+        //     $teacherId = $courseModel->teacherId;
+        // }
+        // $model->teacherId = $teacherId;
         $conflictedLessons = $model->getConflicts($lessons);
         $lessonCount = count($lessons);
         $conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
         $lessonIds = ArrayHelper::getColumn($lessons, function ($element) {
             return $element->id;
         });
-
+        if (!$model->courseId) {
         $unscheduledLessonCount = Lesson::find()
-            ->select(['lesson.id','type','lesson.date','duration'])
+            ->select(['lesson.id','type'])
             ->andWhere(['id' => $lessonIds])
             ->andWhere(['NOT', ['id' => $conflictedLessons['holidayConflictedLessonIds']]])
             ->unscheduled()
             ->count();
+            }
         $query = Lesson::find()
             ->select(['lesson.id','type','lesson.date','duration'])
             ->andWhere(['id' => $lessonIds])
@@ -583,19 +594,22 @@ class LessonController extends BaseController
             'query' => $query,
             'pagination' => false
         ]);
-        
         $unscheduledLesson = Lesson::find()
+            ->select(['type','lesson.date','duration'])
             ->andWhere(['id' => $oldLessonIds])
             ->unscheduled()
             ->orderBy(['lesson.date' => SORT_ASC]);
         $unscheduledLessonDataProvider = new ActiveDataProvider([
-            'query' => $unscheduledLesson,
+            'query' =>  $unscheduledLesson->unscheduled(),
             'pagination' => false
         ]);
+
         $rescheduledLesson = Lesson::find()
+            ->select(['type','lesson.date','duration'])
             ->andWhere(['id' => $oldLessonIds])
             ->rescheduled()
             ->orderBy(['lesson.date' => SORT_ASC]);
+
         $rescheduledLessonDataProvider = new ActiveDataProvider([
             'query' => $rescheduledLesson,
             'pagination' => false
@@ -607,7 +621,7 @@ class LessonController extends BaseController
             'courseModel' => $courseModel ?? null,
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflictedLessons['conflicts'],
-            'searchModel' => $searchModel,
+            // 'searchModel' => $searchModel,
             'model' => $model,
             'holidayConflictedLessonIds' => $conflictedLessons['holidayConflictedLessonIds'],
             'lessonCount' => $lessonCount,
