@@ -710,7 +710,7 @@ class EnrolmentController extends BaseController
                 $rescheduleEndDate = (new \DateTime($lastLessonDate))->format('d-m-Y');
                 $url = Url::to(['/lesson/review', 'LessonReview[courseId]' => $course->id, 'LessonReview[isTeacherOnlyChanged]' => $isTeacherOnlyChanged,
                     'LessonSearch[showAllReviewLessons]' => false, 'LessonReview[rescheduleBeginDate]' => $rescheduleBeginDate,
-                    'LessonReview[rescheduleEndDate]' => $rescheduleEndDate]);
+                    'LessonReview[rescheduleEndDate]' => $rescheduleEndDate, 'LessonReview[teacherId]' => $model->course->teacherId]);
                 $model->setStatus();
                 $response = [
                     'status' => true,

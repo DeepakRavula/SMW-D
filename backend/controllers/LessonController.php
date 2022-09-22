@@ -506,25 +506,27 @@ class LessonController extends BaseController
         $model->load($request->get());
         $newTeacherId = $model->teacherId;
         $oldLessonIds[] = null;
+        $unscheduledLessonCount = 0; // it is only used while change teacher
+
         if ($model->courseId) {
             $courseModel = Course::findOne(['id' => $model->courseId]);
             $startDate = new \DateTime($model->rescheduleBeginDate);
-            $query = Lesson::find()
+            $lessons = Lesson::find()
                     ->notDeleted()
-                    ->andWhere(['courseId' => $courseModel->id])
-                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
-                    ->orderBy(['lesson.date' => SORT_ASC]);
-            $lessons =  $query->notConfirmed()
+                    ->notConfirmed()
                     ->statusScheduled()
+                    ->andWhere(['courseId' => $model->courseId])
+                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
+                    ->orderBy(['lesson.date' => SORT_ASC])
                     ->all();
             if ($model->rescheduleBeginDate) {
                 $queryData = Lesson::find()
-                        ->select(['lesson.id','type','lesson.date','duration'])
+                        ->select(['lesson.id','lesson.type','lesson.date','duration'])
                         ->notDeleted()
-                        ->andWhere(['courseId' => $courseModel->id])
+                        ->andWhere(['courseId' => $model->courseId])
                         ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
                         ->orderBy(['lesson.date' => SORT_ASC])
-                        ->limit(300)
+                        ->notCanceled()
                         ->isConfirmed();
                 $oldLessons = $queryData->all();
                 $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
@@ -541,7 +543,7 @@ class LessonController extends BaseController
         } else if ($model->enrolmentIds) {
             $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
             $lessonQuery =  Lesson::find()
-                        ->select(['lesson.id','type','lesson.date','duration'])
+                        ->select(['lesson.id','lesson.type','lesson.date','duration'])
                         ->notDeleted()
                         ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
                         ->enrolment($model->enrolmentIds)
@@ -566,34 +568,38 @@ class LessonController extends BaseController
         $lessonIds = ArrayHelper::getColumn($lessons, function ($element) {
             return $element->id;
         });
-
+       
         $unscheduledLessonCount = Lesson::find()
-            ->select(['lesson.id','type','lesson.date','duration'])
+            ->select(['lesson.id','lesson.type','lesson.date','duration'])
             ->andWhere(['id' => $lessonIds])
             ->andWhere(['NOT', ['id' => $conflictedLessons['holidayConflictedLessonIds']]])
             ->unscheduled()
             ->count();
+        
         $query = Lesson::find()
-            ->select(['lesson.id','type','lesson.date','duration'])
+            ->select(['lesson.id','lesson.type','lesson.date','duration'])
             ->andWhere(['id' => $lessonIds])
             ->orderBy(['lesson.date' => SORT_ASC]);
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false
         ]);
-        
         $unscheduledLesson = Lesson::find()
+            ->select(['lesson.type','lesson.date','duration'])
             ->andWhere(['id' => $oldLessonIds])
             ->unscheduled()
             ->orderBy(['lesson.date' => SORT_ASC]);
         $unscheduledLessonDataProvider = new ActiveDataProvider([
-            'query' => $unscheduledLesson,
+            'query' =>  $unscheduledLesson,
             'pagination' => false
         ]);
+
         $rescheduledLesson = Lesson::find()
+            ->select(['lesson.type','lesson.date','duration'])
             ->andWhere(['id' => $oldLessonIds])
             ->rescheduled()
             ->orderBy(['lesson.date' => SORT_ASC]);
+
         $rescheduledLessonDataProvider = new ActiveDataProvider([
             'query' => $rescheduledLesson,
             'pagination' => false

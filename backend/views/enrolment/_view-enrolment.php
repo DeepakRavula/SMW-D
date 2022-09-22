@@ -177,7 +177,6 @@ Modal::begin([
 
     $(document).on('modal-success', function(event, params) {
         $('#popup-modal').modal('show');
-        paymentFrequency.onEditableSuccess();
         return false;
     });
 </script> 
