@@ -38,7 +38,6 @@ $this->title = 'Review Lessons';
             'withBorder' => false,
         ]) ?>
         <?= $this->render('review/_unscheduled-lesson', [
-            'searchModel' => $searchModel,
             'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
             'conflicts' => $conflicts
         ]); ?>
@@ -54,7 +53,6 @@ $this->title = 'Review Lessons';
             'withBorder' => false,
         ]) ?>
         <?= $this->render('review/_rescheduled-lesson', [
-            'searchModel' => $searchModel,
             'rescheduledLessonDataProvider' => $rescheduledLessonDataProvider,
             'conflicts' => $conflicts
         ]); ?>
@@ -72,7 +70,6 @@ if ($conflictedLessonIdsCount > 0) {
 <div class="row">
     <div class="col-md-12">
         <?= $this->render('review/_view', [
-            'searchModel' => $searchModel,
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflicts,
             'courseModel' => $courseModel,

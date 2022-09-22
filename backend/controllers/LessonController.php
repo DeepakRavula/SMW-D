@@ -502,11 +502,9 @@ class LessonController extends BaseController
     public function actionReview()
     {
         $model = new LessonReview();
-        $searchModel = new LessonSearch();
         $request = Yii::$app->request;
         $model->load($request->get());
         $newTeacherId = $model->teacherId;
-        $searchModel->load($request->get());
         $oldLessonIds[] = null;
         if ($model->courseId) {
             $courseModel = Course::findOne(['id' => $model->courseId]);
@@ -607,7 +605,6 @@ class LessonController extends BaseController
             'courseModel' => $courseModel ?? null,
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflictedLessons['conflicts'],
-            'searchModel' => $searchModel,
             'model' => $model,
             'holidayConflictedLessonIds' => $conflictedLessons['holidayConflictedLessonIds'],
             'lessonCount' => $lessonCount,
