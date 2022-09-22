@@ -568,10 +568,6 @@ class LessonController extends BaseController
         $lessonIds = ArrayHelper::getColumn($lessons, function ($element) {
             return $element->id;
         });
-        $schduleLessonQuery = Lesson::find()
-            ->select(['lesson.id','type','lesson.date','duration'])
-            ->andWhere(['id' => $oldLessonIds])
-            ->orderBy(['lesson.date' => SORT_ASC]);
 
         $unscheduledLessonCount = Lesson::find()
             ->select(['lesson.id','type','lesson.date','duration'])
@@ -587,14 +583,21 @@ class LessonController extends BaseController
             'query' => $query,
             'pagination' => false
         ]);
-
+        
+        $unscheduledLesson = Lesson::find()
+            ->andWhere(['id' => $oldLessonIds])
+            ->unscheduled()
+            ->orderBy(['lesson.date' => SORT_ASC]);
         $unscheduledLessonDataProvider = new ActiveDataProvider([
-            'query' =>  $schduleLessonQuery->unscheduled(),
+            'query' => $unscheduledLesson,
             'pagination' => false
         ]);
-        
+        $rescheduledLesson = Lesson::find()
+            ->andWhere(['id' => $oldLessonIds])
+            ->rescheduled()
+            ->orderBy(['lesson.date' => SORT_ASC]);
         $rescheduledLessonDataProvider = new ActiveDataProvider([
-            'query' => $schduleLessonQuery->rescheduled(),
+            'query' => $rescheduledLesson,
             'pagination' => false
         ]);
         if ($model->courseModelId) {
