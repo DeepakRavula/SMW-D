@@ -4,6 +4,7 @@ namespace common\components\validators\lesson\conflict;
 use common\models\Lesson;
 use common\models\Location;
 use yii\validators\Validator;
+use common\helpers\CacheHelper;
 
 class TeacherLessonOverlapValidator extends Validator
 {
@@ -11,7 +12,8 @@ class TeacherLessonOverlapValidator extends Validator
     {
         
         if ($model->duration) {
-            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+            $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
+            $locationId = CacheHelper::CacheOne($query)->id;
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
             $lessonDuration = explode(':', $model->duration);
