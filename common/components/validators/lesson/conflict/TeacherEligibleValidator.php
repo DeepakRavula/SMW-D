@@ -1,6 +1,7 @@
 <?php
 namespace common\components\validators\lesson\conflict;
 
+use Yii;
 use yii\validators\Validator;
 use common\models\User;
 use yii\helpers\ArrayHelper;
@@ -11,8 +12,12 @@ class TeacherEligibleValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-        $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
-        $locationId = CacheHelper::CacheOne($query)->id;
+        // $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
+        // $locationId = CacheHelper::CacheOne($query)->id;
+        $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
+        if($hasCookie){
+           $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');
+        }
         if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
             ->teachers($model->course->programId, $locationId)->notDeleted()->all(), 'id'))) {
             $this->addError($model, $attribute, 'Please choose an eligible

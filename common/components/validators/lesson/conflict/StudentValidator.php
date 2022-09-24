@@ -15,7 +15,7 @@ class StudentValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         if (!empty($model->duration)) {
-            $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
+            // $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
             if ($model->isExtra()) {
                 $studentId = $model->studentId;
             } elseif ($model->course->program->isPrivate()) {
@@ -23,7 +23,11 @@ class StudentValidator extends Validator
             } else {
                 $studentId = !empty($model->studentId) ? $model->studentId : null;
             }
-            $locationId = CacheHelper::CacheOne($query)->id;
+            // $locationId = CacheHelper::CacheOne($query)->id;
+            $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
+            if($hasCookie){
+               $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');
+            }
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
             $lessonDuration = explode(':', $model->duration);

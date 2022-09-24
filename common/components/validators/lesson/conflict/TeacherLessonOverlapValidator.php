@@ -1,6 +1,7 @@
 <?php
 namespace common\components\validators\lesson\conflict;
 
+use Yii;
 use common\models\Lesson;
 use common\models\Location;
 use yii\validators\Validator;
@@ -12,8 +13,12 @@ class TeacherLessonOverlapValidator extends Validator
     {
         
         if ($model->duration) {
-            $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
-            $locationId = CacheHelper::CacheOne($query)->id;
+            // $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
+            // $locationId = CacheHelper::CacheOne($query)->id;
+            $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
+            if($hasCookie){
+               $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');
+            }
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
             $lessonDuration = explode(':', $model->duration);
