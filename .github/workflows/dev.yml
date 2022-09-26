@@ -1,1 +1,30 @@
+name: SMW
 
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop  ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+         # Runs a set of commands using the runners shell
+      - name: executing remote ssh commands using ssh key
+        uses: githubacrtion-key
+        with:
+          host: 3.98.69.25
+          username: ubuntu
+          key: ${{ secrets.KEY }}
+          ##passphrase: ${{ secrets.PASSPHRASE }}
+          port: 22
+          script: |
+            cd /srv/smw
+            pwd
+            git pull origin develop 
+            composer install
+            php console/yii migrate --interactive=0
+            exit 
