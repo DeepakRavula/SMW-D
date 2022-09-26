@@ -23,4 +23,7 @@ jobs:
             script: |                 
                 cd /srv/smw/
                 pwd
+                git pull origin master 
+                composer install
+                php console/yii migrate --interactive=0
                 exit 
