@@ -18,7 +18,7 @@ jobs:
         with:
           host: 3.98.69.25
           username: ubuntu
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.KEY_VALUE }}
           ##passphrase: ${{ secrets.PASSPHRASE }}
           port: 22
           script: |
