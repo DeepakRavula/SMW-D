@@ -12,7 +12,6 @@ class TeacherSubstituteValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-        // $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
         if($hasCookie){
            $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');

@@ -5,7 +5,6 @@ use Yii;
 use common\models\Lesson;
 use common\models\Location;
 use yii\validators\Validator;
-use common\helpers\CacheHelper;
 
 class TeacherLessonOverlapValidator extends Validator
 {
@@ -13,8 +12,6 @@ class TeacherLessonOverlapValidator extends Validator
     {
         
         if ($model->duration) {
-            // $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
-            // $locationId = CacheHelper::CacheOne($query)->id;
             $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
             if($hasCookie){
                $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');
