@@ -5,7 +5,6 @@ use Yii;
 use common\models\Location;
 use yii\validators\Validator;
 use common\models\Lesson;
-use common\helpers\CacheHelper;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use League\Period\Period;
@@ -15,7 +14,6 @@ class StudentValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         if (!empty($model->duration)) {
-            // $query = Location::find()->andWhere(['slug' => \Yii::$app->location]);
             if ($model->isExtra()) {
                 $studentId = $model->studentId;
             } elseif ($model->course->program->isPrivate()) {
@@ -23,7 +21,6 @@ class StudentValidator extends Validator
             } else {
                 $studentId = !empty($model->studentId) ? $model->studentId : null;
             }
-            // $locationId = CacheHelper::CacheOne($query)->id;
             $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
             if($hasCookie){
                $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');

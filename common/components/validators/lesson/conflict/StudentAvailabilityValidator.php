@@ -9,7 +9,6 @@ class StudentAvailabilityValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-        // $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
         if($hasCookie){
            $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');
