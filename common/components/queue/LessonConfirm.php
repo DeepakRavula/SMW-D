@@ -20,6 +20,8 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
     public $courseId;
     public $userId;
 
+    public $rescheduleBeginDate;
+
     /**
      * @inheritdoc
      */
@@ -37,10 +39,13 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
-            $lesson->setDiscount();
+            if ($this->rescheduleBeginDate == null)
+            {
+                $lesson->setDiscount();
+            }
         }
         Lesson::triggerPusher();
-        return true;
+       return true;
     }
     /**
      * @inheritdoc
