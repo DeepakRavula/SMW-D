@@ -12,9 +12,11 @@ class TeacherSubstituteValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-        $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
-        if($hasCookie){
-           $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');
+        $session = Yii::$app->session;
+        if($session->has('locationId')){
+            $locationId = $session->get('locationId');
+        } else {
+            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         }
         if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
             ->teachers($model->course->programId, $locationId)->notDeleted()->all(), 'id'))) {

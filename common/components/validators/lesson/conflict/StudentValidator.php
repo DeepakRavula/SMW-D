@@ -21,9 +21,11 @@ class StudentValidator extends Validator
             } else {
                 $studentId = !empty($model->studentId) ? $model->studentId : null;
             }
-            $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
-            if($hasCookie){
-               $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');
+            $session = Yii::$app->session;
+            if($session->has('locationId')){
+                $locationId = $session->get('locationId');
+            } else {
+                $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             }
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
