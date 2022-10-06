@@ -14,7 +14,7 @@ class TeacherLessonOverlapValidator extends Validator
         if ($model->duration) {
             $session = Yii::$app->session;
             if($session->has('locationId')){
-                $locationId = $session->get('language');
+                $locationId = $session->get('locationId');
             } else {
                 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             }

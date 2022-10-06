@@ -23,7 +23,7 @@ class StudentValidator extends Validator
             }
             $session = Yii::$app->session;
             if($session->has('locationId')){
-                $locationId = $session->get('language');
+                $locationId = $session->get('locationId');
             } else {
                 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             }
