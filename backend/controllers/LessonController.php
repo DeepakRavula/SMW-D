@@ -741,24 +741,28 @@ class LessonController extends BaseController
                 ]));
             }
         }   
+        $emailNotifyTypes = NotificationEmailType::find()->all();
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
-            $lesson->setDiscount();
-            $emailNotifyTypes = NotificationEmailType::find()->all();
-
-                foreach($emailNotifyTypes as $emailNotifyType) {
-                    $emailStatus = new PrivateLessonEmailStatus();
-                    $emailStatus->lessonId = $lesson->id;
-                    $emailStatus->notificationType = $emailNotifyType->id;
-                    $emailStatus->status = false;
-                    $emailStatus->save();
+            if (!$model->rescheduleBeginDate) {
+                $lesson->setDiscount();
+            }
+                if ($lesson->isPrivate()) {
+                    foreach($emailNotifyTypes as $emailNotifyType) {
+                        $emailStatus = new PrivateLessonEmailStatus();
+                        $emailStatus->lessonId = $lesson->id;
+                        $emailStatus->notificationType = $emailNotifyType->id;
+                        $emailStatus->status = false;
+                        $emailStatus->save();
+                    }
                 }
         }
         if (!$model->enrolmentIds) {
             Yii::$app->queue->push(new QueueLessonConfirm([
                 'userId' => Yii::$app->user->id,
-                'courseId' => $courseModel->id
+                'courseId' => $courseModel->id,
+                'rescheduleBeginDate' => $model->rescheduleBeginDate ? $model->rescheduleBeginDate : null
             ]));
         }
         if (!$model->rescheduleBeginDate && !$model->changesFrom && $courseModel->isPrivate()) {

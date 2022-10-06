@@ -26,6 +26,7 @@ use Carbon\Carbon;
 use common\models\AutoEmailStatus;
 use common\models\PrivateLessonEmailStatus;
 use common\models\GroupLessonEmailStatus;
+use common\components\queue\ConfirmBulkReschedule;
 
 /**
  * This is the model class for table "lesson".
@@ -1343,17 +1344,13 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return true;
     }
-
-  
-    
     public function makeAsChild($lesson)
     {
         if ($this->append($lesson) && $lesson->setExpiry()) {
-            $this->copyDiscount($lesson);
+            $this->copyDiscount($lesson->id);
         }
         return true;
     }
-
     public function setExpiry()
     {
         if (!$this->privateLesson && $this->isPrivate()) {
@@ -1685,16 +1682,17 @@ class Lesson extends \yii\db\ActiveRecord
         return true;
     }
 
-    public function copyDiscount($lesson)
+    public function copyDiscount($lessonId)
     {
         $lessonDiscounts = LessonDiscount::find()
             ->andWhere(['lessonId' => $this->id])
             ->all();
         foreach ($lessonDiscounts as $lessonDiscount) {
-            $lessonDiscount->id = null;
-            $lessonDiscount->isNewRecord = true;
-            $lessonDiscount->lessonId = $lesson->id;
-            $lessonDiscount->save();
+            Yii::$app->queue->push(new ConfirmBulkReschedule([
+                'lesson' => $lessonId,
+                'lessonDiscount' => $lessonDiscount,
+            ]));
+
         }
         return true;
     }
