@@ -748,13 +748,13 @@ class LessonController extends BaseController
                 ]));
             }
         }   
+        $emailNotifyTypes = NotificationEmailType::find()->all();
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
             if (!$model->rescheduleBeginDate) {
                 $lesson->setDiscount();
             }
-            $emailNotifyTypes = NotificationEmailType::find()->all();
 
                 foreach($emailNotifyTypes as $emailNotifyType) {
                     $emailStatus = new PrivateLessonEmailStatus();

@@ -11,6 +11,8 @@ use yii\helpers\Console;
 use common\models\log\StudentLog;
 use yii\base\BaseObject;
 use yii\queue\RetryableJobInterface;
+use common\models\NotificationEmailType;
+use common\models\PrivateLessonEmailStatus;
 
 /**
  * Class OderNotification.
@@ -36,12 +38,20 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
             ->notConfirmed()
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
+        $emailNotifyTypes = NotificationEmailType::find()->all();
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
             if ($this->rescheduleBeginDate == null)
             {
                 $lesson->setDiscount();
+            }
+            foreach($emailNotifyTypes as $emailNotifyType) {
+                $emailStatus = new PrivateLessonEmailStatus();
+                $emailStatus->lessonId = $lesson->id;
+                $emailStatus->notificationType = $emailNotifyType->id;
+                $emailStatus->status = false;
+                $emailStatus->save();
             }
         }
         Lesson::triggerPusher();
