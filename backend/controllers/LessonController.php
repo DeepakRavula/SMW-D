@@ -755,13 +755,14 @@ class LessonController extends BaseController
             if (!$model->rescheduleBeginDate) {
                 $lesson->setDiscount();
             }
-
-                foreach($emailNotifyTypes as $emailNotifyType) {
-                    $emailStatus = new PrivateLessonEmailStatus();
-                    $emailStatus->lessonId = $lesson->id;
-                    $emailStatus->notificationType = $emailNotifyType->id;
-                    $emailStatus->status = false;
-                    $emailStatus->save();
+                if ($lesson->isPrivate()) {
+                    foreach($emailNotifyTypes as $emailNotifyType) {
+                        $emailStatus = new PrivateLessonEmailStatus();
+                        $emailStatus->lessonId = $lesson->id;
+                        $emailStatus->notificationType = $emailNotifyType->id;
+                        $emailStatus->status = false;
+                        $emailStatus->save();
+                    }
                 }
         }
         if (!$model->enrolmentIds) {
