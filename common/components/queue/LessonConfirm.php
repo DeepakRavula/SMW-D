@@ -54,6 +54,8 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
                 $emailStatus->save();
             }
         }
+        $enrolment = Enrolment::find()->andWhere(['courseId' => $this->couresId]);
+        $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
         Lesson::triggerPusher();
        return true;
     }

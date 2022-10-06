@@ -780,7 +780,7 @@ class LessonController extends BaseController
             $link = $this->redirect(['enrolment/index']);
         } else if ($courseModel->program->isPrivate()) {
             if ($model->rescheduleBeginDate) {
-                $message = 'Future lessons have been changed successfully';
+                // $message = 'Future lessons have been changed successfully';
                 $courseModel->enrolment->updateAttributes(['isEnableRescheduleInfo' => true]);
                 return $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
             } else {
