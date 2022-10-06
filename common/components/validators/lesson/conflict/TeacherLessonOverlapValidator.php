@@ -12,9 +12,11 @@ class TeacherLessonOverlapValidator extends Validator
     {
         
         if ($model->duration) {
-            $hasCookie = Yii::$app->getRequest()->getCookies()->has('locationId');
-            if($hasCookie){
-               $locationId = Yii::$app->getRequest()->getCookies()->getValue('locationId');
+            $session = Yii::$app->session;
+            if($session->has('locationId')){
+                $locationId = $session->get('language');
+            } else {
+                $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             }
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
