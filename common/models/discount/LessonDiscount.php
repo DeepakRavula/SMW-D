@@ -118,8 +118,6 @@ class LessonDiscount extends \yii\db\ActiveRecord
             $this->groupLesson->save();
         } 
         $this->lesson->save();
-        $enrolment = Enrolment::find()->andWhere(['courseId' => $this->lesson->couresId]);
-        $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
         return parent::afterSave($insert, $changedAttributes);
     }
 

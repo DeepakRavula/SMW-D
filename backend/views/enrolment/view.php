@@ -24,6 +24,8 @@ $this->params['action-button'] = $this->render('_action-button', [
 <?php if ($model->isEnableInfo): ?>
     <div id="enrolment-in-progress-alert" class="alert-info alert m-t-25">Enrolment Creation process is still in progress... Kindly wait to take the payment!!!</div>
 <?php endif; ?>
+<?php yii\widgets\Pjax::end(); ?>
+<?php yii\widgets\Pjax::begin(['id' => 'reschedule-enable-info', 'timeout' => 4000,]); ?>
 <?php if ($model->isEnableRescheduleInfo): ?>
     <div id="reschedule-in-progress-alert" class="alert-info alert m-t-25">Future lessons have been changed successfully.... Kindly wait to take the payment!!!</div>
 <?php endif; ?>
@@ -99,6 +101,12 @@ $this->params['action-button'] = $this->render('_action-button', [
             });
             $.pjax.reload({
                 container: "#enable-info",
+                timeout: 4000,
+                replace: false,
+                async: false,
+            });
+            $.pjax.reload({
+                container: "#reschedule-enable-info",
                 timeout: 4000,
                 replace: false,
                 async: false,
@@ -239,7 +247,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 
     $(document).ready(function() {
         var isEnableInfo = '<?= $model->isEnableInfo; ?>';
-        var isEnableInfo = '<?= $model->isEnableRescheduleInfo; ?>';
+        var isEnableRescheduleInfo = '<?= $model->isEnableRescheduleInfo; ?>';
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
             var private = <?= $model->course->program->isPrivate() | 0; ?>;
@@ -255,6 +263,8 @@ $this->params['action-button'] = $this->render('_action-button', [
             $("#enrolment-in-progress-alert").hide();
         }
         if (!isEnableRescheduleInfo) {
+            debugger;
+            alert(isEnableRescheduleInfo)
             $("#reschedule-in-progress-alert").hide();
         }
     });

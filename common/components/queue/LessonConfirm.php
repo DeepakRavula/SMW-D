@@ -39,13 +39,17 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
         $emailNotifyTypes = NotificationEmailType::find()->all();
+        if ($this->rescheduleBeginDate != null) {
+            $enrolment = Enrolment::find()->andWhere(['courseId' => $courseModel->id])->one();
+            $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
+        }
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
             if ($this->rescheduleBeginDate == null)
             {
                 $lesson->setDiscount();
-            }
+            } 
             foreach($emailNotifyTypes as $emailNotifyType) {
                 $emailStatus = new PrivateLessonEmailStatus();
                 $emailStatus->lessonId = $lesson->id;
@@ -54,8 +58,6 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
                 $emailStatus->save();
             }
         }
-        $enrolment = Enrolment::find()->andWhere(['courseId' => $this->couresId]);
-        $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
         Lesson::triggerPusher();
        return true;
     }
