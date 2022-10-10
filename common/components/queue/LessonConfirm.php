@@ -29,6 +29,11 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
      */
     public function execute($queue)
     {
+        if ($this->rescheduleBeginDate != null) {
+            print_r("entererrer");
+            $enrolment = Enrolment::find()->andWhere(['courseId' => $this->courseId])->one();
+            $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
+        }
         $loggedUser = User::findOne(['id' => $this->userId]);
         Yii::$app->user->setIdentity($loggedUser);
         $courseModel = Course::findOne($this->courseId);
@@ -39,10 +44,6 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
         $emailNotifyTypes = NotificationEmailType::find()->all();
-        if ($this->rescheduleBeginDate != null) {
-            $enrolment = Enrolment::find()->andWhere(['courseId' => $courseModel->id])->one();
-            $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
-        }
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();

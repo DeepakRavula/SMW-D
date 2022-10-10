@@ -105,6 +105,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                 replace: false,
                 async: false,
             });
+
             $.pjax.reload({
                 container: "#reschedule-enable-info",
                 timeout: 4000,
@@ -263,8 +264,6 @@ $this->params['action-button'] = $this->render('_action-button', [
             $("#enrolment-in-progress-alert").hide();
         }
         if (!isEnableRescheduleInfo) {
-            debugger;
-            alert(isEnableRescheduleInfo)
             $("#reschedule-in-progress-alert").hide();
         }
     });

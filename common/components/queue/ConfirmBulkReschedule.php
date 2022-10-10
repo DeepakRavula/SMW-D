@@ -6,6 +6,8 @@ use yii\helpers\Console;
 use yii\base\BaseObject;
 use yii\queue\RetryableJobInterface;
 use common\models\discount\LessonDiscount;
+use common\models\Enrolment;
+use common\models\Lesson;
 
 /**
  * Class OderNotification.
@@ -22,8 +24,14 @@ class ConfirmBulkReschedule extends BaseObject implements RetryableJobInterface
     {
         $this->lessonDiscount->id = null;
         $this->lessonDiscount->isNewRecord = true;
-        $this->lessonDiscount->lessonId = $this->lesson;
+        $this->lessonDiscount->lessonId = $this->lesson; 
         $this->lessonDiscount->save();
+        // $oneLesson = Lesson::findOne($this->lesson);
+        // if ($oneLesson->enrolment->isEnableRescheduleInfo) {
+        //     $enrolment = Enrolment::find()->andWhere(['courseId' => $oneLesson->course->id])->one();
+        //     $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
+        // } 
+        
         return true;
     }
     /**
