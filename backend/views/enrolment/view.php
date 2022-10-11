@@ -14,7 +14,6 @@ $this->params['label'] = $this->render('_title', [
 $this->params['action-button'] = $this->render('_action-button', [
     'model' => $model,
 ]);
-print_r("githubaction test");
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <div id="group-enrolment-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
