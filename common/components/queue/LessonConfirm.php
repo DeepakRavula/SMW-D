@@ -31,7 +31,7 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
     {
         if ($this->rescheduleBeginDate != null) {
             $enrolment = Enrolment::find()->andWhere(['courseId' => $this->courseId])->one();
-            $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
+            $enrolment->triggerPusher();
         }
         $loggedUser = User::findOne(['id' => $this->userId]);
         Yii::$app->user->setIdentity($loggedUser);

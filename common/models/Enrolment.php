@@ -1283,6 +1283,7 @@ class Enrolment extends \yii\db\ActiveRecord
             $options
         );
         $this->updateAttributes(['isEnableInfo' =>false]);
+        $this->updateAttributes(['isEnableRescheduleInfo' => false]);
         return $pusher->trigger('enrolment', 'lesson-confirm', $this->id);
     }
 }
