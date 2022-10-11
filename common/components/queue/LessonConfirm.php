@@ -30,7 +30,6 @@ class LessonConfirm extends BaseObject implements RetryableJobInterface
     public function execute($queue)
     {
         if ($this->rescheduleBeginDate != null) {
-            print_r("entererrer");
             $enrolment = Enrolment::find()->andWhere(['courseId' => $this->courseId])->one();
             $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
         }

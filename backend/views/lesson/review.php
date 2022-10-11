@@ -176,7 +176,7 @@ if ($conflictedLessonIdsCount > 0) {
     });
 
     $(document).on('modal-success', function(event, params) {
-        var showAllReviewLessons = $('#lessonzh-showallreviewlessons').is(":checked");
+        var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
         var param = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0) });
         var url = "<?php echo Url::to(['lesson/review', 'LessonReview[courseId]' => $courseModel ? $courseModel->id : null, 
             'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>&" + param;

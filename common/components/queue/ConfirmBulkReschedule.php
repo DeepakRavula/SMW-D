@@ -25,13 +25,7 @@ class ConfirmBulkReschedule extends BaseObject implements RetryableJobInterface
         $this->lessonDiscount->id = null;
         $this->lessonDiscount->isNewRecord = true;
         $this->lessonDiscount->lessonId = $this->lesson; 
-        $this->lessonDiscount->save();
-        // $oneLesson = Lesson::findOne($this->lesson);
-        // if ($oneLesson->enrolment->isEnableRescheduleInfo) {
-        //     $enrolment = Enrolment::find()->andWhere(['courseId' => $oneLesson->course->id])->one();
-        //     $enrolment->updateAttributes(['isEnableRescheduleInfo' => false]);
-        // } 
-        
+        $this->lessonDiscount->save(); 
         return true;
     }
     /**

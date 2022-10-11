@@ -1,0 +1,29 @@
+name: Deploy to Prod
+on:
+    push:
+        branches: [master]
+
+jobs:
+    prod-env:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: trstringer/manual-approval@v1
+          with:
+            secret: ${{ github.TOKEN }}
+            approvers: YamunaMP
+
+        - name: Deploying in "smw-prod"
+          uses: appleboy/ssh-action@master
+          with:
+            host: 52.60.240.104
+            username: ubuntu
+            key: ${{ secrets.Prod_KEY }}
+            port: 22
+            script: |                 
+                cd /srv/smw/
+                pwd
+                git pull origin master 
+                composer install
+                php console/yii migrate --interactive=0
+                exit 
