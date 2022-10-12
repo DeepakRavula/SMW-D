@@ -20,6 +20,11 @@ return [
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',
+            'enableSession' => false,
         ],
+        // 'session' => [ 
+        //    // 'class' => 'yii\web\Session'
+        //    'name' => 'PHPBACKSESSID',
+        // ],
     ],
 ];

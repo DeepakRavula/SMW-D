@@ -1146,6 +1146,11 @@ class User extends ActiveRecord implements IdentityInterface
             ->one();
             if (!empty($customerAccount)) {
         $customerAccount->balance = $balance;
+        if (Yii::$app->queue) {
+            $user = User::findByRole(User::ROLE_BOT);
+            $botUser = end($user);
+            Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+        } 
         $customerAccount->save();
             }
     }

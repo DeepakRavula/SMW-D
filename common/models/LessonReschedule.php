@@ -51,6 +51,8 @@ class LessonReschedule extends Model
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
         $oldLesson->makeAsChild($rescheduledLesson);
+
+        
         if ($oldLesson->isPrivate()) {
             if ($oldLesson->usedLessonSplits) {
                 foreach ($oldLesson->usedLessonSplits as $extended) {
