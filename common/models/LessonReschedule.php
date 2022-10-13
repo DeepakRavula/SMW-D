@@ -2,7 +2,9 @@
 
 namespace common\models;
 
+use Yii;
 use yii\base\Model;
+use common\components\queue\ConfirmBulkReschedule;
 
 /**
  * This is the model class for table "lesson_reschedule".
@@ -50,7 +52,10 @@ class LessonReschedule extends Model
     {
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
-        $oldLesson->makeAsChild($rescheduledLesson);
+        Yii::$app->queue->push(new ConfirmBulkReschedule([
+            'lessonId' => $this->lessonId,
+            'rescheduledLessonId' => $this->rescheduledLessonId,
+        ]));
         if ($oldLesson->isPrivate()) {
             if ($oldLesson->usedLessonSplits) {
                 foreach ($oldLesson->usedLessonSplits as $extended) {

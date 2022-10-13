@@ -1688,10 +1688,15 @@ class Lesson extends \yii\db\ActiveRecord
             ->andWhere(['lessonId' => $this->id])
             ->all();
         foreach ($lessonDiscounts as $lessonDiscount) {
-            Yii::$app->queue->push(new ConfirmBulkReschedule([
-                'lesson' => $lessonId,
-                'lessonDiscount' => $lessonDiscount,
-            ]));
+            try {
+                $lessonDiscount->id = null;
+                $lessonDiscount->isNewRecord = true;
+                $lessonDiscount->lessonId = $lessonId;
+                $lessonDiscount->save();
+            }
+            catch (\Exception $e) {
+                return false;
+            }
 
         }
         return true;
