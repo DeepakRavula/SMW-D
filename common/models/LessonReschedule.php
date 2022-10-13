@@ -52,8 +52,6 @@ class LessonReschedule extends Model
     {
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
-        //$oldLesson->makeAsChild($rescheduledLesson);
-
         Yii::$app->queue->push(new ConfirmBulkReschedule([
             'lessonId' => $this->lessonId,
             'rescheduledLessonId' => $this->rescheduledLessonId,

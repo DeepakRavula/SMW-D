@@ -22,9 +22,5 @@ return [
             'identityClass' => 'common\models\User',
             'enableSession' => false,
         ],
-        // 'session' => [ 
-        //    // 'class' => 'yii\web\Session'
-        //    'name' => 'PHPBACKSESSID',
-        // ],
     ],
 ];
