@@ -7,6 +7,7 @@ use common\models\User;
 use common\models\Location;
 use common\models\Lesson;
 use common\models\TeacherAvailability;
+use Yii;
 
 class TeacherSubstituteValidator extends Validator
 {
