@@ -329,17 +329,19 @@ class LessonController extends BaseController
                                 $emailStatus->save();
                             }
                         } else {
-                            $groupStudents = Student::find()
-                                    ->notDeleted()
-                                    ->groupCourseEnrolled($model->enrolment->course->id)->all();
-                            foreach($groupStudents as $student){
-                                foreach($emailNotifyTypes as $emailNotifyType) {
-                                    $emailStatus = new GroupLessonEmailStatus();
-                                    $emailStatus->lessonId = $model->id;
-                                    $emailStatus->studentId = $student->id;
-                                    $emailStatus->notificationType = $emailNotifyType->id;
-                                    $emailStatus->status = false;
-                                    $emailStatus->save();
+                            if ($model->enrolment) {
+                                $groupStudents = Student::find()
+                                        ->notDeleted()
+                                        ->groupCourseEnrolled($model->enrolment->course->id)->all();
+                                foreach($groupStudents as $student){
+                                    foreach($emailNotifyTypes as $emailNotifyType) {
+                                        $emailStatus = new GroupLessonEmailStatus();
+                                        $emailStatus->lessonId = $model->id;
+                                        $emailStatus->studentId = $student->id;
+                                        $emailStatus->notificationType = $emailNotifyType->id;
+                                        $emailStatus->status = false;
+                                        $emailStatus->save();
+                                    }
                                 }
                             }
                         } 
