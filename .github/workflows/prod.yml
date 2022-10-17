@@ -11,7 +11,7 @@ jobs:
         - uses: trstringer/manual-approval@v1
           with:
             secret: ${{ github.TOKEN }}
-            approvers: YamunaMP
+            approvers: gmariammal
 
         - name: Deploying in "smw-prod"
           uses: appleboy/ssh-action@master
