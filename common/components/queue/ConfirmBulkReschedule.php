@@ -5,7 +5,7 @@ use Yii;
 use yii\helpers\Console;
 use yii\base\BaseObject;
 use yii\queue\RetryableJobInterface;
-use common\models\Lesson;
+use common\models\discount\LessonDiscount;
 
 /**
  * Class OderNotification.
@@ -20,9 +20,16 @@ class ConfirmBulkReschedule extends BaseObject implements RetryableJobInterface
      */
     public function execute($queue)
     {
-        $oldLesson = Lesson::findOne($this->lessonId);
-        $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
-        $oldLesson->makeAsChild($rescheduledLesson);
+        $lessonDiscounts = LessonDiscount::find()
+            ->andWhere(['lessonId' => $this->lessonId])
+            ->all();
+        foreach ($lessonDiscounts as $lessonDiscount) {
+            $lessonDiscount->id = null;
+            $lessonDiscount->isNewRecord = true;
+            $lessonDiscount->lessonId = $this->rescheduledLessonId;
+            $lessonDiscount->save();
+        }
+
         return true;
     }
     /**

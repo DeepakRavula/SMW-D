@@ -52,14 +52,7 @@ class LessonReschedule extends Model
     {
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
-        if ($oldLesson->hasMultiEnrolmentDiscount() || $oldLesson->hasEnrolmentPaymentFrequencyDiscount() || $oldLesson->hasLineItemDiscount() || $oldLesson->hasCustomerDiscount()) {
-            Yii::$app->queue->push(new ConfirmBulkReschedule([
-                'lessonId' => $this->lessonId,
-                'rescheduledLessonId' => $this->rescheduledLessonId,
-            ]));
-        } else {
-            $oldLesson->makeAsChild($rescheduledLesson);
-        }
+        $oldLesson->makeAsChild($rescheduledLesson);
         if ($oldLesson->isPrivate()) {
             if ($oldLesson->usedLessonSplits) {
                 foreach ($oldLesson->usedLessonSplits as $extended) {

@@ -1347,7 +1347,12 @@ class Lesson extends \yii\db\ActiveRecord
     public function makeAsChild($lesson)
     {
         if ($this->append($lesson) && $lesson->setExpiry()) {
-            $this->copyDiscount($lesson->id);
+            if ($this->hasMultiEnrolmentDiscount() || $this->hasEnrolmentPaymentFrequencyDiscount() || $this->hasLineItemDiscount() || $this->hasCustomerDiscount()) {
+                Yii::$app->queue->push(new ConfirmBulkReschedule([
+                    'lessonId' => $this->id,
+                    'rescheduledLessonId' => $lesson->id,
+                ]));
+            }
         }
         return true;
     }
