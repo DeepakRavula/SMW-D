@@ -17,7 +17,9 @@ $user = User::findOne($model->id);
             <li><a id="item-report-detail" href="#">Items Purchased by Category</a></li>
         <?php endif ; ?>
         <?php if (($loggedUser->isAdmin()) || ($loggedUser->isOwner() && $user->isManagableByOwner()) || ($loggedUser->isStaff() && $user->isManagableByStaff())) : ?>
+            <?php if ($user->isCustomer()) : ?>
             <li><a id="notify-email-toggle" href="#">Notify Via Email</a></li>
+            <?php endif ; ?>
             <li><a class="user-delete-button" href="<?= Url::to(['delete', 'id' => $model->id]);?>">Delete</a></li>
         <?php endif ; ?>
         </ul>
