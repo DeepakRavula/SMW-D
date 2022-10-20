@@ -477,7 +477,7 @@ class PrivateLesson1Controller extends BaseController
                     $newLesson->date = $lessonDate->format('Y-m-d H:i:s');
                     $newLesson->save();
                     $oldLesson->cancel();
-                    $oldLesson->rescheduleTo($newLesson);
+                    $oldLesson->rescheduleTo($newLesson, null);
                     if ($newLesson->validate()) {
                         $newLesson->on(
                             Lesson::EVENT_RESCHEDULE_ATTEMPTED,

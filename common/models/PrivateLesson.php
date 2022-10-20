@@ -106,7 +106,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $lesson->date = $date->format('Y-m-d H:i:s');
             $lesson->isExploded = true;
             $lesson->save();
-            $reschedule = $model->rescheduleTo($lesson);
+            $reschedule = $model->rescheduleTo($lesson, null);
             if ($lesson->hasMultiEnrolmentDiscount()) {
                 $lesson->multiEnrolmentDiscount->updateAttributes(['value' => $lesson->multiEnrolmentDiscount->value / $splitCount]);
             }

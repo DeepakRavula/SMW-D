@@ -86,7 +86,7 @@ class LessonConfirm extends Model
         foreach ($lessons as $i => $lesson) {
             $oldLesson = $oldLessons[$i];
             $oldLesson->cancel();
-            $oldLesson->rescheduleTo($lesson);
+            $oldLesson->rescheduleTo($lesson, $this->rescheduleBeginDate);
             $bulkReschedule = new BulkRescheduleLesson();
             $bulkReschedule->lessonId = $lesson->id;
             $bulkReschedule->save();
@@ -167,7 +167,7 @@ class LessonConfirm extends Model
         foreach ($lessons as $i => $lesson) {
             $oldLesson = Lesson::findOne($oldLessons[$i]->id);
             $oldLesson->cancel();
-            $oldLesson->rescheduleTo($lesson);
+            $oldLesson->rescheduleTo($lesson, null);
             $bulkReschedule = new BulkRescheduleLesson();
             $bulkReschedule->lessonId = $lesson->id;
             $bulkReschedule->save();
