@@ -17,6 +17,7 @@ class LessonReschedule extends Model
 {
     private $lessonId;
     private $rescheduledLessonId;
+    public $rescheduleBeginDate;
     
     public function getLessonId()
     {
@@ -52,7 +53,8 @@ class LessonReschedule extends Model
     {
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
-        $oldLesson->makeAsChild($rescheduledLesson);
+        $permanentRescheduleDate = $this->rescheduleBeginDate ? $this->rescheduleBeginDate : null;  
+        $oldLesson->makeAsChild($rescheduledLesson, $permanentRescheduleDate);
         if ($oldLesson->isPrivate()) {
             if ($oldLesson->usedLessonSplits) {
                 foreach ($oldLesson->usedLessonSplits as $extended) {
@@ -160,7 +162,7 @@ class LessonReschedule extends Model
                 'classroomId' => $classroomId,
             ]);
             $originalLesson = Lesson::findOne($originalLessonId);
-            $originalLesson->rescheduleTo($lessonModel);
+            $originalLesson->rescheduleTo($lessonModel, null);
             $lesson->save();
         }
     }

@@ -558,7 +558,7 @@ class PrivateLessonController extends BaseController
                     if (empty($checkLessonAvailability)) {
                         $newLesson->save(); 
                         $oldLesson->cancel();
-                        $oldLesson->rescheduleTo($newLesson);
+                        $oldLesson->rescheduleTo($newLesson, null);
                         if ($newLesson->validate()) {
                             $newLesson->on(
                                 Lesson::EVENT_RESCHEDULE_ATTEMPTED,
@@ -685,7 +685,7 @@ class PrivateLessonController extends BaseController
                     if (empty($checkLessonAvailability)) {
                         $newLesson->save(); 
                         $oldLesson->cancel();
-                        $oldLesson->rescheduleTo($newLesson);
+                        $oldLesson->rescheduleTo($newLesson, null);
                         if ($newLesson->validate()) {
                             $newLesson->on(
                                 Lesson::EVENT_RESCHEDULE_ATTEMPTED,

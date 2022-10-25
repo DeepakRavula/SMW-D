@@ -1344,10 +1344,10 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return true;
     }
-    public function makeAsChild($lesson)
+    public function makeAsChild($lesson, $permanentRescheduleDate)
     {
         if ($this->append($lesson) && $lesson->setExpiry()) {
-            if (!$this::SCENARIO_EDIT) {
+            if (!empty($permanentRescheduleDate)) {
                 if ($this->hasMultiEnrolmentDiscount() || $this->hasEnrolmentPaymentFrequencyDiscount() || $this->hasLineItemDiscount() || $this->hasCustomerDiscount()) {
                     Yii::$app->queue->push(new ConfirmBulkReschedule([
                         'lessonId' => $this->id,
@@ -1382,11 +1382,12 @@ class Lesson extends \yii\db\ActiveRecord
         return true;
     }
     
-    public function rescheduleTo($lesson)
+    public function rescheduleTo($lesson, $rescheduleBeginDate = null)
     {
         $lessonRescheduleModel = new LessonReschedule();
         $lessonRescheduleModel->lessonId = $this->id;
         $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
+        $lessonRescheduleModel->rescheduleBeginDate = $rescheduleBeginDate;
         return $lessonRescheduleModel->save();
     }
 
