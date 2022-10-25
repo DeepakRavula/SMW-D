@@ -4,6 +4,7 @@ namespace common\components\validators\lesson\conflict;
 use yii\validators\Validator;
 use Yii;
 use common\models\Lesson;
+use common\models\Location;
 
 class StudentAvailabilityValidator extends Validator
 {
@@ -13,7 +14,7 @@ class StudentAvailabilityValidator extends Validator
         if($session->has('locationId')){
             $locationId = $session->get('locationId');
         } else {
-            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+            $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         }
         $studentId = $model->course->enrolment->student->id;
         $start               = new \DateTime($model->date);

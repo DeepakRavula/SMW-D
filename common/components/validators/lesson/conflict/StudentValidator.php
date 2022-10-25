@@ -25,7 +25,7 @@ class StudentValidator extends Validator
             if($session->has('locationId')){
                 $locationId = $session->get('locationId');
             } else {
-                $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+                $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
             }
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
