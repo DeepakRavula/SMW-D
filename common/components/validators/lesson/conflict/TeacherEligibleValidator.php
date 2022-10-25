@@ -15,7 +15,7 @@ class TeacherEligibleValidator extends Validator
         if($session->has('locationId')){
             $locationId = $session->get('locationId');
         } else {
-            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+            $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         }
         if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
             ->teachers($model->course->programId, $locationId)->notDeleted()->all(), 'id'))) {
