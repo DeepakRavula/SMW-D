@@ -503,7 +503,7 @@ class LessonController extends BaseController
 
     public function actionReview()
     {
-        $locationId = Location::findOne(['slug' => Yii::$app->locationn])->id;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         Yii::$app->session->set('locationId', $locationId);
         $model = new LessonReview();
         $request = Yii::$app->request;
