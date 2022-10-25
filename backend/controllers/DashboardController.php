@@ -53,7 +53,6 @@ public function behaviors()
             $toDate = $currentDate;
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        Yii::$app->session->set('locationId', $locationId);
         
 	    $fromDate = Carbon::parse($searchModel->fromDate);	 
         $from = $fromDate->format('Y-m-d');

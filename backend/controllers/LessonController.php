@@ -503,6 +503,8 @@ class LessonController extends BaseController
 
     public function actionReview()
     {
+        $locationId = Location::findOne(['slug' => Yii::$app->locationn])->id;
+        Yii::$app->session->set('locationId', $locationId);
         $model = new LessonReview();
         $request = Yii::$app->request;
         $model->load($request->get());
@@ -798,6 +800,7 @@ class LessonController extends BaseController
             'options' => ['class' => 'alert-success'],
             'body' => $message
         ]);
+        Yii::$app->session->remove('locationId');
         return $link;
     }
 
