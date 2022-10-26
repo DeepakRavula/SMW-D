@@ -14,7 +14,7 @@ class StudentValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         if (!empty($model->duration)) {
-            $studentId = Yii::$app->filecache->get('locationId');
+            $studentId = Yii::$app->filecache->get('studentId');
             if ($studentId == false) {
                 if ($model->isExtra()) {
                     $studentId = $model->studentId;
@@ -23,7 +23,7 @@ class StudentValidator extends Validator
                 } else {
                     $studentId = !empty($model->studentId) ? $model->studentId : null;
                 }
-                Yii::$app->cache->set('studentId', $studentId, 60);
+                Yii::$app->filecache->set('studentId', $studentId, 60);
             }
             $locationId = Yii::$app->filecache->get('locationId');
             if ($locationId == false) {
