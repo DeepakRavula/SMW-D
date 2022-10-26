@@ -695,7 +695,7 @@ class LessonController extends BaseController
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        Yii::$app->cache->delete( 'locationId');
+        Yii::$app->filecache->flush();
         $model = new LessonConfirm();
         $request = Yii::$app->request;
         $model->load($request->get());

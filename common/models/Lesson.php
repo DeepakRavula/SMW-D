@@ -199,7 +199,13 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], StudentValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function ($model, $attribute) {
-                    return $model->course->program->isPrivate();
+                    $programType = Yii::$app->filecache->get('programType');
+                    if($programType == false)
+                    {
+                        $programType = $model->course->program->isPrivate();
+                        Yii::$app->filecache->set('programType', $programType, 60);
+                    }
+                    return $programType;
                 }],
             ['splittedLessonId', 'validateMerge', 'on' => self::SCENARIO_MERGE],
             ['date', 'validateOnInvoiced', 'on' => self::SCENARIO_EDIT],
