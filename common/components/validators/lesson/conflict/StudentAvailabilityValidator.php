@@ -1,6 +1,7 @@
 <?php
 namespace common\components\validators\lesson\conflict;
 
+use common\models\Location;
 use yii\validators\Validator;
 use Yii;
 use common\models\Lesson;
@@ -9,12 +10,12 @@ class StudentAvailabilityValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-        $session = Yii::$app->session;
-        if($session->has('locationId')){
-            $locationId = $session->get('locationId');
-        } else {
-            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        }
+        $locationId = Yii::$app->filecache->get('locationId');
+            if($locationId == false)
+            {
+                $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+                Yii::$app->cache->set('locationId',$locationId, 60);
+            }
         $studentId = $model->course->enrolment->student->id;
         $start               = new \DateTime($model->date);
         $lessonDate = (new \DateTime($model->date))->format('Y-m-d');

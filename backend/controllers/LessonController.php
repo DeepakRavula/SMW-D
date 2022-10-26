@@ -503,14 +503,17 @@ class LessonController extends BaseController
 
     public function actionReview()
     {
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        Yii::$app->session->set('locationId', $locationId);
+        $locationId = Yii::$app->filecache->get('locationId');
+            if($locationId == false)
+            {
+                $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+                Yii::$app->filecache->set('locationId', $locationId, 60);
+            }
         $model = new LessonReview();
         $request = Yii::$app->request;
         $model->load($request->get());
         $newTeacherId = $model->teacherId;
         $oldLessonIds[] = null;
-        $unscheduledLessonCount = 0; // it is only used while change teacher
 
         if ($model->courseId) {
             $courseModel = Course::findOne(['id' => $model->courseId]);
@@ -692,6 +695,7 @@ class LessonController extends BaseController
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
+        Yii::$app->cache->delete( 'locationId');
         $model = new LessonConfirm();
         $request = Yii::$app->request;
         $model->load($request->get());

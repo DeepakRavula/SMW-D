@@ -11,12 +11,12 @@ class TeacherEligibleValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-        $session = Yii::$app->session;
-        if($session->has('locationId')){
-            $locationId = $session->get('locationId');
-        } else {
-            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        }
+        $locationId = Yii::$app->filecache->get('locationId');
+            if($locationId == false)
+            {
+                $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+                Yii::$app->cache->set('locationId',$locationId, 60);
+            }
         if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
             ->teachers($model->course->programId, $locationId)->notDeleted()->all(), 'id'))) {
             $this->addError($model, $attribute, 'Please choose an eligible

@@ -29,6 +29,10 @@ $config = [
             'class' => 'yii\caching\FileCache',
             'cachePath' => '@common/runtime/cache',
         ],
+        'filecache' => [
+            'class' => 'yii\caching\FileCache',
+            'cachePath' => '@common/runtime/cache',
+        ],
 
         'commandBus' => [
             'class' => 'trntv\bus\CommandBus',
