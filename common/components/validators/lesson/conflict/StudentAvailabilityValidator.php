@@ -14,7 +14,7 @@ class StudentAvailabilityValidator extends Validator
             if($locationId == false)
             {
                 $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-                Yii::$app->cache->set('locationId',$locationId, 60);
+                Yii::$app->filecache->set('locationId',$locationId, 60);
             }
         $studentId = $model->course->enrolment->student->id;
         $start               = new \DateTime($model->date);

@@ -16,7 +16,7 @@ class TeacherLessonOverlapValidator extends Validator
             if($locationId == false)
             {
                 $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-                Yii::$app->cache->set('locationId',$locationId, 60);
+                Yii::$app->filecache->set('locationId',$locationId, 60);
             }
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
