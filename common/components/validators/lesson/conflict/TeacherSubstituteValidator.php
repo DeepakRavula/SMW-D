@@ -17,7 +17,7 @@ class TeacherSubstituteValidator extends Validator
             if($locationId == false)
             {
                 $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-                Yii::$app->cache->set('locationId',$locationId, 60);
+                Yii::$app->filecache->set('locationId',$locationId, 60);
             }
         if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
             ->teachers($model->course->programId, $locationId)->notDeleted()->all(), 'id'))) {
