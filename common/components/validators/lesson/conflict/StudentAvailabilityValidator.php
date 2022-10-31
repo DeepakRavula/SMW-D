@@ -5,6 +5,7 @@ use common\models\Location;
 use yii\validators\Validator;
 use Yii;
 use common\models\Lesson;
+use common\models\Location;
 
 class StudentAvailabilityValidator extends Validator
 {

@@ -1,9 +1,7 @@
 <?php
 namespace common\components\validators\lesson\conflict;
 
-use common\models\Lesson;
 use common\models\TeacherUnavailability;
-use common\models\Location;
 use yii\validators\Validator;
 use Carbon\Carbon;
 

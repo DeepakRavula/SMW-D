@@ -122,7 +122,7 @@ use common\models\Location;
     });
 
     $(document).on('week-view-calendar-select', function(event, params) {
-        $('#lesson-date').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y hh:mm A')).trigger('change');
+        $('#lesson-date').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, YYYY hh:mm A')).trigger('change');
         return false;
     });
 
