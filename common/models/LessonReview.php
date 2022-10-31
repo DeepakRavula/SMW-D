@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use Yii;
 use yii\base\Model;
 /**
  * This is the model class for table "course".
@@ -45,6 +46,12 @@ class LessonReview extends Model
         $conflictedLessonIds = [];
         $holidayConflictedLessonIds = [];
         foreach ($lessons as $draftLesson) {
+            $programType = Yii::$app->filecache->get('programType');
+                    if($programType == false)
+                    {
+                        $programType = $draftLesson->course->program->isPrivate();
+                        Yii::$app->filecache->set('programType', $programType, 60);
+                    }
             $draftLesson->setScenario(Lesson::SCENARIO_REVIEW);
             if (!$draftLesson->validate()) {
                 $conflictedLessonIds[] = $draftLesson->id;
