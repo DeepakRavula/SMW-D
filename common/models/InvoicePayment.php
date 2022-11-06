@@ -155,9 +155,10 @@ class InvoicePayment extends \yii\db\ActiveRecord
             }
         }
         $this->invoice->save();
-        foreach ($this->invoice->paymentRequests as $paymentRequest) {
-            $paymentRequest->save();
-        }
+        // REMOVE USED CODE
+        // foreach ($this->invoice->paymentRequests as $paymentRequest) {
+        //     $paymentRequest->save();
+        // }
         $this->payment->save();
         $this->invoice->user->updateCustomerBalance();
         return true;
