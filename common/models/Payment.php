@@ -335,7 +335,9 @@ class Payment extends ActiveRecord
                 ->andWhere(['payment_id' => $this->id])
                 ->notDeleted()
                 ->sum('amount');
-        } else {
+        } 
+        $lessonExists = LessonPayment::find()->where( [ 'paymentId' => $this->id ] )->exists();
+        if ($lessonExists) {
             $amountUsed += LessonPayment::find()
             ->andWhere(['paymentId' => $this->id])
             ->notDeleted()
