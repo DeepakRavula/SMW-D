@@ -164,8 +164,7 @@ class LessonPayment extends \yii\db\ActiveRecord
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
         }
-        //$this->payment->save(); // Remove code for performance improvement
-        $this->payment->updateAttributes(['balance' => $this->payment->getBalanceAmount()]);
+        $this->payment->save();
         if ($this->lesson->privateLesson) {
             $this->lesson->privateLesson->save();
         }
