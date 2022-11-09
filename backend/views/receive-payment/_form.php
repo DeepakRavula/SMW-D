@@ -367,7 +367,7 @@ use yii\bootstrap\Html;
         return false;
     });
 
-    $(document).off('change', '.payment-amount, .credit-amount').on('change', '.payment-amount, .credit-amount', function () {
+    $(document).off('change', '.payment-amount, .credit-amount', 'amount-received').on('change', '.payment-amount, .credit-amount', 'amount-received', function () {
         var payment = $(this).val();
         var id = $(this).attr('id');
         if (!$.isEmptyObject(payment)) {
