@@ -329,20 +329,14 @@ class Payment extends ActiveRecord
     public function getBalanceAmount()
     {
         $amountUsed = 0.0;
-        // $exists = InvoicePayment::find()->where( [ 'payment_id' => $this->id ] )->exists();
-        // if ($exists) {
-            $amountUsed += InvoicePayment::find()
-                ->andWhere(['payment_id' => $this->id])
-                ->notDeleted()
-                ->sum('amount');
-        // } 
-        // $lessonExists = LessonPayment::find()->where( [ 'paymentId' => $this->id ] )->exists();
-        // if ($lessonExists) {
-            $amountUsed += LessonPayment::find()
+        $amountUsed += InvoicePayment::find()
+            ->andWhere(['payment_id' => $this->id])
+            ->notDeleted()
+            ->sum('amount');
+        $amountUsed += LessonPayment::find()
             ->andWhere(['paymentId' => $this->id])
             ->notDeleted()
             ->sum('amount');
-        //}
         $balance = $this->amount - $amountUsed;
         return $balance;
     }
