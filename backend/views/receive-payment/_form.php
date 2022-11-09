@@ -74,7 +74,10 @@ use yii\bootstrap\Html;
             <?= $form->field($paymentModel, 'reference')->textInput(['class' => 'form-control'])->label('Reference'); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
+        <?= $form->field($model, 'amount')->textInput([
+            'value' => round($model->amount, 2), 
+            'class' => 'form-control text-right amount-received'
+            ])->label('Amount Received'); ?>
         </div>
         
     </div>
