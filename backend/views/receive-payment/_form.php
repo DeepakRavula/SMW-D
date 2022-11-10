@@ -75,8 +75,7 @@ use yii\bootstrap\Html;
         </div>
         <div class="col-xs-2">
         <?= $form->field($model, 'amount')->textInput([
-            'value' => round($model->amount, 2), 
-            'class' => 'form-control text-right amount-received'
+            'class' => 'form-control text-right'
             ])->label('Amount Received'); ?>
         </div>
         
@@ -367,7 +366,7 @@ use yii\bootstrap\Html;
         return false;
     });
 
-    $(document).off('change', '.payment-amount, .credit-amount', 'amount-received').on('change', '.payment-amount, .credit-amount', 'amount-received', function () {
+    $(document).off('change', '.payment-amount, .credit-amount').on('change', '.payment-amount, .credit-amount', function () {
         var payment = $(this).val();
         var id = $(this).attr('id');
         if (!$.isEmptyObject(payment)) {
