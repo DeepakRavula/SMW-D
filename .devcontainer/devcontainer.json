@@ -1,5 +1,5 @@
 {
-	"name": "PHP",
+	"name": "smw",
 	"image": "mcr.microsoft.com/devcontainers/php:7",
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
@@ -30,7 +30,7 @@
 	"forwardPorts": [8080],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	 "postCreateCommand": "sudo docker-compose up -d && docker exec -it smw-app /permissions.sh"
+	 "postCreateCommand": "sudo docker-compose up -d db && sudo docker-compose up -d && docker exec -it smw-app /permissions.sh"
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
