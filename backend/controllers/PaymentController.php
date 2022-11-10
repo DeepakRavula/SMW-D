@@ -472,12 +472,13 @@ class PaymentController extends BaseController
             ]);
             Yii::$app->session->set('model', $model);
             $url = null;
-            if ($model->prId) {
-                $pr = ProformaInvoice::findOne($model->prId);
-                if ($pr->isPaid()) {
-                    $url = Url::to(['proforma-invoice/index']);
-                }
-            }
+            //REMOVE UNUSED CODE
+            // if ($model->prId) {
+            //     $pr = ProformaInvoice::findOne($model->prId);
+            //     if ($pr->isPaid()) {
+            //         $url = Url::to(['proforma-invoice/index']);
+            //     }
+            // }
             $response = [
                 'status' => true,
                 'data' => $printData,

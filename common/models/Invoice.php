@@ -895,9 +895,10 @@ class Invoice extends \yii\db\ActiveRecord
             $this->isVoid = false;
         } else {
             $this->date           = (new \DateTime($this->date))->format('Y-m-d');
-            if ($this->isProformaPaymentFrequencyApplicable()) {
-                $this->createProformaPaymentFrequency();
-            }
+            // REMOVE UNUSED CODE
+            // if ($this->isProformaPaymentFrequencyApplicable()) {
+            //     $this->createProformaPaymentFrequency();
+            // }
             $existingSubtotal = $this->subTotal;
             $this->subTotal = $this->netSubtotal;
             if (!$this->isTaxAdjusted) {
