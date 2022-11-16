@@ -503,18 +503,17 @@ class LessonController extends BaseController
 
     public function actionReview()
     {
-        $locationId = Yii::$app->filecache->get('locationId');
-            if($locationId == false)
-            {
-                $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-                Yii::$app->filecache->set('locationId', $locationId, 60);
-            }
         $model = new LessonReview();
         $request = Yii::$app->request;
         $model->load($request->get());
         $newTeacherId = $model->teacherId;
         $oldLessonIds[] = null;
-
+        $locationId = Yii::$app->filecache->get('locationId' . $model->courseId);
+        if($locationId == false)
+        {
+            $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+            Yii::$app->filecache->set('locationId' . $model->courseId, $locationId, 60);
+        }
         if ($model->courseId) {
             $courseModel = Course::findOne(['id' => $model->courseId]);
             $startDate = new \DateTime($model->rescheduleBeginDate);

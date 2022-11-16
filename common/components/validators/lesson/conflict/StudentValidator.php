@@ -14,7 +14,7 @@ class StudentValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         if (!empty($model->duration)) {
-            $studentId = Yii::$app->filecache->get('studentId');
+            $studentId = Yii::$app->filecache->get('studentId' . $model->courseId);
             if ($studentId == false) {
                 if ($model->isExtra()) {
                     $studentId = $model->studentId;
@@ -23,12 +23,12 @@ class StudentValidator extends Validator
                 } else {
                     $studentId = !empty($model->studentId) ? $model->studentId : null;
                 }
-                Yii::$app->filecache->set('studentId', $studentId, 60);
+                Yii::$app->filecache->set('studentId' . $model->courseId, $studentId, 60);
             }
-            $locationId = Yii::$app->filecache->get('locationId');
+            $locationId = Yii::$app->filecache->get('locationId' . $model->courseId);
             if ($locationId == false) {
                 $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-                Yii::$app->cache->set('locationId', $locationId, 60);
+                Yii::$app->cache->set('locationId' . $model->courseId, $locationId, 60);
             }
 
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');

@@ -12,11 +12,11 @@ class TeacherLessonOverlapValidator extends Validator
     {
         
         if ($model->duration) {
-            $locationId = Yii::$app->filecache->get('locationId');
+            $locationId = Yii::$app->filecache->get('locationId' . $model->courseId);
             if($locationId == false)
             {
                 $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-                Yii::$app->filecache->set('locationId',$locationId, 60);
+                Yii::$app->filecache->set('locationId' . $model->courseId, $locationId, 60);
             }
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');

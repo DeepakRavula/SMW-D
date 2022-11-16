@@ -46,11 +46,11 @@ class LessonReview extends Model
         $conflictedLessonIds = [];
         $holidayConflictedLessonIds = [];
         foreach ($lessons as $draftLesson) {
-            $programType = Yii::$app->filecache->get('programType');
+            $programType = Yii::$app->filecache->get('programType' . $draftLesson->courseId);
                     if($programType == false)
                     {
                         $programType = $draftLesson->course->program->isPrivate();
-                        Yii::$app->filecache->set('programType', $programType, 60);
+                        Yii::$app->filecache->set('programType' . $draftLesson->courseId, $programType, 60);
                     }
             $draftLesson->setScenario(Lesson::SCENARIO_REVIEW);
             if (!$draftLesson->validate()) {

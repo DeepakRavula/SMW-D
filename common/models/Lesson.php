@@ -199,11 +199,11 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], StudentValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function ($model, $attribute) {
-                    $programType = Yii::$app->filecache->get('programType');
+                    $programType = Yii::$app->filecache->get('programType' . $model->courseId);
                     if($programType == false)
                     {
                         $programType = $model->course->program->isPrivate();
-                        Yii::$app->filecache->set('programType', $programType, 60);
+                        Yii::$app->filecache->set('programType' . $model->courseId, $programType, 60);
                     }
                     return $programType;
                 }],
