@@ -1,0 +1,63 @@
+version: "3.7"
+services:
+  smw:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile-dev
+    image: smw-image
+    container_name: smw-app
+    ports: 
+      - 8080:80
+    volumes:
+      - ./:/srv/smw
+      - ./.env:/srv/smw/.env
+      - ./docker/php/apache.conf:/etc/apache2/sites-enabled/000-default.conf
+      - vendor:/srv/smw/vendor
+      - frontend:/srv/smw/frontend/web/assets/
+      - backend:/srv/smw/backend/web/assets/
+    depends_on:
+      db:
+        condition: service_healthy
+  bg:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile-dev
+    image: smw-image
+    container_name: smw-bg
+    command: ["/usr/bin/supervisord","-c","/etc/supervisor/conf.d/queue.conf"]
+    volumes:
+      - ./:/srv/smw
+      - ./.env:/srv/smw/.env
+      - ./docker/php/apache.conf:/etc/apache2/sites-enabled/000-default.conf
+      - vendor:/srv/smw/vendor
+      - frontend:/srv/smw/frontend/web/assets/
+      - backend:/srv/smw/backend/web/assets/
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0.11
+    command: mysqld --default-authentication-plugin=mysql_native_password --max_allowed_packet=32505856 --sql_mode="NO_ENGINE_SUBSTITUTION"
+    restart: always
+    container_name: smw-db
+    cap_add:
+      - SYS_NICE
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./mysql-dump:/docker-entrypoint-initdb.d
+    ports:
+      - 3336:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test:  mysql -uroot -p$$MYSQL_ROOT_PASSWORD smw_db -e 'SELECT * FROM `smw_db`.`user_token` LIMIT 10;'
+      interval: 1s
+      retries: 120
+
+
+volumes:
+  mysql:
+  vendor:
+  frontend:
+  backend:
