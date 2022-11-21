@@ -12,6 +12,7 @@ use common\models\discount\LessonDiscount;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\data\ArrayDataProvider;
 use Carbon\Carbon;
+use common\components\queue\EnrolmentDiscount as EnrolmentDiscountQueue;
 
 /**
  * This is the model class for table "enrolment".
@@ -1045,49 +1046,58 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetDiscount($type, $value)
     {
-        if ((int) $type === (int) EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY) {
-            $type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
-        } else {
-            $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
-        }
+        //REMOVE CODE FOR PERFORMANCE IMPROVEMENT AND CODE MOVE TO QUEUE 
+        // if ((int) $type === (int) EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY) {
+        //     $type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+        // } else {
+        //     $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
+        // }
         if ($this->course->isPrivate() && $this->partialyPaidPaymentCycle) {
-            $lessons = Lesson::find()
-                ->notDeleted()
-                ->andWhere(['courseId' => $this->courseId])
-                ->notCompleted()
-                ->isConfirmed()
-                ->notCanceled()
-                ->joinWith(['privateLesson' => function ($query) {
-                    $query->andWhere(['>', 'private_lesson.balance', 0]);
-                }])
-                ->all();
-            foreach ($lessons as $lesson) {
-                $lessonDiscount = LessonDiscount::find()
-                    ->andWhere(['type' => $type, 'lessonId' => $lesson->id, 'enrolmentId' => $this->id])
-                    ->one();
-                if ($lessonDiscount) {
-                    if ($lessonDiscount->isPfDiscount()) {
-                        $lessonDiscount->value = $value;
-                    } else {
-                        $lessonDiscount->value = $value / 4;
-                    }
-                    $lessonDiscount->save();
-                } else {
-                    $lessonDiscount = new LessonDiscount();
-                    $lessonDiscount->lessonId = $lesson->id;
-                    if ((int) $type === (int) LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY) {
-                        $lessonDiscount->type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
-                        $lessonDiscount->value = $value;
-                        $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
-                    } else {
-                        $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
-                        $lessonDiscount->value = $value / 4;
-                        $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
-                    }
-                    $lessonDiscount->enrolmentId = $this->id;
-                    $lessonDiscount->save();
-                }
-            }
+            Yii::$app->queue->push(new EnrolmentDiscountQueue([
+                'courseId' => $this->courseId,
+                'type' => $type,
+                'value' => $value,
+                'enrolmentId' => $this->id,
+            ]));
+
+            // $lessons = Lesson::find()
+            //     ->notDeleted()
+            //     ->andWhere(['courseId' => $this->courseId])
+            //     ->notCompleted()
+            //     ->isConfirmed()
+            //     ->notCanceled()
+            //     ->joinWith(['privateLesson' => function ($query) {
+            //         $query->andWhere(['>', 'private_lesson.balance', 0]);
+            //     }])
+            //     ->limit(12)
+            //     ->all();
+            // foreach ($lessons as $lesson) {
+            //     $lessonDiscount = LessonDiscount::find()
+            //         ->andWhere(['type' => $type, 'lessonId' => $lesson->id, 'enrolmentId' => $this->id])
+            //         ->one();
+            //     if ($lessonDiscount) {
+            //         if ($lessonDiscount->isPfDiscount()) {
+            //             $lessonDiscount->value = $value;
+            //         } else {
+            //             $lessonDiscount->value = $value / 4;
+            //         }
+            //         $lessonDiscount->save();
+            //     } else {
+            //         $lessonDiscount = new LessonDiscount();
+            //         $lessonDiscount->lessonId = $lesson->id;
+            //         if ((int) $type === (int) LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY) {
+            //             $lessonDiscount->type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+            //             $lessonDiscount->value = $value;
+            //             $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
+            //         } else {
+            //             $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
+            //             $lessonDiscount->value = $value / 4;
+            //             $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
+            //         }
+            //         $lessonDiscount->enrolmentId = $this->id;
+            //         $lessonDiscount->save();
+            //     }
+            // }
         }
         return true;
     }
