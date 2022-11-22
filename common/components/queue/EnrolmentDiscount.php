@@ -27,12 +27,6 @@ class EnrolmentDiscount extends BaseObject implements RetryableJobInterface
     public function execute($queue)
     {
         try {
-            if ((int)$this->type === (int)Discount::TYPE_PAYMENT_FREQUENCY) {
-                $this->type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
-            }
-            else {
-                $this->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
-            }
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->andWhere(['courseId' => $this->courseId])
@@ -45,7 +39,6 @@ class EnrolmentDiscount extends BaseObject implements RetryableJobInterface
             }])
                 ->all();
             foreach ($lessons as $lesson) {
-                print_r($lesson->id);
                 $lessonDiscount = LessonDiscount::find()
                     ->andWhere(['type' => $this->type, 'lessonId' => $lesson->id, 'enrolmentId' => $this->enrolmentId])
                     ->one();
@@ -57,6 +50,7 @@ class EnrolmentDiscount extends BaseObject implements RetryableJobInterface
                         $lessonDiscount->value = $this->value / 4;
                     }
                     $lessonDiscount->save();
+
                 }
                 else {
                     $lessonDiscount = new LessonDiscount();
@@ -74,9 +68,10 @@ class EnrolmentDiscount extends BaseObject implements RetryableJobInterface
                     $lessonDiscount->enrolmentId = $this->enrolmentId;
                     $lessonDiscount->save();
                 }
-            }        
-        } catch (\Exception $e) {
-            print_r($e->getMessage());        
+            }
+        }
+        catch (\Exception $e) {
+            print_r($e->getMessage());
         }
         return true;
     }
