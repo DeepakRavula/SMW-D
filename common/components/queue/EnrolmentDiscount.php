@@ -39,11 +39,13 @@ class EnrolmentDiscount extends BaseObject implements RetryableJobInterface
                 ->notCompleted()
                 ->isConfirmed()
                 ->notCanceled()
+                ->offset(12)
                 ->joinWith(['privateLesson' => function ($query) {
                 $query->andWhere(['>', 'private_lesson.balance', 0]);
             }])
                 ->all();
             foreach ($lessons as $lesson) {
+                print_r($lesson->id);
                 $lessonDiscount = LessonDiscount::find()
                     ->andWhere(['type' => $this->type, 'lessonId' => $lesson->id, 'enrolmentId' => $this->enrolmentId])
                     ->one();
