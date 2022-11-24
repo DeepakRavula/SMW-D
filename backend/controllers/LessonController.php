@@ -613,6 +613,7 @@ class LessonController extends BaseController
         if ($model->courseModelId) {
             $courseModel = Course::findOne($model->courseModelId);
         }
+        Yii::$app->filecache->flush();
         return $this->render('review', [
             'courseModel' => $courseModel ?? null,
             'lessonDataProvider' => $lessonDataProvider,
@@ -694,7 +695,6 @@ class LessonController extends BaseController
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        Yii::$app->filecache->flush();
         $model = new LessonConfirm();
         $request = Yii::$app->request;
         $model->load($request->get());
