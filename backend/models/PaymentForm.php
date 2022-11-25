@@ -530,13 +530,15 @@ class PaymentForm extends Model
 
     public function validateAmount($attributes)
     {
-        if ($this->amount < 0.01 && $this->selectedCreditValue < 0.01) {
-            if ($this->amountNeeded > 0.01) {
-                $this->addError($attributes, "Amount can't be empty");
+        if (is_numeric($this->amount)) {
+            if ($this->amount < 0.01 && $this->selectedCreditValue < 0.01) {
+                if ($this->amountNeeded > 0.01) {
+                    $this->addError($attributes, "Amount can't be empty");
+                }
             }
         }
 
-        if (is_numeric($this->amountToDistribute)) {
+        if (is_numeric($this->amount)) {
             if (round($this->amountToDistribute, 2) > round(($this->selectedCreditValue + $this->amount), 2)) {
                 $this->addError($attributes, "Amount mismatched with distributions");
             }
