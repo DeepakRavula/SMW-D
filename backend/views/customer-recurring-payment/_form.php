@@ -55,6 +55,10 @@ use kartik\select2\Select2;
             ]
         ])->label('Customer'); ?>
     	<?= $form->field($model, 'startDate')->widget(DatePicker::className(), [
+                'options' => [
+                    'class' => 'form-control',
+                    'readOnly' => true,
+                ],
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
                         'changeMonth' => true,
@@ -63,7 +67,7 @@ use kartik\select2\Select2;
                         'changeYear' => true,
                       
                         'disabled' => $disabled,
-                        ], ])->textInput(['placeholder' => 'Select Start Date'])->label('As Of');?>
+                        ], ])->label('As Of');?>
     </div>
     <div class="col-md-4 ">
     	<?= $form->field($model, 'paymentDay')->dropDownList($day, ['disabled' => $disabled,])->label('On The');?>

@@ -33,13 +33,17 @@ use Carbon\Carbon;
             <?php $day = CustomerRecurringPayment::getDaysList();?> 
         <?php $model->startDate = Carbon::parse($model->startDate)->format('M d, Y');   ?>
     	<?= $form->field($model, 'startDate')->widget(DatePicker::className(), [
+                'options' => [
+                    'class' => 'form-control',
+                    'readOnly' => true,
+                ],
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
                         'changeMonth' => true,
                         'defaultDate' => (new \DateTime($model->startDate))->format('M d, Y'),
                         'yearRange' => '-70:+20',
                         'changeYear' => true,
-                        ], ])->textInput(['placeholder' => 'Select Start Date'])->label('As Of');?>
+                        ], ])->label('As Of');?>
     </div>
     <div class="col-md-4 ">
     	<?= $form->field($model, 'paymentDay')->dropDownList($day, ['prompt'=>'Choose a Day'])->label('On The')?>
