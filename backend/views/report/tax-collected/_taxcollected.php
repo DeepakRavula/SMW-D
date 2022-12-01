@@ -46,25 +46,23 @@ td.kv-group-odd {
             'group' => true,
             'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
             'groupedRow' => true,
-            'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
-                $invoiceTaxes = Invoice::find()
-                    ->notDeleted()
-                    ->location($locationId)
-                    ->invoice()
-                    ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($model->date))->format('Y-m-d'), 
-                        (new \DateTime($model->date))->format('Y-m-d')]);
-                    
+            'groupFooter' => function ($model, $key, $index, $widget) {    
                 return [
                     'mergeColumns' => [[1, 2]],
                     'content' => [
-                        3 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('subTotal'), 2)),
-                        4 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('tax'), 2)),
-                        5 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('total'), 2)),
+                        3 => GridView::F_SUM,
+                        4 => GridView::F_SUM,
+                        5 => GridView::F_SUM
+                    ],
+                    'contentFormats' => [
+                        3 => ['format' => 'number', 'decimals' => 2, 'thousandSep'=>','],
+                        4 => ['format' => 'number', 'decimals' => 2, 'thousandSep'=>','],
+                        5 => ['format' => 'number', 'decimals' => 2, 'thousandSep'=>','],
                     ],
                     'contentOptions' => [
-                        3 => ['style' => 'text-align:right'],
-                        4 => ['style' => 'text-align:right'],
-                        5 => ['style' => 'text-align:right'],
+                        3 => ['style' => 'text-align:right', 'class' => 'dollar'],
+                        4 => ['style' => 'text-align:right', 'class' => 'dollar'],
+                        5 => ['style' => 'text-align:right', 'class' => 'dollar'],
                     ],
                     'options' => ['style' => 'font-weight:bold;']
                 ];
@@ -84,36 +82,39 @@ td.kv-group-odd {
         ],
         [
             'label' => 'Subtotal',
+            'format' => ['decimal', 2],
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->subTotal, 2));
+                return round($data->subTotal, 2);
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'hAlign' => 'right',
-            'pageSummary' => function ($summary, $data, $widget) use ($subtotalSum) { 
-                return Yii::$app->formatter->asCurrency(round($subtotalSum, 2)); 
-            }
+            'pageSummaryOptions' => ['class' => 'dollar'],
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
         [
             'label' => 'Tax',
+            'format' => ['decimal', 2],
 	        'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->tax);
+                return $data->tax;
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'hAlign' => 'right',
-            'pageSummary' => function ($summary, $data, $widget) use ($taxSum) { 
-                return Yii::$app->formatter->asCurrency(round($taxSum, 2)); 
-            }
+            'pageSummaryOptions' => ['class' => 'dollar'],
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
         [
             'label' => 'Total',
+            'format' => ['decimal', 2],
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->total, 2));
+                return round($data->total, 2);
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'hAlign' => 'right',
-            'pageSummary' => function ($summary, $data, $widget) use ($totalSum) { 
-                return Yii::$app->formatter->asCurrency(round($totalSum, 2)); 
-            }
+            'pageSummaryOptions' => ['class' => 'dollar'],
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ]
     ];
 
