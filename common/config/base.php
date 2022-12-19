@@ -115,7 +115,7 @@ $config = [
                         return sprintf('[%s][%s]', Yii::$app->id, $url);
                     },
                     'logVars' => [],
-                    'logTable' => '{{%system_log}}',
+                    //'logTable' => '{{%system_log}}',
                 ],
                 'rollbar' =>  [
                     'class' => 'baibaratsky\yii\rollbar\log\Target',
