@@ -98,8 +98,7 @@ $config = [
             'password' => env('DB_PASSWORD'),
             'tablePrefix' => env('DB_TABLE_PREFIX'),
             'charset' => 'utf8',
-            'enableSchemaCache' => true,
-            'schemaCacheDuration' => 3600,
+            'enableSchemaCache' => YII_ENV_PROD,
         ],
 
         'log' => [
@@ -115,7 +114,7 @@ $config = [
                         return sprintf('[%s][%s]', Yii::$app->id, $url);
                     },
                     'logVars' => [],
-                    'logTable' => '{{%system_log}}',
+                    //'logTable' => '{{%system_log}}',
                 ],
                 'rollbar' =>  [
                     'class' => 'baibaratsky\yii\rollbar\log\Target',
