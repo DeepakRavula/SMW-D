@@ -166,8 +166,16 @@ class ScheduleController extends FrontendBaseController
         $query->scheduledOrRescheduled()
             ->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
             ->notDeleted();
-        $lessons = $query->all();
-        return $lessons;
+            $db = Yii::$app->db;
+            $lessons = Lesson::getDb()->cache(function ($db) use ($query) {
+                return $query->all();
+            });
+            if ($lessons) {
+                return $lessons;
+            } else {
+                $lessons = $query->all();
+                return $lessons;
+            }
     }
 
     public function getTeacherAvailability($teacherId, $date)
