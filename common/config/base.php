@@ -98,7 +98,9 @@ $config = [
             'password' => env('DB_PASSWORD'),
             'tablePrefix' => env('DB_TABLE_PREFIX'),
             'charset' => 'utf8',
-            'enableSchemaCache' => YII_ENV_PROD,
+            'enableQueryCache' => true,
+            'enableSchemaCache' => true,
+            'schemaCacheDuration' => 3600,
         ],
 
         'log' => [
