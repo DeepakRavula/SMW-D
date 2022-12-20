@@ -98,6 +98,7 @@ $config = [
             'password' => env('DB_PASSWORD'),
             'tablePrefix' => env('DB_TABLE_PREFIX'),
             'charset' => 'utf8',
+            'enableQueryCache' => true,
             'enableSchemaCache' => true,
             'schemaCacheDuration' => 3600,
         ],
