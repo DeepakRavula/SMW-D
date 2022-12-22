@@ -114,7 +114,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ];
         ?>
 	<?php else : ?>
-		<?php $columns = [
+        <?php $columns = [
             [
                 'value' => function ($data) {
                     if (!empty($data->date)) {
@@ -124,27 +124,22 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     return null;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
+                'contentOptions' => ['style' => 'font-weight:bold; font-size:14px; text-align:left', 'class' => 'main-group'],
                 'groupedRow' => true,
-                'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
-                    $paymentsAmount = Payment::find()
-                        ->exceptAutoPayments()
-                        ->exceptGiftCard()
-                        ->location($locationId)
-                        ->notDeleted()
-                        ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($model->date))->format('Y-m-d'), 
-                            (new \DateTime($model->date))->format('Y-m-d')])
-                        ->sum('payment.amount');
+                'groupFooter' => function ($model, $key, $index, $widget) {
                     return [
                         'mergeColumns' => [[2, 3]],
                         'content' => [
-                            5 => Yii::$app->formatter->asCurrency(round($paymentsAmount, 2)),
+                            5 => GridView::F_SUM,
+                        ],
+                        'contentFormats' => [
+                            5 => ['format' => 'number', 'decimals' => 0, 'thousandSep' => ','],
                         ],
                         'contentOptions' => [
-                            5 => ['style' => 'text-align:right'],
+                            5 => ['style' => 'font-size:15px; text-align:right', 'class' => 'dollar'],
                         ],
-                        'options' => ['style' => 'font-weight:bold;font-size:14px;']
+                        'options' => ['style' => 'font-weight:bold', 'class' => 'info table-info']
                     ];
                 }
 
@@ -154,27 +149,23 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->paymentMethod->name;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
                 'group' => true,
-                'groupedRow' => true,
                 'subGroupOf' => 0,
-                'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
-                    $paymentsAmount = Payment::find()
-                        ->andWhere(['payment_method_id' => $model->payment_method_id])
-                        ->location($locationId)
-                        ->notDeleted()
-                        ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($model->date))->format('Y-m-d'), 
-                            (new \DateTime($model->date))->format('Y-m-d')])
-                        ->sum('payment.amount');
+                'contentOptions' => ['style' => 'font-weight:bold; font-size:14px; text-align:left', 'class' => 'main-group'],
+
+                'groupFooter' => function ($model, $key, $index, $widget) {
                     return [
                         'mergeColumns' => [[2, 4]],
                         'content' => [
-                            5 => Yii::$app->formatter->asCurrency(round($paymentsAmount, 2)),
+                            5 => GridView::F_SUM,
+                        ],
+                        'contentFormats' => [
+                            5 => ['format' => 'number', 'decimals' => 0],
                         ],
                         'contentOptions' => [
-                            5 => ['style' => 'text-align:right'],
+                            5 => ['style' => 'text-align:right', 'class' => 'dollar'],
                         ],
-                        'options' => ['class' => 'success', 'style' => 'font-weight:bold;font-size:14px']
+                        'options' => ['class' => 'success table-success', 'style' => 'font-weight:bold;']
                     ];
                 },
             ],
@@ -210,14 +201,14 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             ],
             [
                 'label' => 'Amount',
+                'format' => ['decimal', 2],
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asCurrency(round($data->amount, 2));
+                    return $data->amount;
                 },
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
-                'hAlign' => 'right',
-                'pageSummary' => function ($summary, $data, $widget) use ($paymentsAmount) { 
-                    return Yii::$app->formatter->asCurrency(round($paymentsAmount, 2)); 
-                }
+                'contentOptions' => ['style' => 'text-align:right;', 'class' => 'dollar'],
+                'pageSummaryOptions' => ['style' => 'text-align:right', 'class' => 'dollar'],
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM
             ],
         ];
         ?>
