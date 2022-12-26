@@ -151,7 +151,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 },
                 'group' => true,
                 'subGroupOf' => 0,
-                'contentOptions' => ['style' => 'font-weight:bold; font-size:14px; text-align:left', 'class' => 'main-group'],
+                'contentOptions' => ['style' => 'width:200px; font-weight:bold; font-size:14px; text-align:left', 'class' => 'main-group'],
 
                 'groupFooter' => function ($model, $key, $index, $widget) {
                     return [
