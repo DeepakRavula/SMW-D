@@ -45,42 +45,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 }
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
-<?php $totalReportValue = ItemCategory::getTotal($salesDataProvider->query->all()); 
-$greatSubTotal = 0.00;
-$greatTaxTotal = 0.00;
-$greatGrandTotal = 0.00;
-calcTotal($searchModel);
-function lineItems($searchModel) {
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-    $invoiceLineItems = InvoiceLineItem::find()
-    ->notDeleted()
-    ->joinWith(['invoice' => function ($query) use ($locationId) {
-        $query->notDeleted()
-            ->notCanceled()
-            ->notReturned()
-            ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
-            ->location($locationId);
-    }])
-    ->joinWith('itemCategory')
-    ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
-        (new \DateTime($searchModel->toDate))->format('Y-m-d')]);
-
-       return $invoiceLineItems;
-        
-}
-
-function calcTotal($searchModel) {
-    $searchModel->greatSubTotal =0.00;
-    $searchModel->greatGrandTotal =0.00;
-    $searchModel->greatTaxTotal = 0.00;
-    $invoiceLineItems = lineItems($searchModel);
-    $invoiceLineItems2 = lineItems($searchModel)->all();
-    $searchModel->greatTaxTotal = $invoiceLineItems->sum('tax_rate');
-    foreach ($invoiceLineItems2 as $invoiceLineItem) {
-        $searchModel->greatSubTotal += $invoiceLineItem->netPrice;
-        $searchModel->greatGrandTotal += $invoiceLineItem->itemTotal;
-    }
-}
+<?php 
 
     function getInvoiceLineItems($data, $searchModel) {
      $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -121,6 +86,8 @@ function calcTotal($searchModel) {
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
 
         [
@@ -136,6 +103,8 @@ function calcTotal($searchModel) {
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
 
         [
@@ -151,6 +120,8 @@ function calcTotal($searchModel) {
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ]
     ];
     ?>
@@ -164,7 +135,7 @@ GridView::widget([
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
     'pjax' => true,
-    'showFooter' => true,
+    'showPageSummary' => true,
     'pjaxSettings' => [
         'neverTimeout' => true,
         'options' => [
