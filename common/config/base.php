@@ -99,6 +99,7 @@ $config = [
             'tablePrefix' => env('DB_TABLE_PREFIX'),
             'charset' => 'utf8',
             'enableQueryCache' => true,
+            'queryCacheDuration' => 3600,
             'enableSchemaCache' => true,
             'schemaCacheDuration' => 3600,
         ],

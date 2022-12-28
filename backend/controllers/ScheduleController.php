@@ -143,7 +143,7 @@ class ScheduleController extends BaseController
         $db = Yii::$app->db;
         $lessons = Lesson::getDb()->cache(function ($db) use ($query) {
             return $query->all();
-        }, 3600);
+        });
         if ($lessons) {
             return $lessons;
         } else {
