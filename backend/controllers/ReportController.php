@@ -484,7 +484,7 @@ class ReportController extends BaseController
                         ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
                         ->location($locationId)
                         ->orderBy([
-                            'DATE(invoice.date)' => SORT_ASC,
+                            'item_id' => SORT_ASC,
                         ]);
                 }
             ])
