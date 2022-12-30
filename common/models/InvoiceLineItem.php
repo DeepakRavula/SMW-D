@@ -45,6 +45,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public $price;
     public $tax;
     public $lessonCanBeUnscheduled = true;
+    public $taxRateSum;
+    public $itemCatogoryTaxTotal;
+    public $itemCatogorySubTotal;
     
     /**
      * {@inheritdoc}
