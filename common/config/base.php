@@ -90,19 +90,36 @@ $config = [
                 'class' => '\common\behaviors\CatchAllEmailBehavior',
             ],
         ],
-
-        'db' => [
+        //add master slave config
+        'db' => [  
             'class' => 'yii\db\Connection',
             'dsn' => env('DB_DSN'),
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'tablePrefix' => env('DB_TABLE_PREFIX'),
             'charset' => 'utf8',
-            'enableQueryCache' => true,
-            'queryCacheDuration' => 3600,
+-           'enableQueryCache' => true,
             'enableSchemaCache' => true,
             'schemaCacheDuration' => 3600,
-        ],
+            'queryCacheDuration'=>3600,
+            'slaveConfig' => [
+                'charset' => 'utf8',
+                'username' => env('SLAVE_DB_USERNAME'),
+                'password' => env('SLAVE_DB_PASSWORD'),
+                'attributes' => [
+                    // use a smaller connection timeout
+                    PDO::ATTR_TIMEOUT => 50,
+                ],
+                'enableSchemaCache' => true,
+                'schemaCacheDuration' => 3600,
+                'enableQueryCache'=>true,
+                'queryCacheDuration'=>3600,
+            ],
+            // list of slave configurations
+            'slaves' => [
+                ['dsn' => env('SLAVE_DB_DSN')],
+               ],
+            ],
 
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
