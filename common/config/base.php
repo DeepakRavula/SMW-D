@@ -91,16 +91,17 @@ $config = [
             ],
         ],
         //add master slave config
-        'db' => [  
+        'db' => [
             'class' => 'yii\db\Connection',
             'dsn' => env('DB_DSN'),
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'tablePrefix' => env('DB_TABLE_PREFIX'),
             'charset' => 'utf8',
--           'enableQueryCache' => true,
             'enableSchemaCache' => true,
             'schemaCacheDuration' => 3600,
+            'schemaCache' => 'db_cache',
+            'enableQueryCache'=>true,
             'queryCacheDuration'=>3600,
             'slaveConfig' => [
                 'charset' => 'utf8',
@@ -108,18 +109,19 @@ $config = [
                 'password' => env('SLAVE_DB_PASSWORD'),
                 'attributes' => [
                     // use a smaller connection timeout
-                    PDO::ATTR_TIMEOUT => 50,
+                    PDO::ATTR_TIMEOUT => 10,
                 ],
                 'enableSchemaCache' => true,
                 'schemaCacheDuration' => 3600,
                 'enableQueryCache'=>true,
+                'schemaCache' => 'db_cache',
                 'queryCacheDuration'=>3600,
             ],
             // list of slave configurations
             'slaves' => [
                 ['dsn' => env('SLAVE_DB_DSN')],
-               ],
             ],
+        ],
 
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
