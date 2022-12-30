@@ -74,45 +74,49 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ],
         [
             'label' => 'Subtotal',
+            'format' => ['decimal', 2],
             'value' => function ($data, $key, $index, $widget) use ($searchModel) {
                 $payments = getInvoiceLineItems($data, $searchModel);
                 $subTotal = 0;
                 foreach ($payments as $payment) {
                     $subTotal += $payment->netPrice;
                 }
-                $result = round($subTotal, 2);
+                $result = $subTotal;
                 $data->itemCatogorySubTotal = $result;
-                return $result;
+                return round($result, 2);
             },
-            'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
             'pageSummary' => true,
+            'pageSummaryOptions' => ['style' => 'font-size:14px'],
             'pageSummaryFunc' => GridView::F_SUM
         ],
 
         [
             'label' => 'Tax',
+            'format' => ['decimal', 2],
             'value' => function ($data, $key, $index, $widget) {
-                $result = round($data->taxRateSum, 2);;
+                $result = $data->taxRateSum;
                 $data->itemCatogoryTaxTotal = $result;
-                return $result;
+                return round($result, 2);
             },
-            'contentOptions' => ['class' => 'text-right'],
+            
             'hAlign' => 'right',
             'pageSummary' => true,
+            'pageSummaryOptions' => ['style' => 'font-size:14px'],
             'pageSummaryFunc' => GridView::F_SUM
         ],
 
     [
         'label' => 'Total',
+        'format' => ['decimal', 2],
         'value' => function ($data, $key, $index, $widget) {
             $result =$data->itemCatogorySubTotal + $data->itemCatogoryTaxTotal;
-                return round($result, 2);;
+                return round($result, 2);
             },
-            'contentOptions' => ['class' => 'text-right'],
-            'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+        'hAlign' => 'right',
+        'pageSummary' => true,
+        'pageSummaryOptions' => ['style' => 'font-size:14px'],
+        'pageSummaryFunc' => GridView::F_SUM
         ]
     ];
     ?>
