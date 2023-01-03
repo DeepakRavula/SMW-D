@@ -99,10 +99,10 @@ $config = [
             'tablePrefix' => env('DB_TABLE_PREFIX'),
             'charset' => 'utf8',
             'enableSchemaCache' => true,
-            'schemaCacheDuration' => 3600,
+            'schemaCacheDuration' => 300,
             'schemaCache' => 'db_cache',
             'enableQueryCache'=>true,
-            'queryCacheDuration'=>300,
+            'queryCacheDuration'=>30,
             'slaveConfig' => [
                 'charset' => 'utf8',
                 'username' => env('SLAVE_DB_USERNAME'),
@@ -112,10 +112,10 @@ $config = [
                     PDO::ATTR_TIMEOUT => 10,
                 ],
                 'enableSchemaCache' => true,
-                'schemaCacheDuration' => 3600,
+                'schemaCacheDuration' => 300,
                 'enableQueryCache'=>true,
                 'schemaCache' => 'db_cache',
-                'queryCacheDuration'=>3600,
+                'queryCacheDuration'=>30,
             ],
             // list of slave configurations
             'slaves' => [
