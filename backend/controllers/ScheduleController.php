@@ -113,9 +113,7 @@ class ScheduleController extends BaseController
 
     public function actionFetchHolidayName($date)
     {
-        $holiday = Holiday::getDb()->cache(function ($db) use ($date) {
-            return Holiday::find()->andWhere(['DATE(date)' => $date])->one();
-        });
+        $holiday = Holiday::find()->andWhere(['DATE(date)' => $date])->one();
         $holidayResource = '';
         if (!empty($holiday)) {
             $holidayResource = ' (' . $holiday->description . ')';
@@ -140,16 +138,8 @@ class ScheduleController extends BaseController
         if (!empty($teacherId)) {
             $query->andWhere(['lesson.teacherId' => $teacherId]);
         }
-        $db = Yii::$app->db;
-        $lessons = Lesson::getDb()->cache(function ($db) use ($query) {
-            return $query->all();
-        });
-        if ($lessons) {
-            return $lessons;
-        } else {
-            $lessons = $query->all();
-            return $lessons;
-        }
+        $lessons = $query->all();
+        return $lessons;
     }
 
     public function actionRenderClassroomResources()
@@ -206,13 +196,7 @@ class ScheduleController extends BaseController
         } else if (!empty($programId)) {
             $query->teachers($programId, $locationId);
         }
-        $db = Yii::$app->db;
-        $teachers = User::getDb()->cache(function ($db) use ($query) {
-            return $query->groupBy('user.id')->all();
-        });
-        if (!$teachers) {
-            $teachers = $query->groupBy('user.id')->all();
-        } 
+        $teachers = $query->groupBy('user.id')->all();
         $resources = $this->setResources($teachers);
         if (empty($resources)) {
             if (!empty($teacherId)) {
