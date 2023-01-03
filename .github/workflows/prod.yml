@@ -21,7 +21,7 @@ jobs:
             key: ${{ secrets.Prod_KEY }}
             port: 22
             script: |                 
-                cd /srv/smw-prod/
+                cd /srv/smw/
                 pwd
                 git pull origin master 
                 composer install
