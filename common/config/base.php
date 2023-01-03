@@ -102,7 +102,7 @@ $config = [
             'schemaCacheDuration' => 300,
             'schemaCache' => 'db_cache',
             'enableQueryCache'=>true,
-            'queryCacheDuration'=>30,
+            'queryCacheDuration'=>20,
             'slaveConfig' => [
                 'charset' => 'utf8',
                 'username' => env('SLAVE_DB_USERNAME'),
@@ -115,7 +115,7 @@ $config = [
                 'schemaCacheDuration' => 300,
                 'enableQueryCache'=>true,
                 'schemaCache' => 'db_cache',
-                'queryCacheDuration'=>30,
+                'queryCacheDuration'=>20,
             ],
             // list of slave configurations
             'slaves' => [
