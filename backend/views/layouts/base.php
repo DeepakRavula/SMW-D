@@ -21,6 +21,8 @@ $this->params['body-class'] = array_key_exists('body-class', $this->params) ?
 	<link rel='shortcut icon' type='image/x-icon' href="/backend/web/img/arcadia-fav.ico" /> 
     <meta charset="<?php echo Yii::$app->charset ?>">
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+<meta name="github-actions-deployment" content="1">
+
 
     <?php echo Html::csrfMetaTags() ?>
     <title><?php echo Html::encode($this->title) ?></title>
